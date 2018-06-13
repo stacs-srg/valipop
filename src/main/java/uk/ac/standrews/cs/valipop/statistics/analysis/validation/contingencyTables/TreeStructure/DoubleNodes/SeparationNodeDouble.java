@@ -84,6 +84,8 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
             } catch (InvalidRangeException e) {
                 in = null;
             } catch (NullPointerException e) {
+                // newP
+                e.printStackTrace();
                 System.out.println("---- NULL ----");
                 System.out.println("NPA:");
                 System.out.println(newPartnerAge);
@@ -97,7 +99,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 System.out.println(person.toString());
                 printDesent();
                 System.out.println("---- END  ----");
-                in = null;
+                in = false;
             }
 
             // if partners age is in the considered range then process this person using this NPA range and return
@@ -254,32 +256,40 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void calcCount() {
 
-        IntegerRange numberOfChildrenInPartnership = ((NumberOfChildrenInPartnershipNodeDouble)
-                getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
-
-
-        if(numberOfChildrenInPartnership.getValue() == 0) {
+        if(getOption() == SeparationOption.NA) {
             setCount(getParent().getCount());
         } else {
 
-            double forNPeople = getParent().getCount();
-            CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+            IntegerRange numberOfChildrenInPartnership = ((NumberOfChildrenInPartnershipNodeDouble)
+                    getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
 
-            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+//            Integer numberOfChildrenInYear = ((NumberOfChildrenInYearNodeDouble)
+//                    getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
 
-            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+            if (numberOfChildrenInPartnership.getValue() == 0) {
 
-            SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
-                    new SeparationStatsKey(
-                            numberOfChildrenInPartnership.getValue(), age, forNPeople, timePeriod, currentDate), null);
-
-            if (getOption() == SeparationOption.YES) {
-                setCount(sDC.getRawUncorrectedCount());
+                setCount(getParent().getCount());
             } else {
-                setCount(forNPeople - sDC.getRawUncorrectedCount());
-            }
 
+                double forNPeople = getParent().getCount();
+                CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+
+                YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+                Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+
+                Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+
+                SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
+                        new SeparationStatsKey(
+                                numberOfChildrenInPartnership.getValue(), age, forNPeople, timePeriod, currentDate), null);
+
+                if (getOption() == SeparationOption.YES) {
+                    setCount(sDC.getRawUncorrectedCount());
+                } else {
+                    setCount(forNPeople - sDC.getRawUncorrectedCount());
+                }
+
+            }
         }
 
         advanceCount();

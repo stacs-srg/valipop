@@ -50,7 +50,7 @@ public class CTtableSep extends CTtable {
                         leaf.deleteVariable("Died");
                         leaf.deleteVariable("PNCIP");
                         leaf.deleteVariable("NPCIAP");
-                        leaf.deleteVariable("CIY");
+//                        leaf.deleteVariable("CIY");
                         leaf.deleteVariable("NCIY");
                         leaf.deleteVariable("NPA");
                         leaf.deleteVariable("Age");

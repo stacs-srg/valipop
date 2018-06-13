@@ -18,7 +18,7 @@ death <- cleanDeathData(readInData(paste(pathToRunDir, "tables/death-CT.csv", se
 mbirth <- cleanMBData(readInData(paste(pathToRunDir, "tables/mb-CT.csv", sep = "")), maxBirthingAge, round = F)
 obirth <- cleanOBData(readInData(paste(pathToRunDir, "tables/ob-CT.csv", sep = "")), maxBirthingAge)
 part <- cleanPartData(readInData(paste(pathToRunDir, "tables/part-CT.csv", sep = "")), round = F)
-sep <- cleanSepData(readInData(paste(pathToRunDir, "tables/sep-CT.csv", sep = "")), round = F)
+sep <- cleanSepData(readInData(paste(pathToRunDir, "tables/sep-CT.csv", sep = "")), round = T)
 end.rcode-->
 
 <!--begin.rcode 
@@ -48,7 +48,7 @@ source("population-plot-functions.R")
 plotMB(mbirth)
 plotPart(part, subTitle, date = NULL, disc = TRUE, scales = "free_y")
 plotPart(part, subTitle, date = NULL, disc = TRUE, scales = "fixed")
-plotSep.single(sep)
+plotSep.single(sep, subTitle)
 end.rcode-->
 
 <!--begin.rcode
@@ -57,7 +57,6 @@ death.ids <- addCohortIDs.death(death)
 obirth.ids <- addCohortIDs.ob(obirth)
 mbirth.ids <- addCohortIDs.mb2(mbirth)
 part.ids <- addCohortIDs.part3(part)
-sep.ids <- addCohortIDs.sep2(sep)
 source("geeglm-functions.R")
 end.rcode-->
 
@@ -93,6 +92,9 @@ end.rcode-->
 print(summary(part.GEEGLM))
 
 par(mfrow = c(1,1))
+
+library(MASS)
+print(loglm(freq ~ Date + NCIP + Date:NCIP, data = sep))
 
 proc.time()[3]
 end.rcode-->
