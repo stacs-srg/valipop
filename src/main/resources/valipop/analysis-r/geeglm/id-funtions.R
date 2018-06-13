@@ -330,7 +330,7 @@ addCohortIDs.sep <- function(in.data) {
   
   data.id = within(data.id, {
     idvar = ifelse(Source == "SIM", 
-                   (YOB - e) + bin2dec(c(TRUE)) * (l - e + 1),
+                   (YOB - e) + bindec(c(TRUE)) * (l - e + 1),
                    (YOB - e) + bin2dec(c(FALSE)) * (l - e + 1))
   })
   
@@ -362,6 +362,61 @@ addCohortIDs.sep2 <- function(in.data) {
   data.id.sorted <- data.id[order(data.id$idvar, data.id$NCIP),]
   return(data.id.sorted)  
   
+}
+
+addCohortIDs.sep3 <- function(in.data) {
+  
+  e <- min(in.data$YOB)
+  l <- max(in.data$YOB)
+  
+  data.id <- in.data
+  
+  data.id = within(data.id, {
+    idvar = ifelse(Source == "SIM", 
+         ifelse(NCIP == "0", 
+                (YOB - e) + bin2dec(c(TRUE,FALSE,FALSE,FALSE)) * (l - e + 1), #SIM-0
+                ifelse(NCIP == "1",
+                       (YOB - e) + bin2dec(c(TRUE,FALSE,FALSE,TRUE)) * (l - e + 1), #SIM-1
+                       ifelse(NCIP == "2",
+                              (YOB - e) + bin2dec(c(TRUE,FALSE,TRUE,FALSE)) * (l - e + 1), #SIM-2
+                              ifelse(NCIP == "3",
+                                     (YOB - e) + bin2dec(c(TRUE,FALSE,TRUE,TRUE)) * (l - e + 1), #SIM-3
+                                     ifelse(NCIP == "4",
+                                            (YOB - e) + bin2dec(c(TRUE,TRUE,FALSE,FALSE)) * (l - e + 1), #SIM-4
+                                            ifelse(NCIP == "5+",
+                                                   (YOB - e) + bin2dec(c(TRUE,TRUE,FALSE,TRUE)) * (l - e + 1), #SIM-5+
+                                                   (YOB - e) + bin2dec(c(TRUE,TRUE,TRUE,FALSE)) * (l - e + 1) #SIM-0+
+                                            )
+                                     )
+                              )
+                       )
+                )
+         ),
+         ifelse(NCIP == "0", 
+                (YOB - e) + bin2dec(c(FALSE,FALSE,FALSE,FALSE)) * (l - e + 1), #STAT-0
+                ifelse(NCIP == "1",
+                       (YOB - e) + bin2dec(c(FALSE,FALSE,FALSE,TRUE)) * (l - e + 1), #STAT-1
+                       ifelse(NCIP == "2",
+                              (YOB - e) + bin2dec(c(FALSE,FALSE,TRUE,FALSE)) * (l - e + 1), #STAT-2
+                              ifelse(NCIP == "3",
+                                     (YOB - e) + bin2dec(c(FALSE,FALSE,TRUE,TRUE)) * (l - e + 1), #STAT-3
+                                     ifelse(NCIP == "4",
+                                            (YOB - e) + bin2dec(c(FALSE,TRUE,FALSE,FALSE)) * (l - e + 1), #STAT-4
+                                            ifelse(NCIP == "5",
+                                                   (YOB - e) + bin2dec(c(FALSE,TRUE,FALSE,TRUE)) * (l - e + 1), #STAT-5+
+                                                   (YOB - e) + bin2dec(c(FALSE,TRUE,TRUE,FALSE)) * (l - e + 1) #STAT-0+
+                                            )
+                                     )
+                              )
+                       )
+                )
+         )
+  )
+    
+  })
+  
+  data.id.sorted <- data.id[order(data.id$idvar, data.id$NCIP),]
+  return(data.id.sorted)  
 }
 
 

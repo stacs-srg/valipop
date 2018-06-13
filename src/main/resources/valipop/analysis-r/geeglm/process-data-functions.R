@@ -49,7 +49,7 @@ cleanPartData <- function(dirtyData, round = TRUE, start = 1854, end = 2014) {
 
 cleanSepData <- function(dirtyData, round = TRUE) {
   clean.data <- cleanData(dirtyData, round)
-  clean.data <- clean.data[which(clean.data$Separated != "NA") , ]
+  clean.data <- clean.data[which(clean.data$Separated == "YES") , ]
   clean.data$Separated <- droplevels(clean.data$Separated)
   clean.data$NCIP <- droplevels(clean.data$NCIP)
   return(clean.data)

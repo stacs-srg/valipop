@@ -267,7 +267,7 @@ plotSep <- function(Part.data, title, date = NULL) {
  
   library(ggplot2)
   
-  sub <- Part.data
+  sub <- Part.data[which(Part.data$Separated == "YES"),]
   
   if(!is.null(date)) {
     sub <- sub[which(sub$Date == date),]
