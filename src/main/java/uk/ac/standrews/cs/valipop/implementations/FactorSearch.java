@@ -88,7 +88,7 @@ public class FactorSearch {
         minBirthSpacings = new int[]{147};
         bfs = new double[]{0};
         dfs = new double[]{0};
-        t0_pop_size = new int[]{31250, 62500};
+        t0_pop_size = new int[]{31250};
 
 
         for (int size : t0_pop_size) {
