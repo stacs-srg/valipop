@@ -83,14 +83,14 @@ public class OBDModel {
         Logger.setLogFilePath(FileUtils.pathToLogDir(runPurpose, startTime, resultsPath));
     }
 
-    public OBDModel() {
-
-        summary = new SummaryRow(null, null, null, null, null,
-                null, null, null, null, 0, 0, 0,
-                0, true, 0, null);
-
-
-    }
+//    public OBDModel() {
+//
+//        summary = new SummaryRow(null, null, null, null, null,
+//                null, null, null, null, 0, 0, 0,
+//                0, true, 0, null);
+//
+//
+//    }
 
     public OBDModel(String startTime, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
