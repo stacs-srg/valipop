@@ -28,7 +28,7 @@ public class MinimaSearchTests {
         Config config = new Config(new MonthDate(1,1), new MonthDate(1,100),
                 new MonthDate(1,200), 0, 0, 0, new CompoundTimeUnit(1, TimeUnit.YEAR),
                 "src/test/resources/valipop/test-pop", "", "",
-                0, 0, true, 0, 0,
+                0, 0, true, 0, 0, 0,
                 0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null);
 
         OBDModel.setUpFileStructureAndLogs("testing", "test-time", "results");

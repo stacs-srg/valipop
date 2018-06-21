@@ -31,6 +31,7 @@ public class ContigencyTableFactory {
 
         ProgramTimer tableTimer = new ProgramTimer();
 
+        // TODO revert back to T0?
         CTtree fullTree = new CTtree(population, desired, config.getT0(), config.getTE(), startStepBack);
 
         MemoryUsageAnalysis.log();

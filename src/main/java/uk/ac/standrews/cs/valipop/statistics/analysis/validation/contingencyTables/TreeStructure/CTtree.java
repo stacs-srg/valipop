@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.SourceNodeInt;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ContingencyTable;
@@ -84,6 +85,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 //
 //        executeDelayedTasks();
 
+//        YearDate prevY = startDate.getYearDate().advanceTime(new CompoundTimeUnit(startStepBack, TimeUnit.YEAR).negative()).getYearDate();
         YearDate prevY = startDate.getYearDate();
         log.info("CTree --- Populating tree with observed population");
 

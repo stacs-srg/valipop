@@ -225,6 +225,7 @@ addCohortIDs.mb2 <- function(in.data) {
 
 addCohortIDs.part3 <- function(in.data) {
   
+  
   e <- min(in.data$YOB)
   l <- max(in.data$YOB)
   
@@ -241,25 +242,8 @@ addCohortIDs.part3 <- function(in.data) {
   
 }
 
-addCohortIDs.part2 <- function(in.data) {
-  
-  e <- min(in.data$YOB)
-  l <- max(in.data$YOB)
-  
-  data.id <- in.data
-  
-  data.id = within(data.id, {
-    idvar = ifelse(Source == "SIM", 
-                   (YOB - e) + bin2dec(c(TRUE)) * (l - e + 1),
-                   (YOB - e) + bin2dec(c(FALSE)) * (l - e + 1))
-  })
-  
-  data.id.sorted <- data.id[order(data.id$idvar, data.id$Age, data.id$NPA),]
-  return(data.id.sorted)  
-  
-}
-
 addCohortIDs.part <- function(in.data) {
+  # source and age, with discretised NPA
   
   e <- min(in.data$Date)
   l <- max(in.data$Date)

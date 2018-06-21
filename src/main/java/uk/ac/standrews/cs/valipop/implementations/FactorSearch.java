@@ -60,6 +60,7 @@ public class FactorSearch {
     }
 
     static double[] rfs;
+    static double[] prfs;
     static double[] maxInfids;
     static double[] bfs;
     static double[] dfs;
@@ -81,75 +82,77 @@ public class FactorSearch {
 
     public static void runFactorSearch(int size0, String dataFiles, int numberOfRunsPerSim, String runPurpose) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
 
-        rfs = new double[]{0.6};
+        rfs = new double[]{1.0};
+        prfs = new double[]{0.0, 0.3, 0.6, 1.0};
         iws = new CompoundTimeUnit[]{
                 new CompoundTimeUnit(10, TimeUnit.YEAR)
         };
         minBirthSpacings = new int[]{147};
         bfs = new double[]{0};
         dfs = new double[]{0};
-        t0_pop_size = new int[]{62500};
+        t0_pop_size = new int[]{31250};
 
 
         for (int size : t0_pop_size) {
             for (double rf : rfs) {
-                for (CompoundTimeUnit iw : iws) {
-                    for (int minBirthSpacing : minBirthSpacings) {
+                for (double prf : prfs) {
+                    for (CompoundTimeUnit iw : iws) {
+                        for (int minBirthSpacing : minBirthSpacings) {
 
-                        for (double bf : bfs) {
-                            for (double df : dfs) {
+                            for (double bf : bfs) {
+                                for (double df : dfs) {
 
-                                try {
+                                    try {
 
-                                    for (int n = 0; n < numberOfRunsPerSim; n++) {
+                                        for (int n = 0; n < numberOfRunsPerSim; n++) {
 
-                                        String startTime = FileUtils.getDateTime();
-                                        OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
+                                            String startTime = FileUtils.getDateTime();
+                                            OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
 
-                                        Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
-                                                simulation_time_step, dataFiles, results_save_location, runPurpose,
-                                                minBirthSpacing, minBirthSpacing, true, bf, df, rf, iw, output_record_format, startTime);
+                                            Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
+                                                    simulation_time_step, dataFiles, results_save_location, runPurpose,
+                                                    minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime);
 
 
-                                        OBDModel model = new OBDModel(startTime, config);
-                                        try {
-                                            model.runSimulation();
-                                            model.analyseAndOutputPopulation(false);
-                                        } catch (PreEmptiveOutOfMemoryWarning e) {
+                                            OBDModel model = new OBDModel(startTime, config);
+                                            try {
+                                                model.runSimulation();
+                                                model.analyseAndOutputPopulation(false);
+                                            } catch (PreEmptiveOutOfMemoryWarning e) {
+                                                model.getSummaryRow().outputSummaryRowToFile();
+                                                throw e;
+                                            }
+
+                                            ProgramTimer statsTimer = new ProgramTimer();
+
+                                            Integer maxBirthingAge = model.getDesiredPopulationStatistics()
+                                                    .getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
+                                            double v = MinimaSearch.getV(GEEGLM, maxBirthingAge, runPurpose, Control.BF);
+
+                                            model.getSummaryRow().setV(v);
+                                            model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
+
                                             model.getSummaryRow().outputSummaryRowToFile();
-                                            throw e;
+
                                         }
 
-                                        ProgramTimer statsTimer = new ProgramTimer();
-
-                                        Integer maxBirthingAge = model.getDesiredPopulationStatistics()
-                                                .getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
-                                        double v = MinimaSearch.getV(GEEGLM, maxBirthingAge, runPurpose, Control.BF);
-
-                                        model.getSummaryRow().setV(v);
-                                        model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
-
-                                        model.getSummaryRow().outputSummaryRowToFile();
-
+                                    } catch (IOException e) {
+                                        String message = "Model failed due to Input/Output exception, check that this program has " +
+                                                "permission to read or write on disk. Also, check supporting input files are present at location " +
+                                                "specified in config setup code : " + e.getMessage();
+                                        throw new IOException(message, e);
+                                    } catch (InvalidInputFileException | InconsistentWeightException e) {
+                                        String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
+                                        throw new InvalidInputFileException(message, e);
                                     }
 
-                                } catch (IOException e) {
-                                    String message = "Model failed due to Input/Output exception, check that this program has " +
-                                            "permission to read or write on disk. Also, check supporting input files are present at location " +
-                                            "specified in config setup code : " + e.getMessage();
-                                    throw new IOException(message, e);
-                                } catch (InvalidInputFileException | InconsistentWeightException e) {
-                                    String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
-                                    throw new InvalidInputFileException(message, e);
                                 }
-
                             }
-                        }
 
+                        }
                     }
                 }
             }
-
         }
     }
 }

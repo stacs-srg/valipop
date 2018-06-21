@@ -104,6 +104,7 @@ public class Config {
     private double birthFactor;
     private double deathFactor;
     private double recoveryFactor;
+    private double proportionalRecoveryFactor;
     private CompoundTimeUnit inputWidth;
 
     private RecordFormat outputRecordFormat;
@@ -127,12 +128,12 @@ public class Config {
     public Config(AdvancableDate tS, AdvancableDate t0, AdvancableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
                   CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
                   int minBirthSpacing, int minGestationPeriodDays, boolean binominalSampling,
-                  double birthFactor, double deathFactor, double recoveryFactor, CompoundTimeUnit inputWidth,
-                  RecordFormat outputRecordFormat, String startTime, boolean deterministic) {
+                  double birthFactor, double deathFactor, double recoveryFactor, double proportionalRecoveryFactor,
+                  CompoundTimeUnit inputWidth, RecordFormat outputRecordFormat, String startTime, boolean deterministic) {
 
         this(tS, t0, tE, t0PopulationSize, setUpBR, setUpDR, simulationTimeStep, varPath, resultsSavePath, runPurpose,
                 minBirthSpacing, minGestationPeriodDays, binominalSampling, birthFactor, deathFactor,
-                recoveryFactor, inputWidth, outputRecordFormat, startTime);
+                recoveryFactor, proportionalRecoveryFactor, inputWidth, outputRecordFormat, startTime);
         this.deterministic = deterministic;
 
     }
@@ -140,8 +141,8 @@ public class Config {
     public Config(AdvancableDate tS, AdvancableDate t0, AdvancableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
                   CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
                   int minBirthSpacing, int minGestationPeriodDays, boolean binominalSampling,
-                  double birthFactor, double deathFactor, double recoveryFactor, CompoundTimeUnit inputWidth,
-                  RecordFormat outputRecordFormat, String startTime) {
+                  double birthFactor, double deathFactor, double recoveryFactor, double proportionalRecoveryFactor,
+                  CompoundTimeUnit inputWidth, RecordFormat outputRecordFormat, String startTime) {
 
         initialiseVarPaths(varPath);
 
@@ -161,6 +162,7 @@ public class Config {
         this.birthFactor = birthFactor;
         this.deathFactor = deathFactor;
         this.recoveryFactor = recoveryFactor;
+        this.proportionalRecoveryFactor = proportionalRecoveryFactor;
         this.inputWidth = inputWidth;
         this.outputRecordFormat = outputRecordFormat;
         this.startTime = startTime;
@@ -304,6 +306,14 @@ public class Config {
                         recoveryFactor = Double.parseDouble(split[1]);
                     } catch (NumberFormatException e) {
                         log.fatal("recovery_factor " + e.getMessage());
+                        throw e;
+                    }
+                    break;
+                case "proportional_recovery_factor":
+                    try {
+                        proportionalRecoveryFactor = Double.parseDouble(split[1]);
+                    } catch (NumberFormatException e) {
+                        log.fatal("proportional_recovery_factor " + e.getMessage());
                         throw e;
                     }
                     break;
