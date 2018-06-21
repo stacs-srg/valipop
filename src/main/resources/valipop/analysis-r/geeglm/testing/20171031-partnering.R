@@ -5,25 +5,33 @@ source("geeglm/geeglm-functions.R")
 source("geeglm/llm-functions.R")
 source("geeglm/glm-functions.R")
 
-par(mfrow=c(2,2))
+par(mfrow=c(1,1))
 
-ja.pathToTablesDir <- "../results/exp6-ms-jaAA-1m/20180108-124159:727/tables/"
-sc.pathToTablesDir <- "../results/minima-scot-f/20171017-090258:140/tables/"
+sc.pathToTablesDir <- "../results/mixed-rfs/20180619-154814:301/tables/"
+sc.title <- "scot SM"
 
-ja.title <- "ja - bf : 0"
-sc.title <- "scot - bf : 2.4375"
 
-ja.part <- cleanPartData(readInData(paste(ja.pathToTablesDir, "part-CT.csv", sep = "")))
-sc.part <- cleanPartData(readInData(paste(sc.pathToTablesDir, "part-CT.csv", sep = "")))
 
-sourceSummary(ja.part)
+sc.part <- cleanPartData(readInData(paste(sc.pathToTablesDir, "part-CT.csv", sep = "")), round = F, start = "1600")
+
+plotPart(sc.part, title = sc.title)
+
 sourceSummary(sc.part)
+sc.part.ids <- addCohortIDs.part3(sc.part)
+sc <- partSatGEEGLM(sc.part.ids)
 
-ja.part.ids <- addCohortIDs.part(ja.part)
-sc.part.ids <- addCohortIDs.part(sc.part)
+sc
 
-partSatGEEGLM(ja.part.ids)
-partSatGEEGLM(sc.part.ids)
+plot(residuals(sc), type = "l")
+
+sc.part.ids$resid <- residuals(sc)
+
+sc.part.ids[which(residuals(sc) > 18), ]
+sc.part.ids[which(sc.part.ids&Age ==), ]
+
+summary(sc)
+
+head(sc.part.ids, 1000)
 
 #-------
 
