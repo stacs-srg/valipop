@@ -62,7 +62,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     private SourceNodeDouble statNode = null;
 
 
-    public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate, int startStepBack) {
+    public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date zeroDate, Date endDate, int startStepBack) {
         this.expected = expected;
         this.startDate = startDate;
         this.endDate = new YearDate(endDate.getYear() - 2);
@@ -85,8 +85,8 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 //
 //        executeDelayedTasks();
 
-//        YearDate prevY = startDate.getYearDate().advanceTime(new CompoundTimeUnit(startStepBack, TimeUnit.YEAR).negative()).getYearDate();
-        YearDate prevY = startDate.getYearDate();
+        YearDate prevY = zeroDate.getYearDate().advanceTime(new CompoundTimeUnit(startStepBack, TimeUnit.YEAR).negative()).getYearDate();
+//        YearDate prevY = startDate.getYearDate();
         log.info("CTree --- Populating tree with observed population");
 
         for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);

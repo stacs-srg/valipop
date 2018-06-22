@@ -83,14 +83,14 @@ public class FactorSearch {
     public static void runFactorSearch(int size0, String dataFiles, int numberOfRunsPerSim, String runPurpose) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
 
         rfs = new double[]{1.0};
-        prfs = new double[]{0.0, 0.3, 0.6, 1.0};
+        prfs = new double[]{1.0};
         iws = new CompoundTimeUnit[]{
                 new CompoundTimeUnit(10, TimeUnit.YEAR)
         };
         minBirthSpacings = new int[]{147};
         bfs = new double[]{0};
         dfs = new double[]{0};
-        t0_pop_size = new int[]{31250};
+        t0_pop_size = new int[]{10000};
 
 
         for (int size : t0_pop_size) {

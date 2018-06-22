@@ -45,6 +45,7 @@ public class SummaryRow {
     private double birthFactor;
     private double deathFactor;
     private double recoveryFactor;
+    private double proportionalRecoveryFactor;
     private int minBirthSpacing;
 
     private RecordFormat outputRecordFormat = RecordFormat.NONE;
@@ -86,6 +87,7 @@ public class SummaryRow {
                       double birthFactor,
                       double deathFactor,
                       double recoveryFactor,
+                      double proportionalRecoveryFactor,
                       boolean binominalSampling,
                       int minBirthSpacing,
                       RecordFormat outputFormat) {
@@ -106,6 +108,7 @@ public class SummaryRow {
         this.binominalSampling = binominalSampling;
         this.minBirthSpacing = minBirthSpacing;
         this.outputRecordFormat = outputFormat;
+        this.proportionalRecoveryFactor = proportionalRecoveryFactor;
 
     }
 
@@ -154,9 +157,9 @@ public class SummaryRow {
                 + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
                 + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
                 + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + birthFactor + sep
-                + deathFactor + sep + recoveryFactor + sep + binominalSampling + sep + minBirthSpacing + sep
-                + (maxMemoryUsage / 1e6) + sep + outputRecordFormat.toString() + sep + v.toString() + sep
-                + statsRunTime + "\n";
+                + deathFactor + sep + recoveryFactor + sep + proportionalRecoveryFactor + sep + binominalSampling + sep
+                + minBirthSpacing + sep + (maxMemoryUsage / 1e6) + sep + outputRecordFormat.toString() + sep
+                + v.toString() + sep + statsRunTime + "\n";
     }
 
     public static String getSeparatedHeadings(char sep) {
@@ -164,8 +167,9 @@ public class SummaryRow {
                 + "Sim Length" + sep + "Timestep" + sep + "Input Width" + sep + "Start Pop" + sep
                 + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
                 + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Birth Factor" + sep
-                + "Death Factor" + sep + "Recovery Factor" + sep + "Binominal Sampling" + sep + "Min Birth Spacing"
-                + sep + "Peak Memory Usage (MB)" + sep + "Output Record Format" + sep + "v/M" + sep + "Stats Run Time";
+                + "Death Factor" + sep + "Recovery Factor" + sep + "Proportional Recovery Factor" + sep
+                + "Binominal Sampling" + sep + "Min Birth Spacing" + sep + "Peak Memory Usage (MB)" + sep
+                + "Output Record Format" + sep + "v/M" + sep + "Stats Run Time";
     }
 
     public void outputSummaryRowToFile() {

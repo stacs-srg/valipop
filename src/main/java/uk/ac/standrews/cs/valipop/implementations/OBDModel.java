@@ -107,10 +107,11 @@ public class OBDModel {
         InitLogic.setUpInitParameters(config, desired);
 
         summary = new SummaryRow(Paths.get(config.getResultsSavePath().toString(), config.getRunPurpose(), startTime),
-                config.getVarPath(), startTime, config.getRunPurpose(), CODE_VERSION, config.getSimulationTimeStep(), config.getInputWidth(),
-                config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(), config.getTE()),
-                config.getBirthFactor(), config.getDeathFactor(), config.getRecoveryFactor(),
-                config.getBinominalSampling(), config.getMinBirthSpacing(), config.getOutputRecordFormat());
+                config.getVarPath(), startTime, config.getRunPurpose(), CODE_VERSION, config.getSimulationTimeStep(),
+                config.getInputWidth(), config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(),
+                config.getTE()), config.getBirthFactor(), config.getDeathFactor(), config.getRecoveryFactor(),
+                config.getProportionalRecoveryFactor(), config.getBinominalSampling(), config.getMinBirthSpacing(),
+                config.getOutputRecordFormat());
 
     }
 
