@@ -588,6 +588,10 @@ public class Config {
         return recoveryFactor;
     }
 
+    public double getProportionalRecoveryFactor() {
+        return proportionalRecoveryFactor;
+    }
+
     public RecordFormat getOutputRecordFormat() {
         return outputRecordFormat;
     }

@@ -84,21 +84,6 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
             } catch (InvalidRangeException e) {
                 in = null;
             } catch (NullPointerException e) {
-                // newP
-                e.printStackTrace();
-                System.out.println("---- NULL ----");
-                System.out.println("NPA:");
-                System.out.println(newPartnerAge);
-
-                System.out.println("Node Children:");
-                for(Node<IntegerRange, ?, Double, ?> nT : getChildren()) {
-                    System.out.println(nT.getOption().toString());
-                }
-                System.out.println("Node Children End");
-
-                System.out.println(person.toString());
-                printDesent();
-                System.out.println("---- END  ----");
                 in = false;
             }
 
