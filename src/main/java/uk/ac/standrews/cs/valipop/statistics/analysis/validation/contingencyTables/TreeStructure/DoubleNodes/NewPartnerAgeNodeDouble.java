@@ -78,8 +78,18 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
                     .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
             if(getOption().getValue() == null) {
+
+                if(getParent().getCount() > 20) {
+                    System.out.print("");
+                }
+
                 setCount(getParent().getCount());
             } else {
+
+                if(mDC.getRawUncorrectedCount().get(getOption()) > 20) {
+                    System.out.print("");
+                }
+
                 setCount(mDC.getRawUncorrectedCount().get(getOption()));
             }
         }

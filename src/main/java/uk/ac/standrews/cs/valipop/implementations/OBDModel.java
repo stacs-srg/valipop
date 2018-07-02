@@ -111,7 +111,7 @@ public class OBDModel {
                 config.getInputWidth(), config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(),
                 config.getTE()), config.getBirthFactor(), config.getDeathFactor(), config.getRecoveryFactor(),
                 config.getProportionalRecoveryFactor(), config.getBinominalSampling(), config.getMinBirthSpacing(),
-                config.getOutputRecordFormat());
+                config.getOutputRecordFormat(),config.getT0PopulationSize());
 
     }
 
@@ -239,7 +239,8 @@ public class OBDModel {
     public void analyseAndOutputPopulation(boolean outputSummaryRow) throws PreEmptiveOutOfMemoryWarning {
 
         if(config.getOutputTables()) {
-            ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 64);
+            // the 5 year step back is to combat the kick in the early stages of the CTtables for STAT - run in RStudio with no cleaning to see - potential bug in CTtree?
+            ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 5);
         }
 
         ProgramTimer recordTimer = new ProgramTimer();

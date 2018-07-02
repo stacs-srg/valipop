@@ -60,7 +60,7 @@ public class FactorSearch {
     }
 
     static double[] rfs;
-    static double[] prfs;
+//    static double[] prfs;
     static double[] maxInfids;
     static double[] bfs;
     static double[] dfs;
@@ -82,20 +82,20 @@ public class FactorSearch {
 
     public static void runFactorSearch(int size0, String dataFiles, int numberOfRunsPerSim, String runPurpose) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
 
-        rfs = new double[]{1.0};
-        prfs = new double[]{0.0, 0.3, 0.6, 1.0};
+        rfs = new double[]{0.0, 0.3, 0.6, 1.0};
+//        prfs = new double[]{0.0};
         iws = new CompoundTimeUnit[]{
                 new CompoundTimeUnit(10, TimeUnit.YEAR)
         };
         minBirthSpacings = new int[]{147};
         bfs = new double[]{0};
         dfs = new double[]{0};
-        t0_pop_size = new int[]{31250};
+        t0_pop_size = new int[]{10000};
 
 
         for (int size : t0_pop_size) {
             for (double rf : rfs) {
-                for (double prf : prfs) {
+//                for (double prf : prfs) {
                     for (CompoundTimeUnit iw : iws) {
                         for (int minBirthSpacing : minBirthSpacings) {
 
@@ -111,7 +111,7 @@ public class FactorSearch {
 
                                             Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
                                                     simulation_time_step, dataFiles, results_save_location, runPurpose,
-                                                    minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime);
+                                                    minBirthSpacing, minBirthSpacing, true, bf, df, rf, rf, iw, output_record_format, startTime);
 
 
                                             OBDModel model = new OBDModel(startTime, config);
@@ -149,7 +149,7 @@ public class FactorSearch {
                                 }
                             }
 
-                        }
+//                        }
                     }
                 }
             }

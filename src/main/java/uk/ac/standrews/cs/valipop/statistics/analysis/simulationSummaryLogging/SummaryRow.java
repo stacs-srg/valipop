@@ -50,6 +50,8 @@ public class SummaryRow {
 
     private RecordFormat outputRecordFormat = RecordFormat.NONE;
 
+    private int seedPop;
+
     // Post
 
     private Path resultsDirectory;
@@ -90,7 +92,8 @@ public class SummaryRow {
                       double proportionalRecoveryFactor,
                       boolean binominalSampling,
                       int minBirthSpacing,
-                      RecordFormat outputFormat) {
+                      RecordFormat outputFormat,
+                      int seedPopSize) {
 
         this.resultsDirectory = resultsDirectory;
         this.inputsDirectory = inputsDirectory;
@@ -109,6 +112,7 @@ public class SummaryRow {
         this.minBirthSpacing = minBirthSpacing;
         this.outputRecordFormat = outputFormat;
         this.proportionalRecoveryFactor = proportionalRecoveryFactor;
+        this.seedPop = seedPopSize;
 
     }
 
@@ -153,8 +157,8 @@ public class SummaryRow {
     }
 
     public String toSeperatedString(char sep) {
-        return startTime + sep + reason + sep + codeVersion + sep + inputsDirectory + sep + totalPop + sep + completed + sep
-                + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
+        return startTime + sep + reason + sep + codeVersion + sep + inputsDirectory + sep + totalPop + sep + seedPop
+                + sep + completed + sep + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
                 + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
                 + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + birthFactor + sep
                 + deathFactor + sep + recoveryFactor + sep + proportionalRecoveryFactor + sep + binominalSampling + sep
@@ -163,13 +167,13 @@ public class SummaryRow {
     }
 
     public static String getSeparatedHeadings(char sep) {
-        return "Start Time" + sep + "Reason" + sep + "Code Version" + sep + "Inputs Directory" + sep + "Total Pop" + sep + "Completed" + sep
-                + "Sim Length" + sep + "Timestep" + sep + "Input Width" + sep + "Start Pop" + sep
-                + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
-                + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Birth Factor" + sep
-                + "Death Factor" + sep + "Recovery Factor" + sep + "Proportional Recovery Factor" + sep
-                + "Binominal Sampling" + sep + "Min Birth Spacing" + sep + "Peak Memory Usage (MB)" + sep
-                + "Output Record Format" + sep + "v/M" + sep + "Stats Run Time";
+        return "Start Time" + sep + "Reason" + sep + "Code Version" + sep + "Inputs Directory" + sep + "Total Pop"
+                + sep + "Seed Pop Size" + sep + "Completed" + sep + "Sim Length" + sep + "Timestep" + sep
+                + "Input Width" + sep + "Start Pop" + sep + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep
+                + "End Date" + sep + "Sim Run time" + sep + "CT Run time" + sep + "Records Run time" + sep
+                + "Results Directory" + sep + "Birth Factor" + sep + "Death Factor" + sep + "Recovery Factor" + sep
+                + "Proportional Recovery Factor" + sep + "Binominal Sampling" + sep + "Min Birth Spacing" + sep
+                + "Peak Memory Usage (MB)" + sep + "Output Record Format" + sep + "v/M" + sep + "Stats Run Time";
     }
 
     public void outputSummaryRowToFile() {

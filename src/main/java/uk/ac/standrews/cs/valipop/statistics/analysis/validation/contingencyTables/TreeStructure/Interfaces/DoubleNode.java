@@ -51,10 +51,6 @@ public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> 
     }
 
     public void setCount(Double count) {
-        if(count > 20) {
-            System.out.print("");
-        }
-
         super.setCount(count);
     }
 
