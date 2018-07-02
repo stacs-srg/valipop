@@ -7,12 +7,12 @@ source("geeglm/glm-functions.R")
 
 par(mfrow=c(1,1))
 
-sc.pathToTablesDir <- "../results/mixed-rfs/20180619-154814:301/tables/"
+sc.pathToTablesDir <- "../results/mixed-rfs/20180621-121048:363/"
 sc.title <- "scot SM"
 
 
 
-sc.part <- cleanPartData(readInData(paste(sc.pathToTablesDir, "part-CT.csv", sep = "")), round = F, start = "1600")
+sc.part <- cleanPartData(readInData(paste(sc.pathToTablesDir, "part-CT.csv", sep = "")), round = F, start = "1854")
 
 plotPart(sc.part, title = sc.title)
 
@@ -22,12 +22,18 @@ sc <- partSatGEEGLM(sc.part.ids)
 
 sc
 
+summary(sc)
+
 plot(residuals(sc), type = "l")
+grid(NA , 40, lwd = 2)
 
 sc.part.ids$resid <- residuals(sc)
 
-sc.part.ids[which(residuals(sc) > 18), ]
-sc.part.ids[which(sc.part.ids&Age ==), ]
+unique(sc.part.ids[which(residuals(sc) > 8 & sc.part.ids$Source == "STAT" & sc.part.ids$Date < 1800), ]$Date)
+
+sc.part.ids[which(sc.part.ids$Source == "STAT" & sc.part.ids$YOB == 1762), ]
+sc.part.ids[which(sc.part.ids$Source == "STAT" & sc.part.ids$freq > 20), ]
+sc.part.ids[which(sc.part.ids$Age == 29 & sc.part.ids$NPA == "25-29" & sc.part.ids$Date == 1791), ]
 
 summary(sc)
 
