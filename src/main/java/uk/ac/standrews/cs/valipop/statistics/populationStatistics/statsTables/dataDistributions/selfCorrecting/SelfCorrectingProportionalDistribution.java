@@ -76,7 +76,7 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
         double rf = 1;
         if(config != null) {
 //            rf = 0.5;
-            rf = config.getRecoveryFactor();
+            rf = config.getProportionalRecoveryFactor();
         }
 
         LabelledValueSet<IntegerRange, Double> rawFullCorrectionValues =
