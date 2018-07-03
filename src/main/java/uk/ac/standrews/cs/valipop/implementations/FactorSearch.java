@@ -45,7 +45,7 @@ public class FactorSearch {
     public static void main(String[] args) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
 
         String[] pArgs = ProcessArgs.process(args, "FACTOR_SEARCH");
-        if (!ProcessArgs.check(pArgs, "FACTIR_SEARCH")) {
+        if (!ProcessArgs.check(pArgs, "FACTOR_SEARCH")) {
             System.err.println("Incorrect arguments given");
             throw new Error("Incorrect arguments given");
         }
