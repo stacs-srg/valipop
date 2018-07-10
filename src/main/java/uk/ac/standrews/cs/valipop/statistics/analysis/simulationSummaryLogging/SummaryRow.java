@@ -185,6 +185,17 @@ public class SummaryRow {
         }
     }
 
+    public void outputSummaryRowToFile(Path currentResultsSummaryPath) {
+        try {
+            FileUtils.writeSummaryRowToSummaryFiles(this, currentResultsSummaryPath);
+        } catch (IOException e) {
+            System.err.println("Summary row could not be printed to summary files. See message: ");
+            System.err.println(e.getMessage());
+        }
+    }
+
+
+
     public void setV(double v) {
         this.v = v;
     }

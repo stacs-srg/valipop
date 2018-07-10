@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Control;
 import uk.ac.standrews.cs.valipop.implementations.minimaSearch.MinimaSearch;
 import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
+import uk.ac.standrews.cs.valipop.utils.AnalysisThread;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
@@ -146,16 +147,18 @@ public class FactorSearch {
                                                 throw e;
                                             }
 
-                                            ProgramTimer statsTimer = new ProgramTimer();
+                                            new AnalysisThread(model, runPurpose).start();
 
-                                            Integer maxBirthingAge = model.getDesiredPopulationStatistics()
-                                                    .getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
-                                            double v = MinimaSearch.getV(GEEGLM, maxBirthingAge, runPurpose, Control.BF);
-
-                                            model.getSummaryRow().setV(v);
-                                            model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
-
-                                            model.getSummaryRow().outputSummaryRowToFile();
+//                                            ProgramTimer statsTimer = new ProgramTimer();
+//
+//                                            Integer maxBirthingAge = model.getDesiredPopulationStatistics()
+//                                                    .getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
+//                                            double v = MinimaSearch.getV(GEEGLM, maxBirthingAge, runPurpose, Control.BF);
+//
+//                                            model.getSummaryRow().setV(v);
+//                                            model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
+//
+//                                            model.getSummaryRow().outputSummaryRowToFile();
 
                                         }
 
