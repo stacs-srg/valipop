@@ -180,6 +180,11 @@ public class FileUtils {
         Files.write(resultsSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
     }
 
+    public static void writeSummaryRowToSummaryFiles(SummaryRow row, Path currentResultsSummaryPath) throws IOException {
+        Files.write(globalSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
+        Files.write(currentResultsSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
+    }
+
     public static String getDateTime() {
         DateFormat dF = new SimpleDateFormat("yyyyMMdd-HHmmss:SSS");
         return dF.format(Calendar.getInstance().getTime());

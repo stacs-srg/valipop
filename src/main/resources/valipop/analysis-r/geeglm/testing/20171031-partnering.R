@@ -7,12 +7,12 @@ source("geeglm/glm-functions.R")
 
 par(mfrow=c(1,1))
 
-sc.pathToTablesDir <- "../results/mixed-rfs/20180621-121048:363/"
+sc.pathToTablesDir <- "../results/vari-rf-kick/20180702-140346:138/tables/"
 sc.title <- "scot SM"
 
 
 
-sc.part <- cleanPartData(readInData(paste(sc.pathToTablesDir, "part-CT.csv", sep = "")), round = F, start = "1854")
+sc.part <- cleanPartData(readInData(paste(sc.pathToTablesDir, "part-CT.csv", sep = "")), round = F, start = "1600")
 
 plotPart(sc.part, title = sc.title)
 

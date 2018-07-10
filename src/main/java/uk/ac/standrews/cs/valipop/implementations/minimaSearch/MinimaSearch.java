@@ -210,6 +210,23 @@ public class MinimaSearch {
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
     }
 
+    public static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy, String ctPath, String runPath) throws IOException, StatsException {
+
+        switch (minimiseFor) {
+
+            case ALL:
+                return RCaller.getV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
+            case OB:
+                return RCaller.getObV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
+            case GEEGLM:
+                String title = runPurpose + " - " + controlBy.toString() + ": " + String.valueOf(getControllingFactor(controlBy));
+                return RCaller.getGeeglmV(title, runPath,
+                        ctPath, maxBirthingAge);
+        }
+
+        throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
+    }
+
     public static double getControllingFactor(Control controlBy) {
 
         switch(controlBy) {
