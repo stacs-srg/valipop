@@ -228,6 +228,9 @@ public class OBDModel {
 
         summary.setEndPop(population.getLivingPeople().getNumberOfPeople());
         summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());
+        summary.setEligibilityChecks(population.getPopulationCounts().getEligibilityChecks());
+        summary.setFailedEligibilityChecks(population.getPopulationCounts().getFailedEligibilityChecks());
+
 
         return true;
     }

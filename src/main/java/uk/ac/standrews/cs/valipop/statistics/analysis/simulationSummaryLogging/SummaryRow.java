@@ -63,6 +63,9 @@ public class SummaryRow {
     private int endPop;
     private int peakPop;
 
+    private int eligibilityChecks;
+    private int failedEligibilityChecks;
+
     private boolean completed;
 
     private double simRunTime;
@@ -156,6 +159,14 @@ public class SummaryRow {
         this.maxMemoryUsage = maxUsage;
     }
 
+    public void setEligibilityChecks(int eligibilityChecks) {
+        this.eligibilityChecks = eligibilityChecks;
+    }
+
+    public void setFailedEligibilityChecks(int failedEligibilityChecks) {
+        this.failedEligibilityChecks = failedEligibilityChecks;
+    }
+
     public String toSeperatedString(char sep) {
         return startTime + sep + reason + sep + codeVersion + sep + inputsDirectory + sep + totalPop + sep + seedPop
                 + sep + completed + sep + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
@@ -163,7 +174,7 @@ public class SummaryRow {
                 + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + birthFactor + sep
                 + deathFactor + sep + recoveryFactor + sep + proportionalRecoveryFactor + sep + binominalSampling + sep
                 + minBirthSpacing + sep + (maxMemoryUsage / 1e6) + sep + outputRecordFormat.toString() + sep
-                + v.toString() + sep + statsRunTime + "\n";
+                + v.toString() + sep + statsRunTime + sep + eligibilityChecks + sep + failedEligibilityChecks + "\n";
     }
 
     public static String getSeparatedHeadings(char sep) {
@@ -173,7 +184,8 @@ public class SummaryRow {
                 + "End Date" + sep + "Sim Run time" + sep + "CT Run time" + sep + "Records Run time" + sep
                 + "Results Directory" + sep + "Birth Factor" + sep + "Death Factor" + sep + "Recovery Factor" + sep
                 + "Proportional Recovery Factor" + sep + "Binominal Sampling" + sep + "Min Birth Spacing" + sep
-                + "Peak Memory Usage (MB)" + sep + "Output Record Format" + sep + "v/M" + sep + "Stats Run Time";
+                + "Peak Memory Usage (MB)" + sep + "Output Record Format" + sep + "v/M" + sep + "Stats Run Time" + sep
+                + "Eligibility Checks" + sep + "Failed Eligibility Checks";
     }
 
     public void outputSummaryRowToFile() {

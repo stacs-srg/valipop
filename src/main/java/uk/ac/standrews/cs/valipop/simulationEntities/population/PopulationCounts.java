@@ -28,6 +28,10 @@ public class PopulationCounts {
 
     private int maxPopulation = 0;
 
+    private int eligibilityChecks = 0;
+    private int failedEligibilityChecks = 0;
+
+
     public void newMale(int numberOf) {
         createdMales += numberOf;
     }
@@ -48,6 +52,22 @@ public class PopulationCounts {
         if(populationSize > maxPopulation) {
             maxPopulation = populationSize;
         }
+    }
+
+    public void incEligibilityCheck() {
+        eligibilityChecks++;
+    }
+
+    public void incFailedEligibilityCheck() {
+        failedEligibilityChecks++;
+    }
+
+    public int getEligibilityChecks() {
+        return eligibilityChecks;
+    }
+
+    public int getFailedEligibilityChecks() {
+        return failedEligibilityChecks;
     }
 
     public int getPeakPopulationSize() {
