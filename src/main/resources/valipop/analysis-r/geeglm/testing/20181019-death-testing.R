@@ -1,8 +1,11 @@
-pathToRunDir <- "../results/batch24-job31-sc5/20180315-232711:251/"
+pathToRunDir <- "../results/threading-test-4/20180706-155029:005/"
 
 source("geeglm/process-data-functions.R")  
 death <- cleanDeathData(readInData(paste(pathToRunDir, "tables/death-CT.csv", sep = "")))
 sourceSummary(death)
+
+source("geeglm/population-plot-functions.R")
+plotCohorts(death,0,"")
 
 source("geeglm/id-funtions.R")
 death.ids1 <- addCohortIDs.death(death)

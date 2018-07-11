@@ -309,7 +309,15 @@ public class PartneringLogic {
                                     Population population, PopulationStatistics desiredPopulationStatistics,
                                     AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Config config) {
 
-        return maleAvailable(man, childrenInPregnancy, population, desiredPopulationStatistics, currentDate, consideredTimePeriod, config) && legallyEligible(man, woman);
+        population.getPopulationCounts().incEligibilityCheck();
+
+        boolean eligible =  maleAvailable(man, childrenInPregnancy, population, desiredPopulationStatistics, currentDate, consideredTimePeriod, config) && legallyEligible(man, woman);
+
+        if(!eligible) {
+            population.getPopulationCounts().incFailedEligibilityCheck();
+        }
+
+        return eligible;
 
     }
 
