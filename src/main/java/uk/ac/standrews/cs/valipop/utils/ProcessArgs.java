@@ -96,6 +96,12 @@ public class ProcessArgs {
             } catch (ArrayIndexOutOfBoundsException e) {
                 System.err.println("Factor Error B");
             }
+
+            try {
+                processed[6] = args[6];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Factor Error C");
+            }
         }
 
         return processed;
@@ -147,10 +153,11 @@ public class ProcessArgs {
 
     private static boolean factorCheck(String[] args) {
 
-        return args.length == 6
+        return args.length == 7
                 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
                 && !Objects.equals(args[2], "") && !Objects.equals(args[3], "")
-                && !Objects.equals(args[4], "") && !Objects.equals(args[5], "");
+                && !Objects.equals(args[4], "") && !Objects.equals(args[5], "")
+                && !Objects.equals(args[6], "");
 
     }
 

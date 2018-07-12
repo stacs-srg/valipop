@@ -59,10 +59,12 @@ public class FactorSearch {
         String rfsArg = pArgs[4];
         String prfsArg = pArgs[5];
 
+        String resultsDir = pArgs[6];
+
         double[] rfs = toDoubleArray(rfsArg);
         double[] prfs = toDoubleArray(prfsArg);
 
-        runFactorSearch(seedSize, rfs, prfs, dataFiles, numberOfRunsPerSim, runPurpose);
+        runFactorSearch(seedSize, rfs, prfs, dataFiles, numberOfRunsPerSim, runPurpose, resultsDir);
 
     }
 
@@ -92,7 +94,7 @@ public class FactorSearch {
 
     // "src/main/resources/scotland_test_population"
     static String var_data_files = "src/main/resources/proxy-scotland-population-JA";
-    static String results_save_location = "src/main/resources/valipop/results/";
+//    static String results_save_location = "src/main/resources/valipop/results/";
     static RecordFormat output_record_format = RecordFormat.NONE;
 
     static CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
@@ -102,7 +104,7 @@ public class FactorSearch {
     static double set_up_br = 0.0233;
     static double set_up_dr = 0.0322;
 
-    public static void runFactorSearch(int size0, double[] rfs, double[] prfs, String dataFiles, int numberOfRunsPerSim, String runPurpose) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
+    public static void runFactorSearch(int size0, double[] rfs, double[] prfs, String dataFiles, int numberOfRunsPerSim, String runPurpose, String results_save_location) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
 
 //        rfs = new double[]{0.0, 0.3, 0.6, 1.0};
 //        prfs = new double[]{0.0};
