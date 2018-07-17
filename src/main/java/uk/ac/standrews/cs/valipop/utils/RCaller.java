@@ -75,6 +75,9 @@ public class RCaller {
             throw new StatsException("Too many values returned from sh for given script");
         }
 
+//        command <- paste("cat /Volumes/TOSHIBA_EXT/results/", df.post[i,]$Reason, "/", df.post[i,]$Start.Time, "/analysis.html | grep ", df.post[i,]$Start.Time, sep = "")
+//        a <- system(command, intern = TRUE)
+
         return Double.parseDouble(res[0]);
 
     }
