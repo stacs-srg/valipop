@@ -1,5 +1,5 @@
 
-nba <- "/Volumes/TOSHIBA EXT/pop-runs/paper-summary-results.csv"
+nba <- "/Volumes/TOSHIBA_EXT/results/paper-summary-results.csv"
 #nba <- "/Volumes/TOSHIBA EXT/pop-runs/batch59-fs/batch59-fs-results-summary.csv"
 t <- read.table(nba, sep = ",", header = TRUE)
 

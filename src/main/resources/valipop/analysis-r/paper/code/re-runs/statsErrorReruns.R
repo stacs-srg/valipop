@@ -1,3 +1,7 @@
+out <- commandArgs(TRUE)[1]
+
+write(paste("batch", "start.time", "v.M", sep = ","), out)
+
 source("src/main/resources/valipop/analysis-r/paper/code/FileFunctions.R")
 
 df.errors <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.csv",
@@ -31,6 +35,6 @@ for(i in 1:nrow(df.errors)) {
   result <- system(command, intern = TRUE)
   
   # output start time and new v.m to file
-  write(paste(st, result, sep = ","), out, append = TRUE)
+  write(paste(r, st, result, sep = ","), out, append = TRUE)
   
 }
