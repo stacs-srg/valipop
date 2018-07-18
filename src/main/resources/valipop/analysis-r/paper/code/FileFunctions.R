@@ -11,7 +11,7 @@ addMissingColumns <- function(df) {
   return(df)
 }
 
-filesToDF <- function(path, ...) {
+filesToDF <- function(path, ..., onlyGetStatErrors = FALSE) {
   df <- read.table(path, sep = ",", header = TRUE)
   df <- addMissingColumns(df)
   
@@ -24,8 +24,12 @@ filesToDF <- function(path, ...) {
     df <- rbind(df, temp)
   }
   
-  print(paste("Runs removed due to stats failing to run (techical/development errors):", length(which(df$Stats.Run.Time <= 10))))
-  df <- df[which(df$Stats.Run.Time > 10),]
+  if(onlyGetStatErrors) {
+    df <- df[which(df$Stats.Run.Time < 10),]
+  } else {
+    print(paste("Runs removed due to stats failing to run (techical/development errors):", length(which(df$Stats.Run.Time <= 10))))
+    df <- df[which(df$Stats.Run.Time > 10),]
+  }
   
   df[, "Start.Time.Date"] <- NA
   df$Start.Time.Date <- sapply(strsplit(as.character(df$Start.Time),":"), '[', 1)
