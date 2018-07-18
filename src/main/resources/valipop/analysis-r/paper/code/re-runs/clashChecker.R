@@ -22,7 +22,7 @@ for(i in 1:nrow(srf.df)) {
   if(ret.a == "FAILED") {
   
     # run analysis
-    source("src/main/resources/valipop/analysis-r/runAnalyisFunction.R")
+    source("src/main/resources/valipop/analysis-r/geeglm/runAnalyisFunction.R")
     pathToRunDir <- paste("/cs/tmp/tsd4/results", r, st, sep = "/")
     runAnalysis(pathToRunDir, 50, paste(pathToRunDir, "RERUN"))
     
