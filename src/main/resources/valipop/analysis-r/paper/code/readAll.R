@@ -1,17 +1,17 @@
 source("src/main/resources/valipop/analysis-r/paper/code/FileFunctions.R")
 
-df.all <- filesToDF("/Volumes/TOSHIBA_EXT/results/batch52-fs/batch52-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch53-fs/batch53-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch53-fs/batch52now53-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch54-fs/batch54-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch55-fs/batch55-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch56-fs/batch56-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch57-fs/batch57-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch59-fs/batch59-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch60-fs/batch60-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch61-fs/batch61-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch62-fs/batch62-fs-results-summary.csv",
-                "/Volumes/TOSHIBA_EXT/results/batch63-fs/batch63-fs-results-summary.csv")
+df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch53-fs/batch53-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch53-fs/batch52now53-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch54-fs/batch54-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch55-fs/batch55-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch56-fs/batch56-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch57-fs/batch57-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch59-fs/batch59-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch60-fs/batch60-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch61-fs/batch61-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch62-fs/batch62-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch63-fs/batch63-fs-results-summary.csv")
 
 summary(df.all)
 
