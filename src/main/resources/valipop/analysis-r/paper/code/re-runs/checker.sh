@@ -1,6 +1,9 @@
 #!/bin/bash
 
-OUT=$(cat /cs/tmp/tsd4/results/$1/$2/analysis.html | grep -c $2)
+# $1 - path to analysis life to check
+# $2 - run start time
+
+OUT=$(cat $1 | grep -c $2)
 
 if [[ $OUT == "0" ]]
 then

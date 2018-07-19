@@ -60,25 +60,38 @@ public class RCaller {
 
     }
 
-    public static double getGeeglmV(String title, String pathOfRunDir, String pathOfTablesDir, int maxBirthingAge) throws IOException, StatsException {
+    public static double getGeeglmV(String title, String pathOfRunDir, String pathOfTablesDir, int maxBirthingAge, String startTime) throws IOException, StatsException {
 
-        Process p = generateAnalysisHTML(pathOfRunDir, maxBirthingAge, title);
-        waitOnReturn(p);
+        Double result = null;
 
-        String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh";
-        String[] params = {pathOfRunDir + "/analysis.html", String.valueOf(maxBirthingAge)};
+        while(result == null) {
+            Process p = generateAnalysisHTML(pathOfRunDir, maxBirthingAge, title);
+            waitOnReturn(p);
 
-        Process proc = runProcess("/bin/sh", pathOfScript, params);
-        String[] res = waitOnReturn(proc).split(" ");
+            String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh";
+            String[] params = {pathOfRunDir + "/analysis.html", String.valueOf(maxBirthingAge)};
 
-        if(res.length != 1) {
-            throw new StatsException("Too many values returned from sh for given script");
+            Process proc = runProcess("/bin/sh", pathOfScript, params);
+            String[] res = waitOnReturn(proc).split(" ");
+
+            if (res.length != 1) {
+                throw new StatsException("Too many values returned from sh for given script");
+            }
+
+            // This checks to ensure that the parralism bug in knitr hasn't effected this analysis run
+            String checkScript = "src/main/resources/valipop/analysis-r/paper/code/re-runs/checker.sh";
+            String[] checkParams = {pathOfRunDir + "/analysis.html", startTime};
+            Process checkProc = runProcess("/bin/sh", checkScript, checkParams);
+            String checkRes = waitOnReturn(checkProc);
+
+            if (checkRes.equals("CORRECT")) {
+                result = Double.parseDouble(res[0]);
+            }
+
         }
 
-//        command <- paste("cat /Volumes/TOSHIBA_EXT/results/", df.post[i,]$Reason, "/", df.post[i,]$Start.Time, "/analysis.html | grep ", df.post[i,]$Start.Time, sep = "")
-//        a <- system(command, intern = TRUE)
+        return result;
 
-        return Double.parseDouble(res[0]);
 
     }
 

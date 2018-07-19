@@ -43,7 +43,7 @@ public class AnalysisThread extends Thread {
 
         double v = 0;
         try {
-            v = MinimaSearch.getV(GEEGLM, maxBirthingAge, runPurpose, Control.BF, ctPath, runPath);
+            v = MinimaSearch.getV(GEEGLM, maxBirthingAge, runPurpose, Control.BF, ctPath, runPath, summaryRow.getStartTime());
         } catch (IOException | StatsException e) {
             System.err.println("Error in AnalysisThread");
             System.err.println(e.getMessage());

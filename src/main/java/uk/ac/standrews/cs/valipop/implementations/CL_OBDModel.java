@@ -64,7 +64,7 @@ public class CL_OBDModel {
                         FileUtils.getRunPath().toString(),
                         FileUtils.getRunPath().toString(),
                         FileUtils.getContingencyTablesPath().toString(),
-                        model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue());
+                        model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue(), model.getSummaryRow().getStartTime());
 
                 model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
                 model.getSummaryRow().setV(v);

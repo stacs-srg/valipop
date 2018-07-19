@@ -211,4 +211,8 @@ public class SummaryRow {
     public void setV(double v) {
         this.v = v;
     }
+
+    public String getStartTime() {
+        return startTime;
+    }
 }
