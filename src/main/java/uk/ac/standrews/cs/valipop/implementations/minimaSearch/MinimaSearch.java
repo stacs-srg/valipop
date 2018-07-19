@@ -131,7 +131,7 @@ public class MinimaSearch {
                         model.analyseAndOutputPopulation(false);
 
                         Integer maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
-                        double v = getV(minimiseFor, maxBirthingAge, runPurpose, controlBy);
+                        double v = getV(minimiseFor, maxBirthingAge, runPurpose, controlBy, model.getSummaryRow().getStartTime());
 
                         // Failed population run may get a NaN from the V calc
                         if (Double.isNaN(v)) {
@@ -193,7 +193,7 @@ public class MinimaSearch {
 
     }
 
-    public static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy) throws IOException, StatsException {
+    public static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy, String startTime) throws IOException, StatsException {
 
         switch (minimiseFor) {
 
@@ -204,13 +204,13 @@ public class MinimaSearch {
             case GEEGLM:
                 String title = runPurpose + " - " + controlBy.toString() + ": " + String.valueOf(getControllingFactor(controlBy));
                 return RCaller.getGeeglmV(title, FileUtils.getRunPath().toString(),
-                        FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
+                        FileUtils.getContingencyTablesPath().toString(), maxBirthingAge, startTime);
         }
 
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
     }
 
-    public static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy, String ctPath, String runPath) throws IOException, StatsException {
+    public static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy, String ctPath, String runPath, String startTime) throws IOException, StatsException {
 
         switch (minimiseFor) {
 
@@ -221,7 +221,7 @@ public class MinimaSearch {
             case GEEGLM:
                 String title = runPurpose + " - " + controlBy.toString() + ": " + String.valueOf(getControllingFactor(controlBy));
                 return RCaller.getGeeglmV(title, runPath,
-                        ctPath, maxBirthingAge);
+                        ctPath, maxBirthingAge, startTime);
         }
 
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
