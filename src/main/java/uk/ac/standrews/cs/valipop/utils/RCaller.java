@@ -84,7 +84,7 @@ public class RCaller {
             Process checkProc = runProcess("/bin/sh", checkScript, checkParams);
             String checkRes = waitOnReturn(checkProc);
 
-            if (checkRes.equals("CORRECT")) {
+            if (checkRes.equals("CORRECT\n")) {
                 result = Double.parseDouble(res[0]);
             }
 
