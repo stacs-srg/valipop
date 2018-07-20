@@ -7,7 +7,7 @@ FAILURES=$2
 # Makes temp files
 DATE=$(date +%s)
 
-DIRPATH="$(echo ~)/temp/$DATE"
+DIRPATH="$(echo ~)/temp/$DATE/$RANDOM"
 mkdir -p $DIRPATH
 
 FILEPATH1="$DIRPATH/temp.txt"
