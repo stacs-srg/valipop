@@ -1,4 +1,4 @@
-source("src/main/resources/valipop/analysis-r/paper/code/FileFunctions.R")
+source("paper/code/FileFunctions.R")
 
 df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch53-fs/batch53-fs-results-summary.csv",
@@ -7,6 +7,7 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.
                     "/cs/tmp/tsd4/results/batch55-fs/batch55-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch56-fs/batch56-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch57-fs/batch57-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch58-fs/batch58-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch59-fs/batch59-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch60-fs/batch60-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch61-fs/batch61-fs-results-summary.csv",
@@ -24,16 +25,15 @@ df.all[, "v.M.Check"] <- NA
 df.pre <- df.all[which(df.all$Start.Time.Date < "2018/07/10 18:24:00"),]
 df.post <- df.all[which(df.all$Start.Time.Date > "2018/07/10 18:24:00"),]
 
-for(i in 1:nrow(df.post)) {
+for(i in 1:nrow(df.all)) {
   
-  command <- paste("cat /Volumes/TOSHIBA_EXT/results/", df.post[i,]$Reason, "/", df.post[i,]$Start.Time, "/analysis.html | grep ", df.post[i,]$Start.Time, sep = "")
-  a <- system(command, intern = TRUE)
+  failurePath <- paste("~/temp/", df.all[i,]$Reason, "/", df.all[i,]$Start.Time, sep = "")
+  system(paste("mkdir -p", failurePath, sep = " "))
+  system(paste("touch ", failurePath, "/f.txt", sep = ""))
+  command <- paste("sh ~/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh /cs/tmp/tsd4/results/", df.all[i,]$Reason, "/", df.all[i,]$Start.Time, "/analysis.html ", failurePath, "/f.txt", sep = "")
+  system(paste("rm -r", failurePath, sep = " "))
   
-  if(length(a) == 0) {
-    print(paste("MIXED RUNS -", df.post[i,]$Reason, df.post[i,]$Start.Time))
-  }
-  
-  #df.all[i,]$v.M.Check <- as.numeric(system(command, intern = TRUE))
+  df.all[i,]$v.M.Check <- as.numeric(system(command, intern = TRUE))
   
 }
 
