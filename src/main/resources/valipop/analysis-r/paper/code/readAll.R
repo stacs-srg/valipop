@@ -31,7 +31,7 @@ for(i in 1:nrow(df.all)) {
   system(paste("mkdir -p", failurePath, sep = " "))
   system(paste("touch ", failurePath, "/f.txt", sep = ""))
   command <- paste("sh ~/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh /cs/tmp/tsd4/results/", df.all[i,]$Reason, "/", df.all[i,]$Start.Time, "/analysis.html ", failurePath, "/f.txt", sep = "")
-  system(paste("rm -r", failurePath, sep = " "))
+  #system(paste("rm -r", failurePath, sep = " "))
   
   df.all[i,]$v.M.Check <- as.numeric(system(command, intern = TRUE))
   
@@ -49,8 +49,9 @@ df.all$v.M <- df.all$v.M.Check
 summary <- dfToSummaryDF(df.all)
 plot(summary)
 
-sub <- summary[which(summary$seed == 15625),]
+sub <- summary[which(summary$seed == 500000),]
 
+library('ggplot2')
 ggplot() + 
   geom_label(data = sub, aes(prf, rf, label = paste(pass.rate, count, sep = "\n"), fill = pass.rate, colour = count), size = 2.5) +
   scale_colour_gradient(low = "red", high = "white") +
