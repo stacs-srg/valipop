@@ -83,6 +83,31 @@ dfToSummaryDF <- function(inDF, seed = NA) {
   return(df)
 }
 
+summaryDfToFinalDF <- function(summaryDF) {
+  
+  t <- summaryDF
+  
+  finalDF <- data.frame(seed=integer(),
+                   prf=integer(),
+                   rf=integer(),
+                   mean=double(),
+                   median=double(),
+                   min=double(),
+                   pass.rate=double(),
+                   max=double(),
+                   count=integer(),
+                   stringsAsFactors=FALSE)
+  
+  for(s in unique(t$seed)) {
+    t.s <- t[which(t$seed == s), ]
+    r <- t.s[which.max(t.s$pass.rate),]
+    finalDF[nrow(finalDF)+1,] <- c(r$seed, r$prf, r$rf, r$mean, r$median, r$min, r$pass.rate, r$max, r$count)
+  }
+  
+  return(finalDF)
+  
+}
+
 fileToSummaryDF <- function(path, filter = NA) {
   fileDF <- filesToDF(path)
   return(dfToSummaryDF(fileDF, filter))

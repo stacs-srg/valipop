@@ -12,18 +12,15 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.
                     "/cs/tmp/tsd4/results/batch60-fs/batch60-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch61-fs/batch61-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch62-fs/batch62-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch63-fs/batch63-fs-results-summary.csv")
+                    "/cs/tmp/tsd4/results/batch63-fs/batch63-fs-results-summary.csv",
+#                    "/cs/tmp/tsd4/results/batch64-fs/batch64-fs-results-summary.csv",
+                    onlyGetStatErrors = FALSE)
 
 summary(df.all)
 
 
 
 df.all[, "v.M.Check"] <- NA
-
-
-
-df.pre <- df.all[which(df.all$Start.Time.Date < "2018/07/10 18:24:00"),]
-df.post <- df.all[which(df.all$Start.Time.Date > "2018/07/10 18:24:00"),]
 
 for(i in 1:nrow(df.all)) {
   
@@ -49,13 +46,22 @@ df.all$v.M <- df.all$v.M.Check
 summary <- dfToSummaryDF(df.all)
 plot(summary)
 
-sub <- summary[which(summary$seed == 500000),]
+final <- summaryDfToFinalDF(summary)
+
+sub <- summary[which(summary$seed == 7812),]
 
 library('ggplot2')
 ggplot() + 
   geom_label(data = sub, aes(prf, rf, label = paste(pass.rate, count, sep = "\n"), fill = pass.rate, colour = count), size = 2.5) +
   scale_colour_gradient(low = "red", high = "white") +
   scale_fill_gradient(low = "grey", high = "green")
+
+library('ggplot2')
+ggplot() + 
+  geom_label(data = summary, aes(prf, rf, label = paste(pass.rate, count, sep = "\n"), fill = pass.rate, colour = count), size = 2.5) +
+  scale_colour_gradient(low = "red", high = "white") +
+  scale_fill_gradient(low = "grey", high = "green") +
+  facet_wrap(~ seed)
 
 
 a <- system("sh ~/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh /Volumes/TOSHIBA_EXT/pop-runs/batch52-fs/20180704-011733:766/analysis.html 50", intern = TRUE)

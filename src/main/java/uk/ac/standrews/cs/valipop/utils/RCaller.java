@@ -69,7 +69,7 @@ public class RCaller {
             waitOnReturn(p);
 
             String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh";
-            String[] params = {pathOfRunDir + "/analysis.html", String.valueOf(maxBirthingAge)};
+            String[] params = {pathOfRunDir + "/analysis.html", pathOfRunDir + "/failtures.txt"};
 
             Process proc = runProcess("/bin/sh", pathOfScript, params);
             String[] res = waitOnReturn(proc).split(" ");
