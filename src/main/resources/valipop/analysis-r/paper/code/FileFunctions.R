@@ -112,3 +112,16 @@ fileToSummaryDF <- function(path, filter = NA) {
   fileDF <- filesToDF(path)
   return(dfToSummaryDF(fileDF, filter))
 }
+
+selectFromFullDF <- function(fullDF, selected) {
+  
+  chosenDF <- data.frame(matrix(ncol = 32, nrow = 0))
+  colnames(chosenDF) <- colnames(fullDF)
+  
+  for(r in 1:nrow(selected)) {
+    row <- selected[r, ]
+    chosenDF <- rbind(chosenDF, fullDF[which(fullDF$Seed.Pop.Size == row$seed & fullDF$Recovery.Factor == row$rf & fullDF$Proportional.Recovery.Factor == row$prf ), ])
+  }
+  
+  return(chosenDF)
+}

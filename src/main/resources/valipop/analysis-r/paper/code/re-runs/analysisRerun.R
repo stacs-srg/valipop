@@ -7,7 +7,7 @@ write(paste("start.time", "v.M", sep = ","), out)
 source("src/main/resources/valipop/analysis-r/paper/code/FileFunctions.R")
 
 # Read in srf to df
-srf.df <- filesToDF(srf)
+srf.df <- filesToDF(srf, onlyGetStatErrors = TRUE)
 
 # for each
 for(i in 1:nrow(srf.df)) {
@@ -20,7 +20,7 @@ for(i in 1:nrow(srf.df)) {
   pathToRunDir <- paste("/cs/tmp/tsd4/results", r, st, sep = "/")
   runAnalysis(pathToRunDir, 50, paste(pathToRunDir, "RERUN"))
   
-  failurePath <- paste("~/temp/", df.all[i,]$Reason, "/", df.all[i,]$Start.Time, sep = "")
+  failurePath <- paste("~/temp/", srf.df[i,]$Reason, "/", srf.df[i,]$Start.Time, sep = "")
   system(paste("mkdir -p", failurePath, sep = " "))
   system(paste("touch ", failurePath, "/f.txt", sep = ""))
   # run count

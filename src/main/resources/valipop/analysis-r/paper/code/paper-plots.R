@@ -1,7 +1,30 @@
+source("paper/code/FileFunctions.R")
 
-nba <- "/Volumes/TOSHIBA_EXT/results/paper-summary-results.csv"
-#nba <- "/Volumes/TOSHIBA EXT/pop-runs/batch59-fs/batch59-fs-results-summary.csv"
-t <- read.table(nba, sep = ",", header = TRUE)
+df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch53-fs/batch53-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch53-fs/batch52now53-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch54-fs/batch54-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch55-fs/batch55-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch56-fs/batch56-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch57-fs/batch57-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch58-fs/batch58-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch59-fs/batch59-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch60-fs/batch60-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch61-fs/batch61-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch62-fs/batch62-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch63-fs/batch63-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch64-fs/batch64-fs-results-summary.csv",
+                    onlyGetStatErrors = FALSE)
+
+summary(df.all)
+
+
+summary <- dfToSummaryDF(df.all)
+final <- summaryDfToFinalDF(summary)
+
+selected <- selectFromFullDF(df.all, final)
+
+t <- selected
 
 w <- 8
 h <- 5
@@ -62,7 +85,7 @@ for(ss in unique(t$Seed.Pop.Size)) {
   trt <- srt + ctrt + strt + rrt
   trtse <- srtse + ctrtse + strtse + rrtse
 
-  pass.rate <- round(length(t.ss[which(t.ss$v.M == 0)]) / length(t.ss[which(t.ss$v.M >= 0)]), digits = 3)
+  pass.rate <- round(length(which(t.ss$v.M == 0)) / length(which(t.ss$v.M >= 0)), digits = 3)
   
   if(length(unique(t.ss$Recovery.Factor)) != 1) {
     stop("mulitple rfs for a given seed - fix this or change the code")
