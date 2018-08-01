@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.valipop.utils;
 
+import uk.ac.standrews.cs.valipop.implementations.FactorSearch;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.implementations.StatsException;
 import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Control;
@@ -39,9 +40,11 @@ public class AnalysisThread extends Thread {
     @Override
     public void run() {
 
+        FactorSearch.threadCount++;
+
         ProgramTimer statsTimer = new ProgramTimer();
 
-        double v = 0;
+        double v = 99999;
         try {
             v = MinimaSearch.getV(GEEGLM, maxBirthingAge, runPurpose, Control.BF, ctPath, runPath, summaryRow.getStartTime());
         } catch (IOException | StatsException e) {
@@ -54,6 +57,8 @@ public class AnalysisThread extends Thread {
         summaryRow.setStatsRunTime(statsTimer.getRunTimeSeconds());
 
         summaryRow.outputSummaryRowToFile(resultsSummaryPath);
+
+        FactorSearch.threadCount--;
 
     }
 
