@@ -43,7 +43,10 @@ import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.G
  */
 public class FactorSearch {
 
-    public static void main(String[] args) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
+    public static final int THREAD_LIMIT = 3;
+    public static int threadCount = 0;
+
+    public static void main(String[] args) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning, InterruptedException {
 
         String[] pArgs = ProcessArgs.process(args, "FACTOR_SEARCH");
         if (!ProcessArgs.check(pArgs, "FACTOR_SEARCH")) {
@@ -104,7 +107,7 @@ public class FactorSearch {
     static double set_up_br = 0.0233;
     static double set_up_dr = 0.0322;
 
-    public static void runFactorSearch(int size0, double[] rfs, double[] prfs, String dataFiles, int numberOfRunsPerSim, String runPurpose, String results_save_location) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
+    public static void runFactorSearch(int size0, double[] rfs, double[] prfs, String dataFiles, int numberOfRunsPerSim, String runPurpose, String results_save_location) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning, InterruptedException {
 
 //        rfs = new double[]{0.0, 0.3, 0.6, 1.0};
 //        prfs = new double[]{0.0};
@@ -148,6 +151,14 @@ public class FactorSearch {
                                                 model.getSummaryRow().outputSummaryRowToFile();
                                                 throw e;
                                             }
+
+                                            System.out.println("tc: " + threadCount);
+                                            while(threadCount >= THREAD_LIMIT) {
+                                                System.out.println("SLEEP FOR 10s");
+                                                Thread.sleep(10000);
+                                            }
+
+                                            System.out.println("NEW THREAD");
 
                                             new AnalysisThread(model, runPurpose).start();
 
