@@ -1,7 +1,8 @@
 
 srf <- commandArgs(TRUE)[1]
 out <- commandArgs(TRUE)[2]
-range <- commandArgs(TRUE)[3]
+start <- commandArgs(TRUE)[3]
+end <- commandArgs(TRUE)[4]
 
 write(paste("start.time", "v.M", sep = ","), out)
 
@@ -10,8 +11,8 @@ source("src/main/resources/valipop/analysis-r/paper/code/FileFunctions.R")
 # Read in srf to df
 srf.df <- filesToDF(srf, onlyGetStatErrors = FALSE)
 
-if(!is.na(range)) {
-  srf.df <- srf.df[c(range), ]
+if(!is.na(start)) {
+  srf.df <- srf.df[c(start:end), ]
 }
 
 # for each
