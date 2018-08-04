@@ -23,7 +23,7 @@ for(i in 1:nrow(srf.df)) {
   
   # run analysis
   source("src/main/resources/valipop/analysis-r/geeglm/runAnalyisFunction.R")
-  pathToRunDir <- paste("/cs/tmp/tsd4/results", r, st, sep = "/")
+  pathToRunDir <- paste("/cs/tmp/tsd4/results", r, st, sep = "/") 
   runAnalysis(pathToRunDir, 50, paste(pathToRunDir, "RERUN"))
   
   failurePath <- paste("~/temp/", srf.df[i,]$Reason, "/", srf.df[i,]$Start.Time, sep = "")

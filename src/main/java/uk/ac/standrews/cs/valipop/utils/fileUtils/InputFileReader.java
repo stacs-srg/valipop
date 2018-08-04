@@ -69,6 +69,7 @@ public class InputFileReader {
                 }
 
             }
+
         } catch (IOException e) {
             throw new IOException("Unable to read in the lines of the file: " + path.toString(), e);
 
