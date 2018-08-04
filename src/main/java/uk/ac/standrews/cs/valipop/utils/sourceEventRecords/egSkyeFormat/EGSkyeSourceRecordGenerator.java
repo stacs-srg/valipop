@@ -111,6 +111,7 @@ public class EGSkyeSourceRecordGenerator {
                 writer.println(record);
                 progress_indicator.progressStep();
             }
+
         }
 
         if (progress_indicator.getProportionComplete() < 1.0) {

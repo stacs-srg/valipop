@@ -152,13 +152,9 @@ public class FactorSearch {
                                                 throw e;
                                             }
 
-                                            System.out.println("tc: " + threadCount);
                                             while(threadCount >= THREAD_LIMIT) {
-                                                System.out.println("SLEEP FOR 10s");
                                                 Thread.sleep(10000);
                                             }
-
-                                            System.out.println("NEW THREAD");
 
                                             new AnalysisThread(model, runPurpose).start();
 

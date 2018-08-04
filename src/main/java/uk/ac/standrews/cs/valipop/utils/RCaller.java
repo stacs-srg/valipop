@@ -115,6 +115,9 @@ public class RCaller {
             System.out.println(s);
         }
 
+        stdInput.close();
+        stdError.close();
+
         return result;
 
     }
