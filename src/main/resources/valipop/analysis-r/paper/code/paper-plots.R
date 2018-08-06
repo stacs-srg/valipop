@@ -20,7 +20,8 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.
                     "/cs/tmp/tsd4/results/batch68-fs/batch68-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch69-fs/batch69-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch70-fs/batch70-fs-results-summary.csv",
-                    onlyGetStatErrors = FALSE)
+                    "/cs/tmp/tsd4/results/batch71-fs/batch71-fs-results-summary.csv",
+                    onlyGetStatErrors = TRUE)
 
 summary(df.all)
 
