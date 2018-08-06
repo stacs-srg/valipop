@@ -25,10 +25,14 @@ filesToDF <- function(path, ..., onlyGetStatErrors = FALSE) {
   }
   
   if(onlyGetStatErrors) {
-    df <- df[which(df$Stats.Run.Time < 10),]
+    df.t <- df[which(df$Stats.Run.Time < 10) ,]
+    df <- rbind(df.t, df[which(df$v.M == 99999 & df$Stats.Run.Time >= 10) ,])
   } else {
-    print(paste("Runs removed due to stats failing to run (techical/development errors):", length(which(df$Stats.Run.Time <= 10))))
-    df <- df[which(df$Stats.Run.Time > 10),]
+    print(paste("Runs removed due to stats error (stats run time < 10s):", length(which(df$Stats.Run.Time < 10))))
+    df <- df[which(df$Stats.Run.Time >= 10),]
+    
+    print(paste("Runs removed due to stats error (v.M == 99999):", length(which(df$v.M == 99999))))
+    df <- df[which(df$v.M != 99999),]
   }
   
   df[, "Start.Time.Date"] <- NA
