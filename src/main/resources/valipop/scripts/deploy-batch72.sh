@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TD_LOAD_AVG=`uptime | sed 's/.*load average: //' | awk -F\, '{print $1}'`
-TD_NODE_IN_USE=`echo $TD_LOAD_AVG'>'0.05 | bc -l`
+TD_NODE_IN_USE=`echo $TD_LOAD_AVG'>'0.5 | bc -l`
 
 
 if [ $TD_NODE_IN_USE -eq 0 ]; then
