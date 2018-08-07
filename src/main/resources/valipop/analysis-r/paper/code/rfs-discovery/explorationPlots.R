@@ -49,6 +49,12 @@ plot3D <- function(seed, summaryDF, rf.min = NA, rf.max = NA, prf.min = NA, prf.
 }
   
 
-labelPlot2D(15625, summary, rf.min = 0.3, rf.max = 0.335, prf.max = 0.01)
-plot3D(15625, summary, rf.min = 0.3, rf.max = 0.335, prf.max = 0.01)
+labelPlot2D(15625, summary, rf.min = 0.3, rf.max = 0.34, prf.max = 0.01)
+plot3D(15625, summary, rf.min = 0.3, rf.max = 0.34, prf.max = 0.01)
 labelPlot2D(125000, summary)
+
+df.by.date <- df.all[which(df.all$Reason == "batch72-fs"),]
+df.by.date <- df.by.date[order(df.by.date$Start.Time.Date),]
+
+ggplot(df.by.date) +
+  geom_point(aes(Start.Time.Date, Peak.Memory.Usage..MB.))

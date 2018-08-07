@@ -43,7 +43,7 @@ import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.G
  */
 public class FactorSearch {
 
-    public static final int THREAD_LIMIT = 3;
+    public static final int THREAD_LIMIT = 2;
     public static int threadCount = 0;
 
     public static void main(String[] args) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning, InterruptedException {
