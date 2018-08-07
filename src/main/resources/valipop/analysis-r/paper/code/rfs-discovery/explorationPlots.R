@@ -20,15 +20,22 @@ getSubDF <- function(seed, summaryDF, rf.min = NA, rf.max = NA, prf.min = NA, pr
   return(sub)
 }
 
-labelPlot2D <- function(seed, summaryDF, rf.min = NA, rf.max = NA, prf.min = NA, prf.max = NA) {
+labelPlot2D <- function(seed, summaryDF, rf.min = NA, rf.max = NA, prf.min = NA, prf.max = NA, detail = NA) {
   
   sub <- getSubDF(seed, summaryDF, rf.min, rf.max, prf.min, prf.max)
   
   library('ggplot2')
-  return(ggplot() + 
-           geom_label(data = sub, aes(prf, rf, label = paste(pass.rate, count, sep = "\n"), fill = pass.rate, colour = count), size = 2.5) +
-           scale_colour_gradient(low = "red", high = "white") +
-           scale_fill_gradient(low = "grey", high = "green"))
+  if(is.na(detail)) {
+    return(ggplot() + 
+             geom_label(data = sub, aes(prf, rf, label = paste(pass.rate, count, sep = "\n"), fill = pass.rate, colour = count), size = 2.5) +
+             scale_colour_gradient(low = "red", high = "white") +
+             scale_fill_gradient(low = "grey", high = "green"))
+  } else {
+    return(ggplot() + 
+             geom_label(data = sub, aes(prf, rf, label = paste(pass.rate, count, prf, rf, sep = "\n"), fill = pass.rate, colour = count), size = 2.5) +
+             scale_colour_gradient(low = "red", high = "white") +
+             scale_fill_gradient(low = "grey", high = "green"))
+  }
   
 }
 
