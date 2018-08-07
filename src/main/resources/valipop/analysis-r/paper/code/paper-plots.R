@@ -21,7 +21,9 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.
                     "/cs/tmp/tsd4/results/batch69-fs/batch69-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch70-fs/batch70-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch71-fs/batch71-fs-results-summary.csv",
-                    onlyGetStatErrors = TRUE)
+                    "/cs/tmp/tsd4/results/batch72-fs/batch72-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch73-fs/batch73-fs-results-summary.csv",
+                    onlyGetStatErrors = FALSE)
 
 summary(df.all)
 
