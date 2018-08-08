@@ -23,6 +23,9 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.
                     "/cs/tmp/tsd4/results/batch71-fs/batch71-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch72-fs/batch72-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch73-fs/batch73-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch74-fs/batch74-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch75-fs/batch75-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch76-fs/batch76-fs-results-summary.csv",
                     onlyGetStatErrors = FALSE)
 
 summary(df.all)
@@ -62,6 +65,8 @@ df <- data.frame(seedSize=integer(),
                  passRate=double(),
                  rf=double(),
                  prf=double(),
+                 memoryUsage=double(),
+                 memoryUsageCI=double(),
                  stringsAsFactors=FALSE)
 
 rts <- data.frame(averageTotalSize=double(),
@@ -188,27 +193,8 @@ p5 <- ggplot() + theme + scale +
 
 #+ scale_x_continuous(trans='log', breaks=c(312500, 625000, 1250000, 2500000, 5000000, 10000000,20000000), labels = comma)
   
-
-p5b <- ggplot() + theme + scale +
-    geom_line(data = rts, aes(x=averageTotalSize, y=cumalativeRunTime, group = type, colour = type)) + 
-    geom_point(data = rts, aes(x=averageTotalSize, y=cumalativeRunTime, group = type, colour = type)) +
-    xlab("Average of Total Population Size") +
-    ylab("Cumalative Time Taken (s)") +
-    ggtitle("Cumalative Run Time against Total Population Size") +
-    theme(legend.position="bottom", legend.direction = "horizontal") +
-    scale_colour_manual("Cumalative runtime to end of:", breaks = c("Simulation","Contingency Tables", "Validation", "Record Generation"), values=c("green","cyan","red","blue")) +
-    scale_x_continuous(labels = comma) + theme(plot.margin = margin(10, 30, 10, 30))
-
-  #scale_x_continuous(trans='log', breaks=c(300000, 500000, 1250000, 2500000, 5000000, 10000000,20000000), labels = comma)
-    
-
 ggsave(plot = p5, 
        filename = "collective_plot_A.png",
-       path = dir,
-       width = w, height=h, dpi=300)
-
-ggsave(plot = p5b, 
-       filename = "collective_plot_B.png",
        path = dir,
        width = w, height=h, dpi=300)
 

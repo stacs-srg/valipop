@@ -4,19 +4,14 @@ write(paste("batch", "start.time", "v.M", "stat.run.time", sep = ","), out)
 
 source("src/main/resources/valipop/analysis-r/paper/code/FileFunctions.R")
 
-df.errors <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch53-fs/batch53-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch53-fs/batch52now53-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch54-fs/batch54-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch55-fs/batch55-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch56-fs/batch56-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch57-fs/batch57-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch58-fs/batch58-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch59-fs/batch59-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch60-fs/batch60-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch61-fs/batch61-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch62-fs/batch62-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch63-fs/batch63-fs-results-summary.csv", 
+df.errors <- filesToDF("/cs/tmp/tsd4/results/batch66-fs/batch66-fs-results-summary.csv",
+                       "/cs/tmp/tsd4/results/batch67-fs/batch67-fs-results-summary.csv",
+                       "/cs/tmp/tsd4/results/batch68-fs/batch68-fs-results-summary.csv", 
+                       "/cs/tmp/tsd4/results/batch69-fs/batch69-fs-results-summary.csv", 
+                       "/cs/tmp/tsd4/results/batch70-fs/batch70-fs-results-summary.csv", 
+                       "/cs/tmp/tsd4/results/batch72-fs/batch72-fs-results-summary.csv", 
+                       "/cs/tmp/tsd4/results/batch73-fs/batch72-fs-results-summary.csv", 
+                       "/cs/tmp/tsd4/results/batch75-fs/batch75-fs-results-summary.csv", 
                     onlyGetStatErrors = TRUE)
 
 for(i in 1:nrow(df.errors)) {
