@@ -29,6 +29,9 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.
                     "/cs/tmp/tsd4/results/batch77-fs/batch77-fs-results-summary.csv",
                     onlyGetStatErrors = FALSE)
 
+df.all <- filesToDF("/cs/tmp/tsd4/results/ja-batch1/ja-batch1-results-summary.csv",
+                    onlyGetStatErrors = FALSE)
+
 summary(df.all)
 
 
