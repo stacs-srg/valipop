@@ -45,7 +45,7 @@ plot3D <- function(seed, summaryDF, rf.min = NA, rf.max = NA, prf.min = NA, prf.
   
   library(plotly)
   plot_ly() %>%
-    add_trace(data = sub, x = sub$prf, y = sub$rf, z = sub$pass.rate, type="scatter3d", opacity=0.5)  %>%
+    add_trace(data = sub, x = sub$prf, y = sub$rf, z = sub$pass.rate, type="mesh3d", opacity=0.5)  %>%
     layout(
       title = "3D Exploration Plot",
       scene = list(
@@ -57,7 +57,9 @@ plot3D <- function(seed, summaryDF, rf.min = NA, rf.max = NA, prf.min = NA, prf.
   
 
 labelPlot2D(15625, summary, rf.min = 0.3, rf.max = 0.34, prf.max = 0.01)
-plot3D(15625, summary, rf.min = 0.3, rf.max = 0.34, prf.max = 0.01)
+labelPlot2D(15625, summary, rf.min = 0.3390, rf.max = 0.3396, prf.max = 0.005, detail = TRUE)
+
+plot3D(15625, summary, rf.min = 0.3390, rf.max = 0.3396, prf.max = 0.005)
 labelPlot2D(125000, summary)
 
 df.by.date <- df.all[which(df.all$Reason == "batch72-fs"),]

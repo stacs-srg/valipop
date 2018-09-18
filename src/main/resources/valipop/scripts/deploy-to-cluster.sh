@@ -1,7 +1,7 @@
 #!/bin/bash
 # Arg 1 - cluster to use
-# Arg 2 - start at host number n
-# Arg 3 - attempt to start s instances (each on own host)
+# Arg 2 - start at host number n inc.
+# Arg 3 - stop at host number n inc.
 # Arg 4 - script file to deploy
 
 ## now loop through the above array

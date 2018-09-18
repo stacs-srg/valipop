@@ -26,6 +26,7 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.
                     "/cs/tmp/tsd4/results/batch74-fs/batch74-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch75-fs/batch75-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch76-fs/batch76-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch77-fs/batch77-fs-results-summary.csv",
                     onlyGetStatErrors = FALSE)
 
 summary(df.all)
@@ -67,6 +68,8 @@ df <- data.frame(seedSize=integer(),
                  prf=double(),
                  memoryUsage=double(),
                  memoryUsageCI=double(),
+                 firstSuccessTime=double(),
+                 firstSuccessTimeCI=double(),
                  stringsAsFactors=FALSE)
 
 rts <- data.frame(averageTotalSize=double(),
@@ -106,6 +109,12 @@ for(ss in unique(t$Seed.Pop.Size)) {
   trtci <- srtci + ctRTci + strtci + rrtci
 
   pass.rate <- round(length(which(t.ss$v.M == 0)) / length(which(t.ss$v.M >= 0)), digits = 3)
+  first.success <- trt / pass.rate
+  first.success.ci <- trtci / pass.rate
+  
+  
+  mem <- mean(t.ss$Peak.Memory.Usage..MB.)
+  memCI <- calcCI(t.ss$Peak.Memory.Usage..MB.)
   
   if(length(unique(t.ss$Recovery.Factor)) != 1) {
     stop("mulitple rfs for a given seed - fix this or change the code")
@@ -115,7 +124,7 @@ for(ss in unique(t$Seed.Pop.Size)) {
     stop("mulitple prfs for a given seed - fix this or change the code")
   }
   
-  df[nrow(df)+1,] <- c(ss, ats, srt, srtci, ctrt, ctRTci, strt, strtci, rrt, rrtci, trt, trtci, pass.rate, unique(t.ss$Recovery.Factor), unique(t.ss$Proportional.Recovery.Factor))
+  df[nrow(df)+1,] <- c(ss, ats, srt, srtci, ctrt, ctRTci, strt, strtci, rrt, rrtci, trt, trtci, pass.rate, unique(t.ss$Recovery.Factor), unique(t.ss$Proportional.Recovery.Factor), mem, memCI, first.success, first.success.ci)
 }
 
 rts$averageTotalSize <- as.numeric(rts$averageTotalSize)
@@ -133,7 +142,7 @@ require(scales)
 loglogaxis <- ggplot(df) 
 
 #+ scale_x_continuous(trans='log', breaks=c(300000, 500000, 1250000, 2500000, 5000000, 10000000,20000000), labels = comma) +
-              scale_y_continuous(trans='log', breaks=c(60,120,180,240,300,600,900,1200,1800,2400,3000,3600,4200))
+            #  scale_y_continuous(trans='log', breaks=c(60,120,180,240,300,600,900,1200,1800,2400,3000,3600,4200))
 
 theme <- theme_gdocs()
 scale <- scale_color_gdocs()
@@ -181,25 +190,27 @@ ggsave(plot = arrangeGrob(p1, p2, p3, p4, nrow=2),
        path=dir,
        width=w*2, height=h*2, dpi=300)
 
-p5 <- ggplot() + theme + scale +
-  geom_area(data = rts, aes(x=averageTotalSize, y=runTime, fill = type), alpha = 0.7, position = position_stack(reverse=F)) +
-  geom_errorbar(data = rts, aes(x=averageTotalSize, ymin=cumalativeRunTime-cumalativeCI, ymax=cumalativeRunTime+cumalativeCI), width = 100000) +
-  geom_point(data = rts, aes(x=averageTotalSize, y=cumalativeRunTime, group = type, fill = type), pch = 23, size = 1) +
+p5 <- ggplot(data = rts) + theme + scale +
+  geom_area(aes(x=averageTotalSize, y=runTime, fill = type), alpha = 0.7, position = position_stack(reverse=F)) +
+  geom_errorbar(aes(x=averageTotalSize, ymin=cumalativeRunTime-cumalativeCI, ymax=cumalativeRunTime+cumalativeCI), width = 100000) +
+  geom_point(aes(x=averageTotalSize, y=cumalativeRunTime, group = type, fill = type), pch = 23, size = 1) +
   xlab("Average of Total Population Size") +
   ylab("Cumalative Time Taken (s)") +
   ggtitle("Cumalative Run Time against Total Population Size") +
   theme(legend.position="bottom", legend.direction = "horizontal") +
-  scale_fill_manual("Cumalative runtime to end of:", breaks = c("Simulation", "Contingency Tables", "Validation", "Record Generation"), values=c("green","cyan","red","blue"))
-
-#+ scale_x_continuous(trans='log', breaks=c(312500, 625000, 1250000, 2500000, 5000000, 10000000,20000000), labels = comma)
+  scale_fill_manual("Cumalative runtime to end of:", breaks = c("Simulation", "Contingency Tables", "Validation", "Record Generation"), values=c("green","cyan","red","blue")) + 
+  scale_x_continuous(breaks=c(0, 2500000, 5000000, 7500000, 10000000,12500000, 15000000, 17500000, 20000000), labels = comma) +
+  theme(plot.margin=unit(c(0.2,1.0,0.2,0.2),"cm"))
   
 ggsave(plot = p5, 
        filename = "collective_plot_A.png",
        path = dir,
        width = w, height=h, dpi=300)
 
-p6 <- ggplot(t) + theme + scale +
-  geom_boxplot(aes(x=t$Total.Pop, y=t$Peak.Memory.Usage..MB., group = t$Seed.Pop.Size), colour = 'blue') +
+p6 <- ggplot(df) + theme + scale +
+  geom_errorbar(aes(x=averageTotalSize, ymin=memoryUsage-memoryUsageCI, ymax=memoryUsage+memoryUsageCI), width = 0.05) +
+  geom_line(aes(x=averageTotalSize, y=memoryUsage), colour = 'blue') +
+  geom_point(aes(x=averageTotalSize, y=memoryUsage), colour = 'blue') +
   xlab("Average of Total Population Size") +
   ylab("Memory Usage (MB)") +
   ggtitle("Memory Usage against Total Population Size") +
@@ -222,5 +233,19 @@ p7 <- ggplot(df) + theme + scale +
 
 ggsave(plot = p7, 
        filename = "pass_rate_plot.png", 
+       path = dir,
+       width=w, height=h, dpi=300)
+
+p8 <- ggplot(df) + theme + scale +
+  geom_errorbar(aes(x=averageTotalSize, ymin=firstSuccessTime-firstSuccessTimeCI, ymax=firstSuccessTime+firstSuccessTimeCI), width = 250000) +
+  geom_point(aes(x=df$averageTotalSize, y=df$firstSuccessTime), colour = 'blue', fill = 'blue', pch = 4, size = 3) +
+  xlab("Average of Total Population Size") +
+  ylab("Average Time to Valid Populations") +
+  ggtitle("Average Time to Valid Population against Total Population Size") +
+  scale_x_continuous(breaks=c(0, 2500000, 5000000, 7500000, 10000000,12500000, 15000000, 17500000, 20000000), labels = comma) +
+  theme(plot.margin=unit(c(0.2,1.0,0.2,0.2),"cm"))
+
+ggsave(plot = p8, 
+       filename = "average_time_plot.png", 
        path = dir,
        width=w, height=h, dpi=300)
