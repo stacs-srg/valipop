@@ -96,7 +96,7 @@ public class FactorSearch {
     static int[] t0_pop_size;
 
     // "src/main/resources/scotland_test_population"
-    static String var_data_files = "src/main/resources/proxy-scotland-population-JA";
+//    static String var_data_files = "src/main/resources/proxy-scotland-population-JA";
 //    static String results_save_location = "src/main/resources/valipop/results/";
     static RecordFormat output_record_format = RecordFormat.NONE;
 
