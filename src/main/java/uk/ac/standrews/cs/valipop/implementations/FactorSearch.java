@@ -57,6 +57,7 @@ public class FactorSearch {
         String dataFiles = pArgs[0];
         int seedSize = Integer.valueOf(pArgs[1]);
         String runPurpose = pArgs[2];
+        System.out.println(pArgs[3]);
         int numberOfRunsPerSim = Integer.valueOf(pArgs[3]);
 
         String rfsArg = pArgs[4];
