@@ -46,7 +46,7 @@ public class ProcessArgs {
             System.err.println("No run purpose given as 3rd arg");
         }
 
-        if(executionType.equals("MINIMA_SEARCH") || executionType.equals("N-RUNS") || executionType.equals("FACTOR_SEARCH")) {
+        if(executionType.equals("MINIMA_SEARCH") || executionType.equals("N-RUNS") || executionType.equals("FACTOR_SEARCH") || executionType.equals("FACTOR_SEARCH_PRECISION")) {
 
             try {
                 processed[3] = args[3];
