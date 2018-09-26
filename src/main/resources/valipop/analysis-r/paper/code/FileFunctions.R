@@ -87,7 +87,7 @@ dfToSummaryDF <- function(inDF, seed = NA) {
   return(df)
 }
 
-summaryDfToFinalDF <- function(summaryDF) {
+summaryDfToFinalDF <- function(summaryDF, minN = NA) {
   
   t <- summaryDF
   
@@ -104,6 +104,11 @@ summaryDfToFinalDF <- function(summaryDF) {
   
   for(s in unique(t$seed)) {
     t.s <- t[which(t$seed == s), ]
+    
+    if(!is.na(minN)) {
+      t.s <- t.s[which(t.s$count >= minN), ]
+    }
+    
     r <- t.s[which.max(t.s$pass.rate),]
     finalDF[nrow(finalDF)+1,] <- c(r$seed, r$prf, r$rf, r$mean, r$median, r$min, r$pass.rate, r$max, r$count)
   }
