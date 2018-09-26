@@ -51,7 +51,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     private LinkedList<RunnableNode> nciapTasks = new LinkedList<>();
     private LinkedList<RunnableNode> sepTasks = new LinkedList<>();
 
-    public static final double NODE_MIN_COUNT = 1E-66;
+    public static double NODE_MIN_COUNT = 1E-66;
 
     private PopulationStatistics expected;
 

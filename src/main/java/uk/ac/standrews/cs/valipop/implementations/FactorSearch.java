@@ -48,8 +48,8 @@ public class FactorSearch {
 
     public static void main(String[] args) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning, InterruptedException {
 
-        String[] pArgs = ProcessArgs.process(args, "FACTOR_SEARCH");
-        if (!ProcessArgs.check(pArgs, "FACTOR_SEARCH")) {
+        String[] pArgs = ProcessArgs.process(args, "FACTOR_SEARCH_PRECISION");
+        if (!ProcessArgs.check(pArgs, "FACTOR_SEARCH_PRECISION")) {
             System.err.println("Incorrect arguments given");
             throw new Error("Incorrect arguments given");
         }
@@ -64,10 +64,12 @@ public class FactorSearch {
 
         String resultsDir = pArgs[6];
 
+        double[] precisions = toDoubleArray(pArgs[7]);
+
         double[] rfs = toDoubleArray(rfsArg);
         double[] prfs = toDoubleArray(prfsArg);
 
-        runFactorSearch(seedSize, rfs, prfs, dataFiles, numberOfRunsPerSim, runPurpose, resultsDir);
+        runFactorSearch(seedSize, rfs, prfs, precisions, dataFiles, numberOfRunsPerSim, runPurpose, resultsDir);
 
     }
 
@@ -107,7 +109,7 @@ public class FactorSearch {
     static double set_up_br = 0.0233;
     static double set_up_dr = 0.0322;
 
-    public static void runFactorSearch(int size0, double[] rfs, double[] prfs, String dataFiles, int numberOfRunsPerSim, String runPurpose, String results_save_location) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning, InterruptedException {
+    public static void runFactorSearch(int size0, double[] rfs, double[] prfs, double[] precisions, String dataFiles, int numberOfRunsPerSim, String runPurpose, String results_save_location) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning, InterruptedException {
 
 //        rfs = new double[]{0.0, 0.3, 0.6, 1.0};
 //        prfs = new double[]{0.0};
@@ -122,41 +124,44 @@ public class FactorSearch {
         t0_pop_size = new int[]{size0};
 
 
-        for (int size : t0_pop_size) {
-            for (double rf : rfs) {
-                for (double prf : prfs) {
-                    for (CompoundTimeUnit iw : iws) {
-                        for (int minBirthSpacing : minBirthSpacings) {
+        for(double precision : precisions) {
+            CTtree.NODE_MIN_COUNT = precision;
 
-                            for (double bf : bfs) {
-                                for (double df : dfs) {
+            for (int size : t0_pop_size) {
+                for (double rf : rfs) {
+                    for (double prf : prfs) {
+                        for (CompoundTimeUnit iw : iws) {
+                            for (int minBirthSpacing : minBirthSpacings) {
 
-                                    try {
+                                for (double bf : bfs) {
+                                    for (double df : dfs) {
 
-                                        for (int n = 0; n < numberOfRunsPerSim; n++) {
+                                        try {
 
-                                            String startTime = FileUtils.getDateTime();
-                                            OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
+                                            for (int n = 0; n < numberOfRunsPerSim; n++) {
 
-                                            Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
-                                                    simulation_time_step, dataFiles, results_save_location, runPurpose,
-                                                    minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime);
+                                                String startTime = FileUtils.getDateTime();
+                                                OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
+
+                                                Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
+                                                        simulation_time_step, dataFiles, results_save_location, runPurpose,
+                                                        minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime);
 
 
-                                            OBDModel model = new OBDModel(startTime, config);
-                                            try {
-                                                model.runSimulation();
-                                                model.analyseAndOutputPopulation(false);
-                                            } catch (PreEmptiveOutOfMemoryWarning e) {
-                                                model.getSummaryRow().outputSummaryRowToFile();
-                                                throw e;
-                                            }
+                                                OBDModel model = new OBDModel(startTime, config);
+                                                try {
+                                                    model.runSimulation();
+                                                    model.analyseAndOutputPopulation(false);
+                                                } catch (PreEmptiveOutOfMemoryWarning e) {
+                                                    model.getSummaryRow().outputSummaryRowToFile();
+                                                    throw e;
+                                                }
 
-                                            while(threadCount >= THREAD_LIMIT) {
-                                                Thread.sleep(10000);
-                                            }
+                                                while (threadCount >= THREAD_LIMIT) {
+                                                    Thread.sleep(10000);
+                                                }
 
-                                            new AnalysisThread(model, runPurpose).start();
+                                                new AnalysisThread(model, runPurpose).start();
 
 //                                            ProgramTimer statsTimer = new ProgramTimer();
 //
@@ -169,21 +174,22 @@ public class FactorSearch {
 //
 //                                            model.getSummaryRow().outputSummaryRowToFile();
 
+                                            }
+
+                                        } catch (IOException e) {
+                                            String message = "Model failed due to Input/Output exception, check that this program has " +
+                                                    "permission to read or write on disk. Also, check supporting input files are present at location " +
+                                                    "specified in config setup code : " + e.getMessage();
+                                            throw new IOException(message, e);
+                                        } catch (InvalidInputFileException | InconsistentWeightException e) {
+                                            String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
+                                            throw new InvalidInputFileException(message, e);
                                         }
 
-                                    } catch (IOException e) {
-                                        String message = "Model failed due to Input/Output exception, check that this program has " +
-                                                "permission to read or write on disk. Also, check supporting input files are present at location " +
-                                                "specified in config setup code : " + e.getMessage();
-                                        throw new IOException(message, e);
-                                    } catch (InvalidInputFileException | InconsistentWeightException e) {
-                                        String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
-                                        throw new InvalidInputFileException(message, e);
                                     }
-
                                 }
-                            }
 
+                            }
                         }
                     }
                 }

@@ -104,6 +104,33 @@ public class ProcessArgs {
             }
         }
 
+        if(executionType.equals("FACTOR_SEARCH_PRECISION")) {
+
+            try {
+                processed[4] = args[4];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Factor Error A");
+            }
+
+            try {
+                processed[5] = args[5];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Factor Error B");
+            }
+
+            try {
+                processed[6] = args[6];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Factor Error C");
+            }
+
+            try {
+                processed[7] = args[7];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Factor Error C");
+            }
+        }
+
         return processed;
 
     }
@@ -119,6 +146,8 @@ public class ProcessArgs {
                 return nRunsCheck(args);
             case "FACTOR_SEARCH":
                 return factorCheck(args);
+            case "FACTOR_SEARCH_PRECISION":
+                return factorPrecisionCheck(args);
             default:
                 throw new InvalidParameterException();
         }
@@ -158,6 +187,16 @@ public class ProcessArgs {
                 && !Objects.equals(args[2], "") && !Objects.equals(args[3], "")
                 && !Objects.equals(args[4], "") && !Objects.equals(args[5], "")
                 && !Objects.equals(args[6], "");
+
+    }
+
+    private static boolean factorPrecisionCheck(String[] args) {
+
+        return args.length == 8
+                && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
+                && !Objects.equals(args[2], "") && !Objects.equals(args[3], "")
+                && !Objects.equals(args[4], "") && !Objects.equals(args[5], "")
+                && !Objects.equals(args[6], "") && !Objects.equals(args[7], "");
 
     }
 
