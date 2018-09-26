@@ -21,7 +21,7 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.
                     "/cs/tmp/tsd4/results/batch69-fs/batch69-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch70-fs/batch70-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch71-fs/batch71-fs-results-summary.csv",
-                    "/cs/tmp/tsd4/results/batch72-fs/batch72-fs-results-summary.csv",
+                    "/cs/tmp/tsd4/results/batch72-fs/batch72-fs-results-summary.csv", 
                     "/cs/tmp/tsd4/results/batch73-fs/batch73-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch74-fs/batch74-fs-results-summary.csv",
                     "/cs/tmp/tsd4/results/batch75-fs/batch75-fs-results-summary.csv",
@@ -30,6 +30,23 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/batch52-fs/batch52-fs-results-summary.
                     onlyGetStatErrors = FALSE)
 
 df.all <- filesToDF("/cs/tmp/tsd4/results/ja-batch1/ja-batch1-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch2/ja-batch2-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch3/ja-batch3-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch4/ja-batch4-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch5/ja-batch5-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch6/ja-batch6-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch7/ja-batch7-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch8/ja-batch8-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch9/ja-batch9-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch10/ja-batch10-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch11/ja-batch11-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch12/ja-batch12-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch13/ja-batch13-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch14/ja-batch14-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch15/ja-batch15-results-summary.csv",
+                    onlyGetStatErrors = FALSE)
+
+df.all <- filesToDF("/cs/tmp/tsd4/results/PAPER-MANI/PAPER-MANI-results-summary.csv",
                     onlyGetStatErrors = FALSE)
 
 summary(df.all)
@@ -50,6 +67,10 @@ summary(t)
 std <- function(x) sd(x)/sqrt(length(x))
 
 calcCI <- function(data) {
+  if(nrow(data) <= 1) {
+    print("CI FROM ONE OBSERVATION?!?")
+    return(data)
+  }
   r <- t.test(data)
   return((r$conf.int[2] - r$conf.int[1]) / 2)
 }
