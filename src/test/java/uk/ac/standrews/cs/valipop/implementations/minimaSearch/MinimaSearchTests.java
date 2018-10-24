@@ -1,6 +1,5 @@
 package uk.ac.standrews.cs.valipop.implementations.minimaSearch;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
@@ -15,6 +14,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUni
 
 import java.io.IOException;
 
+import static junit.framework.TestCase.assertEquals;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -39,9 +39,9 @@ public class MinimaSearchTests {
     @Test
     public void nanTesting() throws SpaceExploredException {
 
-        double startingFator = 0.0;
+        double startingFactor = 0.0;
 
-        MinimaSearch.startFactor = startingFator;
+        MinimaSearch.startFactor = startingFactor;
         MinimaSearch.step = 0.5;
         MinimaSearch.initStep = 0.5;
 
@@ -50,18 +50,16 @@ public class MinimaSearchTests {
         MinimaSearch.setControllingFactor(control, MinimaSearch.startFactor);
         double bf = MinimaSearch.getControllingFactor(control);
 
-        Assert.assertEquals(bf, startingFator, 1E-6);
+        assertEquals(bf, startingFactor, 1E-6);
 
         MinimaSearch.setControllingFactor(control, MinimaSearch.getNextFactorValue());
         bf = MinimaSearch.getControllingFactor(control);
-        Assert.assertEquals(startingFator, bf, 1E-6);
+        assertEquals(startingFactor, bf, 1E-6);
 
         MinimaSearch.logFactortoV(bf, 0.2078297837489273);
 
         MinimaSearch.setControllingFactor(control, MinimaSearch.getNextFactorValue());
         bf = MinimaSearch.getControllingFactor(control);
-        Assert.assertEquals(startingFator + 0.5, bf, 1E-6);
-
+        assertEquals(startingFactor + 0.5, bf, 1E-6);
     }
-
 }

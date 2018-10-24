@@ -183,7 +183,22 @@ public abstract class GeneralPopulationStructureTests {
 
     private static void assertDeathInfoConsistent(final IPerson person) {
 
-        assertFalse(person.getDeathDate() == null && (person.getDeathPlace() != null || person.getDeathCause() != null));
+        assertFalse(!deathDateIsDefined(person) && (deathPlaceIsDefined(person) || deathCauseIsDefined(person)));
+    }
+
+    private static boolean deathDateIsDefined(IPerson person) {
+
+        return person.getDeathDate() != null;
+    }
+
+    private static boolean deathPlaceIsDefined(IPerson person) {
+
+        return person.getDeathPlace() != null && person.getDeathPlace().length() > 0;
+    }
+
+    private static boolean deathCauseIsDefined(IPerson person) {
+
+        return person.getDeathCause() != null && person.getDeathCause().length() > 0;
     }
 
     @Test

@@ -25,13 +25,13 @@ import java.util.*;
 
 /**
  * A distribution of strings controlled by specified probabilities.
- * 
+ *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public class EnumeratedDistribution implements Distribution<String> {
 
-    private static final Double ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY = 0.000001;
+    private static final Double ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY = 0.001;
     private static final Comparator<? super StringWithCumulativeProbability> ITEM_COMPARATOR = new ItemComparator();
 
     private final RandomGenerator random;
@@ -43,9 +43,9 @@ public class EnumeratedDistribution implements Distribution<String> {
 
     /**
      * Creates an Enumerated distribution.
-     * 
+     *
      * @param item_probabilities a map of strings to probabilities to be used in the creation of the distribution.
-     * @param random a Random instance for use in creation of distribution.
+     * @param random             a Random instance for use in creation of distribution.
      * @throws InconsistentWeightException if the weights in the underlying distribution do not sum to 1.
      */
     public EnumeratedDistribution(final Map<String, Double> item_probabilities, final RandomGenerator random) throws InconsistentWeightException {
@@ -62,20 +62,17 @@ public class EnumeratedDistribution implements Distribution<String> {
 
         for (final Map.Entry<String, Double> entry : item_probabilities.entrySet()) {
 
-            if(entry.getValue() != 0) {
+            if (entry.getValue() != 0) {
                 cumulative_probability += entry.getValue();
-//                cumulative_probability += entry.getValue();
                 items_temp.add(new StringWithCumulativeProbability(entry.getKey(), cumulative_probability));
             }
         }
 
-        cumulative_probability = Math.abs(cumulative_probability - 1);
-        if (cumulative_probability > ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY) {
+        if (Math.abs(cumulative_probability - 1) > ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY) {
             throw new InconsistentWeightException();
         }
 
-        items = items_temp.toArray(new StringWithCumulativeProbability[items_temp.size()]);
-
+        items = items_temp.toArray(new StringWithCumulativeProbability[0]);
     }
 
     @Override

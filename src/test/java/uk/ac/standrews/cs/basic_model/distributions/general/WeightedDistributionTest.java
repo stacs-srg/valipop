@@ -56,7 +56,7 @@ public class WeightedDistributionTest {
         assertTrue(max_deviation < MAX_ACCEPTABLE_DEVIATION_PERCENTAGE);
     }
 
-    public static double getMaxDeviationFromTheoreticalDistribution(final int[] weights, final int[] buckets, final int iterations) {
+    static double getMaxDeviationFromTheoreticalDistribution(final int[] weights, final int[] buckets, final int iterations) {
 
         final int total_weight = WeightedDistribution.sum(weights);
 
@@ -67,7 +67,7 @@ public class WeightedDistributionTest {
         return max_deviation_percentage;
     }
 
-    public static int[] gatherSamplesIntoBuckets(final int[] weights, final int iterations) throws NegativeWeightException {
+    static int[] gatherSamplesIntoBuckets(final int[] weights, final int iterations) throws NegativeWeightException {
 
         final WeightedDistribution distribution = new WeightedDistribution(weights, new JDKRandomGenerator());
         final int[] buckets = new int[weights.length];
@@ -80,7 +80,7 @@ public class WeightedDistributionTest {
         return buckets;
     }
 
-    public static double getDeviationFromTheoreticalAsPercentage(final double weight, final int bucket_count, final int iterations, final int total_weight) {
+    static double getDeviationFromTheoreticalAsPercentage(final double weight, final int bucket_count, final int iterations, final int total_weight) {
 
         if (weight == 0.0) { return 0.0; }
         final double occurrences_tended_to = iterations * weight / total_weight;
