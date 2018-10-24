@@ -67,7 +67,7 @@ public class MinimaSearch {
     public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException, InconsistentWeightException {
 
         String[] pArgs = ProcessArgs.process(args, "MINIMA_SEARCH");
-        if(!ProcessArgs.check(pArgs, "MINIMA_SEARCH")) {
+        if (!ProcessArgs.check(pArgs, "MINIMA_SEARCH")) {
             System.err.println("Incorrect arguments given");
             throw new Error("Incorrect arguments given");
         }
@@ -82,7 +82,6 @@ public class MinimaSearch {
         int repeats = Integer.valueOf(pArgs[7]);
 
         try {
-
             runSearch(seedSize, dataFiles, startFactor, step, runPurpose, repeats, minimise, control);
 
         } catch (SpaceExploredException e) {
@@ -90,7 +89,6 @@ public class MinimaSearch {
         } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
             System.out.println("Ran out of memory - not enough memory for 0 factor - increase JVM heap size using -Xmx argument");
         }
-
     }
 
     private static void runSearch(int populationSize, String dataFiles, double startFactor, double step, String runPurpose, int repeatRuns, Minimise minimiseFor, Control controlBy) throws IOException, InvalidInputFileException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning, InconsistentWeightException {
@@ -107,7 +105,7 @@ public class MinimaSearch {
 
         try {
 
-            while(true) {
+            while (true) {
 
                 setControllingFactor(controlBy, getNextFactorValue());
 
@@ -164,7 +162,6 @@ public class MinimaSearch {
 
                         break;
                     }
-
                 }
 
                 Double avgV = totalV / n;
@@ -190,7 +187,6 @@ public class MinimaSearch {
             String message = "Stats failure - could not execute RScript command - do you have R installed?";
             throw new StatsException(message);
         }
-
     }
 
     public static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy, String startTime) throws IOException, StatsException {
@@ -229,14 +225,13 @@ public class MinimaSearch {
 
     public static double getControllingFactor(Control controlBy) {
 
-        switch(controlBy) {
+        switch (controlBy) {
 
             case BF:
                 return bf;
 
             case DF:
                 return df;
-
         }
 
         throw new InvalidParameterException(controlBy.toString() + " did not resolve to a known parameter");
@@ -244,7 +239,7 @@ public class MinimaSearch {
 
     public static void setControllingFactor(Control controlBy, double startFactor) {
 
-        switch(controlBy) {
+        switch (controlBy) {
 
             case BF:
                 bf = startFactor;
@@ -252,9 +247,7 @@ public class MinimaSearch {
             case DF:
                 df = startFactor;
                 break;
-
         }
-
     }
 
     public static void handleRecoveryFromOutOfMemory(double factor, OBDModel model) {
@@ -269,7 +262,7 @@ public class MinimaSearch {
         MemoryUsageAnalysis.reset();
         model.getSummaryRow().outputSummaryRowToFile();
 
-        if(bottomSearchBoundFactor > topSearchBoundFactor) {
+        if (bottomSearchBoundFactor > topSearchBoundFactor) {
             throw new Error("Bottom bound larger then top bound - resulting from adaptions made due to memory limitations - try to increase JVm heap size (-Xmx) or reduce population size");
         }
     }
@@ -288,8 +281,7 @@ public class MinimaSearch {
         int counter = 0;
 
         do {
-
-            if(counter >= options) {
+            if (counter >= options) {
                 throw new SpaceExploredException();
             }
 
@@ -302,9 +294,9 @@ public class MinimaSearch {
 
             chosenFactor = chosen * (initStep / 2) + bottomSearchBoundFactor;
 
-            counter ++;
+            counter++;
 
-        } while ( containsValue(points, chosenFactor) != null );
+        } while (containsValue(points, chosenFactor) != null);
 
         jumpingPhase = false;
 
@@ -313,7 +305,6 @@ public class MinimaSearch {
         points.addLast(nearestFactor);
 
         return chosenFactor;
-
     }
 
     private static FVPoint getNearestPoint(double chosenFactor) {
@@ -321,9 +312,9 @@ public class MinimaSearch {
         double minDistance = Double.MAX_VALUE;
         FVPoint nearest = null;
 
-        for(FVPoint p : points) {
+        for (FVPoint p : points) {
             double distance = Math.abs(p.x_f - chosenFactor);
-            if(distance < minDistance) {
+            if (distance < minDistance) {
                 minDistance = distance;
                 nearest = p;
             }
@@ -334,15 +325,15 @@ public class MinimaSearch {
 
     private static Double inMinima(double currentFactor) {
 
-        if(points.size() >= pointsInMinima) {
+        if (points.size() >= pointsInMinima) {
             // get two nearest neighbours on either side
             ArrayList<FVPoint> consideredPoints = getNearestFactorNeigbours(pointsInMinima - 1, currentFactor);
             ArrayList<FVPoint> returns = new ArrayList<>();
 
-            for(int i = 0; i < pointsInMinima; i++) {
+            for (int i = 0; i < pointsInMinima; i++) {
 
                 List<FVPoint> l;
-                if(i + pointsInMinima - 1 < consideredPoints.size()) {
+                if (i + pointsInMinima - 1 < consideredPoints.size()) {
                     l = consideredPoints.subList(i, i + pointsInMinima);
                 } else {
                     break;
@@ -350,13 +341,12 @@ public class MinimaSearch {
 
                 FVPoint ret = constitutesMinima(l);
 
-                if(ret != null) {
+                if (ret != null) {
                     returns.add(ret);
                 }
-
             }
 
-            if(returns.size() == 0) {
+            if (returns.size() == 0) {
                 return null;
             } else {
                 FVPoint minima = orderByV(returns).get(0);
@@ -366,19 +356,18 @@ public class MinimaSearch {
         }
 
         return null;
-
     }
 
     // returns factor of minima
     public static FVPoint constitutesMinima(List<FVPoint> potentialMinimaSet) {
 
-        if(potentialMinimaSet.size() != pointsInMinima) {
+        if (potentialMinimaSet.size() != pointsInMinima) {
             return null;
         }
 
         double factorWidth = Math.abs(potentialMinimaSet.get(0).x_f - potentialMinimaSet.get(pointsInMinima - 1).x_f);
 
-        if(factorWidth < minimumMeaningfulStep * minimaSize) {
+        if (factorWidth < minimumMeaningfulStep * minimaSize) {
 
             ArrayList<FVPoint> orderedByV = orderByV(potentialMinimaSet);
 
@@ -387,47 +376,44 @@ public class MinimaSearch {
             double lowerBound = avg * (1 - intervalBoundV);
             double upperBound = avg * (1 + intervalBoundV);
 
-            if(lowerBound < orderedByV.get(0).y_v && orderedByV.get(pointsInMinima - 1).y_v < upperBound) {
+            if (lowerBound < orderedByV.get(0).y_v && orderedByV.get(pointsInMinima - 1).y_v < upperBound) {
                 System.out.println("Minima identified - setting jumpingPhase = true");
                 jumpingPhase = true;
                 return orderedByV.get(0);
             }
-
         }
 
         return null;
-
     }
 
     private static double averageV(List<FVPoint> in) {
 
         double sum = 0.0;
 
-        for(FVPoint p : in) {
+        for (FVPoint p : in) {
             sum += p.y_v;
         }
 
         return sum / in.size();
-
     }
 
     private static ArrayList<FVPoint> orderByFactor(List<FVPoint> in) {
         ArrayList<FVPoint> ordering = new ArrayList<>(in.size());
 
-        for(FVPoint p : in) {
+        for (FVPoint p : in) {
 
-            if(ordering.size() == 0) {
+            if (ordering.size() == 0) {
                 ordering.add(p);
             } else {
                 int i = 0;
-                for(FVPoint o : ordering) {
-                    if(p.x_f < o.x_f) {
+                for (FVPoint o : ordering) {
+                    if (p.x_f < o.x_f) {
                         ordering.add(i, p);
                         break;
                     }
                     i++;
                 }
-                if(i == ordering.size()) {
+                if (i == ordering.size()) {
                     ordering.add(p);
                 }
             }
@@ -438,20 +424,20 @@ public class MinimaSearch {
     private static ArrayList<FVPoint> orderByV(List<FVPoint> in) {
         ArrayList<FVPoint> ordering = new ArrayList<>(in.size());
 
-        for(FVPoint p : in) {
+        for (FVPoint p : in) {
 
-            if(ordering.size() == 0) {
+            if (ordering.size() == 0) {
                 ordering.add(p);
             } else {
                 int i = 0;
-                for(FVPoint o : ordering) {
-                    if(p.y_v < o.y_v) {
+                for (FVPoint o : ordering) {
+                    if (p.y_v < o.y_v) {
                         ordering.add(i, p);
                         break;
                     }
                     i++;
                 }
-                if(i == ordering.size()) {
+                if (i == ordering.size()) {
                     ordering.add(p);
                 }
 
@@ -466,28 +452,28 @@ public class MinimaSearch {
         ArrayList<FVPoint> ordering = orderByFactor(points);
 
         int c = 0;
-        for(FVPoint p : ordering) {
+        for (FVPoint p : ordering) {
 
-            if(p.x_f == factor) {
+            if (p.x_f == factor) {
 
-                if(c < width) {
-                    for(int i = 0; i < c; i++) {
+                if (c < width) {
+                    for (int i = 0; i < c; i++) {
                         selected.add(ordering.get(i));
                     }
                 } else {
-                    for(int i = 0; i < width; i++) {
+                    for (int i = 0; i < width; i++) {
                         selected.add(ordering.get(c - width + i));
                     }
                 }
 
                 selected.add(p);
 
-                if(c >= points.size() - width) {
-                    for(int i = 0; i < points.size() - c; i++) {
+                if (c >= points.size() - width) {
+                    for (int i = 0; i < points.size() - c; i++) {
                         selected.add(ordering.get(i + c));
                     }
                 } else {
-                    for(int i = 0; i < width; i++) {
+                    for (int i = 0; i < width; i++) {
                         selected.add(ordering.get(c + i + 1));
                     }
                 }
@@ -502,18 +488,14 @@ public class MinimaSearch {
 
     public static double getNextFactorValue() throws SpaceExploredException {
 
-        if(jumpingPhase) {
-            System.out.println("Jump Out...");
+        if (jumpingPhase) {
             double nextFactor = jumpOut();
-            System.out.println("Next Factor : " + nextFactor);
             return nextFactor;
         }
 
-        if(points.size() == 0) {
-            System.out.println("Next Factor : " + startFactor);
+        if (points.size() == 0) {
             return startFactor;
-        } else if(points.size() == 1) {
-            System.out.println("Next Factor : " + (startFactor + step));
+        } else if (points.size() == 1) {
             return startFactor + step;
         } else {
 
@@ -526,7 +508,7 @@ public class MinimaSearch {
 
             double direction = dyOverdx / Math.abs(dyOverdx);
 
-            if(!DoubleComparer.equal(0, dyOverdx, 0.0000001)) {
+            if (!DoubleComparer.equal(0, dyOverdx, 0.0000001)) {
                 // if sloped
 
                 newFactor = lastPoint.x_f - (step * direction);
@@ -536,18 +518,17 @@ public class MinimaSearch {
 
                 newFactor = penultimatePoint.x_f - (penultimatePoint.x_f - lastPoint.x_f) / 2;
                 step = step / 2;
-
             }
 
             FVPoint match = containsValue(points, newFactor);
 
-            if(match != null) {
+            if (match != null) {
 
-                if(match.y_v > lastPoint.y_v) {
+                if (match.y_v > lastPoint.y_v) {
                     // up slope to match point - thus split
                     step = step / 2;
                     newFactor = lastPoint.x_f + step;
-                } else if(match.y_v < lastPoint.y_v) {
+                } else if (match.y_v < lastPoint.y_v) {
                     // down slope to match point - thus jump
                     points.remove(match);
                     points.addLast(match);
@@ -555,7 +536,7 @@ public class MinimaSearch {
 
                     FVPoint match2 = containsValue(points, newFactor);
 
-                    while(match2 != null) {
+                    while (match2 != null) {
                         // if newFactor has already been used, then split in gap
                         step = step / 2;
                         newFactor = match.x_f - (step * direction);
@@ -567,31 +548,27 @@ public class MinimaSearch {
                     step = step / 2;
                     newFactor = lastPoint.x_f + step;
                 }
-
             }
 
-            System.out.println("Next Factor : " + newFactor);
-
-            if(newFactor < bottomSearchBoundFactor || newFactor > topSearchBoundFactor) {
+            if (newFactor < bottomSearchBoundFactor || newFactor > topSearchBoundFactor) {
                 // we're out of bounds
                 // the fact we're here means there may be a lower minima out width the specified search area.
                 // if we can extend them and we havn't seen something to suggest we won't overrun the heap then we'll extend the bounds
 
                 // otherwise lets continue the minima search at a random location - but jumping out
 
-
-                if(newFactor < 0) {
-                    if(DoubleComparer.equal(bottomSearchBoundFactor, hardLimitBottomBoundFactor, 0.0000001)) {
+                if (newFactor < 0) {
+                    if (DoubleComparer.equal(bottomSearchBoundFactor, hardLimitBottomBoundFactor, 0.0000001)) {
                         bottomSearchBoundFactor -= step * 2;
-                        System.out.println("Suspected Minima out of search bounds - extending bottom search bound to : " + bottomSearchBoundFactor);
+//                        System.out.println("Suspected Minima out of search bounds - extending bottom search bound to : " + bottomSearchBoundFactor);
                     } else {
-                        System.out.println("Suspected Minima out of search bounds beyond : " + bottomSearchBoundFactor);
-                        System.out.println("Cannot extend search bound due to hard limit placed due to lack of heap space in earlier run - increase heap space to explore this area");
+//                        System.out.println("Suspected Minima out of search bounds beyond : " + bottomSearchBoundFactor);
+//                        System.out.println("Cannot extend search bound due to hard limit placed due to lack of heap space in earlier run - increase heap space to explore this area");
                         return jumpOut();
                     }
                 } else {
-                        topSearchBoundFactor += step * 2;
-                        System.out.println("Suspected Minima out of search bounds - extending top search bound to : " + topSearchBoundFactor);
+                    topSearchBoundFactor += step * 2;
+//                        System.out.println("Suspected Minima out of search bounds - extending top search bound to : " + topSearchBoundFactor);
                 }
             }
 
@@ -601,16 +578,14 @@ public class MinimaSearch {
 
     private static FVPoint containsValue(LinkedList<FVPoint> points, double newFactor) {
 
-        for(FVPoint point : points) {
-            if(DoubleComparer.equal(point.x_f, newFactor, 0.000000001)) {
+        for (FVPoint point : points) {
+            if (DoubleComparer.equal(point.x_f, newFactor, 0.000000001)) {
                 return point;
             }
         }
 
         return null;
     }
-
-//    private static PriorityQueue
 
     static LinkedList<FVPoint> points = new LinkedList<>();
 
@@ -619,7 +594,4 @@ public class MinimaSearch {
         points.addLast(new FVPoint(factor, v));
 
     }
-
-
-
 }

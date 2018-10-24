@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.model;
 
+import org.junit.Ignore;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeDeviationException;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeWeightException;
@@ -27,6 +28,7 @@ import java.io.IOException;
  * @author Victor Andrei (va9@st-andrews.ac.uk)
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
+@Ignore
 public class GeneralOrganicPopulationTest extends GeneralPopulationStructureTests {
 
     public GeneralOrganicPopulationTest() throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
