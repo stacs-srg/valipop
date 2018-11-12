@@ -57,21 +57,19 @@ public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData
         } catch (InvalidRangeException e) {
             return new SingleDeterminedCount(key, 0, 0, 0);
         }
-
     }
 
     public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
         try {
             getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
         } catch (InvalidRangeException e) {
-            if(achievedCount.getDeterminedCount() == 0) {
+            if (achievedCount.getDeterminedCount() == 0) {
                 // all okay, a blank DeterminedCount had been issued due as no recorded data on the request
             } else {
                 // Something is not right here
                 throw e;
             }
         }
-
     }
 
     public SelfCorrectingOneDimensionDataDistribution getData(Integer yLabel) throws InvalidRangeException {
@@ -121,7 +119,6 @@ public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData
             }
         }
         return max;
-
     }
 
     @Override

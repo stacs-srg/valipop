@@ -37,7 +37,7 @@ import java.util.*;
  */
 public abstract class TemporalDistribution<Value> implements ITemporalDistribution<Value> {
 
-    private HashMap<Integer, RestrictedDistribution<Value>> map = new HashMap<Integer, RestrictedDistribution<Value>>();
+    private Map<Integer, RestrictedDistribution<Value>> map = new HashMap<>();
     private String line;
     private boolean firstLine = true;
     private int minimum, maximum;

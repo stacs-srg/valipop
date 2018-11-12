@@ -201,9 +201,7 @@ public class PopulationLogic {
         boolean fatherNotTooYoung = fatherNotTooYoungAtBirth(father_birth_date, child_birth_date);
         boolean fatherNotTooOld = fatherNotTooOldAtBirth(father_birth_date, child_birth_date);
 
-        boolean b = motherAlive && motherNotTooYoung && motherNotTooOld && fatherAliveAtConception && fatherNotTooYoung && fatherNotTooOld;
-
-        return b;
+        return motherAlive && motherNotTooYoung && motherNotTooOld && fatherAliveAtConception && fatherNotTooYoung && fatherNotTooOld;
     }
 
     private static boolean motherAliveAtBirth(final Date mother_death_date, final Date child_birth_date) {

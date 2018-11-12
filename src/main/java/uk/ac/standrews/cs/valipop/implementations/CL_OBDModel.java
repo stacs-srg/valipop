@@ -45,13 +45,13 @@ public class CL_OBDModel {
             OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, resultsPath);
             config = new Config(Paths.get(pathToConfigFile), runPurpose, startTime);
         } catch (IOException e) {
-            String message = "Error in pre-initilisation phase - see logs";
+            String message = "Error in pre-initialisation phase - see logs";
             System.out.println(e.getMessage());
             e.printStackTrace();
             throw new Error(message);
         }
 
-        OBDModel model = null;
+        OBDModel model;
         try {
             model = new OBDModel(startTime, config);
             model.runSimulation();
@@ -83,6 +83,4 @@ public class CL_OBDModel {
             throw new InvalidInputFileException(message, e);
         }
     }
-
-
 }

@@ -27,7 +27,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.Compoun
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.Config;
 import org.apache.commons.math3.distribution.BinomialDistribution;
-import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 
 
@@ -38,21 +37,21 @@ import java.util.Map;
  */
 public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution implements SelfCorrection<Integer, Double> {
 
-    private boolean binominalSampling;
+    private boolean binomialSampling;
     private RandomGenerator rng;
 
     private Map<IntegerRange, Double> appliedRates;
     private Map<IntegerRange, Double> appliedCounts;
 
     public SelfCorrectingOneDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation,
-                                                      Map<IntegerRange, Double> tableData, boolean binominalSampling,
+                                                      Map<IntegerRange, Double> tableData, boolean binomialSampling,
                                                       RandomGenerator randomGenerator) {
 
         super(year, sourcePopulation, sourceOrganisation, tableData);
 
         this.appliedRates = MapUtils.cloneODM(tableData);
         this.appliedCounts = MapUtils.cloneODM(tableData);
-        this.binominalSampling = binominalSampling;
+        this.binomialSampling = binomialSampling;
 
         for (IntegerRange iR : appliedCounts.keySet()) {
             appliedCounts.replace(iR, 0.0);
@@ -60,7 +59,6 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         }
 
         rng = randomGenerator;
-
     }
 
     public SingleDeterminedCount determineCount(StatsKey key, Config config) {
@@ -92,16 +90,16 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         }
 
         double rf = 1;
-        if(config != null) {
+        if (config != null) {
             rf = config.getRecoveryFactor();
         }
 
         // shortfall
-        double fall = Math.ceil( (aC * tD) - (aC * aD) );
+        double fall = Math.ceil((aC * tD) - (aC * aD));
 
         double cD;
-        if(fall > 0) {
-            cD = ( fall * rf + tAT * tD ) / tAT;
+        if (fall > 0) {
+            cD = (fall * rf + tAT * tD) / tAT;
         } else {
             cD = 0;
         }
@@ -116,16 +114,15 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         double rateToApply = calcSubRateFromYearRate(cD, key.getConsideredTimePeriod());
         double uncorrectedRate = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
         return resolveRateToCount(key, rateToApply, uncorrectedRate);
-
     }
 
     public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
 
         StatsKey key = achievedCount.getKey();
 
-        int count = achievedCount.getFufilledCount();
+        int count = achievedCount.getFulfilledCount();
         double achievedRate = 0;
-        if(key.getForNPeople() != 0) {
+        if (key.getForNPeople() != 0) {
             achievedRate = count / key.getForNPeople();
         }
 
@@ -149,7 +146,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         // new applied rate
         double aDn = 0;
-        if(aCn != 0) {
+        if (aCn != 0) {
             aDn = ((aDo * aCo) + (aacD * tAT)) / aCn;
         }
 
@@ -157,12 +154,12 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         double tD = targetRates.get(age);
 
         // if new applied rate has switched across target rate then reset count
-        if((aDo < tD && aDn >= tD) || (aDo > tD && aDn <= tD)) {
+        if ((aDo < tD && aDn >= tD) || (aDo > tD && aDn <= tD)) {
 
             // the number of people it takes at the the applied rate back to the target rate
             double numberOfPeopleToBringRateToCrossOverPoint;
 
-            if(tD == aacD) {
+            if (tD == aacD) {
                 numberOfPeopleToBringRateToCrossOverPoint = tAT;
             } else {
                 numberOfPeopleToBringRateToCrossOverPoint = (aCo * (aDo - tD)) / (tD - aacD);
@@ -174,9 +171,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             appliedRates.replace(age, aDn);
             appliedCounts.replace(age, aCn);
         }
-
     }
-
 
     private SingleDeterminedCount resolveRateToCount(StatsKey key, double rate, double uncorrectedRate) {
 
@@ -184,7 +179,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         double rawUncorrectedCount = uncorrectedRate * key.getForNPeople();
 
         int determinedCount;
-        if(binominalSampling) {
+        if (binomialSampling) {
 
             determinedCount = new BinomialDistribution(rng, (int) Math.round(key.getForNPeople()), rate).sample();
         } else {
@@ -206,5 +201,4 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         double subRate = 1 - Math.pow(1 - yearRate, 1 / stepsInYear);
         return subRate;
     }
-
 }

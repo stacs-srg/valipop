@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -143,7 +143,7 @@ public class DateUtils {
 
     }
 
-    public static AdvancableDate getEarliestDate(AdvancableDate startDate, AdvancableDate startDate1) {
+    public static AdvanceableDate getEarliestDate(AdvanceableDate startDate, AdvanceableDate startDate1) {
         if (dateBeforeOrEqual(startDate, startDate1)) {
             return startDate;
         } else {

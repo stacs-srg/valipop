@@ -39,7 +39,7 @@ import java.nio.file.Paths;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PopulationStatisticsTests {
+public class PopulationStatisticsTest {
 
     @Test
     public void testA() throws IOException, InvalidInputFileException, InconsistentWeightException {
@@ -63,8 +63,6 @@ public class PopulationStatisticsTests {
         MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps.getDeterminedCount(keyM, null);
 
         int numberOfMothers = mDC.getDeterminedCount().getSumOfValues();
-
-
     }
 
     @Test

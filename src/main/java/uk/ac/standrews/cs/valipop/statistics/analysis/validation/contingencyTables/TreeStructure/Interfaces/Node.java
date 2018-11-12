@@ -23,7 +23,6 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 
-
 import java.util.*;
 
 /**
@@ -33,10 +32,11 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     private count count;
     private Op option;
-    private Map<cOp, Node<cOp, ?, childCount, ?>> children = new HashMap<>();
+    private Map<cOp, Node<cOp, ?, childCount, ?>> children = new TreeMap<>();
     private Node<?, Op, ?, count> parent;
 
-    public Node() {}
+    public Node() {
+    }
 
     public Node(Op option, Node<?, Op, ?, count> parent, count initCount) {
         this.option = option;
@@ -45,9 +45,13 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
     }
 
     public abstract Node<cOp, ?, childCount, ?> addChild(cOp childOption, childCount initCount);
+
     public abstract Node<cOp, ?, childCount, ?> addChild(cOp childOption);
+
     public abstract void incCount(count byCount);
+
     public abstract void incCountByOne();
+
     public abstract void processPerson(IPersonExtended person, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date currentDate);
 
     public Node<cOp, ?, childCount, ?> addChild(Node<cOp, ?, childCount, ?> child) {
@@ -59,7 +63,7 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
         Collection<Node> childNodes = new ArrayList<>();
 
-        if(getChildren().size() == 0) {
+        if (getChildren().size() == 0) {
             return Collections.singleton(this);
         } else {
 
@@ -69,17 +73,16 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         }
 
         return childNodes;
-
     }
 
-    public ArrayList<String> getVariableNamesAL() {
-        ArrayList<String> s = getParent().getVariableNamesAL();
+    public List<String> getVariableNamesAL() {
+        List<String> s = getParent().getVariableNamesAL();
         s.add(getClass().getName());
         return s;
     }
 
-    public ArrayList<String> toStringAL() {
-        ArrayList<String> s = getParent().toStringAL();
+    public List<String> toStringAL() {
+        List<String> s = getParent().toStringAL();
         s.add(getOption().toString());
         return s;
     }
@@ -113,7 +116,7 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
     public Node<cOp, ?, childCount, ?> getChild(cOp childOption) throws ChildNotFoundException {
         Node<cOp, ?, childCount, ?> n = children.get(childOption);
 
-        if(n == null) {
+        if (n == null) {
             throw new ChildNotFoundException();
         }
 
@@ -130,7 +133,7 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     public Node getAncestor(Node nodeType) {
 
-        if(nodeType.getClass().isInstance(this)) {
+        if (nodeType.getClass().isInstance(this)) {
             return this;
         } else {
             return getParent().getAncestor(nodeType);
@@ -149,28 +152,28 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         return getAncestor(new CTtree()).getEndDate();
     }
 
-    public int printDesent() {
+    public int printDescent() {
 
         int depth = 0;
 
         Node p = getParent();
-        if(p != null) {
-            depth = p.printDesent() + 1;
+        if (p != null) {
+            depth = p.printDescent() + 1;
         }
 
-        for(int i = 0; i < depth; i++) {
+        for (int i = 0; i < depth; i++) {
             System.out.print(" ");
         }
 
         System.out.print(this.getClass().getSimpleName());
 
-        if(option == null) {
+        if (option == null) {
             System.out.print(" | Op: null");
         } else {
             System.out.print(" | Op: " + option.toString());
         }
 
-        if(count == null) {
+        if (count == null) {
             System.out.print(" | Count: null");
         } else {
             System.out.print(" | Count: " + count);
@@ -179,7 +182,5 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         System.out.println();
 
         return depth;
-
     }
-
 }

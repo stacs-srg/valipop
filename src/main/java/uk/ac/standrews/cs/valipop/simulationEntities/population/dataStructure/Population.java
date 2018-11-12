@@ -16,13 +16,15 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
+import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
-import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
@@ -39,12 +41,21 @@ public class Population {
     private PopulationCounts populationCounts;
 
     public Population(Config config) {
+
+        Person.resetIds();
+        Partnership.resetIds();
+
         livingPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep());
+        livingPeople.setDescription("living");
+
         deadPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep());
+        deadPeople.setDescription(("dead"));
+
         populationCounts = new PopulationCounts();
     }
 
     public PeopleCollection getAllPeople() {
+
         return AggregatePersonCollectionFactory.makePeopleCollection(livingPeople, deadPeople);
     }
 
@@ -60,7 +71,7 @@ public class Population {
         return populationCounts;
     }
 
-    public PeopleCollection getAllPeople(AdvancableDate first, Date last, CompoundTimeUnit maxAge) {
+    public PeopleCollection getAllPeople(AdvanceableDate first, Date last, CompoundTimeUnit maxAge) {
 
         CompoundTimeUnit tp = DateUtils.differenceInMonths(first, last);
 
@@ -68,6 +79,7 @@ public class Population {
         Collection<IPersonExtended> d = deadPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
 
         PeopleCollection pC = new PeopleCollection(first, last, new CompoundTimeUnit(1, TimeUnit.YEAR));
+        pC.setDescription("combined");
 
         for(IPersonExtended p : l) {
             pC.addPerson(p);
@@ -78,7 +90,5 @@ public class Population {
         }
 
         return pC;
-
     }
-
 }

@@ -47,5 +47,4 @@ public class CollectionUtils {
         arr[i] = arr[j];
         arr[j] = tmp;
     }
-
 }

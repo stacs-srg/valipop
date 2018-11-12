@@ -20,19 +20,17 @@ import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
-
-import java.util.Random;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DeathDateSelector extends DateSelector {
 
-    public ExactDate selectDate(IPersonExtended p, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+    public ExactDate selectDate(IPersonExtended p, PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
         IPersonExtended child = p.getLastChild();
 
@@ -55,7 +53,7 @@ public class DeathDateSelector extends DateSelector {
 
     }
 
-    private ExactDate selectDateRestrictedByEPD(AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+    private ExactDate selectDateRestrictedByEPD(AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                                                 Date earliestPossibleDate, RandomGenerator random) {
 
         // if specified earliestPossibleDate is in consideredTimePeriod

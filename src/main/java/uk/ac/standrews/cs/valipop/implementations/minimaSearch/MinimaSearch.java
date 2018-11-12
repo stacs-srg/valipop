@@ -4,14 +4,13 @@ import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightEx
 import uk.ac.standrews.cs.valipop.implementations.*;
 import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
@@ -48,9 +47,9 @@ public class MinimaSearch {
     static String results_save_location = "src/main/resources/valipop/results/";
 
     static CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
-    static AdvancableDate tS = new YearDate(1691);
-    static AdvancableDate t0 = new YearDate(1855);
-    static AdvancableDate tE = new YearDate(2015);
+    static AdvanceableDate tS = new YearDate(1691);
+    static AdvanceableDate t0 = new YearDate(1855);
+    static AdvanceableDate tE = new YearDate(2015);
     static double set_up_br = 0.0133;
     static double set_up_dr = 0.0122;
 
@@ -120,7 +119,7 @@ public class MinimaSearch {
 
                     Config config = new Config(tS, t0, tE, populationSize, set_up_br, set_up_dr,
                             simulation_time_step, dataFiles, results_save_location, runPurpose,
-                            minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime);
+                            minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime, 0, false);
 
                     OBDModel model = new OBDModel(startTime, config);
 

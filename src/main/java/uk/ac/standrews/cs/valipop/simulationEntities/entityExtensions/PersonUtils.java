@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.events.death.NotDeadException;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
@@ -51,7 +51,7 @@ public interface PersonUtils {
 
     IPersonExtended getLastChild();
 
-    void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config);
+    void addChildrenToCurrentPartnership(int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config);
 
     boolean toSeparate();
 
@@ -59,7 +59,7 @@ public interface PersonUtils {
 
     int ageOnDate(Date date);
 
-    boolean needsNewPartner(AdvancableDate currentDate);
+    boolean needsNewPartner(AdvanceableDate currentDate);
 
     int numberOfChildrenInLatestPartnership();
 

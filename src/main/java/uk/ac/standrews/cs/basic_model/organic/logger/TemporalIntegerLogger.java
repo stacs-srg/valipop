@@ -16,12 +16,12 @@
  */
 package uk.ac.standrews.cs.basic_model.organic.logger;
 
+import uk.ac.standrews.cs.basic_model.distributions.temporal.TemporalIntegerDistribution;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
-
-import uk.ac.standrews.cs.basic_model.distributions.temporal.TemporalIntegerDistribution;
 
 public class TemporalIntegerLogger extends TemporalLogger<Integer> {
 
@@ -30,7 +30,7 @@ public class TemporalIntegerLogger extends TemporalLogger<Integer> {
         this.fileName = fileName;
         this.xLabel = xLabel;
         this.convertDaysToYearsOnOutput = convertDaysToYearsOnOutput;
-        map = new HashMap<Integer, DistributionLogger<Integer>>();
+        map = new HashMap<>();
         for (Integer i : relatedTemporalDistribution.getMapKeys()) {
             map.put(i, new DistributionIntergerLogger(relatedTemporalDistribution.getDistributionForYear(i), relatedTemporalDistribution.getMinimumStatedValue(), relatedTemporalDistribution.getMaximumStatedValue()));
         }
@@ -43,5 +43,4 @@ public class TemporalIntegerLogger extends TemporalLogger<Integer> {
     public void log(int currentDay, int xLabel) {
         map.get(getKey(currentDay)).incCountFor(xLabel);
     }
-    
 }

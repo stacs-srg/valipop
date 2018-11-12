@@ -22,16 +22,12 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeEx
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
-
 
     public static Logger log = new Logger(OneDimensionDataDistribution.class);
 
@@ -100,7 +96,6 @@ public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
             }
         }
         return max;
-
     }
 
     public double getRate(Integer rowValue) throws InvalidRangeException {
@@ -126,20 +121,18 @@ public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
     }
 
     public Map<IntegerRange, Double> cloneData() {
-        Map<IntegerRange, Double> map = new HashMap<IntegerRange, Double>();
+        Map<IntegerRange, Double> map = new TreeMap<>();
 
         for (Map.Entry<IntegerRange, Double> iR : targetRates.entrySet()) {
             map.put(iR.getKey(), iR.getValue());
         }
 
         return map;
-
     }
 
     public OneDimensionDataDistribution clone() {
 
         return new OneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, cloneData());
-
     }
 
     public void print(PrintStream out) {
@@ -152,16 +145,14 @@ public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
         out.println("SOURCE\t" + sourceOrganisation);
         out.println("DATA");
 
-        for(IntegerRange iR : orderedKeys) {
+        for (IntegerRange iR : orderedKeys) {
             out.println(iR.getValue() + "\t" + targetRates.get(iR));
         }
 
         out.println();
-
     }
 
     public Set<IntegerRange> getLabels() {
         return targetRates.keySet();
     }
-
 }

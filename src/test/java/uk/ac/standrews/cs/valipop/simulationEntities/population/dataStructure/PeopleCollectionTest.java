@@ -18,8 +18,13 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 
 import org.junit.Before;
+import org.junit.Test;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulationStatisticsFactory;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
@@ -29,19 +34,14 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import org.junit.Test;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -56,7 +56,7 @@ public class PeopleCollectionTest {
                 new MonthDate(1,200), 0, 0, 0, null,
                 "src/test/resources/valipop/test-pop", "", "",
                 0, 0, true, 0, 0, 0,
-                0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null);
+                0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null, 0, true);
         // use config to make make ps
         ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
     }

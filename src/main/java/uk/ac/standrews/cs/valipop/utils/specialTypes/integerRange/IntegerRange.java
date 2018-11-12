@@ -23,7 +23,7 @@ import java.util.Objects;
  */
 public class IntegerRange implements Comparable<IntegerRange> {
 
-    Boolean plus = false;
+    boolean plus = false;
     private Integer min = null;
     private Integer max = null;
 
@@ -60,7 +60,6 @@ public class IntegerRange implements Comparable<IntegerRange> {
                 throw new NumberFormatException();
             }
         }
-
     }
 
     public IntegerRange(int value) {
@@ -69,7 +68,7 @@ public class IntegerRange implements Comparable<IntegerRange> {
         plus = false;
     }
 
-    public Boolean contains(Integer integer) {
+    public boolean contains(Integer integer) {
 
         if(value.equals("na")) {
             throw new InvalidRangeException("Range value na - cannot contain value: " + integer);
@@ -87,20 +86,18 @@ public class IntegerRange implements Comparable<IntegerRange> {
             }
         }
 
-
         return false;
-
     }
 
     public Integer getValue() {
         return min;
     }
 
-    public int getMin() {
+    public Integer getMin() {
         return min;
     }
 
-    public int getMax() {
+    public Integer getMax() {
         if (max == null) {
             return min;
         } else {
@@ -128,8 +125,20 @@ public class IntegerRange implements Comparable<IntegerRange> {
     }
 
     @Override
-    public int compareTo(IntegerRange o) {
-        return Integer.compare(getValue(), o.getValue());
+    public int compareTo(IntegerRange other) {
+
+        if (min == null && other.min == null) return 0;
+        if (min == null) return -1;
+        if (other.min == null) return 1;
+
+        if (min < other.min) return -1;
+        if (min > other.min) return 1;
+
+        if (max == null && other.max == null) return 0;
+        if (max == null) return -1;
+        if (other.max == null) return 1;
+
+        return Integer.compare(min, other.min);
     }
 
     public int hash() {
@@ -146,7 +155,6 @@ public class IntegerRange implements Comparable<IntegerRange> {
             } else {
                 hc += "1";
             }
-
 
             if (min != null) {
                 hc += min.toString();
@@ -165,5 +173,4 @@ public class IntegerRange implements Comparable<IntegerRange> {
 
         return Integer.parseInt(hc);
     }
-
 }

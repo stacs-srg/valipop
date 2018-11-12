@@ -23,7 +23,7 @@ import java.util.*;
  */
 public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> implements LabelledValueSet<AL, AV>, Cloneable {
 
-    protected Map<AL, AV> map = new HashMap<>();
+    protected Map<AL, AV> map = new TreeMap<>();
 
     public AbstractLabelToAbstractValueSet(List<AL> labels, List<AV> values) {
 
@@ -36,7 +36,6 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
             map.put(iR, values.get(c));
             c++;
         }
-
     }
 
     public AbstractLabelToAbstractValueSet(Set<AL> labels, AV initValue) {
@@ -44,7 +43,6 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
         for(AL iR : labels) {
             map.put(iR, initValue);
         }
-
     }
 
     public AbstractLabelToAbstractValueSet(Map<AL, AV> map) {

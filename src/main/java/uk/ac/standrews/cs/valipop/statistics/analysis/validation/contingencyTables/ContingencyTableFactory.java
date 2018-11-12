@@ -21,13 +21,13 @@ import java.nio.file.Path;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class ContigencyTableFactory {
+public class ContingencyTableFactory {
 
-    public static final Logger log = new Logger(ContigencyTableFactory.class);
+    public static final Logger log = new Logger(ContingencyTableFactory.class);
 
-    public static void generateContigencyTables(PeopleCollection population, PopulationStatistics desired,
-                                                Config config, SummaryRow summary, int zeroAdjustValue,
-                                                int startStepBack) throws PreEmptiveOutOfMemoryWarning {
+    public static void generateContingencyTables(PeopleCollection population, PopulationStatistics desired,
+                                                 Config config, SummaryRow summary, int zeroAdjustValue,
+                                                 int startStepBack) throws PreEmptiveOutOfMemoryWarning {
 
         ProgramTimer tableTimer = new ProgramTimer();
 
@@ -64,11 +64,11 @@ public class ContigencyTableFactory {
     }
 
     private static void outputToFile(CTtable table, String fileName) throws IOException, NoTableRowsException, PreEmptiveOutOfMemoryWarning {
+
         MemoryUsageAnalysis.log();
         Path path = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), fileName);
         PrintStream ps = new PrintStream(path.toFile(), "UTF-8");
         table.outputToFile(ps);
         MemoryUsageAnalysis.log();
     }
-
 }

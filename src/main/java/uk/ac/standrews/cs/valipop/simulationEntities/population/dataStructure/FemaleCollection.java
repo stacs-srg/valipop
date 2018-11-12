@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.MisalignedTimeDivisionError;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
@@ -43,7 +43,7 @@ import java.util.*;
 public class FemaleCollection extends PersonCollection {
 
     private static final Logger log = new Logger(FemaleCollection.class);
-    private final TreeMap<MonthDate, TreeMap<Integer, Collection<IPersonExtended>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
+    private final Map<MonthDate, Map<Integer, Collection<IPersonExtended>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
 
     /**
      * Instantiates a new FemaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -54,10 +54,10 @@ public class FemaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    public FemaleCollection(AdvancableDate start, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date end, CompoundTimeUnit divisionSize) {
+    public FemaleCollection(AdvanceableDate start, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date end, CompoundTimeUnit divisionSize) {
         super(start, end, divisionSize);
 
-        for (AdvancableDate d = start; DateUtils.dateBeforeOrEqual(d, end); d = d.advanceTime(divisionSize)) {
+        for (AdvanceableDate d = start; DateUtils.dateBeforeOrEqual(d, end); d = d.advanceTime(divisionSize)) {
             byBirthYearAndNumberOfChildren.put(d.getMonthDate(), new TreeMap<>());
         }
     }
@@ -72,7 +72,7 @@ public class FemaleCollection extends PersonCollection {
      * @param dateOfBirth the year of birth of the mothers in question
      * @return the highest birth order value
      */
-    public int getHighestBirthOrder(AdvancableDate dateOfBirth, CompoundTimeUnit period) {
+    public int getHighestBirthOrder(AdvanceableDate dateOfBirth, CompoundTimeUnit period) {
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
 
@@ -100,7 +100,7 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
-    public Set<Integer> getBirthOrdersInDivision(AdvancableDate dateOfBirth, CompoundTimeUnit period) {
+    public Set<Integer> getBirthOrdersInDivision(AdvanceableDate dateOfBirth, CompoundTimeUnit period) {
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
 
         if(divisionsInPeriod == -1) {
@@ -133,7 +133,7 @@ public class FemaleCollection extends PersonCollection {
      * @param birthOrder       the number of children
      * @return the by number of children
      */
-    public Collection<IPersonExtended> getByDatePeriodAndBirthOrder(AdvancableDate date, CompoundTimeUnit period, Integer birthOrder) {
+    public Collection<IPersonExtended> getByDatePeriodAndBirthOrder(AdvanceableDate date, CompoundTimeUnit period, Integer birthOrder) {
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
 
@@ -160,7 +160,7 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
-    public Collection<IPersonExtended> getByDatePeriodAndBirthOrder(AdvancableDate date, CompoundTimeUnit period, IntegerRange birthOrder) {
+    public Collection<IPersonExtended> getByDatePeriodAndBirthOrder(AdvanceableDate date, CompoundTimeUnit period, IntegerRange birthOrder) {
 
         Integer highestBirthOrder = getHighestBirthOrder(date, period);
 
@@ -196,7 +196,7 @@ public class FemaleCollection extends PersonCollection {
      * @throws InsufficientNumberOfPeopleException the insufficient number of people exception
      */
     @SuppressWarnings("Duplicates")
-    public Collection<IPersonExtended> removeNPersons(int numberToRemove, AdvancableDate dateOfBirth, CompoundTimeUnit period,
+    public Collection<IPersonExtended> removeNPersons(int numberToRemove, AdvanceableDate dateOfBirth, CompoundTimeUnit period,
                                                       int birthOrder, MonthDate currentDate)
                                                             throws InsufficientNumberOfPeopleException {
 
@@ -317,7 +317,7 @@ public class FemaleCollection extends PersonCollection {
         return selectedPeople;
     }
 
-    private Map<Integer, Collection<IPersonExtended>> getAllPeopleFromDivision(AdvancableDate divisionDate) {
+    private Map<Integer, Collection<IPersonExtended>> getAllPeopleFromDivision(AdvanceableDate divisionDate) {
 
         try {
             return byBirthYearAndNumberOfChildren.get(divisionDate.getMonthDate());
@@ -341,7 +341,7 @@ public class FemaleCollection extends PersonCollection {
         Collection<IPersonExtended> people = new ArrayList<>();
 
         // By birth Year
-        for (Map.Entry<MonthDate, TreeMap<Integer, Collection<IPersonExtended>>> t : byBirthYearAndNumberOfChildren.entrySet()) {
+        for (Map.Entry<MonthDate, Map<Integer, Collection<IPersonExtended>>> t : byBirthYearAndNumberOfChildren.entrySet()) {
             // By number of children
             for (Map.Entry<Integer, Collection<IPersonExtended>> i : t.getValue().entrySet()) {
                 people.addAll(i.getValue());
@@ -352,7 +352,7 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+    public Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
 
         Collection<IPersonExtended> people = new ArrayList<>();
 
@@ -384,7 +384,7 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
+    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
         CompoundTimeUnit tP = DateUtils.combineCompoundTimeUnits(timePeriod, maxAge);
 
         Collection<IPersonExtended> peopleBorn = getAllPersonsBornInTimePeriod(firstDate.advanceTime(maxAge.negative()), tP);
@@ -415,7 +415,7 @@ public class FemaleCollection extends PersonCollection {
                         resolveDateToCorrectDivisionDate(person.getBirthDate_ex())).get(countChildren(person)).add(person);
             } catch (NullPointerException e1) {
                 // If the year didn't exist in the map
-                TreeMap<Integer, Collection<IPersonExtended>> temp = new TreeMap<>();
+                Map<Integer, Collection<IPersonExtended>> temp = new TreeMap<>();
                 temp.put(countChildren(person), new ArrayList<>());
                 temp.get(countChildren(person)).add(person);
                 byBirthYearAndNumberOfChildren.put(resolveDateToCorrectDivisionDate(person.getBirthDate_ex()), temp);
@@ -440,7 +440,7 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public int getNumberOfPersons(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+    public int getNumberOfPersons(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
 
         int count = 0;
 
@@ -472,7 +472,7 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public TreeSet<AdvancableDate> getDivisionDates() {
+    public TreeSet<AdvanceableDate> getDivisionDates() {
         return new TreeSet<>(byBirthYearAndNumberOfChildren.keySet());
     }
 

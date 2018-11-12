@@ -19,9 +19,8 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.*;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.*;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.MisalignedTimeDivisionError;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
@@ -47,10 +46,10 @@ public class MaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    public MaleCollection(AdvancableDate start, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date end, CompoundTimeUnit divisionSize) {
+    public MaleCollection(AdvanceableDate start, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date end, CompoundTimeUnit divisionSize) {
         super(start, end, divisionSize);
 
-        for (AdvancableDate d = start; DateUtils.dateBeforeOrEqual(d, end); d = d.advanceTime(divisionSize)) {
+        for (AdvanceableDate d = start; DateUtils.dateBeforeOrEqual(d, end); d = d.advanceTime(divisionSize)) {
             byYear.put(d.getMonthDate(), new ArrayList<>());
         }
     }
@@ -72,7 +71,7 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+    public Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
 
         Collection<IPersonExtended> people = new ArrayList<>();
 
@@ -97,11 +96,10 @@ public class MaleCollection extends PersonCollection {
         }
 
         return people;
-
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
+    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
 
         CompoundTimeUnit tP = DateUtils.combineCompoundTimeUnits(timePeriod, maxAge);
 
@@ -129,11 +127,11 @@ public class MaleCollection extends PersonCollection {
             byYear.put(divisionDate, new ArrayList<>());
             byYear.get(divisionDate).add(person);
         }
-
     }
 
     @Override
     public void removePerson(IPersonExtended person) throws PersonNotFoundException {
+
         Collection<IPersonExtended> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate_ex()));
 
         // Removal of person AND test for removal (all in second clause of the if statement)
@@ -148,7 +146,7 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public int getNumberOfPersons(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+    public int getNumberOfPersons(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
 
         int count = 0;
 
@@ -176,8 +174,7 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public TreeSet<AdvancableDate> getDivisionDates() {
+    public Set<AdvanceableDate> getDivisionDates() {
         return new TreeSet<>(byYear.keySet());
     }
-
 }

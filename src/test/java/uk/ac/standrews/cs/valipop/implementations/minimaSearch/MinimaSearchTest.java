@@ -19,7 +19,7 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class MinimaSearchTests {
+public class MinimaSearchTest {
 
     OBDModel model;
 
@@ -29,7 +29,7 @@ public class MinimaSearchTests {
                 new MonthDate(1,200), 0, 0, 0, new CompoundTimeUnit(1, TimeUnit.YEAR),
                 "src/test/resources/valipop/test-pop", "", "",
                 0, 0, true, 0, 0, 0,
-                0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null);
+                0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null, 0, true);
 
         OBDModel.setUpFileStructureAndLogs("testing", "test-time", "results");
 

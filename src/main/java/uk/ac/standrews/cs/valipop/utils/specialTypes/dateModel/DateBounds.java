@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 
 /**
  * The DateBounds interface provides high level common information about the information
@@ -44,7 +44,7 @@ public interface DateBounds {
      * Sets earliest day that this Data Store is required to provide information regarding.
      *
      */
-    void setStartDate(AdvancableDate start);
+    void setStartDate(AdvanceableDate start);
 
     /**
      * Sets latest day that this Data Store is required to provide information regarding.

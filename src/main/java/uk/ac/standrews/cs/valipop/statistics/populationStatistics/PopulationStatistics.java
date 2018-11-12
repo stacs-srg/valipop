@@ -16,10 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
-import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
-import uk.ac.standrews.cs.basic_model.distributions.general.FileBasedEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
@@ -27,10 +25,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateBounds;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 
@@ -39,7 +34,6 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 
 import java.util.*;
-
 
 /**
  * The PopulationStatistics holds data about the rate at which specified events occur to specified subsets of
@@ -115,7 +109,6 @@ public class PopulationStatistics implements EventRateTables {
         this.minGestationPeriodDays = minGestationPeriodDays;
 
         this.randomGenerator = randomGenerator;
-
     }
 
     /*
@@ -124,37 +117,37 @@ public class PopulationStatistics implements EventRateTables {
 
     public DeterminedCount getDeterminedCount(StatsKey key, Config config) {
 
-        if(key instanceof DeathStatsKey) {
+        if (key instanceof DeathStatsKey) {
             DeathStatsKey k = (DeathStatsKey) key;
             return getDeathRates(k.getDate(), k.getSex()).determineCount(k, config);
         }
 
-        if(key instanceof BirthStatsKey) {
+        if (key instanceof BirthStatsKey) {
             BirthStatsKey k = (BirthStatsKey) key;
             return getOrderedBirthRates(k.getDate()).determineCount(k, config);
         }
 
-        if(key instanceof MultipleBirthStatsKey) {
+        if (key instanceof MultipleBirthStatsKey) {
             MultipleBirthStatsKey k = (MultipleBirthStatsKey) key;
             return getMultipleBirthRates(k.getDate()).determineCount(k, config);
         }
 
-        if(key instanceof IllegitimateBirthStatsKey) {
+        if (key instanceof IllegitimateBirthStatsKey) {
             IllegitimateBirthStatsKey k = (IllegitimateBirthStatsKey) key;
             return getIllegitimateBirthRates(k.getDate()).determineCount(k, config);
         }
 
-        if(key instanceof MarriageStatsKey) {
+        if (key instanceof MarriageStatsKey) {
             MarriageStatsKey k = (MarriageStatsKey) key;
             return getMarriageRates(k.getDate()).determineCount(k, config);
         }
 
-        if(key instanceof SeparationStatsKey) {
+        if (key instanceof SeparationStatsKey) {
             SeparationStatsKey k = (SeparationStatsKey) key;
             return getSeparationByChildCountRates(k.getDate()).determineCount(k, config);
         }
 
-        if(key instanceof PartneringStatsKey) {
+        if (key instanceof PartneringStatsKey) {
             PartneringStatsKey k = (PartneringStatsKey) key;
             return getPartneringRates(k.getDate()).determineCount(k, config);
         }
@@ -164,43 +157,43 @@ public class PopulationStatistics implements EventRateTables {
 
     public void returnAchievedCount(DeterminedCount achievedCount) {
 
-        if(achievedCount.getKey() instanceof DeathStatsKey) {
+        if (achievedCount.getKey() instanceof DeathStatsKey) {
             DeathStatsKey k = (DeathStatsKey) achievedCount.getKey();
             getDeathRates(k.getDate(), k.getSex()).returnAchievedCount(achievedCount);
             return;
         }
 
-        if(achievedCount.getKey() instanceof BirthStatsKey) {
+        if (achievedCount.getKey() instanceof BirthStatsKey) {
             BirthStatsKey k = (BirthStatsKey) achievedCount.getKey();
             getOrderedBirthRates(k.getDate()).returnAchievedCount(achievedCount);
             return;
         }
 
-        if(achievedCount.getKey() instanceof MultipleBirthStatsKey) {
+        if (achievedCount.getKey() instanceof MultipleBirthStatsKey) {
             MultipleBirthStatsKey k = (MultipleBirthStatsKey) achievedCount.getKey();
             getMultipleBirthRates(k.getDate()).returnAchievedCount(achievedCount);
             return;
         }
 
-        if(achievedCount.getKey() instanceof IllegitimateBirthStatsKey) {
+        if (achievedCount.getKey() instanceof IllegitimateBirthStatsKey) {
             IllegitimateBirthStatsKey k = (IllegitimateBirthStatsKey) achievedCount.getKey();
             getIllegitimateBirthRates(k.getDate()).returnAchievedCount(achievedCount);
             return;
         }
 
-        if(achievedCount.getKey() instanceof MarriageStatsKey) {
+        if (achievedCount.getKey() instanceof MarriageStatsKey) {
             MarriageStatsKey k = (MarriageStatsKey) achievedCount.getKey();
             getMarriageRates(k.getDate()).returnAchievedCount(achievedCount);
             return;
         }
 
-        if(achievedCount.getKey() instanceof SeparationStatsKey) {
+        if (achievedCount.getKey() instanceof SeparationStatsKey) {
             SeparationStatsKey k = (SeparationStatsKey) achievedCount.getKey();
             getSeparationByChildCountRates(k.getDate()).returnAchievedCount(achievedCount);
             return;
         }
 
-        if(achievedCount.getKey() instanceof PartneringStatsKey) {
+        if (achievedCount.getKey() instanceof PartneringStatsKey) {
             PartneringStatsKey k = (PartneringStatsKey) achievedCount.getKey();
             getPartneringRates(k.getDate()).returnAchievedCount(achievedCount);
             return;
@@ -208,7 +201,6 @@ public class PopulationStatistics implements EventRateTables {
 
         throw new Error("Key based access not implemented for key class: "
                 + achievedCount.getKey().getClass().toGenericString());
-
     }
 
     @Override
@@ -278,12 +270,6 @@ public class PopulationStatistics implements EventRateTables {
         return sexRatioBirth.get(getNearestYearInMap(onDate, sexRatioBirth));
     }
 
-
-    /*
-    --------------------- Private Helper Methods ---------------------
-     */
-
-
     private YearDate getNearestYearInMap(Date year, Map<YearDate, ?> map) {
 
         int minDifferenceInMonths = Integer.MAX_VALUE;
@@ -302,7 +288,6 @@ public class PopulationStatistics implements EventRateTables {
         }
 
         return nearestTableYear;
-
     }
 
     public int getMinBirthSpacing() {

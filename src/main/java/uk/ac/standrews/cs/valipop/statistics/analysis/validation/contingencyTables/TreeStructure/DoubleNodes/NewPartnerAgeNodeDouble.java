@@ -16,20 +16,20 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ControlSelfNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.PartneringStatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.PartneringStatsKey;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ControlSelfNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -42,7 +42,6 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
         if(!init) {
             calcCount();
         }
-
     }
 
     @Override
@@ -93,11 +92,10 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
                 setCount(mDC.getRawUncorrectedCount().get(getOption()));
             }
         }
-
     }
 
-    public ArrayList<String> toStringAL() {
-        ArrayList<String> s = getParent().toStringAL();
+    public List<String> toStringAL() {
+        List<String> s = getParent().toStringAL();
         if(getOption() == null) {
             s.add("na");
         } else {
@@ -127,5 +125,4 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
     public String getVariableName() {
         return "NPA";
     }
-
 }

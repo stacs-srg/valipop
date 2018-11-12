@@ -51,7 +51,7 @@ public class MultipleDeterminedCount implements DeterminedCount<LabelledValueSet
         return key;
     }
 
-    public LabelledValueSet<IntegerRange, Integer> getFufilledCount() {
+    public LabelledValueSet<IntegerRange, Integer> getFulfilledCount() {
         return fufilledCount;
     }
 
@@ -65,8 +65,8 @@ public class MultipleDeterminedCount implements DeterminedCount<LabelledValueSet
         return rawUncorrectedCount;
     }
 
-    public void setFufilledCount(LabelledValueSet<IntegerRange, Integer> fufilledCount) {
-        this.fufilledCount = fufilledCount;
+    public void setFulfilledCount(LabelledValueSet<IntegerRange, Integer> fulfilledCount) {
+        this.fufilledCount = fulfilledCount;
     }
 
     public LabelledValueSet<IntegerRange, Integer> getZeroedCountsTemplate() {

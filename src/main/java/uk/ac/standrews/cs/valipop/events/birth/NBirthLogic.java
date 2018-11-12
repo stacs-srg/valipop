@@ -16,30 +16,30 @@
  */
 package uk.ac.standrews.cs.valipop.events.birth;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
-import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.events.EventLogic;
+import uk.ac.standrews.cs.valipop.events.birth.partnering.PartneringLogic;
 import uk.ac.standrews.cs.valipop.events.birth.partnering.SeparationLogic;
 import uk.ac.standrews.cs.valipop.events.init.InitLogic;
-import uk.ac.standrews.cs.valipop.events.birth.partnering.PartneringLogic;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.FemaleCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
+import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
+import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.OperableLabelledValueSet;
 
 import java.io.PrintWriter;
@@ -53,19 +53,18 @@ public class NBirthLogic implements EventLogic {
     private int tBirths = 0;
     public static PrintWriter orders = FileUtils.mkDumpFile("order.csv");
 
-
     @Override
-    public int handleEvent(Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+    public int handleEvent(Config config, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                            Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException, PersonNotFoundException {
 
         int bornAtTS = 0;
 
         FemaleCollection femalesLiving = population.getLivingPeople().getFemales();
-        Iterator<AdvancableDate> divDates = femalesLiving.getDivisionDates(consideredTimePeriod).iterator();
+        Iterator<AdvanceableDate> divDates = femalesLiving.getDivisionDates(consideredTimePeriod).iterator();
 
-        AdvancableDate divDate;
+        AdvanceableDate divDate;
         // For each division in the population data store upto the current date
-        while(divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentDate)) {
+        while (divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentDate)) {
 
             int age = DateUtils.differenceInYears(divDate.advanceTime(consideredTimePeriod), currentDate).getCount();
 
@@ -73,7 +72,7 @@ public class NBirthLogic implements EventLogic {
 
             Set<IntegerRange> inputOrders = desiredPopulationStatistics.getOrderedBirthRates(currentDate).getColumnLabels();
 
-            for(IntegerRange order : inputOrders) {
+            for (IntegerRange order : inputOrders) {
 
                 Collection<IPersonExtended> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
 
@@ -82,16 +81,14 @@ public class NBirthLogic implements EventLogic {
                         (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
                 int birthAdjust = 0;
-                if(determinedCount.getDeterminedCount() == 0) {
-                    birthAdjust = 0;
-                } else {
+                if (determinedCount.getDeterminedCount() != 0) {
 
                     int adjuster = new Double(Math.ceil(config.getBirthFactor())).intValue();
 
                     int bound = 1000000;
-                    if(desiredPopulationStatistics.getRandomGenerator().nextInt(bound) < Math.abs(config.getBirthFactor() / adjuster) * bound) {
+                    if (desiredPopulationStatistics.getRandomGenerator().nextInt(bound) < Math.abs(config.getBirthFactor() / adjuster) * bound) {
 
-                        if(config.getBirthFactor() < 0) {
+                        if (config.getBirthFactor() < 0) {
                             birthAdjust = adjuster;
                         } else {
                             birthAdjust = -1 * adjuster;
@@ -103,8 +100,7 @@ public class NBirthLogic implements EventLogic {
 
                 // Make women into mothers
 
-                MotherSet mothers = selectMothers(config, people, numberOfChildren, desiredPopulationStatistics,
-                        currentDate, consideredTimePeriod, population);
+                MotherSet mothers = selectMothers(config, people, numberOfChildren, desiredPopulationStatistics, currentDate, consideredTimePeriod, population);
 
                 // Partner females of age who don't have partners
                 int cancelledChildren = PartneringLogic.handle(mothers.getNeedPartners(), desiredPopulationStatistics, currentDate, consideredTimePeriod, population, config);
@@ -114,29 +110,23 @@ public class NBirthLogic implements EventLogic {
                 bornAtTS += childrenMade;
                 InitLogic.incrementBirthCount(childrenMade);
 
-                if(childrenMade > birthAdjust) {
+                if (childrenMade > birthAdjust) {
                     childrenMade = childrenMade - birthAdjust;
                 } else {
                     childrenMade = 0;
                 }
 
-                determinedCount.setFufilledCount(childrenMade);
+                determinedCount.setFulfilledCount(childrenMade);
 
-//                if(childrenMade < numberOfChildren) {
-//                    System.out.println("Year: " + currentDate.getYear() + " | Age: " + age + " | Order: " + order + " | " + childrenMade + "/" + numberOfChildren);
                 orders.println(currentDate.getYear() + "," + age + "," + order + "," + childrenMade + "," + numberOfChildren);
-//                }
 
                 desiredPopulationStatistics.returnAchievedCount(determinedCount);
-
             }
-
         }
 
         tBirths += bornAtTS;
 
         return bornAtTS;
-
     }
 
     @Override
@@ -150,13 +140,13 @@ public class NBirthLogic implements EventLogic {
     }
 
     private MotherSet selectMothers(Config config, Collection<IPersonExtended> females, int numberOfChildren,
-                                    PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate,
-                                    CompoundTimeUnit consideredTimePeriod, Population population) throws InsufficientNumberOfPeopleException {
+                                    PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate,
+                                    CompoundTimeUnit consideredTimePeriod, Population population) {
 
         Collection<NewMother> needPartners = new ArrayList<>();
         Collection<IPersonExtended> havePartners = new ArrayList<>();
 
-        if(females.size() == 0) {
+        if (females.size() == 0) {
             return new MotherSet(havePartners, needPartners);
         }
 
@@ -176,8 +166,7 @@ public class NBirthLogic implements EventLogic {
                 new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0);
 
         OperableLabelledValueSet<IntegerRange, Integer> remainingMothersToFind =
-                                    new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().clone());
-
+                new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().clone());
 
         IntegerRange highestBirthOption;
 
@@ -189,17 +178,17 @@ public class NBirthLogic implements EventLogic {
 
         CollectionUtils.shuffle(femalesAL, desiredPopulationStatistics.getRandomGenerator());
 
-        for(IPersonExtended female : femalesAL) {
+        for (IPersonExtended female : femalesAL) {
 
-            if(childrenMade >= numberOfChildren) {
+            if (childrenMade >= numberOfChildren) {
                 break;
             }
 
-            if(eligible(female, desiredPopulationStatistics, currentDate)) {
+            if (eligible(female, desiredPopulationStatistics, currentDate)) {
 
                 childrenMade += highestBirthOption.getValue();
 
-                if(female.needsNewPartner(currentDate)) {
+                if (female.needsNewPartner(currentDate)) {
                     needPartners.add(new NewMother(female, highestBirthOption.getValue()));
                 } else {
 
@@ -218,43 +207,39 @@ public class NBirthLogic implements EventLogic {
                 remainingMothersToFind.update(highestBirthOption, furtherMothersNeededForMaternitySize);
 
                 // updates count of mother found
-                motherCountsByMaternities
-                        .update(highestBirthOption, motherCountsByMaternities.getValue(highestBirthOption) + 1);
+                motherCountsByMaternities.update(highestBirthOption, motherCountsByMaternities.getValue(highestBirthOption) + 1);
 
-                if(furtherMothersNeededForMaternitySize <= 0) {
+                if (furtherMothersNeededForMaternitySize <= 0) {
                     try {
                         highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
                     } catch (NoSuchElementException e) {
                         // In this case we have created all the new mothers and children required
                         break;
                     }
-
                 }
             }
         }
 
         SeparationLogic.handle(continuingPartneredFemalesByChildren, consideredTimePeriod, currentDate, desiredPopulationStatistics, population, config);
 
-        requiredBirths.setFufilledCount(motherCountsByMaternities);
+        requiredBirths.setFulfilledCount(motherCountsByMaternities);
         desiredPopulationStatistics.returnAchievedCount(requiredBirths);
 
         return new MotherSet(havePartners, needPartners, childrenMade);
-
     }
 
-    private MultipleDeterminedCount calcNumberOfPreganciesOfMultipleBirth(int ageOfMothers, int numberOfChildren, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate,
+    private MultipleDeterminedCount calcNumberOfPreganciesOfMultipleBirth(int ageOfMothers, int numberOfChildren, PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate,
                                                                           CompoundTimeUnit consideredTimePeriod, Config config) {
 
         MultipleBirthStatsKey key = new MultipleBirthStatsKey(ageOfMothers, numberOfChildren, consideredTimePeriod, currentDate);
         return (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
-
     }
 
     private boolean eligible(IPersonExtended potentialMother, PopulationStatistics desiredPopulationStatistics, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date currentDate) {
 
         IPersonExtended lastChild = potentialMother.getLastChild();
 
-        if(lastChild != null) {
+        if (lastChild != null) {
             ExactDate earliestDateOfNextChild = DateUtils.
                     calculateExactDate(lastChild.getBirthDate_ex(), desiredPopulationStatistics.getMinBirthSpacing());
 
@@ -265,5 +250,4 @@ public class NBirthLogic implements EventLogic {
             return true;
         }
     }
-
 }

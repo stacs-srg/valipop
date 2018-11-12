@@ -21,7 +21,6 @@ import uk.ac.standrews.cs.valipop.events.EventLogic;
 import uk.ac.standrews.cs.valipop.events.birth.NBirthLogic;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.CustomLog4j;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
@@ -29,10 +28,10 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordGenerationFactory;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.events.death.NDeathLogic;
 import uk.ac.standrews.cs.valipop.events.init.InitLogic;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.ContigencyTableFactory;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.ContingencyTableFactory;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulationStatisticsFactory;
 import uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.AnalyticsRunner;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
@@ -64,7 +63,7 @@ public class OBDModel {
 
     private Population population;
 
-    private AdvancableDate currentTime;
+    private AdvanceableDate currentTime;
 
     private EventLogic deathLogic = new NDeathLogic();
     private EventLogic birthLogic = new NBirthLogic();
@@ -73,24 +72,14 @@ public class OBDModel {
 
     private static final CompoundTimeUnit MAX_AGE = new CompoundTimeUnit(110, TimeUnit.YEAR);
 
-
     public static void setUpFileStructureAndLogs(String runPurpose, String startTime, String resultsPath) throws IOException {
-        // This has to be ran prior to creating the Config file as the file structure and log file need to be created
+        // This has to be run prior to creating the Config file as the file structure and log file need to be created
         // prior to the first logging event that occurs when generating the config
         // And errors in this method are sent to standard error
 
         FileUtils.makeDirectoryStructure(runPurpose, startTime, resultsPath);
         Logger.setLogFilePath(FileUtils.pathToLogDir(runPurpose, startTime, resultsPath));
     }
-
-//    public OBDModel() {
-//
-//        summary = new SummaryRow(null, null, null, null, null,
-//                null, null, null, null, 0, 0, 0,
-//                0, true, 0, null);
-//
-//
-//    }
 
     public OBDModel(String startTime, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
@@ -110,9 +99,8 @@ public class OBDModel {
                 config.getVarPath(), startTime, config.getRunPurpose(), CODE_VERSION, config.getSimulationTimeStep(),
                 config.getInputWidth(), config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(),
                 config.getTE()), config.getBirthFactor(), config.getDeathFactor(), config.getRecoveryFactor(),
-                config.getProportionalRecoveryFactor(), config.getBinominalSampling(), config.getMinBirthSpacing(),
-                config.getOutputRecordFormat(),config.getT0PopulationSize());
-
+                config.getProportionalRecoveryFactor(), config.getBinomialSampling(), config.getMinBirthSpacing(),
+                config.getOutputRecordFormat(), config.getT0PopulationSize());
     }
 
     public void runSimulation() throws PreEmptiveOutOfMemoryWarning {
@@ -124,7 +112,7 @@ public class OBDModel {
 
         while (!runPassed) {
 
-            countAttempts ++;
+            countAttempts++;
 
             try {
                 runPassed = runSimulationTimeLoop();
@@ -141,7 +129,7 @@ public class OBDModel {
                 deathLogic.resetEventCount();
                 birthLogic.resetEventCount();
 
-                if(countAttempts > MAX_ATTEMPTS) {
+                if (countAttempts > MAX_ATTEMPTS) {
                     break;
                 }
 
@@ -150,29 +138,26 @@ public class OBDModel {
             } catch (PersonNotFoundException e) {
                 throw new Error("Expected person not found in simulation - fatal error", e);
             }
-
         }
 
         MemoryUsageAnalysis.log();
 
         summary.setTotalPop(population.getAllPeople(config.getT0(), config.getTE(), MAX_AGE).getNumberOfPeople());
         summary.setSimRunTime(simTimer.getRunTimeSeconds());
-
     }
 
     private boolean runSimulationTimeLoop() throws InsufficientNumberOfPeopleException, PersonNotFoundException, PreEmptiveOutOfMemoryWarning {
 
         summary.setCompleted(true);
 
-        while(DateUtils.dateBeforeOrEqual(currentTime, config.getTE())) {
+        while (DateUtils.dateBeforeOrEqual(currentTime, config.getTE())) {
 
-            if(!InitLogic.inInitPeriod(currentTime) && population.getLivingPeople().getAll().size() < 100) {
+            if (!InitLogic.inInitPeriod(currentTime) && population.getLivingPeople().getAll().size() < 100) {
                 summary.setCompleted(false);
 
                 log.info("TKilled\t" + deathLogic.getEventCount());
                 log.info("TBorn\t" + birthLogic.getEventCount());
                 log.info("Ratio\t" + deathLogic.getEventCount() / (double) birthLogic.getEventCount());
-
 
                 summary.setEndPop(population.getLivingPeople().getNumberOfPeople());
                 summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());
@@ -184,16 +169,14 @@ public class OBDModel {
 
             String yearLine = "";
 
-            if(DateUtils.dateBeforeOrEqual(currentTime, config.getT0())) {
+            if (DateUtils.dateBeforeOrEqual(currentTime, config.getT0())) {
                 summary.setStartPop(population.getLivingPeople().getNumberOfPeople());
             }
 
             yearLine += currentTime.toString() + "\t";
 
-
             int bornAtTS = birthLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
             yearLine += bornAtTS + "\t";
-
 
             if (InitLogic.inInitPeriod(currentTime) &&
                     DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS())) {
@@ -201,14 +184,14 @@ public class OBDModel {
                 int initAtTS = InitLogic.handleInitPeople(config, currentTime, population, desired);
                 yearLine += initAtTS + "\t";
 
-            } else if(!InitLogic.inInitPeriod(currentTime)) {
+            } else if (!InitLogic.inInitPeriod(currentTime)) {
                 yearLine += 0 + "\t";
             }
 
             int killedAtTS = deathLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
             yearLine += killedAtTS + "\t";
 
-            if(inSimDates()) {
+            if (inSimDates()) {
                 population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
             }
 
@@ -216,9 +199,7 @@ public class OBDModel {
 
             yearLine += population.getLivingPeople().getNumberOfPeople() + "\t" + population.getDeadPeople().getNumberOfPeople();
             log.info(yearLine);
-
         }
-
 
         log.info("TKilled\t" + deathLogic.getEventCount());
         log.info("TBorn\t" + birthLogic.getEventCount());
@@ -231,7 +212,6 @@ public class OBDModel {
         summary.setEligibilityChecks(population.getPopulationCounts().getEligibilityChecks());
         summary.setFailedEligibilityChecks(population.getPopulationCounts().getFailedEligibilityChecks());
 
-
         return true;
     }
 
@@ -241,19 +221,18 @@ public class OBDModel {
 
     public void analyseAndOutputPopulation(boolean outputSummaryRow) throws PreEmptiveOutOfMemoryWarning {
 
-        if(config.getOutputTables()) {
+        if (config.getOutputTables()) {
             // the 5 year step back is to combat the kick in the early stages of the CTtables for STAT - run in RStudio with no cleaning to see - potential bug in CTtree?
-            ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 5);
+            ContingencyTableFactory.generateContingencyTables(population.getAllPeople(), desired, config, summary, 0, 5);
         }
 
         ProgramTimer recordTimer = new ProgramTimer();
-        if(config.getOutputRecordFormat() != RecordFormat.NONE) {
+        if (config.getOutputRecordFormat() != RecordFormat.NONE) {
             RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), FileUtils.getRecordsDirPath().toString(),
                     population.getAllPeople(), config.getT0());
 
         }
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
-
 
         try {
             AnalyticsRunner.runAnalytics(population.getAllPeople(config.getT0(), config.getTE(), MAX_AGE),
@@ -267,16 +246,12 @@ public class OBDModel {
         summary.setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
         MemoryUsageAnalysis.reset();
 
-        if(outputSummaryRow) {
+        if (outputSummaryRow) {
             summary.outputSummaryRowToFile();
         }
 
         log.info("OBDModel --- Output complete");
-
     }
-
-
-
 
     private boolean inSimDates() {
         return DateUtils.dateBeforeOrEqual(config.getT0(), currentTime);
@@ -293,5 +268,4 @@ public class OBDModel {
     public SummaryRow getSummaryRow() {
         return summary;
     }
-
 }
