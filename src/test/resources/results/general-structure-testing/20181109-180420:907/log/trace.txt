@@ -1,0 +1,7 @@
+[2018-11-09 18:04:21.079] DesiredPopulationStatisticsFactory | Creating PopulationStatistics instance
+[2018-11-09 18:04:21.814] InitLogic | Initial hypothetical population size set: 37734
+[2018-11-09 18:04:21.815] InitLogic | End of Initialisation Period set: 1/1/1649
+[2018-11-09 18:05:16.243] OBDModel | 1/1/1599	0	502	5	497	5
+[2018-11-09 18:05:16.252] OBDModel | 1/1/1600	0	502	5	994	10
+[2018-11-09 18:05:16.265] OBDModel | 1/1/1601	0	503	8	1489	18
+[2018-11-09 18:05:16.276] OBDModel | 1/1/1602	0	503	6	1986	24

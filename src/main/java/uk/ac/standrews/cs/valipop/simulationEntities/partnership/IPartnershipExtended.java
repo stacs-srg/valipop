@@ -17,9 +17,8 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.basic_model.model.IPartnership;
+import uk.ac.standrews.cs.valipop.model.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.entityExtensions.PartnershipUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 

@@ -123,13 +123,8 @@ public final class MonthDate implements AdvanceableDate {
     }
 
     @Override
-    public String toOrderableString() {
-        return year + "_" + month + "_" + DAY;
-    }
-
-    @Override
     public int compareTo(Date o) {
-        if(equals(o)) {
+        if (equals(o)) {
             return 0;
         } else if (DateUtils.dateBeforeOrEqual(this, o)) {
             return -1;
@@ -141,7 +136,7 @@ public final class MonthDate implements AdvanceableDate {
     @Override
     public boolean equals(Object obj) {
 
-        if(obj == null || !(obj instanceof AdvanceableDate)) {
+        if (!(obj instanceof AdvanceableDate)) {
             return false;
         }
 

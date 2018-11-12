@@ -16,15 +16,12 @@
  */
 package uk.ac.standrews.cs.valipop.gedcom;
 
-import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
-import uk.ac.standrews.cs.basic_model.model.IDFactory;
-import uk.ac.standrews.cs.basic_model.model.IPopulation;
-import uk.ac.standrews.cs.basic_model.model.IPopulationWriter;
-import uk.ac.standrews.cs.basic_model.model.PopulationConverter;
-
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
-
+import uk.ac.standrews.cs.valipop.model.IPopulation;
+import uk.ac.standrews.cs.valipop.model.IPopulationWriter;
+import uk.ac.standrews.cs.valipop.model.PopulationConverter;
+import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
@@ -45,8 +42,6 @@ public abstract class AbstractTestCaseRecorder {
     protected void recordTestCase() throws Exception {
 
         for (int i = 0; i < AbstractExporterTest.TEST_CASE_POPULATION_SIZES.length; i++) {
-
-            IDFactory.resetId();
 
             final Path path = Paths.get(
                     AbstractExporterTest.TEST_DIRECTORY_PATH_STRING,

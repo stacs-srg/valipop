@@ -1,16 +1,14 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.basic_model.distributions.StringWithCumulativeProbability;
-import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
-import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.statistics.distributions.StringWithCumulativeProbability;
+import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

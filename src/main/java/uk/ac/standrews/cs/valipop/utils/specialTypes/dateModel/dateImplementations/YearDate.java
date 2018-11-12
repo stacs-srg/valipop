@@ -85,7 +85,7 @@ public final class YearDate implements AdvanceableDate {
     @Override
     public boolean equals(Object obj) {
 
-        if(obj == null || !(obj instanceof AdvanceableDate)) {
+        if (!(obj instanceof AdvanceableDate)) {
             return false;
         }
 
@@ -94,13 +94,8 @@ public final class YearDate implements AdvanceableDate {
     }
 
     @Override
-    public String toOrderableString() {
-        return year + "_" + MONTH + "_" + DAY;
-    }
-
-    @Override
     public int compareTo(Date o) {
-        if(equals(o)) {
+        if (equals(o)) {
             return 0;
         } else if (DateUtils.dateBeforeOrEqual(this, o)) {
             return -1;

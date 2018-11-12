@@ -50,7 +50,6 @@ public class DeathAnalytics {
         this.population = population;
         out = resultsOutput;
         analyseDeaths();
-
     }
 
     /**

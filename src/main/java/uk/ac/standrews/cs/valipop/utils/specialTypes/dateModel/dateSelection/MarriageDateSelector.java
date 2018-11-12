@@ -6,8 +6,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
-import java.util.Random;
-
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -30,8 +28,6 @@ public class MarriageDateSelector extends DateSelector {
         double dayAdjust = random.nextInt((int) (Math.floor(daysInYear *  (averageYearsFromMarriageToChild / poissonM))));
 
         int chosenDay = Math.toIntExact(Math.round(chosenYear * daysInYear + dayAdjust));
-
-//        int chosenDay = Math.toIntExact(Math.round(dist.sample() * daysInYear + random.nextInt(daysInYear) - daysInYear/2.0));
 
         if(chosenDay > daysInWindow) {
             try {

@@ -47,7 +47,6 @@ public class PopulationAnalytics {
 
         this.population = population;
         out = resultsOutput;
-
     }
 
     private void printBirthDate(final IPersonExtended person) {
@@ -82,10 +81,6 @@ public class PopulationAnalytics {
         out.println("Population size = " + size);
         out.println("Number of males = " + number_males + " = " + String.format("%.1f", number_males / (double) size * ONE_HUNDRED) + '%');
         out.println("Number of females = " + number_females + " = " + String.format("%.1f", number_females / (double) size * ONE_HUNDRED) + '%');
-
-//        printAllBirthDates();
-//        printAllDeathDates();
-//        printAllDates();
     }
 
     private int countMales() {

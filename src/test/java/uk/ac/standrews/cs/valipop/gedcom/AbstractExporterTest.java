@@ -19,8 +19,7 @@ package uk.ac.standrews.cs.valipop.gedcom;
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.standrews.cs.basic_model.model.IDFactory;
-import uk.ac.standrews.cs.basic_model.model.IPopulation;
+import uk.ac.standrews.cs.valipop.model.IPopulation;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
@@ -83,7 +82,6 @@ public abstract class AbstractExporterTest {
 
     private static Object[] makeTestConfiguration(final int population_size, final String file_name_root) throws Exception {
 
-        IDFactory.resetId();
         String startTime = FileUtils.getDateTime();
         String purpose = "DETERMINISTIC-TESTING";
         OBDModel.setUpFileStructureAndLogs(purpose, startTime, "results");

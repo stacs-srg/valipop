@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;

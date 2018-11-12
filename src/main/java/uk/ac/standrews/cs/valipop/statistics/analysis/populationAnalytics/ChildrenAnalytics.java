@@ -71,13 +71,11 @@ public class ChildrenAnalytics {
         }
 
         out.println("Fertility rates by year:");
-        for(Map.Entry<Integer, Double> fr : fertilityRateByYear.entrySet()) {
-            if(!fr.getValue().equals(0.0)) {
+        for (Map.Entry<Integer, Double> fr : fertilityRateByYear.entrySet()) {
+            if (!fr.getValue().equals(0.0)) {
                 out.println("\t" + fr.getKey() + " Fertility rate = " + fr.getValue());
             }
         }
-
-
     }
 
     /**
@@ -89,7 +87,7 @@ public class ChildrenAnalytics {
 
         for (final IPersonExtended person : population.getPeople_ex()) {
 
-            if(Character.toLowerCase(person.getSex()) == 'f') {
+            if (Character.toLowerCase(person.getSex()) == 'f') {
                 final List<IPartnershipExtended> partnerships = person.getPartnerships_ex();
                 if (partnerships != null) {
 
@@ -116,7 +114,7 @@ public class ChildrenAnalytics {
 
         for (final IPersonExtended person : population.getPeople_ex()) {
 
-            if(Character.toLowerCase(person.getSex()) == 'f') {
+            if (Character.toLowerCase(person.getSex()) == 'f') {
                 final List<IPartnershipExtended> partnerships = person.getPartnerships_ex();
                 if (partnerships != null) {
 
@@ -126,45 +124,40 @@ public class ChildrenAnalytics {
 
                         if (child_ids != null) {
 
-                            for(final IPersonExtended child : child_ids) {
+                            for (final IPersonExtended child : child_ids) {
 
                                 int yob = child.getBirthDate_ex().getYear();
 
                                 try {
                                     childrenBornInEachYear.put(yob, childrenBornInEachYear.get(yob) + 1);
-                                } catch(NullPointerException e) {
+                                } catch (NullPointerException e) {
                                     childrenBornInEachYear.put(yob, 1);
                                 }
                             }
-
                         }
-
                     }
-
                 }
 
                 int femalesYOB = person.getBirthDate_ex().getYear();
-                for(int y = femalesYOB + MIN_CB_AGE; y < femalesYOB + MAX_CB_AGE; y++) {
+                for (int y = femalesYOB + MIN_CB_AGE; y < femalesYOB + MAX_CB_AGE; y++) {
 
                     try {
                         livingFemalesOfSBAgeInEachYear.put(y, livingFemalesOfSBAgeInEachYear.get(y) + 1);
-                    } catch(NullPointerException e) {
+                    } catch (NullPointerException e) {
                         livingFemalesOfSBAgeInEachYear.put(y, 1);
                     }
-
                 }
-
             }
         }
 
         Integer earliestYear = getSmallestValueInSets(livingFemalesOfSBAgeInEachYear.keySet(), childrenBornInEachYear.keySet());
         Integer latestYear = getLargestValueInSets(livingFemalesOfSBAgeInEachYear.keySet(), childrenBornInEachYear.keySet());
 
-        if(earliestYear == null || latestYear == null) {
+        if (earliestYear == null || latestYear == null) {
             return;
         }
 
-        for(int y = earliestYear; y < latestYear; y ++) {
+        for (int y = earliestYear; y < latestYear; y++) {
             int births;
             int femalesOfCBAge;
 
@@ -181,7 +174,7 @@ public class ChildrenAnalytics {
             }
 
             double asfrForYear;
-            if(femalesOfCBAge == 0) {
+            if (femalesOfCBAge == 0) {
                 asfrForYear = 0;
             } else {
                 asfrForYear = births / (double) femalesOfCBAge;
@@ -189,7 +182,6 @@ public class ChildrenAnalytics {
 
             fertilityRateByYear.put(y, asfrForYear);
         }
-
     }
 
     public static Integer getSmallestValueInSets(Set<Integer> a, Set<Integer> b) {
@@ -199,12 +191,11 @@ public class ChildrenAnalytics {
 
         Collections.sort(sets);
 
-        if(sets.size() == 0) {
+        if (sets.size() == 0) {
             return null;
         } else {
             return sets.get(0);
         }
-
     }
 
     public static Integer getLargestValueInSets(Set<Integer> a, Set<Integer> b) {
@@ -214,11 +205,10 @@ public class ChildrenAnalytics {
 
         Collections.sort(sets);
 
-        if(sets.size() == 0) {
+        if (sets.size() == 0) {
             return null;
         } else {
             return sets.get(sets.size() - 1);
         }
-
     }
 }

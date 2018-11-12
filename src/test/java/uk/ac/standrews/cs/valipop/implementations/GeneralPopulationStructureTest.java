@@ -17,11 +17,10 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.basic_model.model.IPartnership;
-import uk.ac.standrews.cs.basic_model.model.IPerson;
-import uk.ac.standrews.cs.basic_model.model.IPopulation;
-import uk.ac.standrews.cs.basic_model.model.PopulationLogic;
 import uk.ac.standrews.cs.utilities.DateManipulation;
+import uk.ac.standrews.cs.valipop.model.IPartnership;
+import uk.ac.standrews.cs.valipop.model.IPerson;
+import uk.ac.standrews.cs.valipop.model.IPopulation;
 
 import java.util.*;
 

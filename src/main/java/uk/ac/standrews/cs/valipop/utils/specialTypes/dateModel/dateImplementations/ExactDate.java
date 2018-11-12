@@ -135,12 +135,6 @@ public final class ExactDate implements Date {
         return new YearDate(year);
     }
 
-
-    @Override
-    public String toOrderableString() {
-        return year + "_" + month + "_" + day;
-    }
-
     @Override
     public MonthDate getMonthDate() {
         return new MonthDate(month, year);
