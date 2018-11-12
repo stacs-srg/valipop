@@ -46,17 +46,16 @@ public class ProcessArgs {
             System.err.println("No run purpose given as 3rd arg");
         }
 
-        if(executionType.equals("MINIMA_SEARCH") || executionType.equals("N-RUNS") || executionType.equals("FACTOR_SEARCH") || executionType.equals("FACTOR_SEARCH_PRECISION")) {
+        if (executionType.equals("MINIMA_SEARCH") || executionType.equals("N-RUNS") || executionType.equals("FACTOR_SEARCH") || executionType.equals("FACTOR_SEARCH_PRECISION")) {
 
             try {
                 processed[3] = args[3];
             } catch (ArrayIndexOutOfBoundsException e) {
                 System.err.println("No desired number of populations specified as 4th arg");
             }
-
         }
 
-        if(executionType.equals("MINIMA_SEARCH")) {
+        if (executionType.equals("MINIMA_SEARCH")) {
 
             try {
                 processed[4] = args[4];
@@ -83,7 +82,7 @@ public class ProcessArgs {
             }
         }
 
-        if(executionType.equals("FACTOR_SEARCH")) {
+        if (executionType.equals("FACTOR_SEARCH")) {
 
             try {
                 processed[4] = args[4];
@@ -104,7 +103,7 @@ public class ProcessArgs {
             }
         }
 
-        if(executionType.equals("FACTOR_SEARCH_PRECISION")) {
+        if (executionType.equals("FACTOR_SEARCH_PRECISION")) {
 
             try {
                 processed[4] = args[4];
@@ -138,11 +137,11 @@ public class ProcessArgs {
     public static boolean check(String[] args, String executionType) {
 
         switch (executionType) {
-            case "STANDARD" :
+            case "STANDARD":
                 return standardCheck(args);
-            case "MINIMA_SEARCH" :
+            case "MINIMA_SEARCH":
                 return minimaCheck(args);
-            case "N-RUNS" :
+            case "N-RUNS":
                 return nRunsCheck(args);
             case "FACTOR_SEARCH":
                 return factorCheck(args);
@@ -151,7 +150,6 @@ public class ProcessArgs {
             default:
                 throw new InvalidParameterException();
         }
-
     }
 
     private static boolean standardCheck(String[] args) {
@@ -159,7 +157,6 @@ public class ProcessArgs {
         return args.length == 3
                 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
                 && !Objects.equals(args[2], "");
-
     }
 
     private static boolean nRunsCheck(String[] args) {
@@ -167,7 +164,6 @@ public class ProcessArgs {
         return args.length == 4
                 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
                 && !Objects.equals(args[2], "") && !Objects.equals(args[3], "");
-
     }
 
     private static boolean minimaCheck(String[] args) {
@@ -177,7 +173,6 @@ public class ProcessArgs {
                 && !Objects.equals(args[2], "") && !Objects.equals(args[3], "")
                 && !Objects.equals(args[4], "") && !Objects.equals(args[5], "")
                 && !Objects.equals(args[6], "") && !Objects.equals(args[7], "");
-
     }
 
     private static boolean factorCheck(String[] args) {
@@ -187,7 +182,6 @@ public class ProcessArgs {
                 && !Objects.equals(args[2], "") && !Objects.equals(args[3], "")
                 && !Objects.equals(args[4], "") && !Objects.equals(args[5], "")
                 && !Objects.equals(args[6], "");
-
     }
 
     private static boolean factorPrecisionCheck(String[] args) {
@@ -197,7 +191,5 @@ public class ProcessArgs {
                 && !Objects.equals(args[2], "") && !Objects.equals(args[3], "")
                 && !Objects.equals(args[4], "") && !Objects.equals(args[5], "")
                 && !Objects.equals(args[6], "") && !Objects.equals(args[7], "");
-
     }
-
 }

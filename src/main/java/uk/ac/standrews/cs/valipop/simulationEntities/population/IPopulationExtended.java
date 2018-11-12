@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population;
 
-import uk.ac.standrews.cs.basic_model.model.IPopulation;
+import uk.ac.standrews.cs.valipop.model.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 

@@ -27,7 +27,6 @@ import java.util.*;
  */
 public class MapUtils {
 
-
     public static int getMax(Set<Integer> integers) {
 
         int max = Integer.MIN_VALUE;
@@ -38,43 +37,6 @@ public class MapUtils {
             }
         }
         return max;
-
-    }
-
-    public static <U> int countObjectsInCollectionsInMap(Map<Integer, Collection<U>> map) {
-
-        int count = 0;
-
-        for (Map.Entry<Integer, Collection<U>> i : map.entrySet()) {
-            count += i.getValue().size();
-        }
-
-        return count;
-
-    }
-
-    public static int sumOfFlooredValues(Map<IntegerRange, Double> map) {
-
-        int sum = 0;
-
-        for (Map.Entry<IntegerRange, Double> iR : map.entrySet()) {
-            double d = iR.getValue();
-            sum += (int) d;
-        }
-
-        return sum;
-    }
-
-    public static Map<Integer, Integer> floorAllValuesInMap(Map<IntegerRange, Double> map) {
-
-        Map<Integer, Integer> temp = new HashMap<>();
-
-        for (Map.Entry<IntegerRange, Double> iR : map.entrySet()) {
-
-            temp.put(iR.getKey().getValue(), iR.getValue().intValue());
-        }
-
-        return temp;
     }
 
     public static void print(String label, Map<IntegerRange, ?> temp, int s, int interval, int e) {

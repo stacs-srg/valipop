@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
-import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.AnalysisThread;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;

@@ -19,10 +19,10 @@ package uk.ac.standrews.cs.valipop.gedcom;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import uk.ac.standrews.cs.basic_model.model.IPopulation;
-import uk.ac.standrews.cs.basic_model.model.IPopulationWriter;
-import uk.ac.standrews.cs.basic_model.model.PopulationConverter;
-import uk.ac.standrews.cs.basic_model.model.gedcom.GEDCOMPopulationWriter;
+import uk.ac.standrews.cs.valipop.model.IPopulation;
+import uk.ac.standrews.cs.valipop.model.IPopulationWriter;
+import uk.ac.standrews.cs.valipop.model.PopulationConverter;
+import uk.ac.standrews.cs.valipop.model.gedcom.GEDCOMPopulationWriter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -57,9 +57,8 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         try (PopulationConverter converter = new PopulationConverter(population, population_writer)) {
             converter.convert();
         }
-//FileManipulation.
-        assertThatFilesHaveSameContent(actual_output, intended_output);
 
+        assertThatFilesHaveSameContent(actual_output, intended_output);
     }
 
     @Before
@@ -77,12 +76,10 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
 
             while ((line1 = reader1.readLine()) != null) {
                 String line2 = reader2.readLine();
-//                System.out.println(line1);
                 assertEquals(line1, line2);
             }
-//            System.out.println("--------------------------------");
-            assertNull(reader2.readLine());
 
+            assertNull(reader2.readLine());
         }
     }
 }

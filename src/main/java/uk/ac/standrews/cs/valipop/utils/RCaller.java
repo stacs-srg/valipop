@@ -24,7 +24,6 @@ public class RCaller {
         } catch (IOException e) {
             throw new StatsException(e.getMessage());
         }
-
     }
 
     public static double getV(String pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
@@ -130,7 +129,6 @@ public class RCaller {
         ProcessBuilder pb = new ProcessBuilder(commands);
 
         return pb.start();
-
     }
 
     private static String[] joinArrays(String[] first, String[] second) {
@@ -139,6 +137,4 @@ public class RCaller {
         Collections.addAll(both, second);
         return both.toArray(new String[both.size()]);
     }
-
-
 }

@@ -18,8 +18,6 @@ package uk.ac.standrews.cs.valipop.utils.selectionApproaches;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.util.Random;
-
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -38,7 +36,5 @@ public class SharedLogic {
         }
 
         return flooredToHaveEvent;
-
     }
-
 }

@@ -49,7 +49,6 @@ public class CompoundTimeUnit {
         }
 
         this.count = Integer.parseInt(count);
-
     }
 
     public int getCount() {
@@ -87,6 +86,5 @@ public class CompoundTimeUnit {
         }
 
         return ret;
-
     }
 }

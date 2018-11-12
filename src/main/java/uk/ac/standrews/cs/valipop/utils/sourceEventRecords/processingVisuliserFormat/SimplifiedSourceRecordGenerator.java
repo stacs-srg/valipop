@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFormat;
 
-import uk.ac.standrews.cs.basic_model.model.IPopulation;
+import uk.ac.standrews.cs.valipop.model.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 import uk.ac.standrews.cs.utilities.FileManipulation;
 import uk.ac.standrews.cs.utilities.PercentageProgressIndicator;

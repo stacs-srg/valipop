@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
-import uk.ac.standrews.cs.basic_model.model.IPopulation;
+import uk.ac.standrews.cs.valipop.model.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;

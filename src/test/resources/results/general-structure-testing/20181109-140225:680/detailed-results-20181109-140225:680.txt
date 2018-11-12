@@ -1,0 +1,371 @@
+Population size = 87710
+Number of males = 43175 = 49.2%
+Number of females = 44535 = 50.8%
+Children per marriage sizes:
+	21558 Marriages with 1 child_ids = 59.8%
+	176 Marriages with 2 child_ids = 0.5%
+	895 Marriages with 3 child_ids = 2.5%
+	10498 Marriages with 4 child_ids = 29.1%
+	2333 Marriages with 5 child_ids = 6.5%
+	488 Marriages with 6 child_ids = 1.4%
+	74 Marriages with 7 child_ids = 0.2%
+	18 Marriages with 8 child_ids = 0.0%
+	3 Marriages with 9 child_ids = 0.0%
+	1 Marriages with 10 child_ids = 0.0%
+Fertility rates by year:
+	1771 Fertility rate = 0.8
+	1772 Fertility rate = 0.2
+	1774 Fertility rate = 0.18181818181818182
+	1775 Fertility rate = 0.2727272727272727
+	1776 Fertility rate = 0.5333333333333333
+	1778 Fertility rate = 0.13157894736842105
+	1779 Fertility rate = 0.09210526315789473
+	1780 Fertility rate = 0.21794871794871795
+	1781 Fertility rate = 0.09558823529411764
+	1782 Fertility rate = 0.08125
+	1783 Fertility rate = 0.08571428571428572
+	1784 Fertility rate = 0.17391304347826086
+	1785 Fertility rate = 0.18789808917197454
+	1786 Fertility rate = 0.14171122994652408
+	1787 Fertility rate = 0.12993039443155452
+	1788 Fertility rate = 0.13419117647058823
+	1789 Fertility rate = 0.13245033112582782
+	1790 Fertility rate = 0.10684931506849316
+	1791 Fertility rate = 0.1336573511543135
+	1792 Fertility rate = 0.11437908496732026
+	1793 Fertility rate = 0.13783269961977188
+	1794 Fertility rate = 0.1261564339781329
+	1795 Fertility rate = 0.12336160370084812
+	1796 Fertility rate = 0.13569937369519833
+	1797 Fertility rate = 0.1366223908918406
+	1798 Fertility rate = 0.1004566210045662
+	1799 Fertility rate = 0.12046291425565492
+	1800 Fertility rate = 0.11024390243902439
+	1801 Fertility rate = 0.12881508078994613
+	1802 Fertility rate = 0.14255499153976312
+	1803 Fertility rate = 0.13899765074393108
+	1804 Fertility rate = 0.1226207906295754
+	1805 Fertility rate = 0.12840869865377977
+	1806 Fertility rate = 0.13313706247955512
+	1807 Fertility rate = 0.09616573902288188
+	1808 Fertility rate = 0.10689252336448599
+	1809 Fertility rate = 0.10077734591893392
+	1810 Fertility rate = 0.09606756400105569
+	1811 Fertility rate = 0.11116712881270481
+	1812 Fertility rate = 0.09632476579389863
+	1813 Fertility rate = 0.09216589861751152
+	1814 Fertility rate = 0.09250611518790304
+	1815 Fertility rate = 0.09368331199317115
+	1816 Fertility rate = 0.0811930405965203
+	1817 Fertility rate = 0.0838
+	1818 Fertility rate = 0.07336057598754621
+	1819 Fertility rate = 0.07852019630049076
+	1820 Fertility rate = 0.07830882352941176
+	1821 Fertility rate = 0.07285714285714286
+	1822 Fertility rate = 0.07528384279475983
+	1823 Fertility rate = 0.07223942208462332
+	1824 Fertility rate = 0.06694701429772919
+	1825 Fertility rate = 0.07033588293980712
+	1826 Fertility rate = 0.0660377358490566
+	1827 Fertility rate = 0.0644593730006398
+	1828 Fertility rate = 0.06895461015340819
+	1829 Fertility rate = 0.0617476942316711
+	1830 Fertility rate = 0.06501690747002767
+	1831 Fertility rate = 0.06305208650624429
+	1832 Fertility rate = 0.0664451827242525
+	1833 Fertility rate = 0.05883240307738724
+	1834 Fertility rate = 0.05936892477942276
+	1835 Fertility rate = 0.058666666666666666
+	1836 Fertility rate = 0.05786832004723944
+	1837 Fertility rate = 0.059322033898305086
+	1838 Fertility rate = 0.05972323379461034
+	1839 Fertility rate = 0.05902020642535252
+	1840 Fertility rate = 0.06272582743170979
+	1841 Fertility rate = 0.05546773961776117
+	1842 Fertility rate = 0.060206422018348624
+	1843 Fertility rate = 0.059117521062401826
+	1844 Fertility rate = 0.05901639344262295
+	1845 Fertility rate = 0.05587942556519266
+	1846 Fertility rate = 0.05582317937092661
+	1847 Fertility rate = 0.060370422734341865
+	1848 Fertility rate = 0.05260180995475113
+	1849 Fertility rate = 0.06231454005934718
+	1850 Fertility rate = 0.0559480079118395
+	1851 Fertility rate = 0.05360678925035361
+	1852 Fertility rate = 0.0586655357647724
+	1853 Fertility rate = 0.05063469675599436
+	1854 Fertility rate = 0.05515587529976019
+	1855 Fertility rate = 0.06128486897717667
+	1856 Fertility rate = 0.05857385398981324
+	1857 Fertility rate = 0.052282976324689964
+	1858 Fertility rate = 0.05825105782792666
+	1859 Fertility rate = 0.053061224489795916
+	1860 Fertility rate = 0.05895595891374701
+	1861 Fertility rate = 0.054118976967641653
+	1862 Fertility rate = 0.056159164667701426
+	1863 Fertility rate = 0.053778658363996604
+	1864 Fertility rate = 0.056876061120543296
+	1865 Fertility rate = 0.056036317208114625
+	1866 Fertility rate = 0.05754475703324808
+	1867 Fertility rate = 0.057763269940391715
+	1868 Fertility rate = 0.05067423704755145
+	1869 Fertility rate = 0.0605888209358555
+	1870 Fertility rate = 0.05400795906765207
+	1871 Fertility rate = 0.052549353784973725
+	1872 Fertility rate = 0.0576840905853867
+	1873 Fertility rate = 0.055872291904218926
+	1874 Fertility rate = 0.05561100812776273
+	1875 Fertility rate = 0.05105533371363377
+	1876 Fertility rate = 0.0548258138206739
+	1877 Fertility rate = 0.05607076615779712
+	1878 Fertility rate = 0.06201661415067316
+	1879 Fertility rate = 0.05309861170745671
+	1880 Fertility rate = 0.05473563547786216
+	1881 Fertility rate = 0.052186379928315416
+	1882 Fertility rate = 0.06007473411899971
+	1883 Fertility rate = 0.053980135310205846
+	1884 Fertility rate = 0.05847701149425287
+	1885 Fertility rate = 0.05058924978442081
+	1886 Fertility rate = 0.0546683930369731
+	1887 Fertility rate = 0.05681001006759672
+	1888 Fertility rate = 0.054003456221198155
+	1889 Fertility rate = 0.05952724127990775
+	1890 Fertility rate = 0.05170166545981173
+	1891 Fertility rate = 0.05907050818010714
+	1892 Fertility rate = 0.05265448215839861
+	1893 Fertility rate = 0.05843216661845531
+	1894 Fertility rate = 0.051494052799535825
+	1895 Fertility rate = 0.05299070847851336
+	1896 Fertility rate = 0.05790775498326786
+	1897 Fertility rate = 0.05397933944420195
+	1898 Fertility rate = 0.0577370564281559
+	1899 Fertility rate = 0.05315275957477792
+	1900 Fertility rate = 0.05507669831994157
+	1901 Fertility rate = 0.05390008764241893
+	1902 Fertility rate = 0.052816386247256764
+	1903 Fertility rate = 0.05696757230499562
+	1904 Fertility rate = 0.05233999125236915
+	1905 Fertility rate = 0.05688315496261545
+	1906 Fertility rate = 0.056028160750953356
+	1907 Fertility rate = 0.05489505357404961
+	1908 Fertility rate = 0.05492730210016155
+	1909 Fertility rate = 0.052515445719329215
+	1910 Fertility rate = 0.053758676709496384
+	1911 Fertility rate = 0.05532605488344645
+	1912 Fertility rate = 0.055875831485587585
+	1913 Fertility rate = 0.06127270042817068
+	1914 Fertility rate = 0.0540340488527017
+	1915 Fertility rate = 0.05351319300326119
+	1916 Fertility rate = 0.052318668252080855
+	1917 Fertility rate = 0.05577926920208799
+	1918 Fertility rate = 0.053563457818776965
+	1919 Fertility rate = 0.0569677033492823
+	1920 Fertility rate = 0.05005977286312014
+	1921 Fertility rate = 0.052702299193789194
+	1922 Fertility rate = 0.06254676043692953
+	1923 Fertility rate = 0.053790830086904405
+	1924 Fertility rate = 0.05377797806819889
+	1925 Fertility rate = 0.04984984984984985
+	1926 Fertility rate = 0.054537259615384616
+	1927 Fertility rate = 0.05324909747292419
+	1928 Fertility rate = 0.05859316162072601
+	1929 Fertility rate = 0.05108499095840868
+	1930 Fertility rate = 0.05660377358490566
+	1931 Fertility rate = 0.05741048496751775
+	1932 Fertility rate = 0.05320600272851296
+	1933 Fertility rate = 0.05174506828528073
+	1934 Fertility rate = 0.05443211190512392
+	1935 Fertility rate = 0.05587697929354446
+	1936 Fertility rate = 0.0540045766590389
+	1937 Fertility rate = 0.05360134003350084
+	1938 Fertility rate = 0.05611466910643489
+	1939 Fertility rate = 0.05435614760373603
+	1940 Fertility rate = 0.05906719852715557
+	1941 Fertility rate = 0.05357142857142857
+	1942 Fertility rate = 0.05622304374614911
+	1943 Fertility rate = 0.05027760641579272
+	1944 Fertility rate = 0.057906114885731934
+	1945 Fertility rate = 0.05138095972843697
+	1946 Fertility rate = 0.056551297898640294
+	1947 Fertility rate = 0.0560198081089446
+	1948 Fertility rate = 0.053932235001554245
+	1949 Fertility rate = 0.05614307931570762
+	1950 Fertility rate = 0.056022408963585436
+	1951 Fertility rate = 0.05328762854471798
+	1952 Fertility rate = 0.05643903960087309
+	1953 Fertility rate = 0.052006871778853665
+	1954 Fertility rate = 0.05296875
+	1955 Fertility rate = 0.05469604625722769
+	1956 Fertility rate = 0.05640864932623002
+	1957 Fertility rate = 0.05504155559040301
+	1958 Fertility rate = 0.0536754289312136
+	1959 Fertility rate = 0.053119597674053116
+	1960 Fertility rate = 0.05498660784622656
+	1961 Fertility rate = 0.05345316934720908
+	1962 Fertility rate = 0.05462582886011999
+	1963 Fertility rate = 0.05602285351531503
+	1964 Fertility rate = 0.05747856462369006
+	1965 Fertility rate = 0.05208002540489044
+	1966 Fertility rate = 0.05768313999682186
+	1967 Fertility rate = 0.05328455543184349
+	1968 Fertility rate = 0.053713739241313355
+	1969 Fertility rate = 0.05230326295585413
+	1970 Fertility rate = 0.05479233226837061
+	1971 Fertility rate = 0.05716110490180425
+	1972 Fertility rate = 0.05425361155698234
+	1973 Fertility rate = 0.05658254299951776
+	1974 Fertility rate = 0.0523265174690066
+	1975 Fertility rate = 0.05128617363344051
+	1976 Fertility rate = 0.057354599645561465
+	1977 Fertility rate = 0.05255521521844269
+	1978 Fertility rate = 0.056741028128031036
+	1979 Fertility rate = 0.058092625463934164
+	1980 Fertility rate = 0.05344995140913508
+	1981 Fertility rate = 0.052392538523925385
+	1982 Fertility rate = 0.05587136592496346
+	1983 Fertility rate = 0.050365556458164096
+	1984 Fertility rate = 0.053420195439739415
+	1985 Fertility rate = 0.05777705239105598
+	1986 Fertility rate = 0.0575950399738946
+	1987 Fertility rate = 0.05341391702058151
+	1988 Fertility rate = 0.05511939810271508
+	1989 Fertility rate = 0.05360655737704918
+	1990 Fertility rate = 0.05258819650511045
+	1991 Fertility rate = 0.05601317957166392
+	1992 Fertility rate = 0.05371013055693274
+	1993 Fertility rate = 0.050956464379947226
+	1994 Fertility rate = 0.05630779392338177
+	1995 Fertility rate = 0.05268373245251858
+	1996 Fertility rate = 0.05536217470578485
+	1997 Fertility rate = 0.05561088977423639
+	1998 Fertility rate = 0.05129059117402165
+	1999 Fertility rate = 0.05677074636834196
+	2000 Fertility rate = 0.056130972268626796
+	2001 Fertility rate = 0.0514018691588785
+	2002 Fertility rate = 0.054067626380984266
+	2003 Fertility rate = 0.05689424364123159
+	2004 Fertility rate = 0.04958123953098827
+	2005 Fertility rate = 0.055415617128463476
+	2006 Fertility rate = 0.05668629100084104
+	2007 Fertility rate = 0.05631428089698196
+	2008 Fertility rate = 0.0537525354969574
+	2009 Fertility rate = 0.053405441946932565
+	2010 Fertility rate = 0.05981023381904439
+	2011 Fertility rate = 0.048983050847457625
+	2012 Fertility rate = 0.05378350865286732
+	2013 Fertility rate = 0.05637881110543349
+	2014 Fertility rate = 0.05614334470989761
+	2015 Fertility rate = 0.051671214188267395
+	2016 Fertility rate = 0.059448346753469244
+Death distribution:
+	Deaths at age: 1 = 35 = 0.055%
+	Deaths at age: 2 = 27 = 0.042%
+	Deaths at age: 3 = 20 = 0.031%
+	Deaths at age: 4 = 22 = 0.034%
+	Deaths at age: 5 = 14 = 0.022%
+	Deaths at age: 6 = 17 = 0.027%
+	Deaths at age: 7 = 10 = 0.016%
+	Deaths at age: 8 = 17 = 0.027%
+	Deaths at age: 9 = 12 = 0.019%
+	Deaths at age: 10 = 16 = 0.025%
+	Deaths at age: 11 = 16 = 0.025%
+	Deaths at age: 12 = 16 = 0.025%
+	Deaths at age: 13 = 16 = 0.025%
+	Deaths at age: 14 = 26 = 0.041%
+	Deaths at age: 15 = 23 = 0.036%
+	Deaths at age: 16 = 29 = 0.045%
+	Deaths at age: 17 = 48 = 0.075%
+	Deaths at age: 18 = 41 = 0.064%
+	Deaths at age: 19 = 51 = 0.080%
+	Deaths at age: 20 = 53 = 0.083%
+	Deaths at age: 21 = 37 = 0.058%
+	Deaths at age: 22 = 42 = 0.066%
+	Deaths at age: 23 = 36 = 0.056%
+	Deaths at age: 24 = 45 = 0.070%
+	Deaths at age: 25 = 45 = 0.070%
+	Deaths at age: 26 = 49 = 0.077%
+	Deaths at age: 27 = 48 = 0.075%
+	Deaths at age: 28 = 49 = 0.077%
+	Deaths at age: 29 = 51 = 0.080%
+	Deaths at age: 30 = 49 = 0.077%
+	Deaths at age: 31 = 56 = 0.087%
+	Deaths at age: 32 = 58 = 0.091%
+	Deaths at age: 33 = 62 = 0.097%
+	Deaths at age: 34 = 79 = 0.123%
+	Deaths at age: 35 = 70 = 0.109%
+	Deaths at age: 36 = 98 = 0.153%
+	Deaths at age: 37 = 78 = 0.122%
+	Deaths at age: 38 = 104 = 0.162%
+	Deaths at age: 39 = 125 = 0.195%
+	Deaths at age: 40 = 137 = 0.214%
+	Deaths at age: 41 = 151 = 0.236%
+	Deaths at age: 42 = 159 = 0.248%
+	Deaths at age: 43 = 178 = 0.278%
+	Deaths at age: 44 = 217 = 0.339%
+	Deaths at age: 45 = 232 = 0.362%
+	Deaths at age: 46 = 253 = 0.395%
+	Deaths at age: 47 = 276 = 0.431%
+	Deaths at age: 48 = 309 = 0.483%
+	Deaths at age: 49 = 367 = 0.573%
+	Deaths at age: 50 = 382 = 0.597%
+	Deaths at age: 51 = 448 = 0.700%
+	Deaths at age: 52 = 490 = 0.766%
+	Deaths at age: 53 = 526 = 0.822%
+	Deaths at age: 54 = 575 = 0.898%
+	Deaths at age: 55 = 605 = 0.945%
+	Deaths at age: 56 = 698 = 1.091%
+	Deaths at age: 57 = 737 = 1.151%
+	Deaths at age: 58 = 812 = 1.269%
+	Deaths at age: 59 = 917 = 1.433%
+	Deaths at age: 60 = 887 = 1.386%
+	Deaths at age: 61 = 1011 = 1.580%
+	Deaths at age: 62 = 1030 = 1.609%
+	Deaths at age: 63 = 1201 = 1.876%
+	Deaths at age: 64 = 1213 = 1.895%
+	Deaths at age: 65 = 1253 = 1.958%
+	Deaths at age: 66 = 1397 = 2.183%
+	Deaths at age: 67 = 1423 = 2.223%
+	Deaths at age: 68 = 1587 = 2.479%
+	Deaths at age: 69 = 1605 = 2.508%
+	Deaths at age: 70 = 1685 = 2.633%
+	Deaths at age: 71 = 1787 = 2.792%
+	Deaths at age: 72 = 1895 = 2.961%
+	Deaths at age: 73 = 1907 = 2.979%
+	Deaths at age: 74 = 1984 = 3.100%
+	Deaths at age: 75 = 2052 = 3.206%
+	Deaths at age: 76 = 2036 = 3.181%
+	Deaths at age: 77 = 2071 = 3.236%
+	Deaths at age: 78 = 2165 = 3.383%
+	Deaths at age: 79 = 2152 = 3.362%
+	Deaths at age: 80 = 2089 = 3.264%
+	Deaths at age: 81 = 2041 = 3.189%
+	Deaths at age: 82 = 2017 = 3.151%
+	Deaths at age: 83 = 1915 = 2.992%
+	Deaths at age: 84 = 1812 = 2.831%
+	Deaths at age: 85 = 1735 = 2.711%
+	Deaths at age: 86 = 1525 = 2.383%
+	Deaths at age: 87 = 1421 = 2.220%
+	Deaths at age: 88 = 1226 = 1.915%
+	Deaths at age: 89 = 1063 = 1.661%
+	Deaths at age: 90 = 876 = 1.369%
+	Deaths at age: 91 = 720 = 1.125%
+	Deaths at age: 92 = 612 = 0.956%
+	Deaths at age: 93 = 469 = 0.733%
+	Deaths at age: 94 = 372 = 0.581%
+	Deaths at age: 95 = 326 = 0.509%
+	Deaths at age: 96 = 211 = 0.330%
+	Deaths at age: 97 = 135 = 0.211%
+	Deaths at age: 98 = 80 = 0.125%
+	Deaths at age: 99 = 36 = 0.056%
+	Deaths at age: 100 = 51 = 0.080%
+	Deaths at age: 101 = 53 = 0.083%
+	Deaths at age: 102 = 10 = 0.016%
+	Deaths at age: 103 = 1 = 0.002%
+	Deaths at age: 104 = 4 = 0.006%
+	Deaths at age: 105 = 3 = 0.005%
+	Deaths at age: 106 = 1 = 0.002%
+	Deaths at age: 107 = 1 = 0.002%
+	Deaths at age: 108 = 0 = 0.000%
+	Deaths at age: 109 = 0 = 0.000%
+Male marriage sizes:
+	 unmarried: 0

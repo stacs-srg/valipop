@@ -16,9 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.utilities.FileManipulation;
 import uk.ac.standrews.cs.utilities.PercentageProgressIndicator;
 import uk.ac.standrews.cs.utilities.ProgressIndicator;

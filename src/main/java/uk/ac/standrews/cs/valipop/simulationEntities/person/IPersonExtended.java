@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.person;
 
 
-import uk.ac.standrews.cs.basic_model.model.IPerson;
+import uk.ac.standrews.cs.valipop.model.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.entityExtensions.PersonUtils;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;

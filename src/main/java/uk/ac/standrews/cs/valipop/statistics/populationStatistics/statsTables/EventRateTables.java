@@ -16,9 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables;
 
-import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
-import uk.ac.standrews.cs.basic_model.distributions.general.FileBasedEnumeratedDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;

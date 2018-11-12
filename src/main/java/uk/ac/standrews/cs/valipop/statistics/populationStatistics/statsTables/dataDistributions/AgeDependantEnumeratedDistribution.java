@@ -1,8 +1,8 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
-import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;

@@ -31,5 +31,4 @@ public class AnalyticsRunner {
         new DeathAnalytics(population, resultsOutput).printAllAnalytics();
         new MarriageAnalytics(population, resultsOutput).printAllAnalytics();
     }
-
 }

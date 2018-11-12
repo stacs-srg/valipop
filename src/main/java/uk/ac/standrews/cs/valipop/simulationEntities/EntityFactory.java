@@ -18,19 +18,19 @@ package uk.ac.standrews.cs.valipop.simulationEntities;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.BirthDateSelector;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.MarriageDateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class EntityFactory {
 
     public static MarriageDateSelector marriageDateSelector = new MarriageDateSelector();
 
-    private static BirthDateSelector birthDateSelector = new BirthDateSelector();
+    private static DateSelector birthDateSelector = new DateSelector();
 
     public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended father, IPersonExtended mother, AdvanceableDate currentDate,
                                                                     CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, boolean illegitimate, boolean marriedAtBirth) throws PersonNotFoundException {

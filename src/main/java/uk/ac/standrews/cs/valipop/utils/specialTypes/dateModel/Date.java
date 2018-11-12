@@ -25,7 +25,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
  */
 public interface Date extends Comparable<Date> {
 
-
     int getYear();
 
     /**
@@ -48,9 +47,5 @@ public interface Date extends Comparable<Date> {
 
     YearDate getYearDate();
 
-    String toOrderableString();
-
     MonthDate getMonthDate();
-
-
 }
