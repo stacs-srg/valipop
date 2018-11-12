@@ -14,21 +14,20 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.implementations;
+package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations;
 
-import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
-
-import java.io.IOException;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class GeneralValiPopPopulationTest extends GeneralPopulationStructureTests {
+public interface AdvanceableDate extends Date {
 
-    public GeneralValiPopPopulationTest() throws IOException, InvalidInputFileException, PreEmptiveOutOfMemoryWarning, StatsException {
-        super(CL_OBDModel.runOBDModel("src/test/resources/valipop/config-ps.txt",
-                "src/test/resources/results", "general-structure-testing")
-                .getPopulation().getAllPeople(), false);
-    }
+    AdvanceableDate advanceTime(int numberOf, TimeUnit unit);
 
+    AdvanceableDate advanceTime(CompoundTimeUnit timeStep);
+
+    MonthDate getMonthDate();
 }

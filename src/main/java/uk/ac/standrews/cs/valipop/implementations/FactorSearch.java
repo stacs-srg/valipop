@@ -17,26 +17,19 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
-import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Control;
-import uk.ac.standrews.cs.valipop.implementations.minimaSearch.MinimaSearch;
-import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.AnalysisThread;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
-import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
-import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.io.IOException;
-
-import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.GEEGLM;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -104,9 +97,9 @@ public class FactorSearch {
     static RecordFormat output_record_format = RecordFormat.NONE;
 
     static CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
-    static AdvancableDate tS = new YearDate(1599);
-    static AdvancableDate t0 = new YearDate(1855);
-    static AdvancableDate tE = new YearDate(2015);
+    static AdvanceableDate tS = new YearDate(1599);
+    static AdvanceableDate t0 = new YearDate(1855);
+    static AdvanceableDate tE = new YearDate(2015);
     static double set_up_br = 0.0233;
     static double set_up_dr = 0.0322;
 
@@ -146,7 +139,7 @@ public class FactorSearch {
 
                                                 Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
                                                         simulation_time_step, dataFiles, results_save_location, runPurpose,
-                                                        minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime);
+                                                        minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime, 0, false);
 
 
                                                 OBDModel model = new OBDModel(startTime, config);

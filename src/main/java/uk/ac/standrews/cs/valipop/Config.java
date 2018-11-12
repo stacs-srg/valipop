@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InputFileReader;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.exceptions.InvalidTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -66,8 +66,6 @@ public class Config {
     private static final String locationsSubFile = "locations";
     private static final String migrationSubFile = "migration";
 
-
-
     public static final Logger log = new Logger(Config.class);
 
     private MonthDate tS;
@@ -112,7 +110,8 @@ public class Config {
 
     private final String startTime;
 
-    private boolean binominalSampling = true;
+    private boolean binomialSampling = true;
+    private int seed = 0;
     private boolean deterministic = false;
 
     // Filter method to exclude dot files from data file directory streams
@@ -124,25 +123,11 @@ public class Config {
         throw new IOException("Failed to get Filename");
     };
 
-
-    public Config(AdvancableDate tS, AdvancableDate t0, AdvancableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
+    public Config(AdvanceableDate tS, AdvanceableDate t0, AdvanceableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
                   CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
-                  int minBirthSpacing, int minGestationPeriodDays, boolean binominalSampling,
+                  int minBirthSpacing, int minGestationPeriodDays, boolean binomialSampling,
                   double birthFactor, double deathFactor, double recoveryFactor, double proportionalRecoveryFactor,
-                  CompoundTimeUnit inputWidth, RecordFormat outputRecordFormat, String startTime, boolean deterministic) {
-
-        this(tS, t0, tE, t0PopulationSize, setUpBR, setUpDR, simulationTimeStep, varPath, resultsSavePath, runPurpose,
-                minBirthSpacing, minGestationPeriodDays, binominalSampling, birthFactor, deathFactor,
-                recoveryFactor, proportionalRecoveryFactor, inputWidth, outputRecordFormat, startTime);
-        this.deterministic = deterministic;
-
-    }
-
-    public Config(AdvancableDate tS, AdvancableDate t0, AdvancableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
-                  CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
-                  int minBirthSpacing, int minGestationPeriodDays, boolean binominalSampling,
-                  double birthFactor, double deathFactor, double recoveryFactor, double proportionalRecoveryFactor,
-                  CompoundTimeUnit inputWidth, RecordFormat outputRecordFormat, String startTime) {
+                  CompoundTimeUnit inputWidth, RecordFormat outputRecordFormat, String startTime, int seed, boolean deterministic) {
 
         initialiseVarPaths(varPath);
 
@@ -155,7 +140,7 @@ public class Config {
         this.setUpBR = setUpBR;
         this.setUpDR = setUpDR;
         this.simulationTimeStep = simulationTimeStep;
-        this.binominalSampling = binominalSampling;
+        this.binomialSampling = binomialSampling;
         this.runPurpose = runPurpose;
         this.minBirthSpacing = minBirthSpacing;
         this.minGestationPeriodDays = minGestationPeriodDays;
@@ -166,7 +151,7 @@ public class Config {
         this.inputWidth = inputWidth;
         this.outputRecordFormat = outputRecordFormat;
         this.startTime = startTime;
-
+        this.deterministic = deterministic;
     }
 
     /**
@@ -191,7 +176,6 @@ public class Config {
 
             for (int i = 0; i < split.length; i++)
                 split[i] = split[i].trim();
-
 
             String path = split[1];
 
@@ -283,7 +267,7 @@ public class Config {
                     }
                     break;
                 case "binominal_sampling":
-                    binominalSampling = split[1].toLowerCase().equals("true");
+                    binomialSampling = split[1].toLowerCase().equals("true");
                     break;
                 case "birth_factor":
                     try {
@@ -342,11 +326,9 @@ public class Config {
                 case "deterministic":
                     deterministic = split[1].toLowerCase().equals("true");
                     break;
-
             }
         }
     }
-
 
     private void initialiseVarPaths(String path) {
 
@@ -371,14 +353,11 @@ public class Config {
         varMaleForenamePaths = Paths.get(annotationsSubPath, maleForenameSubFile);
         varFemaleForenamePaths = Paths.get(annotationsSubPath, femaleForenameSubFile);
         varSurnamePaths = Paths.get(annotationsSubPath, surnameSubFile);
-
-
     }
 
     public String getVarPath() {
         return varPath;
     }
-
 
     public DirectoryStream<Path> getVarOrderedBirthPaths() throws IOException {
         try {
@@ -389,7 +368,6 @@ public class Config {
             throw new IOException(message, e);
         }
     }
-
 
     public DirectoryStream<Path> getVarMaleLifetablePaths() throws IOException {
         try {
@@ -461,7 +439,6 @@ public class Config {
         }
     }
 
-
     public DirectoryStream<Path> getVarPartneringPaths() throws IOException {
         try {
             return Files.newDirectoryStream(varPartneringPaths, filter);
@@ -471,7 +448,6 @@ public class Config {
             throw new IOException(message, e);
         }
     }
-
 
     public DirectoryStream<Path> getVarSeparationPaths() throws IOException {
         try {
@@ -567,10 +543,9 @@ public class Config {
         return inputWidth;
     }
 
-    public boolean getBinominalSampling() {
-        return binominalSampling;
+    public boolean getBinomialSampling() {
+        return binomialSampling;
     }
-
 
     public int getMinBirthSpacing() {
         return minBirthSpacing;
@@ -604,8 +579,11 @@ public class Config {
         return minGestationPeriodDays;
     }
 
+    public int getSeed() {
+        return seed;
+    }
+
     public boolean deterministic() {
         return deterministic;
     }
-
 }

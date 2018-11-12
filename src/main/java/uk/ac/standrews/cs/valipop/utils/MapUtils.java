@@ -20,10 +20,7 @@ package uk.ac.standrews.cs.valipop.utils;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -66,7 +63,6 @@ public class MapUtils {
         }
 
         return sum;
-
     }
 
     public static Map<Integer, Integer> floorAllValuesInMap(Map<IntegerRange, Double> map) {
@@ -76,11 +72,9 @@ public class MapUtils {
         for (Map.Entry<IntegerRange, Double> iR : map.entrySet()) {
 
             temp.put(iR.getKey().getValue(), iR.getValue().intValue());
-
         }
 
         return temp;
-
     }
 
     public static void print(String label, Map<IntegerRange, ?> temp, int s, int interval, int e) {
@@ -101,24 +95,22 @@ public class MapUtils {
 
     public static Map<IntegerRange, OneDimensionDataDistribution> clone(Map<IntegerRange, OneDimensionDataDistribution> tableData) {
 
-        Map<IntegerRange, OneDimensionDataDistribution> clone = new HashMap<IntegerRange, OneDimensionDataDistribution>();
+        Map<IntegerRange, OneDimensionDataDistribution> clone = new TreeMap<>();
 
         for (Map.Entry<IntegerRange, OneDimensionDataDistribution> iR : tableData.entrySet()) {
             clone.put(iR.getKey(), iR.getValue().clone());
         }
 
         return clone;
-
     }
 
     public static Map<IntegerRange, Double> cloneODM(Map<IntegerRange, Double> tableData) {
 
-        Map<IntegerRange, Double> clone = new HashMap<>();
+        Map<IntegerRange, Double> clone = new TreeMap<>();
 
         for(Map.Entry<IntegerRange, Double> iR : tableData.entrySet()) {
             clone.put(iR.getKey(), iR.getValue());
         }
-
 
         return clone;
     }

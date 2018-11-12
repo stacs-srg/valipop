@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.u
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PersonCollection;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -57,7 +57,7 @@ public class AggregatePersonCollectionFactory {
      */
     public static PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) {
 
-        AdvancableDate start = DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
+        AdvanceableDate start = DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
         Date end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());
 
         PeopleCollection cloneCol1 = col1.clone();
@@ -66,16 +66,14 @@ public class AggregatePersonCollectionFactory {
         cloneCol1.setStartDate(start);
         cloneCol1.setEndDate(end);
 
-        for(IPersonExtended p : cloneCol2.getPeople_ex()) {
+        for (IPersonExtended p : cloneCol2.getPeople_ex()) {
             cloneCol1.addPerson(p);
         }
 
-        for(IPartnershipExtended p : cloneCol2.getPartnerships_ex()) {
+        for (IPartnershipExtended p : cloneCol2.getPartnerships_ex()) {
             cloneCol1.addPartnershipToIndex(p);
         }
 
         return cloneCol1;
     }
-
-
 }

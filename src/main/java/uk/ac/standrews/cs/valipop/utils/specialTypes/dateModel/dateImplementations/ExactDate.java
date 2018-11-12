@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementati
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 
-import java.security.InvalidParameterException;
 import java.time.DateTimeException;
 import java.util.Calendar;
 
@@ -65,7 +64,6 @@ public final class ExactDate implements Date {
         this.day = day;
         this.month = month;
         this.year = year;
-
     }
 
     public ExactDate(Date date) {
@@ -99,7 +97,6 @@ public final class ExactDate implements Date {
 
         throw new IllegalArgumentException("Advancing of time failed - for days - numberOfDays = " + numberOfDays);
     }
-
 
     @Override
     public int getYear() {

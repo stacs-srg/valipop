@@ -16,15 +16,15 @@
  */
 package uk.ac.standrews.cs.basic_model.organic.logger;
 
+import uk.ac.standrews.cs.basic_model.distributions.general.NotSetUpAtClassInitilisationException;
+import uk.ac.standrews.cs.basic_model.distributions.temporal.TemporalEnumDistribution;
+import uk.ac.standrews.cs.basic_model.organic.OrganicPopulation;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
-
-import uk.ac.standrews.cs.basic_model.distributions.general.NotSetUpAtClassInitilisationException;
-import uk.ac.standrews.cs.basic_model.distributions.temporal.TemporalEnumDistribution;
-import uk.ac.standrews.cs.basic_model.organic.OrganicPopulation;
 
 public class TemporalEnumLogger<Value> extends TemporalLogger<Integer> {
 
@@ -32,7 +32,7 @@ public class TemporalEnumLogger<Value> extends TemporalLogger<Integer> {
         this.title = graphTitle;
         this.fileName = fileName;
         this.xLabel = xLabel;
-        map = new HashMap<Integer, DistributionLogger<Integer>>();
+        map = new HashMap<>();
         for (Integer i : relatedTemporalDistribution.getMapKeys()) {
             map.put(i, new DistributionEnumLogger(relatedTemporalDistribution.getDistributionForYear(i), relatedTemporalDistribution.getEnums()));
         }

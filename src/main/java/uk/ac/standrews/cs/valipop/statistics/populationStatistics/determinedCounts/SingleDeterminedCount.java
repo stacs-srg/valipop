@@ -48,7 +48,7 @@ public class SingleDeterminedCount implements DeterminedCount<Integer, Double> {
         return key;
     }
 
-    public Integer getFufilledCount() {
+    public Integer getFulfilledCount() {
         return fufilledCount;
     }
 
@@ -62,7 +62,7 @@ public class SingleDeterminedCount implements DeterminedCount<Integer, Double> {
         return rawUncorrectedCount;
     }
 
-    public void setFufilledCount(Integer fufilledCount) {
-        this.fufilledCount = fufilledCount;
+    public void setFulfilledCount(Integer fulfilledCount) {
+        this.fufilledCount = fulfilledCount;
     }
 }

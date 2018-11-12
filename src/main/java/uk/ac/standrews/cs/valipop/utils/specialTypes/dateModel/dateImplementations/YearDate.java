@@ -26,7 +26,7 @@ import java.util.Calendar;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public final class YearDate implements AdvancableDate {
+public final class YearDate implements AdvanceableDate {
 
     private static final int DAY = 1;
     private final int year;
@@ -85,11 +85,11 @@ public final class YearDate implements AdvancableDate {
     @Override
     public boolean equals(Object obj) {
 
-        if(obj == null || !(obj instanceof AdvancableDate)) {
+        if(obj == null || !(obj instanceof AdvanceableDate)) {
             return false;
         }
 
-        AdvancableDate date = (AdvancableDate) obj;
+        AdvanceableDate date = (AdvanceableDate) obj;
         return this.year == date.getYear() && this.getMonth() == date.getMonth();
     }
 
@@ -110,12 +110,12 @@ public final class YearDate implements AdvancableDate {
     }
 
     @Override
-    public AdvancableDate advanceTime(int numberOf, TimeUnit unit) {
+    public AdvanceableDate advanceTime(int numberOf, TimeUnit unit) {
         return getMonthDate().advanceTime(numberOf, unit);
     }
 
     @Override
-    public AdvancableDate advanceTime(CompoundTimeUnit timeStep) {
+    public AdvanceableDate advanceTime(CompoundTimeUnit timeStep) {
         return getMonthDate().advanceTime(timeStep);
     }
 }

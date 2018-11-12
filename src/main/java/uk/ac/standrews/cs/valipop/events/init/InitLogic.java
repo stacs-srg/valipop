@@ -22,14 +22,13 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStat
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.selectionApproaches.SharedLogic;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
-
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -62,10 +61,9 @@ public class InitLogic {
         log.info("End of Initialisation Period set: " + endOfInitPeriod.toString());
 
         initTimeStep = config.getSimulationTimeStep();
-
     }
 
-    public static int handleInitPeople(Config config, AdvancableDate currentTime, Population population, PopulationStatistics ps) {
+    public static int handleInitPeople(Config config, AdvanceableDate currentTime, Population population, PopulationStatistics ps) {
 
         // calculate hypothetical number of expected births
         int hypotheticalBirths = calculateChildrenToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR() * initTimeStep.toDecimalRepresentation());
@@ -79,7 +77,7 @@ public class InitLogic {
         // update hypothetical population
         currentHypotheticalPopulationSize = currentHypotheticalPopulationSize + hypotheticalBirths - hypotheticalDeaths;
 
-        if(shortFallInBirths >= 0) {
+        if (shortFallInBirths >= 0) {
             // add Orphan Children to the population
             for (int i = 0; i < shortFallInBirths; i++) {
                 EntityFactory.formOrphanChild(currentTime, InitLogic.getTimeStep(), population, ps);
@@ -89,7 +87,7 @@ public class InitLogic {
             int removeMales;
             int removeFemales;
 
-            if(removeN % 1 != 0) {
+            if (removeN % 1 != 0) {
                 removeMales = (int) Math.ceil(removeN);
                 removeFemales = (int) Math.floor(removeN);
             } else {
@@ -110,11 +108,9 @@ public class InitLogic {
                 // Never should happen
                 throw new Error();
             }
-
         }
 
         return shortFallInBirths;
-
     }
 
     public static void incrementBirthCount(int n) {
@@ -141,5 +137,4 @@ public class InitLogic {
     public static int calculateNumberToDie(int people, Double deathRate) {
         return SharedLogic.calculateNumberToHaveEvent(people, deathRate, randomNumberGenerator);
     }
-
 }

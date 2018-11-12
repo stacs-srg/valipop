@@ -58,7 +58,7 @@ public abstract class AbstractTestCaseRecorder {
                     0.0122, new CompoundTimeUnit(1, TimeUnit.YEAR), "src/test/resources/valipop/test-pop",
                     "results", "DETERMINISTIC-TESTING", 147,
                     147, true, 0.0, 0.0, 1.0, 1.0,
-                    new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, startTime, true);
+                    new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, startTime, 0, true);
             OBDModel sim = new OBDModel(startTime, config);
             sim.runSimulation();
 

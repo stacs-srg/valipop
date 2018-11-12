@@ -17,31 +17,30 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.junit.Assert;
+import org.junit.Test;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.DeathStatsKey;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import org.junit.Assert;
-import org.junit.Test;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.DeathStatsKey;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectionTests {
+public class SelfCorrectionTest {
 
     private final double DELTA = 1E-10;
 
     private SelfCorrectingOneDimensionDataDistribution createSC1DDD() {
 
-        Map<IntegerRange, Double> data = new HashMap<>();
+        Map<IntegerRange, Double> data = new TreeMap<>();
         data.put(new IntegerRange(0), 0.1);
         data.put(new IntegerRange(1), 0.000037);
         data.put(new IntegerRange(2), 0D);
@@ -76,28 +75,7 @@ public class SelfCorrectionTests {
             StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, y, null, 'm');
             DeterminedCount r2 = sc1DDD.determineCount(k2, null);
             Assert.assertEquals((int)Math.round(check * 1000), (int) r2.getDeterminedCount(), DELTA);
-
-//            // Secondary retrieval having met first request
-//            r1.setFufilledCount(r1.getDeterminedCount());
-//            sc1DDD.returnAchievedCount(r1);
-//            r1 = sc1DDD.determineCount(k1);
-//            Assert.assertEquals((int)Math.ceil(check * 100), (int) r1.getDeterminedCount(), DELTA);
-//
-//            r2.setFufilledCount(r2.getDeterminedCount());
-//            sc1DDD.returnAchievedCount(r2);
-//            r2 = sc1DDD.determineCount(k2);
-//            Assert.assertEquals((int)Math.ceil(check * 1000), (int) r2.getDeterminedCount(), DELTA);
-//
-//            r1 = sc1DDD.determineCount(k1);
-//            Assert.assertEquals((int)Math.ceil(check * 100), (int) r1.getDeterminedCount(), DELTA);
-//
-//            StatsKey k4 = new DeathStatsKey(iR.getValue(), 10, y, null, 'm');
-//            DeterminedCount r4 = sc1DDD.determineCount(k4);
-//
-//            Assert.assertEquals((int)Math.ceil(check * 10), (int) r4.getDeterminedCount(), DELTA);
-
         }
-
     }
 
     @Test
@@ -126,118 +104,10 @@ public class SelfCorrectionTests {
                 Assert.assertEquals((int) Math.round(c1 * r1.getKey().getForNPeople()), r1.getDeterminedCount());
 
                 int rr2 = (int) Math.round(1.5 * (int) r1.getDeterminedCount());
-                r1.setFufilledCount(rr2);
+                r1.setFulfilledCount(rr2);
                 sc1DDD.returnAchievedCount(r1);
-
-                // --- C
-
-//                DeterminedCount rr2c1 = sc1DDD.determineCount(k1);
-//
-////                double exprr2c1 = calcExpectedCorrectiveRate(c1, rr2, k1, k1);
-//                int expc2c1 = calcExpectedCount(r1, k1, c1);
-//                Assert.assertEquals(expc2c1, rr2c1.getDeterminedCount());
-//
-//                DeterminedCount rr2c2 = sc1DDD.determineCount(k2);
-//                int expc2c2 = calcExpectedCount(r1, k2, c1);
-//                Assert.assertEquals(expc2c2, rr2c2.getDeterminedCount());
-//
-//                rr2c2.setFufilledCount(rr2c2.getDeterminedCount());
-//                sc1DDD.returnAchievedCount(rr2c2);
-//
-//                // --- D
-//
-//                DeterminedCount rr3c = sc1DDD.determineCount(k1);
-//                Assert.assertEquals((int) Math.ceil(c1 * rr3c.getKey().getForNPeople()), rr3c.getDeterminedCount());
-//
-//
-//                int rr4 = (int) Math.round(0.5 * (int) r1.getDeterminedCount());
-//                rr3c.setFufilledCount(rr4);
-//                sc1DDD.returnAchievedCount(rr3c);
-//
-//                // --- E
-//
-//                DeterminedCount rr4c1 = sc1DDD.determineCount(k1);
-//                int expc4c1 = calcExpectedCount(rr3c, k1, c1);
-//
-//                Assert.assertEquals(expc4c1, rr4c1.getDeterminedCount());
-//
-//                DeterminedCount rr4c2 = sc1DDD.determineCount(k2);
-//
-//                double exprr4c2 = calcExpectedCorrectiveRate(c1, rr4, k1, k2);
-//                int expc4c2 = calcExpectedCount(rr3c, k2, c1);
-//
-//                Assert.assertEquals(expc4c2, rr4c2.getDeterminedCount());
-//
-//                if ((int) rr4c2.getDeterminedCount() == rr4c2.getKey().getForNPeople()) {
-//                    rr4c2.setFufilledCount(calcUnfetteredExpectedCount(rr3c, k2, c1));
-//                } else {
-//                    rr4c2.setFufilledCount(expc4c2);
-//                }
-//
-//                sc1DDD.returnAchievedCount(rr4c2);
-//
-//                // --- F
-//
-//                DeterminedCount rr5c = sc1DDD.determineCount(k1);
-//                Assert.assertEquals((int) Math.round(c1 * rr5c.getKey().getForNPeople()), rr5c.getDeterminedCount());
-
-//                double rr6 = 0.25 * r1;
-//                sc1DDD.returnAchievedCount(k1, rr6, tp);
-//
-//                // --- G
-//
-//                double rr6c1 = sc1DDD.determineCount(k1, tp);
-//                double exprr6c1 = calcExpectedCorrectiveRate(c1, rr6, k1, k1);
-//                Assert.assertEquals(exprr6c1, rr6c1, DELTA);
-//
-//                double rr6c2 = sc1DDD.determineCount(k2, tp);
-//                double exprr6c2 = calcExpectedCorrectiveRate(c1, rr6, k1, k2);
-//                Assert.assertEquals(exprr6c2, rr6c2, DELTA);
-//
-//                double rr7 = rr6c2 * 1.75;
-//
-//                sc1DDD.returnAchievedCount(k2, rr7, tp);
-//
-//                // --- H
-//
-//                double rrA = calcAdditiveRate(k1, rr6, k2, rr7);
-//                StatsKey kA = new DeathStatsKey(iR.getValue(), k1.getForNPeople() + k2.getForNPeople());
-//
-//                double rrAc1 = sc1DDD.determineCount(k1, tp);
-//                double exprrAc1 = calcExpectedCorrectiveRate(c1, rrA, kA, k1);
-//                Assert.assertEquals(exprrAc1, rrAc1, DELTA);
-//
-//                double rrAc2 = sc1DDD.determineCount(k2, tp);
-//                double exprrAc2 = calcExpectedCorrectiveRate(c1, rrA, kA, k2);
-//                Assert.assertEquals(exprrAc2, rrAc2, DELTA);
-//
-//                double rr8 = rrAc1 * 0.9;
-//
-//                sc1DDD.returnAchievedCount(k1, rr8, tp);
-//
-//                // --- I
-//
-//                double rrB = calcAdditiveRate(kA, rrA, k1, rr8);
-//                StatsKey kB = new DeathStatsKey(iR.getValue(), kA.getForNPeople() + k1.getForNPeople());
-//
-//                double rrBc1 = sc1DDD.determineCount(k1, tp);
-//                double exprrBc1 = calcExpectedCorrectiveRate(c1, rrB, kB, k1);
-//                Assert.assertEquals(exprrBc1, rrBc1, DELTA);
-//
-//                double rrBc2 = sc1DDD.determineCount(k2, tp);
-//                double exprrBc2 = calcExpectedCorrectiveRate(c1, rrB, kB, k2);
-//                Assert.assertEquals(exprrBc2, rrBc2, DELTA);
-//
-//                sc1DDD.returnAchievedCount(k2, rrBc2, tp);
-//
-//                // --- J
-//
-//                double rrBc2c = sc1DDD.determineCount(k1, tp);
-//                Assert.assertEquals(c1, rrBc2c, DELTA);
-
             }
         }
-
     }
 
     private int calcExpectedCount(DeterminedCount applied, StatsKey corrective, double targetRate) {
@@ -258,7 +128,7 @@ public class SelfCorrectionTests {
 
     private int calcUnfetteredExpectedCount(DeterminedCount applied, StatsKey corrective, double targetRate) {
 
-        return (int) Math.ceil(targetRate * (applied.getKey().getForNPeople() + corrective.getForNPeople()) - (int) applied.getFufilledCount());
+        return (int) Math.ceil(targetRate * (applied.getKey().getForNPeople() + corrective.getForNPeople()) - (int) applied.getFulfilledCount());
     }
 
     private double calcAdditiveRate(StatsKey k1, double r1, StatsKey k2, double r2) {
@@ -286,7 +156,7 @@ public class SelfCorrectionTests {
         return expectedCorrectiveRate;
     }
 
-    private double calcUnfeteredExpectedCorrectiveRate(double targetRate, double returnedRate, StatsKey returnedKey, StatsKey checkKey) {
+    private double calcUnfetteredExpectedCorrectiveRate(double targetRate, double returnedRate, StatsKey returnedKey, StatsKey checkKey) {
 
         double expectedCorrectiveRate =
                 (targetRate * (returnedKey.getForNPeople()
@@ -298,7 +168,6 @@ public class SelfCorrectionTests {
         return expectedCorrectiveRate;
     }
 
-
     @Test
     public void variedTimeStepTest() {
 
@@ -309,7 +178,6 @@ public class SelfCorrectionTests {
         int popSize = 1000000;
         CompoundTimeUnit y = new CompoundTimeUnit(1, TimeUnit.YEAR);
         CompoundTimeUnit m2 = new CompoundTimeUnit(2, TimeUnit.MONTH);
-
 
         StatsKey yearK = new DeathStatsKey(age, popSize, y, null, 'm');
         int expPopSize = popSize - data.determineCount(yearK, null).getDeterminedCount();
@@ -324,10 +192,7 @@ public class SelfCorrectionTests {
         }
 
         Assert.assertEquals(expPopSize, popSize);
-
     }
-
-
 }
 
 

@@ -33,7 +33,6 @@ public class Logger {
         } catch (IOException | NullPointerException e) {
             System.out.print("Log setup has failed | " + message);
         }
-
     }
 
     public void info(String message) {
@@ -47,6 +46,4 @@ public class Logger {
     public void error(String message) {
         log(message);
     }
-
-
 }

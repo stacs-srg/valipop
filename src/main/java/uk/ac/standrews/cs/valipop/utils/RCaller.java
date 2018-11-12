@@ -2,7 +2,6 @@ package uk.ac.standrews.cs.valipop.utils;
 
 import uk.ac.standrews.cs.valipop.implementations.StatsException;
 
-import javax.sql.rowset.spi.SyncResolver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -41,7 +40,6 @@ public class RCaller {
         }
 
         return Double.parseDouble(res[1]);
-
     }
 
     public static double getObV(String pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
@@ -57,7 +55,6 @@ public class RCaller {
         }
 
         return Double.parseDouble(res[1]);
-
     }
 
     public static double getGeeglmV(String title, String pathOfRunDir, String pathOfTablesDir, int maxBirthingAge, String startTime) throws IOException, StatsException {
@@ -78,7 +75,7 @@ public class RCaller {
                 throw new StatsException("Too many values returned from sh for given script");
             }
 
-            // This checks to ensure that the parralism bug in knitr hasn't effected this analysis run
+            // This checks to ensure that the parallelism bug in knitr hasn't affected this analysis run
             String checkScript = "src/main/resources/valipop/analysis-r/paper/code/re-runs/checker.sh";
             String[] checkParams = {pathOfRunDir + "/analysis.html", startTime};
             Process checkProc = runProcess("/bin/sh", checkScript, checkParams);
@@ -87,12 +84,9 @@ public class RCaller {
             if (checkRes.equals("CORRECT\n")) {
                 result = Double.parseDouble(res[0]);
             }
-
         }
 
         return result;
-
-
     }
 
     public static String waitOnReturn(Process process) throws IOException {
@@ -119,7 +113,6 @@ public class RCaller {
         stdError.close();
 
         return result;
-
     }
 
     public static Process runProcess(String processName, String pathOfScript, String[] params) throws IOException {

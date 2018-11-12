@@ -27,7 +27,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DeathDateSelector;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
@@ -45,7 +45,7 @@ public class NDeathLogic implements EventLogic {
 
     // Move from year to sim date and time step
     public int handleEvent(Config config,
-                           AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+                           AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                            Population population, PopulationStatistics desiredPopulationStatistics) {
 
         int killedAtTS = 0;
@@ -54,7 +54,6 @@ public class NDeathLogic implements EventLogic {
         killedAtTS += handleDeathsForSex('F', config, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
 
         return killedAtTS;
-
     }
 
     @Override
@@ -70,17 +69,17 @@ public class NDeathLogic implements EventLogic {
     private int tKilled = 0;
 
     private int handleDeathsForSex(char sex, Config config,
-                                    AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                                    Population population, PopulationStatistics desiredPopulationStatistics) {
+                                   AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+                                   Population population, PopulationStatistics desiredPopulationStatistics) {
 
         int killedAtTS = 0;
 
         PersonCollection ofSexLiving = getLivingPeopleOfSex(sex, population);
-        Iterator<AdvancableDate> divDates = ofSexLiving.getDivisionDates(consideredTimePeriod).iterator();
+        Iterator<AdvanceableDate> divDates = ofSexLiving.getDivisionDates(consideredTimePeriod).iterator();
 
-        AdvancableDate divDate;
-        // For each division in the population data store upto the current date
-        while(divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentDate)) {
+        AdvanceableDate divDate;
+        // For each division in the population data store up to the current date
+        while (divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentDate)) {
 
             int age = DateUtils.differenceInYears(divDate, currentDate).getCount();
             int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
@@ -89,17 +88,14 @@ public class NDeathLogic implements EventLogic {
             StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentDate, sex);
             DeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key, config);
 
-            // Calculate the appropriate number to kill and then kill
+            // Calculate the appropriate number to kill
             Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
-
             int killAdjust = 0;
-            if(numberToKill == 0) {
-                killAdjust = 0;
-            } else {
+            if (numberToKill != 0) {
 
                 int bound = 10000;
-                if(desiredPopulationStatistics.getRandomGenerator().nextInt(bound) < config.getDeathFactor() * bound) {
+                if (desiredPopulationStatistics.getRandomGenerator().nextInt(bound) < config.getDeathFactor() * bound) {
                     killAdjust = -1;
                 }
             }
@@ -109,17 +105,15 @@ public class NDeathLogic implements EventLogic {
                 peopleToKill =
                         ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
             } catch (InsufficientNumberOfPeopleException e) {
-                throw new Error("Insufficient number of people to kill, - this has occured when selecting a less " +
+                throw new Error("Insufficient number of people to kill, - this has occurred when selecting a less " +
                         "than 1 proportion of a population");
             }
-
-
 
             int killed = killPeople(peopleToKill, desiredPopulationStatistics, currentDate, consideredTimePeriod, population, config);
             killedAtTS += killed + killAdjust;
 
             // Returns the number killed to the distribution manager
-            determinedCount.setFufilledCount(killed);
+            determinedCount.setFulfilledCount(killed);
             desiredPopulationStatistics.returnAchievedCount(determinedCount);
         }
 
@@ -128,35 +122,24 @@ public class NDeathLogic implements EventLogic {
         return killedAtTS;
     }
 
-
     private int killPeople(Collection<IPersonExtended> people,
-                            PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                            Population population, Config config) {
+                           PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+                           Population population, Config config) {
 
         int killed = 0;
 
-        for(IPersonExtended person : people) {
+        for (IPersonExtended person : people) {
 
             // choose date of death
             Date deathDate = deathDateSelector.selectDate(person, desiredPopulationStatistics, currentDate, consideredTimePeriod);
 
             // execute death
-            if(person.recordDeath(deathDate, population, desiredPopulationStatistics)) {
+            if (person.recordDeath(deathDate, population, desiredPopulationStatistics)) {
                 killed++;
             }
 
-//            try {
-//                DeathCauseStatsKey dck = new DeathCauseStatsKey(person.ageAtDeath(), 1, consideredTimePeriod, currentDate, person.getSex());
-//
-//                MultipleDeterminedCount mdc = (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(dck, config);
-//
-//            } catch (NotDeadException e) {
-//                throw new Error("Living dead person...");
-//            }
-
             // move person to correct place in data structure
             population.getDeadPeople().addPerson(person);
-
         }
 
         return killed;
@@ -165,7 +148,7 @@ public class NDeathLogic implements EventLogic {
     private PersonCollection getLivingPeopleOfSex(char sex, Population population) {
         PersonCollection ofSexLiving;
 
-        if(Character.toLowerCase(sex) == 'm') {
+        if (Character.toLowerCase(sex) == 'm') {
             ofSexLiving = population.getLivingPeople().getMales();
         } else {
             ofSexLiving = population.getLivingPeople().getFemales();
@@ -173,5 +156,4 @@ public class NDeathLogic implements EventLogic {
 
         return ofSexLiving;
     }
-
 }

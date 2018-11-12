@@ -16,14 +16,14 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -33,7 +33,6 @@ public class NewPartnerAgeNodeInt extends IntNode<IntegerRange, String> {
     public NewPartnerAgeNodeInt(IntegerRange option, SeparationNodeInt parentNode, Integer initCount) {
         super(option, parentNode, initCount);
     }
-
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
@@ -45,8 +44,8 @@ public class NewPartnerAgeNodeInt extends IntNode<IntegerRange, String> {
         return null;
     }
 
-    public ArrayList<String> toStringAL() {
-        ArrayList<String> s = getParent().toStringAL();
+    public List<String> toStringAL() {
+        List<String> s = getParent().toStringAL();
         s.add(getOption().toString());
         s.add(getCount().toString());
         return s;

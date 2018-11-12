@@ -1,19 +1,16 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.basic_model.distributions.StringWithCumulativeProbability;
 import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 
-import java.math.BigDecimal;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -24,7 +21,7 @@ public class AgeDependantEnumeratedDistribution implements InputMetaData {
     private final String sourcePopulation;
     private final String sourceOrganisation;
 
-    private final Map<IntegerRange, EnumeratedDistribution> distributionsByAge = new HashMap<>();
+    private final Map<IntegerRange, EnumeratedDistribution> distributionsByAge = new TreeMap<>();
 
     public AgeDependantEnumeratedDistribution(YearDate year, String sourcePopulation, String sourceOrganisation,
                                               Map<IntegerRange, LabelledValueSet<String, Double>> item_probabilities, RandomGenerator random) throws InconsistentWeightException {
@@ -35,7 +32,6 @@ public class AgeDependantEnumeratedDistribution implements InputMetaData {
         for(IntegerRange iR : item_probabilities.keySet()) {
             distributionsByAge.put(iR, new EnumeratedDistribution(item_probabilities.get(iR).getMap(), random));
         }
-
     }
 
     public EnumeratedDistribution getDistributionForAge(Integer age) {
@@ -83,5 +79,4 @@ public class AgeDependantEnumeratedDistribution implements InputMetaData {
 
         return null;
     }
-
 }

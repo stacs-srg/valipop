@@ -21,7 +21,6 @@ import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.basic_model.model.IPerson;
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.basic_model.model.PopulationLogic;
-import uk.ac.standrews.cs.basic_model.organic.OrganicPerson;
 import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import java.util.*;
@@ -34,36 +33,28 @@ import static org.junit.Assert.*;
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public abstract class GeneralPopulationStructureTests {
+public abstract class GeneralPopulationStructureTest {
 
     public static final int PEOPLE_ITERATION_SAMPLE_THRESHOLD = 40;
     public static final int PEOPLE_ITERATION_SAMPLE_START = 30;
     public static final int PARTNERSHIP_ITERATION_SAMPLE_THRESHOLD = 20;
     public static final int PARTNERSHIP_ITERATION_SAMPLE_START = 10;
-    protected IPopulation population;
-    private boolean consistent_across_iterations = false;
 
-    public GeneralPopulationStructureTests(final IPopulation population, final boolean consistent_across_iterations) {
+    private IPopulation population;
 
-        this(consistent_across_iterations);
+    public GeneralPopulationStructureTest(final IPopulation population) {
 
         this.population = population;
-        population.setConsistentAcrossIterations(consistent_across_iterations);
-    }
-
-    public GeneralPopulationStructureTests(final boolean consistent_across_iterations) {
-
-        this.consistent_across_iterations = consistent_across_iterations;
     }
 
     @Test
-    public void findNonExistentPerson() throws Exception {
+    public void findNonExistentPerson() {
 
         assertNull(population.findPerson(-1));
     }
 
     @Test
-    public void findNonExistentPartnership() throws Exception {
+    public void findNonExistentPartnership() {
 
         assertNull(population.findPartnership(-1));
     }
@@ -150,7 +141,7 @@ public abstract class GeneralPopulationStructureTests {
     }
 
     @Test
-    public void birthsBeforeDeaths() throws Exception {
+    public void birthsBeforeDeaths() {
 
         for (final IPerson person : population.getPeople()) {
 
@@ -159,7 +150,7 @@ public abstract class GeneralPopulationStructureTests {
     }
 
     @Test
-    public void birthInfoConsistent() throws Exception {
+    public void birthInfoConsistent() {
 
         for (final IPerson person : population.getPeople()) {
 
@@ -173,7 +164,7 @@ public abstract class GeneralPopulationStructureTests {
     }
 
     @Test
-    public void deathInfoConsistent() throws Exception {
+    public void deathInfoConsistent() {
 
         for (final IPerson person : population.getPeople()) {
 
@@ -202,7 +193,7 @@ public abstract class GeneralPopulationStructureTests {
     }
 
     @Test
-    public void birthsBeforeMarriages() throws Exception {
+    public void birthsBeforeMarriages() {
 
         for (final IPerson person : population.getPeople()) {
 
@@ -211,7 +202,7 @@ public abstract class GeneralPopulationStructureTests {
     }
 
     @Test
-    public void marriagesBeforeDeaths() throws Exception {
+    public void marriagesBeforeDeaths() {
 
         for (final IPerson person : population.getPeople()) {
 
@@ -229,7 +220,7 @@ public abstract class GeneralPopulationStructureTests {
     }
 
     @Test
-    public void surnamesInheritedOnMaleLine() throws Exception {
+    public void surnamesInheritedOnMaleLine() {
 
         for (final IPerson person : population.getPeople()) {
 
@@ -238,7 +229,16 @@ public abstract class GeneralPopulationStructureTests {
     }
 
     @Test
-    public void noSiblingPartners() throws Exception {
+    public void childrenExist() {
+
+        for (final IPerson person : population.getPeople()) {
+
+            assertChildrenExist(person);
+        }
+    }
+
+    @Test
+    public void noSiblingPartners() {
 
         for (final IPerson person : population.getPeople()) {
 
@@ -255,14 +255,14 @@ public abstract class GeneralPopulationStructureTests {
         }
     }
 
-//    @Test
-//    public void parentsHaveSensibleAgesAtBirths() throws Exception {
-//
-//        for (final IPartnership partnership : population.getPartnerships()) {
-//
-//            assertParentsHaveSensibleAgesAtBirth(partnership);
-//        }
-//    }
+    @Test
+    public void parentsHaveSensibleAgesAtBirths() {
+
+        for (final IPartnership partnership : population.getPartnerships()) {
+
+            assertParentsHaveSensibleAgesAtBirth(partnership);
+        }
+    }
 
     @Test
     public void parentsAndChildrenConsistent() {
@@ -281,23 +281,13 @@ public abstract class GeneralPopulationStructureTests {
 
             for (final int child_id : child_ids) {
 
-                // TODO anything specific to OrganicPopulation should be in a subclass.
-                // TODO why is this logic necessary anyway - why would children be seed people?
-
                 final IPerson child = population.findPerson(child_id);
-
-                if (child.getClass().getName().equals(OrganicPerson.class.getName())) {
-                    if (((OrganicPerson) child).isSeedPerson()) {
-                        assertEquals(child.getParentsPartnership(), -1);
-                    } else {
-                        assertEquals(child.getParentsPartnership(), partnership.getId());
-                    }
-                }
+                assertEquals(child.getParentsPartnership(), partnership.getId());
             }
         }
     }
 
-    private void assertParentsHaveSensibleAgesAtBirth(final IPartnership partnership) throws Exception {
+    private void assertParentsHaveSensibleAgesAtBirth(final IPartnership partnership) {
 
         final IPerson mother = population.findPerson(partnership.getFemalePartnerId());
         final IPerson father = population.findPerson(partnership.getMalePartnerId());
@@ -305,8 +295,7 @@ public abstract class GeneralPopulationStructureTests {
         for (final int child_id : partnership.getChildIds()) {
 
             final IPerson child = population.findPerson(child_id);
-            boolean b = PopulationLogic.parentsHaveSensibleAgesAtChildBirth(father, mother, child);
-            assertTrue(b);
+            assertTrue(PopulationLogic.parentsHaveSensibleAgesAtChildBirth(father, mother, child));
         }
     }
 
@@ -317,13 +306,28 @@ public abstract class GeneralPopulationStructureTests {
 
             for (final int child_id : child_ids) {
 
-                assertFalse(child_id == partnership.getFemalePartnerId());
-                assertFalse(child_id == partnership.getMalePartnerId());
+                assertNotEquals(child_id, partnership.getFemalePartnerId());
+                assertNotEquals(child_id, partnership.getMalePartnerId());
             }
         }
     }
 
-    private void assertNoneOfChildrenAreSiblingPartners(final IPerson person) throws Exception {
+    private void assertChildrenExist(final IPerson person) {
+
+        if (person.getPartnerships() != null) {
+
+            for (final int partnership_id : person.getPartnerships()) {
+                List<Integer> childIds = population.findPartnership(partnership_id).getChildIds();
+                for (final int child_id : childIds) {
+
+                    IPerson child = population.findPerson(child_id);
+                    assertNotNull(child);
+                }
+            }
+        }
+    }
+
+    private void assertNoneOfChildrenAreSiblingPartners(final IPerson person) {
 
         // Include half-siblings.
         final Set<Integer> sibling_ids = new HashSet<>();
@@ -347,14 +351,14 @@ public abstract class GeneralPopulationStructureTests {
         assertEquals(Character.toLowerCase(IPerson.MALE), Character.toLowerCase(population.findPerson(partnership.getMalePartnerId()).getSex()));
     }
 
-    private void assertNotPartnerOfAny(final int person_id, final Set<Integer> people_ids) throws Exception {
+    private void assertNotPartnerOfAny(final int person_id, final Set<Integer> people_ids) {
 
         for (final int another_person_id : people_ids) {
             assertFalse(partnerOf(person_id, another_person_id));
         }
     }
 
-    public boolean partnerOf(final int p1_id, final int p2_id) throws Exception {
+    private boolean partnerOf(final int p1_id, final int p2_id) {
 
         final List<Integer> partnership_ids = population.findPerson(p1_id).getPartnerships();
         if (partnership_ids != null) {
@@ -368,7 +372,7 @@ public abstract class GeneralPopulationStructureTests {
         return false;
     }
 
-    private void assertSurnameInheritedOnMaleLine(final IPerson person) throws Exception {
+    private void assertSurnameInheritedOnMaleLine(final IPerson person) {
 
         if (person.getSex() == IPerson.MALE) {
 
@@ -458,19 +462,6 @@ public abstract class GeneralPopulationStructureTests {
         final IPerson retrieved_person = population.findPerson(id);
 
         assertEquals(id, retrieved_person.getId());
-
-        if (consistent_across_iterations) {
-
-            assertEquals(person.getFirstName(), retrieved_person.getFirstName());
-            assertEquals(person.getSurname(), retrieved_person.getSurname());
-            assertEquals(person.getSex(), retrieved_person.getSex());
-            assertEquals(person.getBirthDate(), retrieved_person.getBirthDate());
-            assertEquals(person.getBirthPlace(), retrieved_person.getBirthPlace());
-            assertEquals(person.getDeathDate(), retrieved_person.getDeathDate());
-            assertEquals(person.getDeathPlace(), retrieved_person.getDeathPlace());
-            assertEquals(person.getDeathCause(), retrieved_person.getDeathCause());
-            assertEquals(person.getOccupation(), retrieved_person.getOccupation());
-        }
     }
 
     private void assertRetrievedConsistently(final IPartnership[] sample) throws Exception {
@@ -486,20 +477,6 @@ public abstract class GeneralPopulationStructureTests {
         final IPartnership retrieved_person = population.findPartnership(id);
 
         assertEquals(id, retrieved_person.getId());
-
-        if (consistent_across_iterations) {
-
-            assertEquals(partnership.getFemalePartnerId(), retrieved_person.getFemalePartnerId());
-            assertEquals(partnership.getMalePartnerId(), retrieved_person.getMalePartnerId());
-            assertEquals(partnership.getMarriageDate(), retrieved_person.getMarriageDate());
-            assertEquals(partnership.getMarriagePlace(), retrieved_person.getMarriagePlace());
-            assertChildrenEqual(partnership.getChildIds(), retrieved_person.getChildIds());
-        }
-    }
-
-    private static void assertChildrenEqual(final List<Integer> children1, final List<Integer> children2) {
-
-        assertArrayEquals(children1.toArray(new Integer[children1.size()]), children2.toArray(new Integer[children2.size()]));
     }
 
     private static void doTooManyIterations(final Iterator<?> iterator, final int number_available) {

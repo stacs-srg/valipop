@@ -62,7 +62,6 @@ public interface IPersonExtended extends IPerson, Comparable<IPersonExtended>, P
 
     boolean isIllegitimate();
 
-
     List<IPartnershipExtended> getPartnershipsBeforeDate(Date date);
 
     ExactDate getDateOfLastLegitimatePartnershipEventBeforeDate(ExactDate date);

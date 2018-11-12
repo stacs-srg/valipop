@@ -61,7 +61,6 @@ public abstract class IntNode<Op, cOp> extends Node<Op, cOp, Integer, Integer> {
         }
 
         return child;
-
     }
 
     @Override

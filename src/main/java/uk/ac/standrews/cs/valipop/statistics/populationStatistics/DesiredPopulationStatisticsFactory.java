@@ -19,10 +19,12 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.InputMetaData;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.Logger;
@@ -31,18 +33,15 @@ import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This factory class handles the correct construction of a PopulationStatistics object.
@@ -53,7 +52,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
     private static Logger log = new Logger(DesiredPopulationStatisticsFactory.class);
 
-    private static final int DETERMINISTIC_SEED = 1111111111;
+    private static final int DEFAULT_DETERMINISTIC_SEED = 56854687;
     private static RandomGenerator randomGenerator;
 
     /**
@@ -67,8 +66,8 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         randomGenerator = new JDKRandomGenerator();
 
-        if(config.deterministic()) {
-            randomGenerator.setSeed(DETERMINISTIC_SEED);
+        if (config.deterministic()) {
+            randomGenerator.setSeed(config.getSeed() == 0 ? DEFAULT_DETERMINISTIC_SEED : config.getSeed());
         }
 
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath = readInSC1DDataFiles(config.getVarMaleLifetablePaths(), config);
@@ -89,17 +88,16 @@ public abstract class DesiredPopulationStatisticsFactory {
         return new PopulationStatistics(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth,
                 marriage, separation, sexRatioBirth, maleForename, femaleForename, surname, config.getMinBirthSpacing(),
                 config.getMinGestationPeriodDays(), randomGenerator);
-
     }
 
     private static Map<YearDate, Double> readInSingleInputDataFile(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
         int c = 0;
 
-        Map<YearDate, Double> data = new HashMap<>();
+        Map<YearDate, Double> data = new TreeMap<>();
 
-        for(Path p : paths) {
-            if(c == 1) {
+        for (Path p : paths) {
+            if (c == 1) {
                 throw new Error("Too many sex ratio files - there should only be one - remove any additional files from the ratio_birth directory");
             }
 
@@ -108,16 +106,16 @@ public abstract class DesiredPopulationStatisticsFactory {
             c++;
         }
 
-        if(data.isEmpty()) {
+        if (data.isEmpty()) {
             data.put(new YearDate(1600), 0.5);
         }
 
         return data;
     }
 
-    private static Map<YearDate,SelfCorrectingOneDimensionDataDistribution> readInSC1DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+    private static Map<YearDate, SelfCorrectingOneDimensionDataDistribution> readInSC1DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> data = new HashMap<>();
+        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -125,12 +123,11 @@ public abstract class DesiredPopulationStatisticsFactory {
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);
-
     }
 
-    private static Map<YearDate,ValiPopEnumeratedDistribution> readInNamesDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
+    private static Map<YearDate, ValiPopEnumeratedDistribution> readInNamesDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
-        Map<YearDate, ValiPopEnumeratedDistribution> data = new HashMap<>();
+        Map<YearDate, ValiPopEnumeratedDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -138,12 +135,11 @@ public abstract class DesiredPopulationStatisticsFactory {
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);
-
     }
 
     private static Map<YearDate, AgeDependantEnumeratedDistribution> readInDeathCauseDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
-        Map<YearDate, AgeDependantEnumeratedDistribution> data = new HashMap<>();
+        Map<YearDate, AgeDependantEnumeratedDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -155,7 +151,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
     private static Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> readInSC2DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> data = new HashMap<>();
+        Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -167,7 +163,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
     private static Map<YearDate, SelfCorrectingProportionalDistribution> readInAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, SelfCorrectingProportionalDistribution> data = new HashMap<>();
+        Map<YearDate, SelfCorrectingProportionalDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -179,7 +175,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
     private static Map<YearDate, ProportionalDistribution> readInAndAdaptAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, ProportionalDistribution> data = new HashMap<>();
+        Map<YearDate, ProportionalDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -189,7 +185,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private static <T extends InputMetaData> Map<YearDate, T>  insertDistributionsToMeetInputWidth(Config config, Map<YearDate, T> inputs) {
+    private static <T extends InputMetaData> Map<YearDate, T> insertDistributionsToMeetInputWidth(Config config, Map<YearDate, T> inputs) {
 
         CompoundTimeUnit inputWidth = config.getInputWidth();
 
@@ -205,21 +201,21 @@ public abstract class DesiredPopulationStatisticsFactory {
         YearDate[] years = inputs.keySet().toArray(new YearDate[inputs.keySet().size()]);
         Arrays.sort(years);
 
-        if(years.length == 0) {
+        if (years.length == 0) {
             return inputs;
         }
 
-        while(DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), years[0])) {
+        while (DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), years[0])) {
             inputs.put(curDate.getYearDate(), inputs.get(years[0]));
             c++;
         }
 
         prevInputDate = years[0];
 
-        for(YearDate curInputDate : years) {
+        for (YearDate curInputDate : years) {
 
 
-            while(DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), curInputDate)) {
+            while (DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), curInputDate)) {
                 YearDate duplicateFrom = getNearestDate(curDate, prevInputDate, curInputDate);
                 inputs.put(curDate.getYearDate(), inputs.get(duplicateFrom));
                 c++;
@@ -229,14 +225,12 @@ public abstract class DesiredPopulationStatisticsFactory {
             prevInputDate = curInputDate;
         }
 
-        while(DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), config.getTE())) {
+        while (DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), config.getTE())) {
             inputs.put(curDate.getYearDate(), inputs.get(prevInputDate));
             c++;
         }
 
-
         return inputs;
-
     }
 
     private static YearDate getNearestDate(Date referenceDate, YearDate option1, YearDate option2) {
@@ -244,11 +238,10 @@ public abstract class DesiredPopulationStatisticsFactory {
         int refTo1 = DateUtils.differenceInDays(referenceDate, option1);
         int refTo2 = DateUtils.differenceInDays(referenceDate, option2);
 
-        if(refTo1 < refTo2) {
+        if (refTo1 < refTo2) {
             return option1;
         } else {
             return option2;
         }
-
     }
 }

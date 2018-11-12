@@ -1,8 +1,5 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
-import org.apache.commons.math3.random.JDKRandomGenerator;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.Config;
@@ -11,7 +8,6 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulat
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
@@ -20,10 +16,12 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUni
 
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PersonTests {
+public class PersonTest {
 
     @Test
     public void testAgeOnDate() throws InconsistentWeightException, IOException, InvalidInputFileException {
@@ -32,7 +30,7 @@ public class PersonTests {
                 new MonthDate(1,200), 0, 0, 0, null,
                 "src/test/resources/valipop/test-pop", "", "",
                 0, 0, true, 0, 0, 0,
-                0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null);
+                0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null, 0, true);
         // use config to make make ps
         PopulationStatistics ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
 
@@ -45,20 +43,17 @@ public class PersonTests {
 
         ExactDate e = new ExactDate(31,12,1901);
 
-        Assert.assertEquals(0, p1.ageOnDate(y1));
+        assertEquals(0, p1.ageOnDate(y1));
 
-        Assert.assertEquals(0, p3.ageOnDate(y2));
-        Assert.assertEquals(0, p1.ageOnDate(y2));
+        assertEquals(0, p3.ageOnDate(y2));
+        assertEquals(0, p1.ageOnDate(y2));
 
-        Assert.assertEquals(1, p1.ageOnDate(y3));
+        assertEquals(1, p1.ageOnDate(y3));
 
         Person p2 = new Person('M', new ExactDate(31,12,1900), null, ps);
 
-        Assert.assertEquals(0, p2.ageOnDate(y2));
-        Assert.assertEquals(1, p2.ageOnDate(e));
-        Assert.assertEquals(1, p2.ageOnDate(y3));
-
+        assertEquals(0, p2.ageOnDate(y2));
+        assertEquals(1, p2.ageOnDate(e));
+        assertEquals(1, p2.ageOnDate(y3));
     }
-
-
 }

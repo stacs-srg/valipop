@@ -9,7 +9,7 @@ import java.util.*;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<IntegerRange, Double>
-                                                implements OperableLabelledValueSet<IntegerRange, Double> {
+        implements OperableLabelledValueSet<IntegerRange, Double> {
 
     private static double DELTA = 1E-2;
 
@@ -25,7 +25,9 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
         super(set.getMap());
     }
 
-    public IntegerRangeToDoubleSet() {super();}
+    public IntegerRangeToDoubleSet() {
+        super();
+    }
 
     @Override
     public Class getLabelClass() {
@@ -72,7 +74,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
         List<IntegerRange> labels = new ArrayList<>();
         List<Double> products = new ArrayList<>();
 
-        for(IntegerRange iR : map.keySet()) {
+        for (IntegerRange iR : map.keySet()) {
             labels.add(iR);
             products.add(iR.getValue() * getValue(iR));
         }
@@ -86,7 +88,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
         double sum = getSumOfValues();
         double sumRounded = Math.round(sum);
 
-        if(!DoubleComparer.equal(sum, sumRounded, DELTA)) {
+        if (!DoubleComparer.equal(sum, sumRounded, DELTA)) {
             throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as " +
                     "values do not sum to a whole number", this);
         }
@@ -95,27 +97,26 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
 
         OperableLabelledValueSet<IntegerRange, Integer> roundingSet = new IntegerRangeToIntegerSet();
 
-        for(IntegerRange iR : getLabels()) {
-            if(getValue(iR) < 0) {
+        for (IntegerRange iR : getLabels()) {
+            if (getValue(iR) < 0) {
                 roundingSet.add(iR, 0);
             } else {
                 roundingSet.add(iR, (int) Math.floor(getValue(iR)));
             }
         }
 
-        Set<IntegerRange> usedLabels = new HashSet<>();
+        Set<IntegerRange> usedLabels = new TreeSet<>();
 
         int roundingSetSum;
-        while((roundingSetSum = roundingSet.getSumOfValues()) != sumInt) {
+        while ((roundingSetSum = roundingSet.getSumOfValues()) != sumInt) {
 
-            if(roundingSetSum < sumInt) {
+            if (roundingSetSum < sumInt) {
                 // need more in the rounding set therefore
                 IntegerRange labelOfGreatestRemainder = this.getLabelOfValueWithGreatestRemainder(usedLabels);
-                roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder)+1);
+                roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder) + 1);
             }
 
-
-            if(roundingSetSum > sumInt) {
+            if (roundingSetSum > sumInt) {
                 IntegerRange largestReducatbleLabel;
                 try {
                     largestReducatbleLabel =
@@ -123,9 +124,8 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
                 } catch (NoSuchElementException e) {
                     largestReducatbleLabel = this.smallestLabel();
                 }
-                roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel)-1);
+                roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel) - 1);
             }
-
         }
 
         return roundingSet;
@@ -137,7 +137,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
         double sum = getSumOfValues();
         double sumRounded = Math.round(sum);
 
-        if(!DoubleComparer.equal(sum, sumRounded, DELTA)) {
+        if (!DoubleComparer.equal(sum, sumRounded, DELTA)) {
             throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as " +
                     "values do not sum to a whole number", this);
         }
@@ -146,27 +146,26 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
 
         OperableLabelledValueSet<IntegerRange, Integer> roundingSet = new IntegerRangeToIntegerSet();
 
-        for(IntegerRange iR : getLabels()) {
-            if(getValue(iR) < 0) {
+        for (IntegerRange iR : getLabels()) {
+            if (getValue(iR) < 0) {
                 roundingSet.add(iR, 0);
             } else {
                 roundingSet.add(iR, (int) Math.floor(getValue(iR)));
             }
         }
 
-        Set<IntegerRange> usedLabels = new HashSet<>();
+        Set<IntegerRange> usedLabels = new TreeSet<>();
 
         int roundingSetSum;
-        while((roundingSetSum = roundingSet.productOfLabelsAndValues().getSumOfValues()) != sumInt) {
+        while ((roundingSetSum = roundingSet.productOfLabelsAndValues().getSumOfValues()) != sumInt) {
 
-            if(roundingSetSum < sumInt) {
+            if (roundingSetSum < sumInt) {
                 // need more in the rounding set therefore
                 IntegerRange labelOfGreatestRemainder = this.getLabelOfValueWithGreatestRemainder(usedLabels);
-                roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder)+1);
+                roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder) + 1);
             }
 
-
-            if(roundingSetSum > sumInt) {
+            if (roundingSetSum > sumInt) {
                 IntegerRange largestReducatbleLabel;
                 try {
                     largestReducatbleLabel =
@@ -174,7 +173,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
                 } catch (NoSuchElementException e) {
                     largestReducatbleLabel = this.smallestLabel();
                 }
-                roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel)-1);
+                roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel) - 1);
             }
 
         }
@@ -188,7 +187,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
         double sum = productOfLabelsAndValues().getSumOfValues();
         double sumRounded = Math.round(sum);
 
-        if(!DoubleComparer.equal(sum, sumRounded, DELTA)) {
+        if (!DoubleComparer.equal(sum, sumRounded, DELTA)) {
             throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as " +
                     "values do not sum to a whole number", this);
         }
@@ -197,20 +196,20 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
 
         OperableLabelledValueSet<IntegerRange, Integer> roundingSet = new IntegerRangeToIntegerSet();
 
-        for(IntegerRange iR : getLabels()) {
-            if(getValue(iR) < 0) {
+        for (IntegerRange iR : getLabels()) {
+            if (getValue(iR) < 0) {
                 roundingSet.add(iR, 0);
             } else {
                 roundingSet.add(iR, (int) Math.floor(getValue(iR)));
             }
         }
 
-        Set<IntegerRange> usedLabels = new HashSet<>();
+        Set<IntegerRange> usedLabels = new TreeSet<>();
 
         int roundingSetSum;
-        while((roundingSetSum = roundingSet.productOfLabelsAndValues().getSumOfValues()) != sumInt) {
+        while ((roundingSetSum = roundingSet.productOfLabelsAndValues().getSumOfValues()) != sumInt) {
 
-            if(roundingSetSum < sumInt) {
+            if (roundingSetSum < sumInt) {
                 // need more in the rounding set therefore
                 IntegerRange labelOfGreatestRemainder;
                 try {
@@ -223,7 +222,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
             }
 
             // too many in rounding set therefore
-            if(roundingSetSum > sumInt) {
+            if (roundingSetSum > sumInt) {
                 // catch and increase to self - then the up will put in a lower order birth
                 IntegerRange largestReducatbleLabel;
                 try {
@@ -232,21 +231,19 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
                 } catch (NoSuchElementException e) {
                     largestReducatbleLabel = this.smallestLabel();
                 }
-                roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel)-1);
+                roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel) - 1);
             }
-
         }
 
         return roundingSet;
     }
-
 
     @Override
     public OperableLabelledValueSet<IntegerRange, Double> divisionOfValuesByLabels() {
         List<IntegerRange> labels = new ArrayList<>();
         List<Double> products = new ArrayList<>();
 
-        for(IntegerRange iR : map.keySet()) {
+        for (IntegerRange iR : map.keySet()) {
             labels.add(iR);
             products.add(getValue(iR) / (double) iR.getValue());
         }
@@ -259,19 +256,19 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
 
         IntegerRange largestLabel = null;
 
-        for(IntegerRange iR : map.keySet()) {
+        for (IntegerRange iR : map.keySet()) {
 
             int currentIRLable = iR.getValue();
 
-            if(currentIRLable <= n.getValue()) {
-                if(largestLabel == null || currentIRLable > largestLabel.getValue()) {
+            if (currentIRLable <= n.getValue()) {
+                if (largestLabel == null || currentIRLable > largestLabel.getValue()) {
                     largestLabel = iR;
                 }
             }
 
         }
 
-        if(largestLabel == null) {
+        if (largestLabel == null) {
             throw new NoSuchElementException("No values in set or no values in set less that n - set size: "
                     + getLabels().size());
         }
@@ -285,25 +282,25 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
         IntegerRange largestLabel = null;
         IntegerRange smallestLabelLargerThanN = null;
 
-        for(IntegerRange iR : map.keySet()) {
+        for (IntegerRange iR : map.keySet()) {
 
             int currentIRLable = iR.getValue();
 
-            if(currentIRLable <= n.getValue()) {
-                if(largestLabel == null || currentIRLable > largestLabel.getValue()) {
+            if (currentIRLable <= n.getValue()) {
+                if (largestLabel == null || currentIRLable > largestLabel.getValue()) {
                     largestLabel = iR;
                 }
             } else {
-                if(largestLabel == null || currentIRLable < smallestLabelLargerThanN.getValue()) {
+                if (largestLabel == null || currentIRLable < smallestLabelLargerThanN.getValue()) {
                     smallestLabelLargerThanN = iR;
                 }
             }
 
         }
 
-        if(largestLabel == null) {
+        if (largestLabel == null) {
 
-            if(smallestLabelLargerThanN != null) {
+            if (smallestLabelLargerThanN != null) {
                 return smallestLabelLargerThanN;
             }
 
@@ -318,18 +315,18 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
     public IntegerRange getLargestLabelOfNoneZeroValue() {
         IntegerRange largestLabel = null;
 
-        for(IntegerRange iR : map.keySet()) {
+        for (IntegerRange iR : map.keySet()) {
 
             int currentIRLable = iR.getValue();
 
-            if(largestLabel == null || currentIRLable > largestLabel.getValue()) {
-                if(!DoubleComparer.equal(0, get(iR), DELTA)) {
+            if (largestLabel == null || currentIRLable > largestLabel.getValue()) {
+                if (!DoubleComparer.equal(0, get(iR), DELTA)) {
                     largestLabel = iR;
                 }
             }
         }
 
-        if(largestLabel == null) {
+        if (largestLabel == null) {
             throw new NoSuchElementException("No non zero values in set - set size: " + getLabels().size());
         }
 
@@ -343,8 +340,8 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
         int minLabelInt = Integer.MAX_VALUE;
         IntegerRange minLabel = null;
 
-        for(IntegerRange label : labels) {
-            if(label.getValue() < minLabelInt) {
+        for (IntegerRange label : labels) {
+            if (label.getValue() < minLabelInt) {
                 minLabel = label;
                 minLabelInt = label.getValue();
             }
@@ -359,16 +356,14 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
         ArrayList<Double> newValues = new ArrayList<>();
 
 
-        for(IntegerRange label : labels) {
-            if((Double) lvs.get(label) < 0) {
+        for (IntegerRange label : labels) {
+            if ((Double) lvs.get(label) < 0) {
                 newValues.add(getValue(label) + n);
             } else {
                 newValues.add(getValue(label));
             }
         }
 
-
         return new IntegerRangeToDoubleSet(labels, newValues);
     }
-
 }

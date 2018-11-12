@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExten
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.*;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
@@ -48,21 +48,23 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
 
     private final Map<Integer, IPersonExtended> peopleIndex = new HashMap<>();
     private final Map<Integer, IPartnershipExtended> partnershipIndex = new HashMap<>();
+
     // TODO decide on which part approach using either line above or below
     private ArrayList<IPartnershipExtended> partTemp = new ArrayList<>();
 
     public PeopleCollection clone() {
+
         PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate(), getDivisionSize());
 
-        for(IPersonExtended m : males.getAll()) {
+        for (IPersonExtended m : males.getAll()) {
             clone.addPerson(m);
         }
 
-        for(IPersonExtended f : females.getAll()) {
+        for (IPersonExtended f : females.getAll()) {
             clone.addPerson(f);
         }
 
-        for(Map.Entry<Integer, IPartnershipExtended> k : partnershipIndex.entrySet()) {
+        for (Map.Entry<Integer, IPartnershipExtended> k : partnershipIndex.entrySet()) {
             clone.addPartnershipToIndex(k.getValue());
         }
 
@@ -80,7 +82,8 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
      * @param start the start
      * @param end   the end
      */
-    public PeopleCollection(AdvancableDate start, Date end, CompoundTimeUnit divisionSize) {
+    public PeopleCollection(AdvanceableDate start, Date end, CompoundTimeUnit divisionSize) {
+
         super(start, end, divisionSize);
 
         males = new MaleCollection(start, end, divisionSize);
@@ -126,24 +129,27 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
-        Collection<IPersonExtended> people =  males.getAllPersonsBornInTimePeriod(firstDate, timePeriod);
+    public Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
+
+        Collection<IPersonExtended> people = males.getAllPersonsBornInTimePeriod(firstDate, timePeriod);
         people.addAll(females.getAllPersonsBornInTimePeriod(firstDate, timePeriod));
         return people;
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
-        Collection<IPersonExtended> people =  males.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge);
+    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
+
+        Collection<IPersonExtended> people = males.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge);
         people.addAll(females.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge));
         return people;
     }
 
     @Override
     public void addPerson(IPersonExtended person) {
-//        peopleIndex.put(person.getId(), person);
+
         if (person.getSex() == 'm') {
             males.addPerson(person);
+
         } else {
             females.addPerson(person);
         }
@@ -153,9 +159,10 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
 
     @Override
     public void removePerson(IPersonExtended person) throws PersonNotFoundException {
-//        peopleIndex.remove(person.getId());
+
         if (person.getSex() == 'm') {
             males.removePerson(person);
+
         } else {
             females.removePerson(person);
         }
@@ -167,12 +174,12 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
     }
 
     @Override
-    public int getNumberOfPersons(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+    public int getNumberOfPersons(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
         return males.getNumberOfPersons(firstDate, timePeriod) + females.getNumberOfPersons(firstDate, timePeriod);
     }
 
     @Override
-    public TreeSet<AdvancableDate> getDivisionDates() {
+    public TreeSet<AdvanceableDate> getDivisionDates() {
         return females.getDivisionDates();
     }
 
@@ -204,6 +211,7 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
 
     @Override
     public IPerson findPerson(int i) {
+
         return peopleIndex.get(i);
     }
 
@@ -216,7 +224,6 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
     public int getNumberOfPeople() {
         return getAll().size();
     }
-
 
     @Override
     public int getNumberOfPartnerships() {
@@ -234,38 +241,36 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
     }
 
     private Collection<IPersonExtended> getPeopleBetweenDates(PersonCollection collection,
-                                                              AdvancableDate firstDateOfInterest,
-                                                              AdvancableDate lastDateOfInterest) {
+                                                              AdvanceableDate firstDateOfInterest,
+                                                              AdvanceableDate lastDateOfInterest) {
 
         Collection<IPersonExtended> people = new ArrayList<>();
 
-        AdvancableDate firstDivOfInterest = resolveDateToCorrectDivisionDate(firstDateOfInterest);
-        AdvancableDate lastDivOfInterest = resolveDateToCorrectDivisionDate(lastDateOfInterest);
+        AdvanceableDate firstDivOfInterest = resolveDateToCorrectDivisionDate(firstDateOfInterest);
+        AdvanceableDate lastDivOfInterest = resolveDateToCorrectDivisionDate(lastDateOfInterest);
 
-        AdvancableDate consideredDate = firstDivOfInterest;
+        AdvanceableDate consideredDate = firstDivOfInterest;
 
-        while(DateUtils.dateBeforeOrEqual(consideredDate, lastDivOfInterest)) {
+        while (DateUtils.dateBeforeOrEqual(consideredDate, lastDivOfInterest)) {
 
             Collection<IPersonExtended> temp = collection.getAllPersonsBornInTimePeriod(consideredDate, getDivisionSize());
 
-            if(DateUtils.datesEqual(firstDivOfInterest, consideredDate)) {
+            if (DateUtils.datesEqual(firstDivOfInterest, consideredDate)) {
 
-                for(IPersonExtended p : temp) {
+                for (IPersonExtended p : temp) {
 
-                    if(!DateUtils.dateBefore(p.getBirthDate_ex(), firstDateOfInterest)) {
+                    if (!DateUtils.dateBefore(p.getBirthDate_ex(), firstDateOfInterest)) {
                         people.add(p);
                     }
-
                 }
 
-            } else if(DateUtils.datesEqual(lastDivOfInterest, consideredDate)){
+            } else if (DateUtils.datesEqual(lastDivOfInterest, consideredDate)) {
 
-                for(IPersonExtended p : temp) {
+                for (IPersonExtended p : temp) {
 
-                    if(DateUtils.dateBefore(p.getBirthDate_ex(), lastDateOfInterest)) {
+                    if (DateUtils.dateBefore(p.getBirthDate_ex(), lastDateOfInterest)) {
                         people.add(p);
                     }
-
                 }
 
             } else {
@@ -276,5 +281,9 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
         }
 
         return people;
+    }
+
+    public String toString() {
+        return description;
     }
 }

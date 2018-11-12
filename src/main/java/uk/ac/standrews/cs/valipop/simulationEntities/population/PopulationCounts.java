@@ -16,8 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
-
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -30,7 +28,6 @@ public class PopulationCounts {
 
     private int eligibilityChecks = 0;
     private int failedEligibilityChecks = 0;
-
 
     public void newMale(int numberOf) {
         createdMales += numberOf;
@@ -49,7 +46,7 @@ public class PopulationCounts {
     }
 
     public void updateMaxPopulation(int populationSize) {
-        if(populationSize > maxPopulation) {
+        if (populationSize > maxPopulation) {
             maxPopulation = populationSize;
         }
     }
@@ -81,5 +78,4 @@ public class PopulationCounts {
     public double getAllTimeSexRatio() {
         return createdMales / ((double) (createdFemales + createdMales));
     }
-
 }

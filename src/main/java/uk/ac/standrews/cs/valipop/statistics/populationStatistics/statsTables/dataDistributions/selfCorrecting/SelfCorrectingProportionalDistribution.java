@@ -49,7 +49,7 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
         this.sourcePopulation = sourcePopulation;
         this.targetProportions = targetProportions;
 
-        this.achievedCounts = new HashMap<>();
+        this.achievedCounts = new TreeMap<>();
 
         for(Map.Entry<IntegerRange, LabelledValueSet<IntegerRange, Double>> iR : targetProportions.entrySet()) {
             achievedCounts.put(iR.getKey(), new IntegerRangeToIntegerSet(iR.getValue().getLabels(), 0));
@@ -123,7 +123,7 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
             return;
         }
 
-        LabelledValueSet<IntegerRange, Integer> newAchievedCountsForAge = achievedCount.getFufilledCount();
+        LabelledValueSet<IntegerRange, Integer> newAchievedCountsForAge = achievedCount.getFulfilledCount();
 
         LabelledValueSet<IntegerRange, Integer> summedAchievedCountsForAge = previousAchievedCountsForAge
                 .valuesPlusValues(newAchievedCountsForAge).floorValues();

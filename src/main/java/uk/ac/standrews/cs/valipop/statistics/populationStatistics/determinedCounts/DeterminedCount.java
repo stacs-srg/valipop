@@ -27,12 +27,11 @@ public interface DeterminedCount<T, Raw> {
 
     T getDeterminedCount();
 
-    void setFufilledCount(T fufilledCount);
+    void setFulfilledCount(T fulfilledCount);
 
-    T getFufilledCount();
+    T getFulfilledCount();
 
     Raw getRawCorrectedCount();
 
     Raw getRawUncorrectedCount();
-
 }

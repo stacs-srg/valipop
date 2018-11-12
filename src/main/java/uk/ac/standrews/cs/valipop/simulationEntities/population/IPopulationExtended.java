@@ -44,5 +44,4 @@ public interface IPopulationExtended extends IPopulation {
      * @return an iterable sequence of partnerships
      */
     Iterable<IPartnershipExtended> getPartnerships_ex();
-
 }
