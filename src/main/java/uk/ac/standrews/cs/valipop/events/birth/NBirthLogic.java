@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.valipop.events.EventLogic;
 import uk.ac.standrews.cs.valipop.events.birth.partnering.PartneringLogic;
 import uk.ac.standrews.cs.valipop.events.birth.partnering.SeparationLogic;
 import uk.ac.standrews.cs.valipop.events.init.InitLogic;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.FemaleCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
@@ -74,7 +74,7 @@ public class NBirthLogic implements EventLogic {
 
             for (IntegerRange order : inputOrders) {
 
-                Collection<IPersonExtended> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
+                Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
 
                 BirthStatsKey key = new BirthStatsKey(age, order.getValue(), cohortSize, consideredTimePeriod, currentDate);
                 SingleDeterminedCount determinedCount =
@@ -139,19 +139,19 @@ public class NBirthLogic implements EventLogic {
         tBirths = 0;
     }
 
-    private MotherSet selectMothers(Config config, Collection<IPersonExtended> females, int numberOfChildren,
+    private MotherSet selectMothers(Config config, Collection<IPerson> females, int numberOfChildren,
                                     PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate,
                                     CompoundTimeUnit consideredTimePeriod, Population population) {
 
         Collection<NewMother> needPartners = new ArrayList<>();
-        Collection<IPersonExtended> havePartners = new ArrayList<>();
+        Collection<IPerson> havePartners = new ArrayList<>();
 
         if (females.size() == 0) {
             return new MotherSet(havePartners, needPartners);
         }
 
         // TODO adjust this to also permit age variations
-        ArrayList<IPersonExtended> femalesAL = new ArrayList<>(females);
+        ArrayList<IPerson> femalesAL = new ArrayList<>(females);
 
         int ageOfMothers = femalesAL.get(0).ageOnDate(currentDate);
 
@@ -160,7 +160,7 @@ public class NBirthLogic implements EventLogic {
 
         int childrenMade = 0;
 
-        Map<Integer, ArrayList<IPersonExtended>> continuingPartneredFemalesByChildren = new HashMap<>();
+        Map<Integer, ArrayList<IPerson>> continuingPartneredFemalesByChildren = new HashMap<>();
 
         LabelledValueSet<IntegerRange, Integer> motherCountsByMaternities =
                 new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0);
@@ -178,7 +178,7 @@ public class NBirthLogic implements EventLogic {
 
         CollectionUtils.shuffle(femalesAL, desiredPopulationStatistics.getRandomGenerator());
 
-        for (IPersonExtended female : femalesAL) {
+        for (IPerson female : femalesAL) {
 
             if (childrenMade >= numberOfChildren) {
                 break;
@@ -235,9 +235,9 @@ public class NBirthLogic implements EventLogic {
         return (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
     }
 
-    private boolean eligible(IPersonExtended potentialMother, PopulationStatistics desiredPopulationStatistics, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date currentDate) {
+    private boolean eligible(IPerson potentialMother, PopulationStatistics desiredPopulationStatistics, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date currentDate) {
 
-        IPersonExtended lastChild = potentialMother.getLastChild();
+        IPerson lastChild = potentialMother.getLastChild();
 
         if (lastChild != null) {
             ExactDate earliestDateOfNextChild = DateUtils.

@@ -16,11 +16,11 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 import uk.ac.standrews.cs.utilities.DateManipulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -129,8 +129,6 @@ public class DeathSourceRecord extends IndividualSourceRecord {
             setParentAttributes(person, population, parents_partnership);
         }
     }
-
-
 
     public String getDeathDay() {
         return death_date.getDay();

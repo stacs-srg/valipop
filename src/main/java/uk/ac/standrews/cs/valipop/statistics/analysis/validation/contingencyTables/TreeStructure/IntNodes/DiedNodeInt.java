@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
@@ -43,13 +43,13 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
 
     @SuppressWarnings("Duplicates")
     @Override
-    public void processPerson(IPersonExtended person, Date currentDate) {
+    public void processPerson(IPerson person, Date currentDate) {
 
         incCountByOne();
 
         if(Character.toUpperCase(person.getSex()) == 'F') {
 
-            IPartnershipExtended partnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
+            IPartnership partnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
             int numberOfChildren;
 
             if(partnership == null) {

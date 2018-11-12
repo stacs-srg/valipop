@@ -16,11 +16,11 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.ChildrenInYearOption;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
@@ -35,11 +35,11 @@ public class ChildrenInYearNodeInt extends IntNode<ChildrenInYearOption, Integer
     }
 
     @Override
-    public void processPerson(IPersonExtended person, Date currentDate) {
+    public void processPerson(IPerson person, Date currentDate) {
 
         incCountByOne();
 
-        IPartnershipExtended activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
+        IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
 
         Integer option;
 

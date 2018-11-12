@@ -17,9 +17,7 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -36,14 +34,14 @@ import java.util.List;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class Partnership implements IPartnershipExtended {
+public class Partnership implements IPartnership {
 
     private static Logger log = new Logger(Partnership.class);
     private static int nextId = 0;
     private int id;
-    private IPersonExtended male;
-    private IPersonExtended female;
-    private List<IPersonExtended> children = new ArrayList<>();
+    private IPerson male;
+    private IPerson female;
+    private List<IPerson> children = new ArrayList<>();
 
     private ExactDate partnershipDate;
     private ExactDate marriageDate = null;
@@ -52,14 +50,14 @@ public class Partnership implements IPartnershipExtended {
 
     private static DateSelector dateSelector = new DateSelector();
 
-    public Partnership(IPersonExtended male, IPersonExtended female, ExactDate partnershipDate) {
+    public Partnership(IPerson male, IPerson female, ExactDate partnershipDate) {
 
         this(male, female);
 
         this.partnershipDate = partnershipDate;
     }
 
-    public Partnership(IPersonExtended male, IPersonExtended female) {
+    public Partnership(IPerson male, IPerson female) {
 
         this.id = getNewId();
 
@@ -165,7 +163,7 @@ public class Partnership implements IPartnershipExtended {
     public List<Integer> getChildIds() {
         List<Integer> childrenIDs = new ArrayList<>();
 
-        for(IPersonExtended p : getChildren()) {
+        for(IPerson p : getChildren()) {
             childrenIDs.add(p.getId());
         }
 
@@ -173,17 +171,17 @@ public class Partnership implements IPartnershipExtended {
     }
 
     @Override
-    public IPersonExtended getFemalePartner() {
+    public IPerson getFemalePartner() {
         return female;
     }
 
     @Override
-    public IPersonExtended getMalePartner() {
+    public IPerson getMalePartner() {
         return male;
     }
 
     @Override
-    public IPersonExtended getPartnerOf(IPersonExtended id) {
+    public IPerson getPartnerOf(IPerson id) {
         if (id.getSex() == 'm') {
             return female;
         } else {
@@ -192,7 +190,7 @@ public class Partnership implements IPartnershipExtended {
     }
 
     @Override
-    public List<IPersonExtended> getChildren() {
+    public List<IPerson> getChildren() {
         return children;
     }
 
@@ -259,7 +257,7 @@ public class Partnership implements IPartnershipExtended {
     }
 
     @Override
-    public void addChildren(Collection<IPersonExtended> children) {
+    public void addChildren(Collection<IPerson> children) {
         this.children.addAll(children);
     }
 
@@ -273,12 +271,12 @@ public class Partnership implements IPartnershipExtended {
     }
 
     @Override
-    public IPersonExtended getLastChild() {
+    public IPerson getLastChild() {
 
         Date latestBirthDate = new YearDate(Integer.MIN_VALUE);
-        IPersonExtended latestChild = null;
+        IPerson latestChild = null;
 
-        for(IPersonExtended c : getChildren()) {
+        for(IPerson c : getChildren()) {
             if(DateUtils.dateBefore(latestBirthDate, c.getBirthDate_ex())) {
                 latestBirthDate = c.getBirthDate_ex();
                 latestChild = c;

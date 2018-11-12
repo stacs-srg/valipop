@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import uk.ac.standrews.cs.utilities.DateManipulation;
-import uk.ac.standrews.cs.valipop.model.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 import java.util.Date;
 

@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.annotations.names;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 /**
@@ -24,6 +24,6 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStat
  */
 public interface NameGenerator {
 
-    String getName(IPersonExtended personToBeNamed, PopulationStatistics populationStatistics);
+    String getName(IPerson personToBeNamed, PopulationStatistics populationStatistics);
 
 }

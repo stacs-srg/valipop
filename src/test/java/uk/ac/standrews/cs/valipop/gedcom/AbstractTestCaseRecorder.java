@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.gedcom;
 
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.model.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.model.PopulationConverter;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;

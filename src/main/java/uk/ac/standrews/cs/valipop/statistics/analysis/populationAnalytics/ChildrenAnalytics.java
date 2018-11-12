@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
@@ -85,15 +85,15 @@ public class ChildrenAnalytics {
      */
     public void analyseChildren() {
 
-        for (final IPersonExtended person : population.getPeople_ex()) {
+        for (final IPerson person : population.getPeople()) {
 
             if (Character.toLowerCase(person.getSex()) == 'f') {
-                final List<IPartnershipExtended> partnerships = person.getPartnerships_ex();
+                final List<IPartnership> partnerships = person.getPartnerships_ex();
                 if (partnerships != null) {
 
-                    for (final IPartnershipExtended partnership : partnerships) {
+                    for (final IPartnership partnership : partnerships) {
 
-                        final List<IPersonExtended> child_ids = partnership.getChildren();
+                        final List<IPerson> child_ids = partnership.getChildren();
 
                         if (child_ids != null) {
                             children_per_marriage[child_ids.size()]++;
@@ -112,19 +112,19 @@ public class ChildrenAnalytics {
         final int MIN_CB_AGE = 15;
         final int MAX_CB_AGE = 50;
 
-        for (final IPersonExtended person : population.getPeople_ex()) {
+        for (final IPerson person : population.getPeople()) {
 
             if (Character.toLowerCase(person.getSex()) == 'f') {
-                final List<IPartnershipExtended> partnerships = person.getPartnerships_ex();
+                final List<IPartnership> partnerships = person.getPartnerships_ex();
                 if (partnerships != null) {
 
-                    for (final IPartnershipExtended partnership : partnerships) {
+                    for (final IPartnership partnership : partnerships) {
 
-                        final List<IPersonExtended> child_ids = partnership.getChildren();
+                        final List<IPerson> child_ids = partnership.getChildren();
 
                         if (child_ids != null) {
 
-                            for (final IPersonExtended child : child_ids) {
+                            for (final IPerson child : child_ids) {
 
                                 int yob = child.getBirthDate_ex().getYear();
 

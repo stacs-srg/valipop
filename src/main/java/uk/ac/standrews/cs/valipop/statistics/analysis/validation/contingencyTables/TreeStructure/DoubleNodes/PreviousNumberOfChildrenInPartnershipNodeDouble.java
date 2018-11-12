@@ -25,7 +25,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeEx
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 import java.util.Collection;
 
@@ -45,7 +45,7 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
 
 
     @Override
-    public void processPerson(IPersonExtended person, Date currentDate) {
+    public void processPerson(IPerson person, Date currentDate) {
         incCountByOne();
 
         Integer numberOfPrevChildrenInAnyPartnership = person.numberOfChildrenBirthedBeforeDate(currentDate.getYearDate());

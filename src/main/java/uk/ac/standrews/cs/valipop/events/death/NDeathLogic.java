@@ -30,7 +30,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 
 import java.util.Collection;
@@ -100,7 +100,7 @@ public class NDeathLogic implements EventLogic {
                 }
             }
 
-            Collection<IPersonExtended> peopleToKill;
+            Collection<IPerson> peopleToKill;
             try {
                 peopleToKill =
                         ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
@@ -122,13 +122,13 @@ public class NDeathLogic implements EventLogic {
         return killedAtTS;
     }
 
-    private int killPeople(Collection<IPersonExtended> people,
+    private int killPeople(Collection<IPerson> people,
                            PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                            Population population, Config config) {
 
         int killed = 0;
 
-        for (IPersonExtended person : people) {
+        for (IPerson person : people) {
 
             // choose date of death
             Date deathDate = deathDateSelector.selectDate(person, desiredPopulationStatistics, currentDate, consideredTimePeriod);

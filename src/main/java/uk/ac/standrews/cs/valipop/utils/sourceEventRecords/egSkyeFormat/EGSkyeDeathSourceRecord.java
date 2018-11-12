@@ -1,9 +1,9 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
@@ -22,7 +22,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
     protected String mothersOccupation;
     protected String marriageIDs;
 
-    public EGSkyeDeathSourceRecord(IPersonExtended person, IPopulation population) {
+    public EGSkyeDeathSourceRecord(IPerson person, IPopulation population) {
         super(person, population);
 
         deathDate = new ExactDate(person.getDeathDate_ex());
@@ -58,9 +58,9 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
 
     }
 
-    public String identifyMarritalStatus(IPersonExtended deceased) {
+    public String identifyMarritalStatus(IPerson deceased) {
 
-        List<IPartnershipExtended> partnerships = deceased.getPartnerships_ex();
+        List<IPartnership> partnerships = deceased.getPartnerships_ex();
 
         if(partnerships.size() == 0) {
             if(Character.toLowerCase(deceased.getSex()) == 'm') {
@@ -89,16 +89,16 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
         }
     }
 
-    public String[] identifyNameAndOccupationOfSpouses(IPersonExtended deceased) {
+    public String[] identifyNameAndOccupationOfSpouses(IPerson deceased) {
         String[] ret = new String[3];
 
         StringBuilder names = new StringBuilder();
         StringBuilder occupations = new StringBuilder();
         StringBuilder marIDs = new StringBuilder();
 
-        for(IPartnershipExtended partnership : deceased.getPartnerships_ex()) {
+        for(IPartnership partnership : deceased.getPartnerships_ex()) {
 
-            IPersonExtended spouse = partnership.getPartnerOf(deceased);
+            IPerson spouse = partnership.getPartnerOf(deceased);
 
             String spousesName = spouse.getFirstName() + " " + spouse.getSurname();
             String spousesOccupation = spouse.getOccupation();

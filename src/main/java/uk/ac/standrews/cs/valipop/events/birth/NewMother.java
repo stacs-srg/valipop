@@ -16,22 +16,22 @@
  */
 package uk.ac.standrews.cs.valipop.events.birth;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class NewMother {
 
-    private IPersonExtended newMother;
+    private IPerson newMother;
     private int numberOfChildrenInMaternity;
 
-    public NewMother(IPersonExtended newMother, int numberOfChildrenInMaternity) {
+    public NewMother(IPerson newMother, int numberOfChildrenInMaternity) {
         this.newMother = newMother;
         this.numberOfChildrenInMaternity = numberOfChildrenInMaternity;
     }
 
-    public IPersonExtended getNewMother() {
+    public IPerson getNewMother() {
         return newMother;
     }
 

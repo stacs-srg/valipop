@@ -18,10 +18,21 @@ package uk.ac.standrews.cs.valipop.model.gedcom;
 
 import org.gedcom4j.model.*;
 import uk.ac.standrews.cs.utilities.DateManipulation;
-import uk.ac.standrews.cs.valipop.model.AbstractPerson;
-import uk.ac.standrews.cs.valipop.model.IPerson;
+import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.events.death.NotDeadException;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,7 +40,98 @@ import java.util.List;
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk>
  */
-public class GEDCOMPerson extends AbstractPerson {
+public class GEDCOMPerson implements IPerson {
+
+    protected int id;
+    protected String first_name;
+    protected String surname;
+    protected char sex;
+    protected java.util.Date birth_date;
+    protected String birth_place;
+    protected java.util.Date death_date;
+    protected String death_place;
+    protected String death_cause;
+    protected String occupation;
+    protected String string_rep;
+    protected List<Integer> partnerships;
+    protected int parents_partnership_id;
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String getFirstName() {
+        return first_name;
+    }
+
+    @Override
+    public String getSurname() {
+        return surname;
+    }
+
+    @Override
+    public char getSex() {
+        return sex;
+    }
+
+    @Override
+    public java.util.Date getBirthDate() {
+        return (java.util.Date) birth_date.clone();
+    }
+
+    @Override
+    public String getBirthPlace() {
+        return birth_place;
+    }
+
+    @Override
+    public java.util.Date getDeathDate() {
+        return death_date == null ? null : (java.util.Date) death_date.clone();
+    }
+
+    @Override
+    public String getDeathPlace() {
+        return death_place;
+    }
+
+    @Override
+    public String getDeathCause() {
+        return death_cause;
+    }
+
+    @Override
+    public String getOccupation() {
+        return occupation;
+    }
+
+    @Override
+    public List<Integer> getPartnerships() {
+        return partnerships;
+    }
+
+    @Override
+    public int getParentsPartnership() {
+        return parents_partnership_id;
+    }
+
+    @SuppressWarnings("NonFinalFieldReferenceInEquals")
+    @Override
+    public boolean equals(final Object other) {
+        return other instanceof IPerson && ((IPerson) other).getId() == id;
+    }
+
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return string_rep;
+    }
 
     private static final String MALE_STRING = String.valueOf(IPerson.MALE);
 
@@ -141,5 +243,195 @@ public class GEDCOMPerson extends AbstractPerson {
             builder.append(name);
         }
         return builder.toString();
+    }
+
+    @Override
+    public ExactDate getBirthDate_ex() {
+        return null;
+    }
+
+    @Override
+    public ExactDate getDeathDate_ex() {
+        return null;
+    }
+
+    @Override
+    public List<IPartnership> getPartnerships_ex() {
+        return null;
+    }
+
+    @Override
+    public IPartnership getParentsPartnership_ex() {
+        return null;
+    }
+
+    @Override
+    public boolean isIllegitimate() {
+        return false;
+    }
+
+    @Override
+    public List<IPartnership> getPartnershipsBeforeDate(Date date) {
+        return null;
+    }
+
+    @Override
+    public ExactDate getDateOfLastLegitimatePartnershipEventBeforeDate(ExactDate date) {
+        return null;
+    }
+
+    @Override
+    public boolean isWidow(Date onDate) {
+        return false;
+    }
+
+    @Override
+    public IPerson getPartner(Date onDate) {
+        return null;
+    }
+
+    @Override
+    public boolean noRecentChildren(MonthDate currentDate, CompoundTimeUnit timePeriod) {
+        return false;
+    }
+
+    @Override
+    public void recordPartnership(IPartnership partnership) {
+
+    }
+
+    @Override
+    public boolean recordDeath(Date date, Population population, PopulationStatistics desiredPopulationStatistics) {
+        return false;
+    }
+
+    @Override
+    public int ageAtDeath() throws NotDeadException {
+        return 0;
+    }
+
+    @Override
+    public boolean aliveOnDate(Date date) {
+        return false;
+    }
+
+    @Override
+    public IPerson getLastChild() {
+        return null;
+    }
+
+    @Override
+    public void addChildrenToCurrentPartnership(int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config) {
+
+    }
+
+    @Override
+    public boolean toSeparate() {
+        return false;
+    }
+
+    @Override
+    public void willSeparate(boolean b) {
+
+    }
+
+    @Override
+    public int ageOnDate(Date date) {
+        return 0;
+    }
+
+    @Override
+    public boolean needsNewPartner(AdvanceableDate currentDate) {
+        return false;
+    }
+
+    @Override
+    public int numberOfChildrenInLatestPartnership() {
+        return 0;
+    }
+
+    @Override
+    public Collection<IPerson> getAllChildren() {
+        return null;
+    }
+
+    @Override
+    public Collection<IPerson> getAllGrandChildren() {
+        return null;
+    }
+
+    @Override
+    public Collection<IPerson> getAllGreatGrandChildren() {
+        return null;
+    }
+
+    @Override
+    public boolean diedInYear(YearDate year) {
+        return false;
+    }
+
+    @Override
+    public Collection<IPartnership> getPartnershipsActiveInYear(YearDate year) {
+        return null;
+    }
+
+    @Override
+    public boolean bornInYear(YearDate year) {
+        return false;
+    }
+
+    @Override
+    public boolean aliveInYear(YearDate y) {
+        return false;
+    }
+
+    @Override
+    public IPartnership getLastPartnership() {
+        return null;
+    }
+
+    @Override
+    public Integer numberOfChildrenBirthedBeforeDate(YearDate y) {
+        return null;
+    }
+
+    @Override
+    public boolean bornBefore(Date year) {
+        return false;
+    }
+
+    @Override
+    public boolean bornOnDate(Date y) {
+        return false;
+    }
+
+    @Override
+    public Date getDateOfNextPostSeparationEvent(Date separationDate) {
+        return null;
+    }
+
+    @Override
+    public Date getDateOfPreviousPreMarriageEvent(Date latestPossibleMarriageDate) {
+        return null;
+    }
+
+    @Override
+    public boolean diedAfter(Date date) {
+        return false;
+    }
+
+    @Override
+    public void setMarriageBaby(boolean b) {
+
+    }
+
+    @Override
+    public boolean getMarriageBaby() {
+        return false;
+    }
+
+    @Override
+    public int compareTo(IPerson o) {
+        return 0;
     }
 }

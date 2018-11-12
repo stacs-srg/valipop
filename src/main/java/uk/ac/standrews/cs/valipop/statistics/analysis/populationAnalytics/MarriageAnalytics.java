@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
@@ -73,11 +73,11 @@ public class MarriageAnalytics {
      */
     public void analyseMarriages() {
 
-        for (final IPersonExtended person : population.getPeople_ex()) {
+        for (final IPerson person : population.getPeople()) {
 
-            if (person.getSex() == IPersonExtended.MALE) { // only look at Males to avoid counting marriages twice.
+            if (person.getSex() == IPerson.MALE) { // only look at Males to avoid counting marriages twice.
 
-                final List<IPartnershipExtended> partnership_ids = person.getPartnerships_ex();
+                final List<IPartnership> partnership_ids = person.getPartnerships_ex();
                 if (partnership_ids == null) {
                     count_marriages[0]++;
                 } else {

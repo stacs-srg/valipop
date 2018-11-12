@@ -16,10 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population;
 
-import uk.ac.standrews.cs.valipop.model.IPopulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
-
 /**
  * Interface for all population models.
  *
@@ -28,20 +24,20 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
  */
 public interface IPopulationExtended extends IPopulation {
 
-    /**
-     * Allows iteration over the people in the population.
-     * The order is determined by the underlying population implementation.
-     * The unique identifiers of people are allocated in temporal order.
-     *
-     * @return an iterable sequence of people
-     */
-    Iterable<IPersonExtended> getPeople_ex();
-
-    /**
-     * Allows iteration over the partnerships in the population.
-     * The order is determined by the underlying population implementation.
-     *
-     * @return an iterable sequence of partnerships
-     */
-    Iterable<IPartnershipExtended> getPartnerships_ex();
+//    /**
+//     * Allows iteration over the people in the population.
+//     * The order is determined by the underlying population implementation.
+//     * The unique identifiers of people are allocated in temporal order.
+//     *
+//     * @return an iterable sequence of people
+//     */
+//    Iterable<IPerson> getPeople_ex();
+//
+//    /**
+//     * Allows iteration over the partnerships in the population.
+//     * The order is determined by the underlying population implementation.
+//     *
+//     * @return an iterable sequence of partnerships
+//     */
+//    Iterable<IPartnership> getPartnerships_ex();
 }

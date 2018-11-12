@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 import java.util.Collection;
 
@@ -38,7 +38,7 @@ public class InsufficientNumberOfPeopleException extends Exception {
     }
 
 
-    public InsufficientNumberOfPeopleException(String message, Collection<IPersonExtended> chosen) {
+    public InsufficientNumberOfPeopleException(String message, Collection<IPerson> chosen) {
         this.message = message;
     }
 

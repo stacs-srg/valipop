@@ -16,11 +16,11 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 import uk.ac.standrews.cs.utilities.DateManipulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 
 import java.util.Date;
 
@@ -138,7 +138,6 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 
 				// TODO this will need to change to reflect however we choose to model current location in geographical model
 				setBirthAddress(parents_partnership.getMarriagePlace());
-
 			}
 
 			setParentAttributes(person, population, parents_partnership);

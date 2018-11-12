@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.events.birth.partnering;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 /**
@@ -24,14 +24,14 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
  */
 public class ProposedPartnership {
 
-    IPersonExtended male;
+    IPerson male;
     IntegerRange malesRange;
 
-    IPersonExtended female;
+    IPerson female;
 
     int numberOfChildren;
 
-    public ProposedPartnership(IPersonExtended male, IPersonExtended female, IntegerRange malesRange, int numberOfChildren) {
+    public ProposedPartnership(IPerson male, IPerson female, IntegerRange malesRange, int numberOfChildren) {
         this.male = male;
         this.female = female;
         this.malesRange = malesRange;
@@ -40,7 +40,7 @@ public class ProposedPartnership {
         female.willSeparate(false);
     }
 
-    public void setMale(IPersonExtended newMale, IntegerRange newMalesRange) {
+    public void setMale(IPerson newMale, IntegerRange newMalesRange) {
         this.male = newMale;
         this.malesRange = newMalesRange;
         male.willSeparate(false);
@@ -50,11 +50,11 @@ public class ProposedPartnership {
         return malesRange;
     }
 
-    public IPersonExtended getFemale() {
+    public IPerson getFemale() {
         return female;
     }
 
-    public IPersonExtended getMale() {
+    public IPerson getMale() {
         return male;
     }
 

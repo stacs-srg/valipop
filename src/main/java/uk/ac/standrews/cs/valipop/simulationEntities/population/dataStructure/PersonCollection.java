@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.MisalignedTimeDivisionError;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.*;
@@ -64,7 +64,7 @@ public abstract class PersonCollection implements DateBounds {
      *
      * @return All people in the PersonCollection
      */
-    public abstract Collection<IPersonExtended> getAll();
+    public abstract Collection<IPerson> getAll();
 
     /**
      * Gets all the people in the PersonCollection who were born in the given years.
@@ -72,7 +72,7 @@ public abstract class PersonCollection implements DateBounds {
      * @param firstDate the year of birth of the desired cohort
      * @return the desired cohort
      */
-    public abstract Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod);
+    public abstract Collection<IPerson> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod);
 
     /**
      * Gets all the people in the PersonCollection who were alive in the given years.
@@ -80,14 +80,14 @@ public abstract class PersonCollection implements DateBounds {
      * @param firstDate the year of birth of the desired cohort
      * @return the desired cohort
      */
-    public abstract Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge);
+    public abstract Collection<IPerson> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge);
 
     /**
      * Adds the given person to the PersonCollection.
      *
      * @param person the person to be added
      */
-    abstract void addPerson(IPersonExtended person);
+    abstract void addPerson(IPerson person);
 
     /**
      * Removes the specified person from this PersonCollection.
@@ -95,7 +95,7 @@ public abstract class PersonCollection implements DateBounds {
      * @param person the person to be removed
      * @throws PersonNotFoundException If the specified person is not found then an exception is thrown
      */
-    abstract void removePerson(IPersonExtended person) throws PersonNotFoundException;
+    abstract void removePerson(IPerson person) throws PersonNotFoundException;
 
     /**
      * Counts and returns the number of people in the PersonCollection. This may be very expensive as it involves
@@ -126,7 +126,7 @@ public abstract class PersonCollection implements DateBounds {
      * @throws InsufficientNumberOfPeopleException If there are less people alive for the given year of birth than
      */
     @SuppressWarnings("Duplicates")
-    public Collection<IPersonExtended> removeNPersons(int numberToRemove, AdvanceableDate firstDate, CompoundTimeUnit timePeriod, boolean bestAttempt) throws InsufficientNumberOfPeopleException {
+    public Collection<IPerson> removeNPersons(int numberToRemove, AdvanceableDate firstDate, CompoundTimeUnit timePeriod, boolean bestAttempt) throws InsufficientNumberOfPeopleException {
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(divisionSize, timePeriod);
 
@@ -134,7 +134,7 @@ public abstract class PersonCollection implements DateBounds {
             throw new MisalignedTimeDivisionError();
         }
 
-        List<IPersonExtended> people = new ArrayList<>();
+        List<IPerson> people = new ArrayList<>();
         MonthDate divisionDate = firstDate.getMonthDate();
 
         LinkedList<MonthDate> reusableDivisions = new LinkedList<>();
@@ -186,7 +186,7 @@ public abstract class PersonCollection implements DateBounds {
             MonthDate consideredDivision = reusableDivisions.removeFirst();
             divisionsUsed++;
 
-            Collection<IPersonExtended> selectedPeople = removeNPersonsFromDivision(numberToRemoveFromDivision, consideredDivision);
+            Collection<IPerson> selectedPeople = removeNPersonsFromDivision(numberToRemoveFromDivision, consideredDivision);
             people.addAll(selectedPeople);
 
             // if more people in division keep note incase of shortfall in other divisions
@@ -199,16 +199,16 @@ public abstract class PersonCollection implements DateBounds {
         return people;
     }
 
-    private Collection<IPersonExtended> removeNPersonsFromDivision(int numberToRemove, AdvanceableDate divisionDate) {
+    private Collection<IPerson> removeNPersonsFromDivision(int numberToRemove, AdvanceableDate divisionDate) {
 
         // The selected people
-        Collection<IPersonExtended> selectedPeople = new ArrayList<>();
+        Collection<IPerson> selectedPeople = new ArrayList<>();
 
         if (numberToRemove == 0) {
             return selectedPeople;
         }
 
-        LinkedList<IPersonExtended> cohort = new LinkedList<>(getAllPersonsBornInTimePeriod(divisionDate, divisionSize));
+        LinkedList<IPerson> cohort = new LinkedList<>(getAllPersonsBornInTimePeriod(divisionDate, divisionSize));
 
         while (selectedPeople.size() < numberToRemove) {
 
@@ -216,7 +216,7 @@ public abstract class PersonCollection implements DateBounds {
                 return selectedPeople;
             }
 
-            IPersonExtended p = cohort.removeFirst();
+            IPerson p = cohort.removeFirst();
 
             try {
                 removePerson(p);

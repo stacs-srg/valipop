@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
@@ -70,7 +70,7 @@ public class DeathAnalytics {
      */
     public void analyseDeaths() {
 
-        for (final IPersonExtended person : population.getPeople_ex()) {
+        for (final IPerson person : population.getPeople()) {
 
             final Date death_date = person.getDeathDate_ex();
 

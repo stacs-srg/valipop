@@ -16,17 +16,15 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.*;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.*;
 
@@ -46,25 +44,25 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
     private MaleCollection males;
     private FemaleCollection females;
 
-    private final Map<Integer, IPersonExtended> peopleIndex = new HashMap<>();
-    private final Map<Integer, IPartnershipExtended> partnershipIndex = new HashMap<>();
+    private final Map<Integer, IPerson> peopleIndex = new HashMap<>();
+    private final Map<Integer, IPartnership> partnershipIndex = new HashMap<>();
 
     // TODO decide on which part approach using either line above or below
-    private ArrayList<IPartnershipExtended> partTemp = new ArrayList<>();
+    private ArrayList<IPartnership> partTemp = new ArrayList<>();
 
     public PeopleCollection clone() {
 
         PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate(), getDivisionSize());
 
-        for (IPersonExtended m : males.getAll()) {
+        for (IPerson m : males.getAll()) {
             clone.addPerson(m);
         }
 
-        for (IPersonExtended f : females.getAll()) {
+        for (IPerson f : females.getAll()) {
             clone.addPerson(f);
         }
 
-        for (Map.Entry<Integer, IPartnershipExtended> k : partnershipIndex.entrySet()) {
+        for (Map.Entry<Integer, IPartnership> k : partnershipIndex.entrySet()) {
             clone.addPartnershipToIndex(k.getValue());
         }
 
@@ -109,12 +107,12 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
      *
      * @param partnership the partnership
      */
-    public void addPartnershipToIndex(IPartnershipExtended partnership) {
+    public void addPartnershipToIndex(IPartnership partnership) {
         partnershipIndex.put(partnership.getId(), partnership);
         partTemp.add(partnership);
     }
 
-    public void removePartnershipFromIndex(IPartnershipExtended partnership) {
+    public void removePartnershipFromIndex(IPartnership partnership) {
         partnershipIndex.remove(partnership.getId(), partnership);
         partTemp.remove(partnership);
     }
@@ -124,28 +122,28 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
      */
 
     @Override
-    public Collection<IPersonExtended> getAll() {
+    public Collection<IPerson> getAll() {
         return AggregatePersonCollectionFactory.makeCollectionOfPersons(females, males);
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
+    public Collection<IPerson> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
 
-        Collection<IPersonExtended> people = males.getAllPersonsBornInTimePeriod(firstDate, timePeriod);
+        Collection<IPerson> people = males.getAllPersonsBornInTimePeriod(firstDate, timePeriod);
         people.addAll(females.getAllPersonsBornInTimePeriod(firstDate, timePeriod));
         return people;
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
+    public Collection<IPerson> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
 
-        Collection<IPersonExtended> people = males.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge);
+        Collection<IPerson> people = males.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge);
         people.addAll(females.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge));
         return people;
     }
 
     @Override
-    public void addPerson(IPersonExtended person) {
+    public void addPerson(IPerson person) {
 
         if (person.getSex() == 'm') {
             males.addPerson(person);
@@ -158,7 +156,7 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
     }
 
     @Override
-    public void removePerson(IPersonExtended person) throws PersonNotFoundException {
+    public void removePerson(IPerson person) throws PersonNotFoundException {
 
         if (person.getSex() == 'm') {
             males.removePerson(person);
@@ -183,22 +181,6 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
         return females.getDivisionDates();
     }
 
-    /*
-    -------------------- IPopulationExtended interface methods --------------------
-     */
-
-    @Override
-    public Iterable<IPersonExtended> getPeople_ex() {
-        return getAll();
-    }
-
-    @Override
-    public Iterable<IPartnershipExtended> getPartnerships_ex() {
-
-        // TODO Is this temp object needed?
-        return partTemp;
-    }
-
     @Override
     public Iterable<IPerson> getPeople() {
         return new ArrayList<>(getAll());
@@ -216,7 +198,7 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
     }
 
     @Override
-    public IPartnershipExtended findPartnership(int id) {
+    public IPartnership findPartnership(int id) {
         return partnershipIndex.get(id);
     }
 
@@ -240,11 +222,11 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
 
     }
 
-    private Collection<IPersonExtended> getPeopleBetweenDates(PersonCollection collection,
-                                                              AdvanceableDate firstDateOfInterest,
-                                                              AdvanceableDate lastDateOfInterest) {
+    private Collection<IPerson> getPeopleBetweenDates(PersonCollection collection,
+                                                      AdvanceableDate firstDateOfInterest,
+                                                      AdvanceableDate lastDateOfInterest) {
 
-        Collection<IPersonExtended> people = new ArrayList<>();
+        Collection<IPerson> people = new ArrayList<>();
 
         AdvanceableDate firstDivOfInterest = resolveDateToCorrectDivisionDate(firstDateOfInterest);
         AdvanceableDate lastDivOfInterest = resolveDateToCorrectDivisionDate(lastDateOfInterest);
@@ -253,11 +235,11 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
 
         while (DateUtils.dateBeforeOrEqual(consideredDate, lastDivOfInterest)) {
 
-            Collection<IPersonExtended> temp = collection.getAllPersonsBornInTimePeriod(consideredDate, getDivisionSize());
+            Collection<IPerson> temp = collection.getAllPersonsBornInTimePeriod(consideredDate, getDivisionSize());
 
             if (DateUtils.datesEqual(firstDivOfInterest, consideredDate)) {
 
-                for (IPersonExtended p : temp) {
+                for (IPerson p : temp) {
 
                     if (!DateUtils.dateBefore(p.getBirthDate_ex(), firstDateOfInterest)) {
                         people.add(p);
@@ -266,7 +248,7 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
 
             } else if (DateUtils.datesEqual(lastDivOfInterest, consideredDate)) {
 
-                for (IPersonExtended p : temp) {
+                for (IPerson p : temp) {
 
                     if (DateUtils.dateBefore(p.getBirthDate_ex(), lastDateOfInterest)) {
                         people.add(p);

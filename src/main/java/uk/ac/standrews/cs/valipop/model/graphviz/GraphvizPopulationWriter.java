@@ -17,9 +17,9 @@
 package uk.ac.standrews.cs.valipop.model.graphviz;
 
 import uk.ac.standrews.cs.valipop.model.AbstractFilePopulationWriter;
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 
 import java.io.IOException;
 import java.io.PrintWriter;

@@ -22,7 +22,7 @@ import org.junit.Test;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulationStatisticsFactory;
@@ -97,13 +97,13 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for females
-        Collection<IPersonExtended> females = living.getFemales().getByDatePeriodAndBirthOrder(new YearDate(1900), y, 0);
+        Collection<IPerson> females = living.getFemales().getByDatePeriodAndBirthOrder(new YearDate(1900), y, 0);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
         assertFalse(females.contains(f4));
 
-        Collection<IPersonExtended> males = living.getMales().getAllPersonsBornInTimePeriod(new YearDate(1900), y);
+        Collection<IPerson> males = living.getMales().getAllPersonsBornInTimePeriod(new YearDate(1900), y);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
@@ -140,7 +140,7 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for females
-        Collection<IPersonExtended> females = living.getFemales().getByDatePeriodAndBirthOrder(start, y, 0);
+        Collection<IPerson> females = living.getFemales().getByDatePeriodAndBirthOrder(start, y, 0);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -176,14 +176,14 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for males
-        Collection<IPersonExtended> males = living.getMales().getAllPersonsBornInTimePeriod(start, y);
+        Collection<IPerson> males = living.getMales().getAllPersonsBornInTimePeriod(start, y);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
 
-        Collection<IPersonExtended> females = living.getFemales().getAllPersonsBornInTimePeriod(start, y);
+        Collection<IPerson> females = living.getFemales().getAllPersonsBornInTimePeriod(start, y);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -219,18 +219,18 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for males
-        Collection<IPersonExtended> males = living.getMales().getAll();
+        Collection<IPerson> males = living.getMales().getAll();
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
-        Collection<IPersonExtended> females = living.getFemales().getAll();
+        Collection<IPerson> females = living.getFemales().getAll();
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
 
-        Collection<IPersonExtended> all = living.getAll();
+        Collection<IPerson> all = living.getAll();
         assertTrue(all.contains(m1));
         assertTrue(all.contains(m2));
         assertTrue(all.contains(m3));
@@ -274,7 +274,7 @@ public class PeopleCollectionTest {
         living.addPerson(f1);
 
         // are they in the new place
-        Collection<IPersonExtended> people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate_ex().getYearDate(), y, 1);
+        Collection<IPerson> people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate_ex().getYearDate(), y, 1);
         assertTrue(people.contains(f1));
 
         // and not in the old place

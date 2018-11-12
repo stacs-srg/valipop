@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.model;
 
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 /**
  * Interface to be implemented by classes that process information from a population.

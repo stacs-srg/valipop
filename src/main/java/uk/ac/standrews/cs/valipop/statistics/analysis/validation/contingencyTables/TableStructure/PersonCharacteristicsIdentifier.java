@@ -17,13 +17,11 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure;
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,9 +31,9 @@ import java.util.Collection;
  */
 public class PersonCharacteristicsIdentifier {
 
-    public static IPartnershipExtended getActivePartnership(IPersonExtended person, Date currentDate) {
+    public static IPartnership getActivePartnership(IPerson person, Date currentDate) {
 
-        ArrayList<IPartnershipExtended> partnershipsInYear = new ArrayList<>(person.getPartnershipsActiveInYear(currentDate.getYearDate()));
+        ArrayList<IPartnership> partnershipsInYear = new ArrayList<>(person.getPartnershipsActiveInYear(currentDate.getYearDate()));
 
         if(partnershipsInYear.size() > 1) {
             throw new UnsupportedOperationException("Lots of partners in year - likely for a female to get this error");
@@ -47,17 +45,17 @@ public class PersonCharacteristicsIdentifier {
 
     }
 
-    public static Integer getChildrenBirthedInYear(IPartnershipExtended activePartnership, YearDate year) {
+    public static Integer getChildrenBirthedInYear(IPartnership activePartnership, YearDate year) {
 
         if(activePartnership == null) {
             return 0;
         }
 
-        Collection<IPersonExtended> children = activePartnership.getChildren();
+        Collection<IPerson> children = activePartnership.getChildren();
 
         int c = 0;
 
-        for(IPersonExtended child : children) {
+        for(IPerson child : children) {
             if(child.bornInYear(year)) {
                 c++;
             }
@@ -68,17 +66,17 @@ public class PersonCharacteristicsIdentifier {
     }
 
 
-    public static Integer getChildrenBirthedBeforeDate(IPartnershipExtended activePartnership, Date year) {
+    public static Integer getChildrenBirthedBeforeDate(IPartnership activePartnership, Date year) {
 
         if(activePartnership == null) {
             return 0;
         }
 
-        Collection<IPersonExtended> children = activePartnership.getChildren();
+        Collection<IPerson> children = activePartnership.getChildren();
 
         int c = 0;
 
-        for(IPersonExtended child : children) {
+        for(IPerson child : children) {
             if(child.bornBefore(year)) {
                 c++;
             }
@@ -89,13 +87,13 @@ public class PersonCharacteristicsIdentifier {
     }
 
 
-    public static SeparationOption toSeparate(IPartnershipExtended activePartnership, YearDate y) {
+    public static SeparationOption toSeparate(IPartnership activePartnership, YearDate y) {
 
         if(activePartnership == null) {
             return SeparationOption.NA;
         }
 
-        IPersonExtended lastChild = activePartnership.getLastChild();
+        IPerson lastChild = activePartnership.getLastChild();
 
         if (!lastChild.bornInYear(y)) {
             return SeparationOption.NO;
@@ -107,7 +105,7 @@ public class PersonCharacteristicsIdentifier {
 
     }
 
-    public static boolean startedInYear(IPartnershipExtended activePartnership, YearDate y) {
+    public static boolean startedInYear(IPartnership activePartnership, YearDate y) {
 
         Date startDate = activePartnership.getPartnershipDate();
 

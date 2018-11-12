@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
-import uk.ac.standrews.cs.valipop.model.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;

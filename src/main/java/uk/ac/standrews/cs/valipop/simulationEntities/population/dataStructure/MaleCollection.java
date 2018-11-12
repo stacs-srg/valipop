@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.*;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
@@ -35,7 +35,7 @@ import java.util.*;
 public class MaleCollection extends PersonCollection {
 
     // this is by year of birth
-    private final Map<MonthDate, Collection<IPersonExtended>> byYear = new TreeMap<>();
+    private final Map<MonthDate, Collection<IPerson>> byYear = new TreeMap<>();
 
     /**
      * Instantiates a new MaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -59,11 +59,11 @@ public class MaleCollection extends PersonCollection {
      */
 
     @Override
-    public Collection<IPersonExtended> getAll() {
+    public Collection<IPerson> getAll() {
 
-        Collection<IPersonExtended> people = new ArrayList<>();
+        Collection<IPerson> people = new ArrayList<>();
 
-        for (Map.Entry<MonthDate, Collection<IPersonExtended>> persons : byYear.entrySet()) {
+        for (Map.Entry<MonthDate, Collection<IPerson>> persons : byYear.entrySet()) {
             people.addAll(persons.getValue());
         }
 
@@ -71,9 +71,9 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
+    public Collection<IPerson> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
 
-        Collection<IPersonExtended> people = new ArrayList<>();
+        Collection<IPerson> people = new ArrayList<>();
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
 
@@ -99,15 +99,15 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
+    public Collection<IPerson> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
 
         CompoundTimeUnit tP = DateUtils.combineCompoundTimeUnits(timePeriod, maxAge);
 
-        Collection<IPersonExtended> peopleBorn = getAllPersonsBornInTimePeriod(firstDate.advanceTime(maxAge.negative()), tP);
+        Collection<IPerson> peopleBorn = getAllPersonsBornInTimePeriod(firstDate.advanceTime(maxAge.negative()), tP);
 
-        Collection<IPersonExtended> peopleAlive = new ArrayList<>();
+        Collection<IPerson> peopleAlive = new ArrayList<>();
 
-        for(IPersonExtended p : peopleBorn) {
+        for(IPerson p : peopleBorn) {
             if(p.diedAfter(firstDate)) {
                 peopleAlive.add(p);
             }
@@ -117,7 +117,7 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public void addPerson(IPersonExtended person) {
+    public void addPerson(IPerson person) {
         MonthDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate_ex());
 
         try {
@@ -130,9 +130,9 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public void removePerson(IPersonExtended person) throws PersonNotFoundException {
+    public void removePerson(IPerson person) throws PersonNotFoundException {
 
-        Collection<IPersonExtended> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate_ex()));
+        Collection<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate_ex()));
 
         // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {

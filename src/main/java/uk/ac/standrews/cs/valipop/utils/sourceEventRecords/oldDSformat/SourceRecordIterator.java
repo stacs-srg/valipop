@@ -16,12 +16,12 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
 import uk.ac.standrews.cs.utilities.FilteredIterator;
 import uk.ac.standrews.cs.utilities.MappedIterator;
 import uk.ac.standrews.cs.utilities.Mapper;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -73,13 +73,7 @@ public class SourceRecordIterator {
                     l.add(p);
             }
 
-
-            Mapper<IPartnership, MarriageSourceRecord> person_to_marriage_record_mapper = new Mapper<IPartnership, MarriageSourceRecord>() {
-                @Override
-                public MarriageSourceRecord map(IPartnership partnership) {
-                    return new MarriageSourceRecord(partnership, population);
-                }
-            };
+            Mapper<IPartnership, MarriageSourceRecord> person_to_marriage_record_mapper = partnership -> new MarriageSourceRecord(partnership, population);
 
             return new MappedIterator<>(l.iterator(), person_to_marriage_record_mapper);
         };

@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.*;
@@ -38,7 +38,7 @@ import java.util.Collection;
  */
 public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, IntegerRange> implements ControlSelfNode, ControlChildrenNode, RunnableNode {
 
-    Collection<IPersonExtended> people = new ArrayList<>();
+    Collection<IPerson> people = new ArrayList<>();
 
     public NumberOfChildrenInYearNodeDouble(Integer option, ChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
@@ -60,7 +60,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     }
 
     @Override
-    public void processPerson(IPersonExtended person, Date currentDate) {
+    public void processPerson(IPerson person, Date currentDate) {
 
         people.add(person);
 

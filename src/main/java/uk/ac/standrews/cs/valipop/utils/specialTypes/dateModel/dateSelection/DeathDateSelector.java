@@ -23,16 +23,16 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DeathDateSelector extends DateSelector {
 
-    public ExactDate selectDate(IPersonExtended p, PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+    public ExactDate selectDate(IPerson p, PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
-        IPersonExtended child = p.getLastChild();
+        IPerson child = p.getLastChild();
 
         if(child != null) {
 
