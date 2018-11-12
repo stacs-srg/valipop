@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
@@ -31,7 +31,7 @@ import java.util.ArrayList;
  */
 public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
 
-    ArrayList<IPersonExtended> people = new ArrayList<>();
+    ArrayList<IPerson> people = new ArrayList<>();
 
     public AgeNodeInt(IntegerRange option, SexNodeInt parentNode, Integer initCount) {
         super(option, parentNode, initCount);
@@ -42,7 +42,7 @@ public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
     }
 
     @Override
-    public void processPerson(IPersonExtended person, Date currentDate) {
+    public void processPerson(IPerson person, Date currentDate) {
 
 //        YearDate yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
 //        Integer age = getOption().getValue();

@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
@@ -120,12 +120,12 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
     }
 
     @Override
-    public void processPerson(IPersonExtended person, Date currentDate) {
+    public void processPerson(IPerson person, Date currentDate) {
 
         incCountByOne();
 
         if(Character.toUpperCase(person.getSex()) == 'F') {
-            ArrayList<IPartnershipExtended> partnershipsInYear = new ArrayList<>(
+            ArrayList<IPartnership> partnershipsInYear = new ArrayList<>(
                     person.getPartnershipsActiveInYear(currentDate.getYearDate()));
 
             if(partnershipsInYear.size() == 0) {
@@ -136,7 +136,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
                     addChild(range).processPerson(person, currentDate);
                 }
             } else if(partnershipsInYear.size() == 1) {
-                IPartnershipExtended partnership = partnershipsInYear.remove(0);
+                IPartnership partnership = partnershipsInYear.remove(0);
                 int numberOfChildren = partnership.getChildren().size();
                 IntegerRange range = resolveToChildRange(numberOfChildren);
                 try {

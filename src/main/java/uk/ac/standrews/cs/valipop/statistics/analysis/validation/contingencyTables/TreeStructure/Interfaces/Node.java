@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
@@ -52,7 +52,7 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     public abstract void incCountByOne();
 
-    public abstract void processPerson(IPersonExtended person, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date currentDate);
+    public abstract void processPerson(IPerson person, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date currentDate);
 
     public Node<cOp, ?, childCount, ?> addChild(Node<cOp, ?, childCount, ?> child) {
         children.put(child.getOption(), child);

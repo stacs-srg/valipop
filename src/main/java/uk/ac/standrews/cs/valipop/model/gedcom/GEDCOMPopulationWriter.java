@@ -18,8 +18,8 @@ package uk.ac.standrews.cs.valipop.model.gedcom;
 
 import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.model.AbstractFilePopulationWriter;
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -269,7 +269,6 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
 		final int parents_partnership_id = person.getParentsPartnership();
 		if (parents_partnership_id != -1) {
 			write(FAMILY_AS_CHILD_TAG, makeFamilyReference(parents_partnership_id));
-
 		}
 	}
 

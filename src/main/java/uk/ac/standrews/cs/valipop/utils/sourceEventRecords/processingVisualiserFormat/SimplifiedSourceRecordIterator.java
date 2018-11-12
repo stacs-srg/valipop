@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFormat;
+package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat;
 
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
 import uk.ac.standrews.cs.utilities.FilteredIterator;
 import uk.ac.standrews.cs.utilities.MappedIterator;
 import uk.ac.standrews.cs.utilities.Mapper;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -74,12 +74,7 @@ public class SimplifiedSourceRecordIterator {
             }
 
 
-            Mapper<IPartnership, SimplifiedMarriageSourceRecord> person_to_marriage_record_mapper = new Mapper<IPartnership, SimplifiedMarriageSourceRecord>() {
-                @Override
-                public SimplifiedMarriageSourceRecord map(IPartnership partnership) {
-                    return new SimplifiedMarriageSourceRecord(partnership, population);
-                }
-            };
+            Mapper<IPartnership, SimplifiedMarriageSourceRecord> person_to_marriage_record_mapper = partnership -> new SimplifiedMarriageSourceRecord(partnership, population);
 
             return new MappedIterator<>(l.iterator(), person_to_marriage_record_mapper);
         };

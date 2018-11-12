@@ -29,7 +29,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUni
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.SourceNodeInt;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ContingencyTable;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 
@@ -95,7 +95,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
             ExactDate prevDay = new ExactDate(31, 12, y.getYear() - 1);
 
             // for every person in population
-            for (IPersonExtended person : population.getPeople_ex()) {
+            for (IPerson person : population.getPeople()) {
 
                 if(prevY.getYear() == y.getYear() && person.aliveOnDate(prevDay)) {
                     //if(prevY.getYear() == y.getYear() && person.aliveInYear(y) && !person.bornInYear(y)) {
@@ -285,7 +285,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
     }
 
-    public void processPerson(IPersonExtended person, Date currentDate, SourceType source) {
+    public void processPerson(IPerson person, Date currentDate, SourceType source) {
 
         try {
             getChild(source).processPerson(person, currentDate);
@@ -304,7 +304,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     }
 
     @Override
-    public void processPerson(IPersonExtended person, Date currentDate) {
+    public void processPerson(IPerson person, Date currentDate) {
 
     }
 

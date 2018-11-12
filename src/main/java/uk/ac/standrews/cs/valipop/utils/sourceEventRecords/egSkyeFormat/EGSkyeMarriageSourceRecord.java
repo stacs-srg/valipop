@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
-import uk.ac.standrews.cs.valipop.model.IPopulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.MarriageSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
@@ -14,7 +14,7 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
     protected int groomID;
     protected int brideID;
 
-    public EGSkyeMarriageSourceRecord(IPartnershipExtended partnership, IPopulation population) {
+    public EGSkyeMarriageSourceRecord(IPartnership partnership, IPopulation population) {
         super(partnership, population);
 
         marriageDate = new ExactDate(partnership.getPartnershipDate());

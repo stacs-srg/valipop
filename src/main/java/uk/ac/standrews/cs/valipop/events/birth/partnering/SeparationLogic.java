@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.SeparationStatsKey;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 
 import java.util.ArrayList;
@@ -34,18 +34,18 @@ import java.util.Map;
  */
 public class SeparationLogic {
 
-    public static void handle(Map<Integer, ArrayList<IPersonExtended>> continuingPartnedFemalesByChildren,
+    public static void handle(Map<Integer, ArrayList<IPerson>> continuingPartnedFemalesByChildren,
                               CompoundTimeUnit consideredTimePeriod, Date currentDate,
                               PopulationStatistics desiredPopulationStatistics, Population population, Config config) {
 
         // Consideration of separation is based on number of children in females current partnerships
-        for(Map.Entry<Integer, ArrayList<IPersonExtended>> entry : continuingPartnedFemalesByChildren.entrySet()) {
+        for(Map.Entry<Integer, ArrayList<IPerson>> entry : continuingPartnedFemalesByChildren.entrySet()) {
 
             Integer numberOfChildren = entry.getKey();
             Integer ageOfMothers = 0;
 
             // Get mothers with given number of children in current partnership
-            ArrayList<IPersonExtended> mothers = entry.getValue();
+            ArrayList<IPerson> mothers = entry.getValue();
 
             if(mothers.size() != 0) {
                 ageOfMothers = mothers.get(0).ageOnDate(currentDate);
@@ -58,7 +58,7 @@ public class SeparationLogic {
             int count = 0;
 
             // For each mother in this group
-            for(IPersonExtended p : mothers) {
+            for(IPerson p : mothers) {
 
                 // If enough mothers have been separated then break
                 if(count >= dC.getDeterminedCount()) {

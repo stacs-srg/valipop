@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFormat;
+package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat;
 
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 import uk.ac.standrews.cs.utilities.DateManipulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -75,9 +75,7 @@ public class SimplifiedDeathSourceRecord extends IndividualSourceRecord {
 
         partnerships = person.getPartnerships();
 
-
-
-        if(partnerships.size() != 0) {
+        if (partnerships.size() != 0) {
             IPerson spouse = population.findPerson(population.findPartnership(partnerships.get(partnerships.size() - 1)).getPartnerOf(person.getId()));
             setSpousesNames(spouse.getFirstName() + " " + spouse.getSurname());
             setSpousesId(String.valueOf(spouse.getId()));
@@ -248,22 +246,22 @@ public class SimplifiedDeathSourceRecord extends IndividualSourceRecord {
 
         int rnd;
 
-        if(fathers_id != null) {
+        if (fathers_id != null) {
             rnd = new Random().nextInt(101);
             RelationshipsTable.relationshipsFather.add(new String[]{"Father", String.valueOf(uid), String.valueOf(fathers_id), String.valueOf(rnd), death_date.getDay() + "." + death_date.getMonth() + "." + death_date.getYear()});
         }
 
-        if(mothers_id != null) {
+        if (mothers_id != null) {
             rnd = new Random().nextInt(101);
             RelationshipsTable.relationshipsMother.add(new String[]{"Mother", String.valueOf(uid), String.valueOf(mothers_id), String.valueOf(rnd), death_date.getDay() + "." + death_date.getMonth() + "." + death_date.getYear()});
         }
 
-        if(fathers_id != null && mothers_id != null) {
+        if (fathers_id != null && mothers_id != null) {
             rnd = new Random().nextInt(101);
             RelationshipsTable.relationshipsMarriage.add(new String[]{"Marriage", String.valueOf(fathers_id), String.valueOf(mothers_id), String.valueOf(rnd), "-"});
         }
 
-        if(!Objects.equals(spouses_id, "")) {
+        if (!Objects.equals(spouses_id, "")) {
             rnd = new Random().nextInt(101);
             RelationshipsTable.relationshipsMarriage.add(new String[]{"Marriage", String.valueOf(uid), String.valueOf(spouses_id), String.valueOf(rnd), "-"});
         }

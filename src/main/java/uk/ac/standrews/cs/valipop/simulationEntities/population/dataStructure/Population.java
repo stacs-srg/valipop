@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
@@ -75,17 +75,17 @@ public class Population {
 
         CompoundTimeUnit tp = DateUtils.differenceInMonths(first, last);
 
-        Collection<IPersonExtended> l = livingPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
-        Collection<IPersonExtended> d = deadPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
+        Collection<IPerson> l = livingPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
+        Collection<IPerson> d = deadPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
 
         PeopleCollection pC = new PeopleCollection(first, last, new CompoundTimeUnit(1, TimeUnit.YEAR));
         pC.setDescription("combined");
 
-        for(IPersonExtended p : l) {
+        for(IPerson p : l) {
             pC.addPerson(p);
         }
 
-        for(IPersonExtended p : d) {
+        for(IPerson p : d) {
             pC.addPerson(p);
         }
 

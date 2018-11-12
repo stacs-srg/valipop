@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
-import uk.ac.standrews.cs.valipop.model.IPopulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
@@ -22,7 +22,7 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
     protected String marriageBaby = "";
     protected String deathID = "";
 
-    public EGSkyeBirthSourceRecord(IPersonExtended person, IPopulation population) {
+    public EGSkyeBirthSourceRecord(IPerson person, IPopulation population) {
         super(person, population);
 
         familyID = parents_partnership_id;

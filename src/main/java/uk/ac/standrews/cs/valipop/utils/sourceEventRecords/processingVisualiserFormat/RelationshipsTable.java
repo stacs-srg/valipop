@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFormat;
+package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat;
 
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 

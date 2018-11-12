@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.gedcom;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.model.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.model.PopulationConverter;
 import uk.ac.standrews.cs.valipop.model.gedcom.GEDCOMPopulationWriter;

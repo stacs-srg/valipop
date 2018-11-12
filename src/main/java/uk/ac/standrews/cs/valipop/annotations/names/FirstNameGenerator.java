@@ -16,13 +16,13 @@
  */
 package uk.ac.standrews.cs.valipop.annotations.names;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 public class FirstNameGenerator implements NameGenerator {
 
     @Override
-    public String getName(IPersonExtended personToBeNamed, PopulationStatistics ps) {
+    public String getName(IPerson personToBeNamed, PopulationStatistics ps) {
         return ps.getForenameDistribution(personToBeNamed.getBirthDate_ex(), personToBeNamed.getSex()).getSample();
     }
 

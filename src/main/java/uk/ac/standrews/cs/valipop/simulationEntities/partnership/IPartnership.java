@@ -1,6 +1,6 @@
 /*
- * Copyright 2014 Digitising Scotland project:
- * <http://digitisingscotland.cs.st-andrews.ac.uk/>
+ * Copyright 2017 Systems Research Group, University of St Andrews:
+ * <https://github.com/stacs-srg>
  *
  * This file is part of the module population_model.
  *
@@ -14,8 +14,14 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.model;
+package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 
+import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +31,54 @@ import java.util.List;
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public interface IPartnership extends Comparable<IPartnership> {
+
+    /**
+     * Gets the female in the partnership.
+     *
+     * @return the female
+     */
+    IPerson getFemalePartner();
+
+    /**
+     * Gets the male in the partnership.
+     *
+     * @return the male
+     */
+    IPerson getMalePartner();
+
+    /**
+     * Gets the identifier of the partner of the person with the given identifier, or -1 if neither member
+     * of this partnership has the given identifier.
+     *
+     * @param person the person
+     * @return the identifier of the partner of the person with the given identifier
+     */
+    IPerson getPartnerOf(IPerson person);
+
+    /**
+     * Gets the identifiers of the partnership's child_ids, or null if none are recorded.
+     *
+     * @return the identifiers of the partnership's child_ids
+     */
+    List<IPerson> getChildren();
+
+    ExactDate getPartnershipDate();
+
+    ExactDate getSeparationDate(RandomGenerator randomGenerator);
+
+    ExactDate getEarliestPossibleSeparationDate();
+
+    void setMarriageDate(ExactDate marriageDate);
+
+    ExactDate getMarriageDate_ex();
+
+    void addChildren(Collection<IPerson> children);
+
+    void setPartnershipDate(ExactDate startDate);
+
+    void separate(ExactDate currentDate, CompoundTimeUnit consideredTimePeriod);
+
+    IPerson getLastChild();
 
     /**
      * Gets the partnership's unique identifier.

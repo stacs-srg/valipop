@@ -19,8 +19,8 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
 
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
 
 import java.io.PrintStream;
@@ -49,12 +49,12 @@ public class PopulationAnalytics {
         out = resultsOutput;
     }
 
-    private void printBirthDate(final IPersonExtended person) {
+    private void printBirthDate(final IPerson person) {
 
         out.print(person.getBirthDate_ex().toString());
     }
 
-    private void printDeathDate(final IPersonExtended person) {
+    private void printDeathDate(final IPerson person) {
 
         final Date death_date = person.getDeathDate_ex();
         if (death_date != null) {
@@ -86,8 +86,8 @@ public class PopulationAnalytics {
     private int countMales() {
 
         int count = 0;
-        for (final IPersonExtended person : population.getPeople_ex()) {
-            if (Character.toUpperCase(person.getSex()) == IPersonExtended.MALE) {
+        for (final IPerson person : population.getPeople()) {
+            if (Character.toUpperCase(person.getSex()) == IPerson.MALE) {
                 count++;
             }
         }
@@ -97,8 +97,8 @@ public class PopulationAnalytics {
     private int countFemales() {
 
         int count = 0;
-        for (final IPersonExtended person : population.getPeople_ex()) {
-            if (Character.toUpperCase(person.getSex()) == IPersonExtended.FEMALE) {
+        for (final IPerson person : population.getPeople()) {
+            if (Character.toUpperCase(person.getSex()) == IPerson.FEMALE) {
                 count++;
             }
         }
@@ -110,7 +110,7 @@ public class PopulationAnalytics {
      */
     public void printAllBirthDates() {
 
-        for (final IPersonExtended person : population.getPeople_ex()) {
+        for (final IPerson person : population.getPeople()) {
             printBirthDate(person);
             out.println();
         }
@@ -121,7 +121,7 @@ public class PopulationAnalytics {
      */
     public void printAllDeathDates() {
 
-        for (final IPersonExtended person : population.getPeople_ex()) {
+        for (final IPerson person : population.getPeople()) {
             printDeathDate(person);
             out.println();
         }
@@ -132,10 +132,10 @@ public class PopulationAnalytics {
      *
      * @param partnership the partnership
      */
-    public void printChildren(final IPartnershipExtended partnership) {
+    public void printChildren(final IPartnership partnership) {
 
         if (partnership.getChildren() != null) {
-            for (final IPersonExtended child : partnership.getChildren()) {
+            for (final IPerson child : partnership.getChildren()) {
 
                 out.println("\t\tChild born: " + child.getBirthDate_ex().toString());
             }
@@ -148,14 +148,14 @@ public class PopulationAnalytics {
      * @param person the person
      */
     @SuppressWarnings("FeatureEnvy")
-    public void printPartnerships(final IPersonExtended person) {
+    public void printPartnerships(final IPerson person) {
 
-        final List<IPartnershipExtended> partnership_ids = person.getPartnerships_ex();
+        final List<IPartnership> partnership_ids = person.getPartnerships_ex();
         if (partnership_ids != null) {
-            for (final IPartnershipExtended partnership : partnership_ids) {
+            for (final IPartnership partnership : partnership_ids) {
 
 
-                final IPersonExtended partner = partnership.getPartnerOf(person);
+                final IPerson partner = partnership.getPartnerOf(person);
                 out.println("\tPartner born: " + partner.getBirthDate_ex().toString());
 
                 final Date marriage_date = partnership.getPartnershipDate();
@@ -173,7 +173,7 @@ public class PopulationAnalytics {
      */
     public void printAllDates() {
 
-        for (final IPersonExtended person : population.getPeople_ex()) {
+        for (final IPerson person : population.getPeople()) {
 
             out.print(person.getSex() + " Born: ");
             printBirthDate(person);

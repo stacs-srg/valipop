@@ -20,11 +20,11 @@ import org.gedcom4j.model.Family;
 import org.gedcom4j.model.Individual;
 import org.gedcom4j.parser.GedcomParser;
 import org.gedcom4j.parser.GedcomParserException;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
-import uk.ac.standrews.cs.valipop.model.IPartnership;
-import uk.ac.standrews.cs.valipop.model.IPerson;
-import uk.ac.standrews.cs.utilities.Mapper;
 import uk.ac.standrews.cs.utilities.MappedIterator;
+import uk.ac.standrews.cs.utilities.Mapper;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -62,16 +62,12 @@ public class GEDCOMPopulationAdapter implements IPopulation {
 
         return new Iterable<IPerson>() {
 
-            private final Mapper<Individual, IPerson> mapper = new Mapper<Individual, IPerson>() {
+            private final Mapper<Individual, IPerson> mapper = individual -> {
+                try {
+                    return new GEDCOMPerson(individual);
 
-                @Override
-                public IPerson map(final Individual individual) {
-                    try {
-                        return new GEDCOMPerson(individual);
-
-                    } catch (final ParseException e) {
-                        throw new RuntimeException(e.getMessage());
-                    }
+                } catch (final ParseException e) {
+                    throw new RuntimeException(e.getMessage());
                 }
             };
 
@@ -89,15 +85,11 @@ public class GEDCOMPopulationAdapter implements IPopulation {
 
         return new Iterable<IPartnership>() {
 
-            private final Mapper<Family, IPartnership> mapper = new Mapper<Family, IPartnership>() {
-
-                @Override
-                public IPartnership map(final Family family) {
-                    try {
-                        return new GEDCOMPartnership(family);
-                    } catch (final ParseException e) {
-                        throw new RuntimeException(e.getMessage());
-                    }
+            private final Mapper<Family, IPartnership> mapper = family -> {
+                try {
+                    return new GEDCOMPartnership(family);
+                } catch (final ParseException e) {
+                    throw new RuntimeException(e.getMessage());
                 }
             };
 

@@ -16,9 +16,9 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
@@ -44,8 +44,8 @@ public class EntityFactory {
 
     private static DateSelector birthDateSelector = new DateSelector();
 
-    public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended father, IPersonExtended mother, AdvanceableDate currentDate,
-                                                                    CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, boolean illegitimate, boolean marriedAtBirth) throws PersonNotFoundException {
+    public static IPartnership formNewChildrenInPartnership(int numberOfChildren, IPerson father, IPerson mother, AdvanceableDate currentDate,
+                                                            CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, boolean illegitimate, boolean marriedAtBirth) throws PersonNotFoundException {
 
         try {
             population.getLivingPeople().removePerson(mother);
@@ -55,17 +55,17 @@ public class EntityFactory {
             throw new PersonNotFoundException("Could not remove parents for population position update when creating new partnership");
         }
 
-        IPartnershipExtended partnership = new Partnership(father, mother);
+        IPartnership partnership = new Partnership(father, mother);
 
-        List<IPersonExtended> children = new ArrayList<>(numberOfChildren);
+        List<IPerson> children = new ArrayList<>(numberOfChildren);
 
         // This ensures twins are born on the same day
         ExactDate childrenBirthDate = null;
-        IPersonExtended aChild = null;
+        IPerson aChild = null;
 
         // the loop here allows for the multiple children in pregnancies
         for (int c = 0; c < numberOfChildren; c++) {
-            IPersonExtended child;
+            IPerson child;
             if (childrenBirthDate == null) {
                 // Make first child
                 child = makePerson(currentDate, birthTimeStep, partnership, population, ps, illegitimate);
@@ -122,7 +122,7 @@ public class EntityFactory {
         return partnership;
     }
 
-    public static IPersonExtended formOrphanChild(AdvanceableDate currentDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps) {
+    public static IPerson formOrphanChild(AdvanceableDate currentDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps) {
         return makePerson(currentDate, birthTimeStep, null, population, ps);
     }
 
@@ -141,7 +141,7 @@ public class EntityFactory {
         }
     }
 
-    public static IPersonExtended makePerson(Date birthDate, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps, boolean illegitimate) {
+    public static IPerson makePerson(Date birthDate, IPartnership parentsPartnership, Population population, PopulationStatistics ps, boolean illegitimate) {
 
         Person person = new Person(getSex(population.getPopulationCounts(), ps, birthDate), birthDate, parentsPartnership, ps, illegitimate);
 
@@ -150,17 +150,17 @@ public class EntityFactory {
         return person;
     }
 
-    public static IPersonExtended makePerson(Date birthDate, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps) {
+    public static IPerson makePerson(Date birthDate, IPartnership parentsPartnership, Population population, PopulationStatistics ps) {
 
         return makePerson(birthDate, parentsPartnership, population, ps, false);
     }
 
-    public static IPersonExtended makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps) {
+    public static IPerson makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, Population population, PopulationStatistics ps) {
 
         return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep, ps.getRandomGenerator()), parentsPartnership, population, ps);
     }
 
-    public static IPersonExtended makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps, boolean illegitimate) {
+    public static IPerson makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, Population population, PopulationStatistics ps, boolean illegitimate) {
 
         return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep, ps.getRandomGenerator()), parentsPartnership, population, ps, illegitimate);
     }

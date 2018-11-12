@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.implementations;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.standrews.cs.valipop.model.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 
 import java.util.ArrayList;
 import java.util.Collection;

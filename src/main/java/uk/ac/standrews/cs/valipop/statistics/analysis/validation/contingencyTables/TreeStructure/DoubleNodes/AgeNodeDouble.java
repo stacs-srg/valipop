@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
@@ -40,7 +40,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
     boolean initNode = false;
 
-    Collection<IPersonExtended> people = new ArrayList<>();
+    Collection<IPerson> people = new ArrayList<>();
 
     public AgeNodeDouble(IntegerRange age, SexNodeDouble parentNode, double initCount, boolean init) {
         super(age, parentNode, initCount);
@@ -83,7 +83,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
     }
 
     @Override
-    public void processPerson(IPersonExtended person, Date currentDate) {
+    public void processPerson(IPerson person, Date currentDate) {
 
         initNode = true;
 
