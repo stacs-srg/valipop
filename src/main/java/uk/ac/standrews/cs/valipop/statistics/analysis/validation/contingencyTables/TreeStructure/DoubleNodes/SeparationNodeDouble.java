@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -60,7 +60,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     }
 
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
 
 
         incCountByOne();
@@ -171,7 +171,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
         Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
         if(died == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && diedN.getCount() > CTtree.NODE_MIN_COUNT) {
 
@@ -261,7 +261,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
                 Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-                Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+                ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
                 SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
                         new SeparationStatsKey(
@@ -321,7 +321,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                     YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
                     Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-                    Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+                    ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
                     double numberOfFemales = getCount();
                     CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);

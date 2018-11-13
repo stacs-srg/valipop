@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 /**
@@ -9,7 +9,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.Compoun
  */
 public class MarriageStatsKey extends StatsKey {
 
-    public MarriageStatsKey(Integer age, double forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate) {
+    public MarriageStatsKey(Integer age, double forNPeople, CompoundTimeUnit consideredTimePeriod, ValipopDate currentDate) {
         super(age, forNPeople, consideredTimePeriod, currentDate);
     }
 

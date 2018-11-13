@@ -19,9 +19,8 @@ package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.utils.Logger;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -43,14 +42,14 @@ public class Partnership implements IPartnership {
     private IPerson female;
     private List<IPerson> children = new ArrayList<>();
 
-    private ExactDate partnershipDate;
-    private ExactDate marriageDate = null;
-    private ExactDate separationDate = null;
-    private ExactDate earliestPossibleSeparationDate = null;
+    private ValipopDate partnershipDate;
+    private ValipopDate marriageDate = null;
+    private ValipopDate separationDate = null;
+    private ValipopDate earliestPossibleSeparationDate = null;
 
     private static DateSelector dateSelector = new DateSelector();
 
-    public Partnership(IPerson male, IPerson female, ExactDate partnershipDate) {
+    public Partnership(IPerson male, IPerson female, ValipopDate partnershipDate) {
 
         this(male, female);
 
@@ -100,7 +99,7 @@ public class Partnership implements IPartnership {
         return s;
     }
 
-    public void setPartnershipDate(ExactDate startDate) {
+    public void setPartnershipDate(ValipopDate startDate) {
         partnershipDate = startDate;
     }
 
@@ -145,12 +144,12 @@ public class Partnership implements IPartnership {
         }
     }
 
-    public void setMarriageDate(ExactDate marriageDate) {
+    public void setMarriageDate(ValipopDate marriageDate) {
         this.marriageDate = marriageDate;
     }
 
     @Override
-    public ExactDate getMarriageDate_ex() {
+    public ValipopDate getMarriageDate_ex() {
         return marriageDate;
     }
 
@@ -195,12 +194,12 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public ExactDate getPartnershipDate() {
+    public ValipopDate getPartnershipDate() {
         return partnershipDate;
     }
 
     @Override
-    public ExactDate getSeparationDate(RandomGenerator random) {
+    public ValipopDate getSeparationDate(RandomGenerator random) {
 
         if(earliestPossibleSeparationDate == null) {
             return null;
@@ -208,10 +207,10 @@ public class Partnership implements IPartnership {
 
             if(separationDate == null) {
 
-                Date maleMovedOnDate = male.getDateOfNextPostSeparationEvent(earliestPossibleSeparationDate);
-                Date femaleMovedOnDate = female.getDateOfNextPostSeparationEvent(earliestPossibleSeparationDate);
+                ValipopDate maleMovedOnDate = male.getDateOfNextPostSeparationEvent(earliestPossibleSeparationDate);
+                ValipopDate femaleMovedOnDate = female.getDateOfNextPostSeparationEvent(earliestPossibleSeparationDate);
 
-                Date earliestMovedOnDate;
+                ValipopDate earliestMovedOnDate;
 
                 if (maleMovedOnDate != null) {
                     if (femaleMovedOnDate != null) {
@@ -247,7 +246,7 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public ExactDate getEarliestPossibleSeparationDate() {
+    public ValipopDate getEarliestPossibleSeparationDate() {
         return earliestPossibleSeparationDate;
     }
 
@@ -262,7 +261,7 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public void separate(ExactDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+    public void separate(ValipopDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
         earliestPossibleSeparationDate = currentDate;
 
@@ -273,7 +272,7 @@ public class Partnership implements IPartnership {
     @Override
     public IPerson getLastChild() {
 
-        Date latestBirthDate = new YearDate(Integer.MIN_VALUE);
+        ValipopDate latestBirthDate = new YearDate(Integer.MIN_VALUE);
         IPerson latestChild = null;
 
         for(IPerson c : getChildren()) {

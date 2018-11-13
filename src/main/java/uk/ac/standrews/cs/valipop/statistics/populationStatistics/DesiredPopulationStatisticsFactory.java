@@ -30,7 +30,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InputFileReader;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -196,7 +196,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         prevInputDate = config.getT0().advanceTime(new CompoundTimeUnit(stepBack, TimeUnit.YEAR).negative()).getYearDate();
 
         int c = 1;
-        Date curDate;
+        ValipopDate curDate;
 
         YearDate[] years = inputs.keySet().toArray(new YearDate[inputs.keySet().size()]);
         Arrays.sort(years);
@@ -233,7 +233,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         return inputs;
     }
 
-    private static YearDate getNearestDate(Date referenceDate, YearDate option1, YearDate option2) {
+    private static YearDate getNearestDate(ValipopDate referenceDate, YearDate option1, YearDate option2) {
 
         int refTo1 = DateUtils.differenceInDays(referenceDate, option1);
         int refTo2 = DateUtils.differenceInDays(referenceDate, option2);

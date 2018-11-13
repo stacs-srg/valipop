@@ -30,7 +30,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.MarriageStatsK
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.IllegitimateBirthStatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
@@ -74,7 +74,7 @@ public class Person implements IPerson {
     // TODO extract as variable
     private static int earliestAgeOfMarriage = 16;
 
-    public Person(char sex, Date birthDate, IPartnership parentsPartnership, PopulationStatistics ps) {
+    public Person(char sex, ValipopDate birthDate, IPartnership parentsPartnership, PopulationStatistics ps) {
 
         if (random == null) {
             random = ps.getRandomGenerator();
@@ -90,7 +90,7 @@ public class Person implements IPerson {
         setSurname(surnameGenerator.getName(this, ps));
     }
 
-    public Person(char sex, Date birthDate, IPartnership parentsPartnership, PopulationStatistics ps, boolean illegitimate) {
+    public Person(char sex, ValipopDate birthDate, IPartnership parentsPartnership, PopulationStatistics ps, boolean illegitimate) {
         this(sex, birthDate, parentsPartnership, ps);
         this.illegitimate = illegitimate;
     }
@@ -124,12 +124,12 @@ public class Person implements IPerson {
     }
 
     @Override
-    public ExactDate getBirthDate_ex() {
+    public ValipopDate getBirthDate_ex() {
         return birthDate;
     }
 
     @Override
-    public ExactDate getDeathDate_ex() {
+    public ValipopDate getDeathDate_ex() {
         return deathDate;
     }
 
@@ -149,7 +149,7 @@ public class Person implements IPerson {
     }
 
     @Override
-    public List<IPartnership> getPartnershipsBeforeDate(Date date) {
+    public List<IPartnership> getPartnershipsBeforeDate(ValipopDate date) {
         List<IPartnership> partnershipsBeforeDate = new ArrayList<>();
 
         for (IPartnership partnership : partnerships) {
@@ -162,12 +162,12 @@ public class Person implements IPerson {
     }
 
     @Override
-    public ExactDate getDateOfLastLegitimatePartnershipEventBeforeDate(ExactDate date) {
+    public ValipopDate getDateOfLastLegitimatePartnershipEventBeforeDate(ValipopDate date) {
 
-        ExactDate latestDate;
+        ValipopDate latestDate;
 
         // Handle the leap year baby... TODO clean up date code in general - this really should be in the Date implementation
-        Date temp = birthDate.getMonthDate().advanceTime(earliestAgeOfMarriage, TimeUnit.YEAR);
+        ValipopDate temp = birthDate.getMonthDate().advanceTime(earliestAgeOfMarriage, TimeUnit.YEAR);
         if (temp.getMonth() == DateUtils.FEB && !DateUtils.isLeapYear(temp.getYear()) && birthDate.getDay() == DateUtils.DAYS_IN_LEAP_FEB) {
             latestDate = new ExactDate(birthDate.getDay() - 1, temp.getMonth(), temp.getYear());
         } else {
@@ -182,13 +182,13 @@ public class Person implements IPerson {
                         // this partnership has legitimate children
 
                         // thus check separation date
-                        ExactDate sepDate = partnership.getEarliestPossibleSeparationDate();
+                        ValipopDate sepDate = partnership.getEarliestPossibleSeparationDate();
                         if (sepDate != null && DateUtils.dateBefore(latestDate, sepDate)) {
                             latestDate = sepDate;
                         }
 
                         // partner death date
-                        ExactDate partnerDeath = partnership.getPartnerOf(this).getDeathDate_ex();
+                        ValipopDate partnerDeath = partnership.getPartnerOf(this).getDeathDate_ex();
                         if (partnerDeath != null && DateUtils.dateBefore(latestDate, partnerDeath)) {
                             latestDate = partnerDeath;
                         }
@@ -298,7 +298,7 @@ public class Person implements IPerson {
     }
 
     @Override
-    public boolean recordDeath(Date date, Population population, PopulationStatistics desiredPopulationStatistics) {
+    public boolean recordDeath(ValipopDate date, Population population, PopulationStatistics desiredPopulationStatistics) {
 
         deathDate = date.getExactDate();
 
@@ -320,7 +320,7 @@ public class Person implements IPerson {
     }
 
     @Override
-    public boolean aliveOnDate(Date date) {
+    public boolean aliveOnDate(ValipopDate date) {
 
         if (DateUtils.dateBeforeOrEqual(birthDate, date)) {
             return deathDate == null || DateUtils.dateBefore(date, deathDate);
@@ -331,7 +331,7 @@ public class Person implements IPerson {
     @Override
     public IPerson getLastChild() {
 
-        Date latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
+        ValipopDate latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
         IPerson child = null;
 
         for (IPartnership p : partnerships) {
@@ -348,7 +348,7 @@ public class Person implements IPerson {
     }
 
     @Override
-    public boolean isWidow(Date onDate) {
+    public boolean isWidow(ValipopDate onDate) {
 
         IPerson partner = getPartner(onDate);
 
@@ -360,7 +360,7 @@ public class Person implements IPerson {
     }
 
     @Override
-    public IPerson getPartner(Date onDate) {
+    public IPerson getPartner(ValipopDate onDate) {
 
         IPartnership currentPartnership = null;
 
@@ -402,7 +402,7 @@ public class Person implements IPerson {
         IPartnership last = lastChild.getParentsPartnership_ex();
         IPerson child = null;
 
-        Date birthDate = null;
+        ValipopDate birthDate = null;
 
         IPerson man = last.getMalePartner();
 
@@ -458,7 +458,7 @@ public class Person implements IPerson {
     }
 
     @Override
-    public int ageOnDate(Date currentDate) {
+    public int ageOnDate(ValipopDate currentDate) {
         if (birthDate.getDay() == 1 && birthDate.getMonth() == 1) {
             int age = DateUtils.differenceInYears(birthDate, currentDate).getCount() - 1;
             return age == -1 ? 0 : age;
@@ -472,7 +472,7 @@ public class Person implements IPerson {
         return partnerships.size() == 0 || toSeparate() || lastPartnerDied(currentDate);
     }
 
-    private boolean lastPartnerDied(Date currentDate) {
+    private boolean lastPartnerDied(ValipopDate currentDate) {
         try {
             return !getLastChild().getParentsPartnership_ex().getMalePartner().aliveOnDate(currentDate);
         } catch (NullPointerException e) {
@@ -537,7 +537,7 @@ public class Person implements IPerson {
         Collection<IPartnership> activePartnerships = new ArrayList<>();
 
         for (IPartnership part : getPartnerships_ex()) {
-            Date startDate = part.getPartnershipDate();
+            ValipopDate startDate = part.getPartnershipDate();
 
             if (DateUtils.dateInYear(startDate, year)) {
                 activePartnerships.add(part);
@@ -571,7 +571,7 @@ public class Person implements IPerson {
     @Override
     public IPartnership getLastPartnership() {
 
-        Date latestPartnershipDate = new YearDate(Integer.MIN_VALUE);
+        ValipopDate latestPartnershipDate = new YearDate(Integer.MIN_VALUE);
         IPartnership partnership = null;
 
         for (IPartnership p : partnerships) {
@@ -600,22 +600,22 @@ public class Person implements IPerson {
     }
 
     @Override
-    public boolean bornBefore(Date date) {
+    public boolean bornBefore(ValipopDate date) {
         return DateUtils.dateBefore(getBirthDate_ex(), date);
     }
 
     @Override
-    public boolean bornOnDate(Date y) {
+    public boolean bornOnDate(ValipopDate y) {
         return DateUtils.datesEqual(y, birthDate);
     }
 
     @Override
-    public Date getDateOfNextPostSeparationEvent(Date separationDate) {
+    public ValipopDate getDateOfNextPostSeparationEvent(ValipopDate separationDate) {
 
-        Date earliestDate = null;
+        ValipopDate earliestDate = null;
 
         for (IPartnership part : partnerships) {
-            Date date = part.getPartnershipDate();
+            ValipopDate date = part.getPartnershipDate();
             if (DateUtils.dateBefore(separationDate, date)) {
 
                 if (earliestDate == null || DateUtils.dateBefore(date, earliestDate)) {
@@ -643,16 +643,16 @@ public class Person implements IPerson {
     }
 
     @Override
-    public Date getDateOfPreviousPreMarriageEvent(Date latestPossibleMarriageDate) {
+    public ValipopDate getDateOfPreviousPreMarriageEvent(ValipopDate latestPossibleMarriageDate) {
 
-        ExactDate earliestPossibleMarriageDate =
+        ValipopDate earliestPossibleMarriageDate =
                 new ExactDate(birthDate.getMonthDate().advanceTime(16, TimeUnit.YEAR)).advanceTime(birthDate.getDay());
 
         if (partnerships.size() == 0) {
             return earliestPossibleMarriageDate;
         } else {
 
-            Date latestEventDate = earliestPossibleMarriageDate;
+            ValipopDate latestEventDate = earliestPossibleMarriageDate;
 
             for (IPartnership p : partnerships) {
 
@@ -660,8 +660,8 @@ public class Person implements IPerson {
                     // dont care
                 } else {
 
-                    ExactDate sepDate = p.getEarliestPossibleSeparationDate();
-                    Date spouseDeathDate = p.getPartnerOf(this).getDeathDate_ex();
+                    ValipopDate sepDate = p.getEarliestPossibleSeparationDate();
+                    ValipopDate spouseDeathDate = p.getPartnerOf(this).getDeathDate_ex();
 
                     // TODO prevent selection of dates after latestPossibleMarriageDate
 
@@ -690,7 +690,7 @@ public class Person implements IPerson {
     }
 
     @Override
-    public boolean diedAfter(Date date) {
+    public boolean diedAfter(ValipopDate date) {
         if (deathDate == null) {
             return true;
         }

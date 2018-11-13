@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -48,7 +48,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
         Integer ageI = age.getValue();
 
-        Date currentDate = yob.advanceTime(ageI, TimeUnit.YEAR);
+        ValipopDate currentDate = yob.advanceTime(ageI, TimeUnit.YEAR);
 
         if(DateUtils.dateBefore(currentDate, getStartDate())) {
             initNode = true;
@@ -83,7 +83,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
     }
 
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
 
         initNode = true;
 

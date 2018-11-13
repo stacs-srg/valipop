@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -71,7 +71,7 @@ public class Population {
         return populationCounts;
     }
 
-    public PeopleCollection getAllPeople(AdvanceableDate first, Date last, CompoundTimeUnit maxAge) {
+    public PeopleCollection getAllPeople(AdvanceableDate first, ValipopDate last, CompoundTimeUnit maxAge) {
 
         CompoundTimeUnit tp = DateUtils.differenceInMonths(first, last);
 

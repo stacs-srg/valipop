@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.valipop.utils.Logger;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -54,7 +55,7 @@ public class FemaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    public FemaleCollection(AdvanceableDate start, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date end, CompoundTimeUnit divisionSize) {
+    public FemaleCollection(AdvanceableDate start, ValipopDate end, CompoundTimeUnit divisionSize) {
         super(start, end, divisionSize);
 
         for (AdvanceableDate d = start; DateUtils.dateBeforeOrEqual(d, end); d = d.advanceTime(divisionSize)) {

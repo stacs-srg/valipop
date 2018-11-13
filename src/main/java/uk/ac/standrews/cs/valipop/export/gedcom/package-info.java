@@ -16,7 +16,7 @@
  */
 
 /**
- * Graph vis classes.
+ * Gedcom classes.
  */
-package uk.ac.standrews.cs.valipop.model.graphviz;
+package uk.ac.standrews.cs.valipop.export.gedcom;
 

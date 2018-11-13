@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
@@ -43,7 +43,7 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
 
     @SuppressWarnings("Duplicates")
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
 
         incCountByOne();
 
@@ -84,7 +84,7 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
         YearDate yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
         Integer age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
 
-        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 

@@ -46,7 +46,7 @@ public class MaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    public MaleCollection(AdvanceableDate start, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date end, CompoundTimeUnit divisionSize) {
+    public MaleCollection(AdvanceableDate start, ValipopDate end, CompoundTimeUnit divisionSize) {
         super(start, end, divisionSize);
 
         for (AdvanceableDate d = start; DateUtils.dateBeforeOrEqual(d, end); d = d.advanceTime(divisionSize)) {

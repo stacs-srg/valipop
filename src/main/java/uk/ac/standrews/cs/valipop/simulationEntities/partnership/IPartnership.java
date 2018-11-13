@@ -18,11 +18,10 @@ package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,21 +61,21 @@ public interface IPartnership extends Comparable<IPartnership> {
      */
     List<IPerson> getChildren();
 
-    ExactDate getPartnershipDate();
+    ValipopDate getPartnershipDate();
 
-    ExactDate getSeparationDate(RandomGenerator randomGenerator);
+    ValipopDate getSeparationDate(RandomGenerator randomGenerator);
 
-    ExactDate getEarliestPossibleSeparationDate();
+    ValipopDate getEarliestPossibleSeparationDate();
 
-    void setMarriageDate(ExactDate marriageDate);
+    void setMarriageDate(ValipopDate marriageDate);
 
-    ExactDate getMarriageDate_ex();
+    ValipopDate getMarriageDate_ex();
 
     void addChildren(Collection<IPerson> children);
 
-    void setPartnershipDate(ExactDate startDate);
+    void setPartnershipDate(ValipopDate startDate);
 
-    void separate(ExactDate currentDate, CompoundTimeUnit consideredTimePeriod);
+    void separate(ValipopDate currentDate, CompoundTimeUnit consideredTimePeriod);
 
     IPerson getLastChild();
 
@@ -110,7 +109,7 @@ public interface IPartnership extends Comparable<IPartnership> {
      * Gets the date of the marriage between the partners in this partnership, or null if they are not married.
      * @return the date of the marriage of this partnership
      */
-    Date getMarriageDate();
+    java.util.Date getMarriageDate();
 
     /**
      * Gets the place of marriage, or null if not recorded.

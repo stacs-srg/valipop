@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging;
 
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.io.IOException;
@@ -37,8 +37,8 @@ public class SummaryRow {
     private CompoundTimeUnit inputWidth;
     private CompoundTimeUnit timestep;
 
-    private Date startDate;
-    private Date endDate;
+    private ValipopDate startDate;
+    private ValipopDate endDate;
 
     private int simLength;
 
@@ -86,8 +86,8 @@ public class SummaryRow {
                       String codeVersion,
                       CompoundTimeUnit timestep,
                       CompoundTimeUnit inputWidth,
-                      Date startDate,
-                      Date endDate,
+                      ValipopDate startDate,
+                      ValipopDate endDate,
                       int simLength,
                       double birthFactor,
                       double deathFactor,

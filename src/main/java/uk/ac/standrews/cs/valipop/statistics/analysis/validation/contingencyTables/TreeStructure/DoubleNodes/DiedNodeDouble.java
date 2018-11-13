@@ -26,7 +26,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.DeathStatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -68,7 +68,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
         Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
         if(getOption() == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && getCount() > CTtree.NODE_MIN_COUNT) {
 
@@ -91,7 +91,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
         Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
         double forNPeople = getParent().getCount();
         CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
@@ -120,7 +120,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
     }
 
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
 
         incCountByOne();
 
@@ -208,7 +208,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
         Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 

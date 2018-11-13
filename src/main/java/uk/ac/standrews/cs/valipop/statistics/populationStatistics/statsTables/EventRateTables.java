@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 /**
  * The EventRateTables interface provides methods that pertain to the events modelled within the population
@@ -48,9 +48,9 @@ public interface EventRateTables {
      * @param gender the gender
      * @return the death rates
      */
-    OneDimensionDataDistribution getDeathRates(Date year, char gender);
+    OneDimensionDataDistribution getDeathRates(ValipopDate year, char gender);
 
-    EnumeratedDistribution getDeathCauseRates(Date year, char gender, int age);
+    EnumeratedDistribution getDeathCauseRates(ValipopDate year, char gender, int age);
 
     /**
      * Gets marriage rates for those married in the given year. The return table is two dimensional as it shows the rate
@@ -68,7 +68,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the marriage rates
      */
-    SelfCorrectingProportionalDistribution getPartneringRates(Date year);
+    SelfCorrectingProportionalDistribution getPartneringRates(ValipopDate year);
 
     /**
      * Gets birth rates by order for births in the given year defined by the age and number of previous children born to
@@ -86,11 +86,11 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(Date year);
+    SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(ValipopDate year);
 
-    SelfCorrectingOneDimensionDataDistribution getIllegitimateBirthRates(Date year);
+    SelfCorrectingOneDimensionDataDistribution getIllegitimateBirthRates(ValipopDate year);
 
-    SelfCorrectingOneDimensionDataDistribution getMarriageRates(Date year);
+    SelfCorrectingOneDimensionDataDistribution getMarriageRates(ValipopDate year);
 
 
 
@@ -109,7 +109,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    ProportionalDistribution getMultipleBirthRates(Date year);
+    ProportionalDistribution getMultipleBirthRates(ValipopDate year);
 
     /**
      * Gets the rate of separation after having a given number of children as a couple. The rate is considered in respect
@@ -125,12 +125,12 @@ public interface EventRateTables {
      * @param year the year
      * @return the death rates
      */
-    SelfCorrectingTwoDimensionDataDistribution getSeparationByChildCountRates(Date year);
+    SelfCorrectingTwoDimensionDataDistribution getSeparationByChildCountRates(ValipopDate year);
 
-    EnumeratedDistribution getForenameDistribution(Date year, char gender);
+    EnumeratedDistribution getForenameDistribution(ValipopDate year, char gender);
 
-    EnumeratedDistribution getSurnameDistribution(Date year);
+    EnumeratedDistribution getSurnameDistribution(ValipopDate year);
 
-    double getMaleProportionOfBirths(Date year);
+    double getMaleProportionOfBirths(ValipopDate year);
 
 }

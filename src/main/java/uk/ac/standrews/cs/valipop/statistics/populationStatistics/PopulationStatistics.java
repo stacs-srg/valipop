@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
@@ -204,7 +204,7 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
-    public SelfCorrectingOneDimensionDataDistribution getDeathRates(Date year, char gender) {
+    public SelfCorrectingOneDimensionDataDistribution getDeathRates(ValipopDate year, char gender) {
         if (Character.toLowerCase(gender) == 'm') {
             return maleDeath.get(getNearestYearInMap(year.getYearDate(), maleDeath));
         } else {
@@ -213,7 +213,7 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
-    public EnumeratedDistribution getDeathCauseRates(Date year, char gender, int age) {
+    public EnumeratedDistribution getDeathCauseRates(ValipopDate year, char gender, int age) {
         if (Character.toLowerCase(gender) == 'm') {
             return maleDeathCauses.get(getNearestYearInMap(year.getYearDate(), maleDeathCauses)).getDistributionForAge(age);
         } else {
@@ -222,37 +222,37 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
-    public SelfCorrectingProportionalDistribution getPartneringRates(Date year) {
+    public SelfCorrectingProportionalDistribution getPartneringRates(ValipopDate year) {
         return partnering.get(getNearestYearInMap(year.getYearDate(), partnering));
     }
 
     @Override
-    public SelfCorrectingOneDimensionDataDistribution getIllegitimateBirthRates(Date year) {
+    public SelfCorrectingOneDimensionDataDistribution getIllegitimateBirthRates(ValipopDate year) {
         return illegitimateBirth.get(getNearestYearInMap(year.getYearDate(), illegitimateBirth));
     }
 
     @Override
-    public SelfCorrectingOneDimensionDataDistribution getMarriageRates(Date year) {
+    public SelfCorrectingOneDimensionDataDistribution getMarriageRates(ValipopDate year) {
         return marriage.get(getNearestYearInMap(year.getYearDate(), marriage));
     }
 
     @Override
-    public SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(Date year) {
+    public SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(ValipopDate year) {
         return orderedBirth.get(getNearestYearInMap(year.getYearDate(), orderedBirth));
     }
 
     @Override
-    public ProportionalDistribution getMultipleBirthRates(Date year) {
+    public ProportionalDistribution getMultipleBirthRates(ValipopDate year) {
         return multipleBirth.get(getNearestYearInMap(year.getYearDate(), multipleBirth));
     }
 
     @Override
-    public SelfCorrectingTwoDimensionDataDistribution getSeparationByChildCountRates(Date year) {
+    public SelfCorrectingTwoDimensionDataDistribution getSeparationByChildCountRates(ValipopDate year) {
         return separation.get(getNearestYearInMap(year.getYearDate(), separation));
     }
 
     @Override
-    public EnumeratedDistribution getForenameDistribution(Date year, char gender) {
+    public EnumeratedDistribution getForenameDistribution(ValipopDate year, char gender) {
         if (Character.toLowerCase(gender) == 'm') {
             return maleForename.get(getNearestYearInMap(year.getYearDate(), maleForename));
         } else {
@@ -261,16 +261,16 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
-    public EnumeratedDistribution getSurnameDistribution(Date year) {
+    public EnumeratedDistribution getSurnameDistribution(ValipopDate year) {
         return surname.get(getNearestYearInMap(year.getYearDate(), surname));
     }
 
     @Override
-    public double getMaleProportionOfBirths(Date onDate) {
+    public double getMaleProportionOfBirths(ValipopDate onDate) {
         return sexRatioBirth.get(getNearestYearInMap(onDate, sexRatioBirth));
     }
 
-    private YearDate getNearestYearInMap(Date year, Map<YearDate, ?> map) {
+    private YearDate getNearestYearInMap(ValipopDate year, Map<YearDate, ?> map) {
 
         int minDifferenceInMonths = Integer.MAX_VALUE;
         YearDate nearestTableYear = null;

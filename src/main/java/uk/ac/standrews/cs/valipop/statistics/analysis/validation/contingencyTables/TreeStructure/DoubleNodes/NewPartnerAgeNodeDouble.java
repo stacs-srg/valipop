@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.PartneringStatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
@@ -50,7 +50,7 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
     }
 
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
         incCountByOne();
     }
 
@@ -68,7 +68,7 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
             YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+            ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
             double numberOfFemales = getParent().getCount();
             CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);

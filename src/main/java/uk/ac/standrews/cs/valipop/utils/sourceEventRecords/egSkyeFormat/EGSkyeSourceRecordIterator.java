@@ -22,8 +22,7 @@ import uk.ac.standrews.cs.utilities.Mapper;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ import java.util.function.Predicate;
  */
 public class EGSkyeSourceRecordIterator {
 
-    public static Iterable<EGSkyeBirthSourceRecord> getBirthRecordIterator(final IPopulationExtended population, Date startDate) {
+    public static Iterable<EGSkyeBirthSourceRecord> getBirthRecordIterator(final IPopulation population, ValipopDate startDate) {
 
         return () -> {
 
@@ -50,7 +49,7 @@ public class EGSkyeSourceRecordIterator {
         };
     }
 
-    public static Iterable<EGSkyeDeathSourceRecord> getDeathRecordIterator(final IPopulationExtended population, Date startDate) {
+    public static Iterable<EGSkyeDeathSourceRecord> getDeathRecordIterator(final IPopulation population, ValipopDate startDate) {
 
         return () -> {
 
@@ -64,7 +63,7 @@ public class EGSkyeSourceRecordIterator {
         };
     }
 
-    public static Iterable<EGSkyeMarriageSourceRecord> getMarriageRecordIterator(final IPopulation population, Date startDate) {
+    public static Iterable<EGSkyeMarriageSourceRecord> getMarriageRecordIterator(final IPopulation population, ValipopDate startDate) {
 
         return () -> {
 
@@ -78,13 +77,7 @@ public class EGSkyeSourceRecordIterator {
                     l.add(p);
             }
 
-
-            Mapper<IPartnership, EGSkyeMarriageSourceRecord> person_to_marriage_record_mapper = new Mapper<IPartnership, EGSkyeMarriageSourceRecord>() {
-                @Override
-                public EGSkyeMarriageSourceRecord map(IPartnership partnership) {
-                    return new EGSkyeMarriageSourceRecord(partnership, population);
-                }
-            };
+            Mapper<IPartnership, EGSkyeMarriageSourceRecord> person_to_marriage_record_mapper = partnership -> new EGSkyeMarriageSourceRecord(partnership, population);
 
             return new MappedIterator<>(l.iterator(), person_to_marriage_record_mapper);
         };

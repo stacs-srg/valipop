@@ -34,6 +34,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.Mult
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -235,7 +236,7 @@ public class NBirthLogic implements EventLogic {
         return (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
     }
 
-    private boolean eligible(IPerson potentialMother, PopulationStatistics desiredPopulationStatistics, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date currentDate) {
+    private boolean eligible(IPerson potentialMother, PopulationStatistics desiredPopulationStatistics, ValipopDate currentDate) {
 
         IPerson lastChild = potentialMother.getLastChild();
 

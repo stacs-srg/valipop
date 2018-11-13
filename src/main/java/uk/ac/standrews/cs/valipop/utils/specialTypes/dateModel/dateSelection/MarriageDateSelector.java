@@ -2,7 +2,7 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection;
 
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
@@ -16,7 +16,7 @@ public class MarriageDateSelector extends DateSelector {
     double averageYearsFromMarriageToChild = 3.0;
     int daysInYear = 365;
 
-    public ExactDate selectDate(Date earliestDate, Date latestDate, RandomGenerator random) {
+    public ExactDate selectDate(ValipopDate earliestDate, ValipopDate latestDate, RandomGenerator random) {
 
         if(dist == null) {
             dist = new PoissonDistribution(random, poissonM - 0.5,PoissonDistribution.DEFAULT_EPSILON, PoissonDistribution.DEFAULT_MAX_ITERATIONS);

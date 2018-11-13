@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 /**
@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.Compoun
  */
 public class PartneringStatsKey extends StatsKey {
 
-    public PartneringStatsKey(Integer age, double forNumberOfFemales, CompoundTimeUnit consideredTimePeriod, Date currentDate) {
+    public PartneringStatsKey(Integer age, double forNumberOfFemales, CompoundTimeUnit consideredTimePeriod, ValipopDate currentDate) {
         super(age, forNumberOfFemales, consideredTimePeriod, currentDate);
     }
 

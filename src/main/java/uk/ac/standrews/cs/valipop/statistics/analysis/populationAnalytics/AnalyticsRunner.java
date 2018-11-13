@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 
 import java.io.PrintStream;
 
@@ -25,7 +25,8 @@ import java.io.PrintStream;
  */
 public class AnalyticsRunner {
 
-    public static void runAnalytics(IPopulationExtended population, PrintStream resultsOutput) {
+    public static void runAnalytics(IPopulation population, PrintStream resultsOutput) {
+
         new PopulationAnalytics(population, resultsOutput).printAllAnalytics();
         new ChildrenAnalytics(population, resultsOutput).printAllAnalytics();
         new DeathAnalytics(population, resultsOutput).printAllAnalytics();

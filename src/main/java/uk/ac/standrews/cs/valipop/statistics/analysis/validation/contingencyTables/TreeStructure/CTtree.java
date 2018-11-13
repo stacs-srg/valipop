@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SourceType;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.Logger;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
@@ -55,14 +55,14 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
     private PopulationStatistics expected;
 
-    private Date endDate;
-    private Date startDate;
+    private ValipopDate endDate;
+    private ValipopDate startDate;
 
     private SourceNodeInt simNode;
     private SourceNodeDouble statNode = null;
 
 
-    public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date zeroDate, Date endDate, int startStepBack) {
+    public CTtree(PeopleCollection population, PopulationStatistics expected, ValipopDate startDate, ValipopDate zeroDate, ValipopDate endDate, int startStepBack) {
         this.expected = expected;
         this.startDate = startDate;
         this.endDate = new YearDate(endDate.getYear() - 2);
@@ -182,11 +182,11 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     }
 
 
-    public Date getEndDate() {
+    public ValipopDate getEndDate() {
         return endDate;
     }
 
-    public Date getStartDate() {
+    public ValipopDate getStartDate() {
         return startDate;
     }
 
@@ -285,7 +285,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
     }
 
-    public void processPerson(IPerson person, Date currentDate, SourceType source) {
+    public void processPerson(IPerson person, ValipopDate currentDate, SourceType source) {
 
         try {
             getChild(source).processPerson(person, currentDate);
@@ -304,7 +304,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     }
 
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
 
     }
 

@@ -32,6 +32,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.Ille
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.PartneringStatsKey;
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -267,7 +268,7 @@ public class PartneringLogic {
         return 0;
     }
 
-    private static IntegerRange resolveAgeToIR(IPerson male, Set<IntegerRange> labels, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date currentDate) {
+    private static IntegerRange resolveAgeToIR(IPerson male, Set<IntegerRange> labels, ValipopDate currentDate) {
         int age = male.ageOnDate(currentDate);
 
         for (IntegerRange iR : labels) {
@@ -552,7 +553,7 @@ public class PartneringLogic {
         return new CompoundTimeUnit(length, TimeUnit.YEAR);
     }
 
-    private static AdvanceableDate getYobOfOlderEndOfIR(IntegerRange iR, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date currentDate) {
+    private static AdvanceableDate getYobOfOlderEndOfIR(IntegerRange iR, ValipopDate currentDate) {
 
         int yob = currentDate.getYear() - iR.getMax() - 1;
 

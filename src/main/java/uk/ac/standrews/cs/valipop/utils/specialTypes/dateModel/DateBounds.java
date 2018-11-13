@@ -31,14 +31,14 @@ public interface DateBounds {
      *
      * @return the earliest day
      */
-    Date getStartDate();
+    ValipopDate getStartDate();
 
     /**
      * Gets latest day that this Data Store is required to provide information regarding.
      *
      * @return the latest day
      */
-    Date getEndDate();
+    ValipopDate getEndDate();
 
     /**
      * Sets earliest day that this Data Store is required to provide information regarding.
@@ -50,8 +50,5 @@ public interface DateBounds {
      * Sets latest day that this Data Store is required to provide information regarding.
      *
      */
-    void setEndDate(Date end);
-
-
-
+    void setEndDate(ValipopDate end);
 }
