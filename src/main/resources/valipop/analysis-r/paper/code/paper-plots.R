@@ -44,6 +44,14 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/ja-batch1/ja-batch1-results-summary.cs
                     "/cs/tmp/tsd4/results/ja-batch13/ja-batch13-results-summary.csv",
                     "/cs/tmp/tsd4/results/ja-batch14/ja-batch14-results-summary.csv",
                     "/cs/tmp/tsd4/results/ja-batch15/ja-batch15-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch16/ja-batch16-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch17/ja-batch17-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch18/ja-batch18-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch19/ja-batch19-results-summary.csv",
+                    "/cs/tmp/tsd4/results/ja-batch20/ja-batch20-results-summary.csv",
+                    onlyGetStatErrors = FALSE)
+
+df.all <- filesToDF("/cs/tmp/tsd4/results/ja-batch22/ja-batch22-results-summary.csv",
                     onlyGetStatErrors = FALSE)
 
 df.all <- filesToDF("/cs/tmp/tsd4/results/PAPER-MANI/PAPER-MANI-results-summary.csv",
@@ -53,7 +61,7 @@ summary(df.all)
 
 
 summary <- dfToSummaryDF(df.all)
-final <- summaryDfToFinalDF(summary)
+final <- summaryDfToFinalDF(summary, minN = NA)
 
 selected <- selectFromFullDF(df.all, final)
 
@@ -67,7 +75,7 @@ summary(t)
 std <- function(x) sd(x)/sqrt(length(x))
 
 calcCI <- function(data) {
-  if(nrow(data) <= 1) {
+  if(length(data) <= 1) {
     print("CI FROM ONE OBSERVATION?!?")
     return(data)
   }
@@ -94,6 +102,7 @@ df <- data.frame(seedSize=integer(),
                  memoryUsageCI=double(),
                  firstSuccessTime=double(),
                  firstSuccessTimeCI=double(),
+                 n=integer(),
                  stringsAsFactors=FALSE)
 
 rts <- data.frame(averageTotalSize=double(),
@@ -148,7 +157,7 @@ for(ss in unique(t$Seed.Pop.Size)) {
     stop("mulitple prfs for a given seed - fix this or change the code")
   }
   
-  df[nrow(df)+1,] <- c(ss, ats, srt, srtci, ctrt, ctRTci, strt, strtci, rrt, rrtci, trt, trtci, pass.rate, unique(t.ss$Recovery.Factor), unique(t.ss$Proportional.Recovery.Factor), mem, memCI, first.success, first.success.ci)
+  df[nrow(df)+1,] <- c(ss, ats, srt, srtci, ctrt, ctRTci, strt, strtci, rrt, rrtci, trt, trtci, pass.rate, unique(t.ss$Recovery.Factor), unique(t.ss$Proportional.Recovery.Factor), mem, memCI, first.success, first.success.ci, nrow(t.ss))
 }
 
 rts$averageTotalSize <- as.numeric(rts$averageTotalSize)
@@ -229,7 +238,7 @@ p5 <- ggplot(data = rts) + theme + scale +
 ggsave(plot = p5, 
        filename = "collective_plot_A.png",
        path = dir,
-       width = w, height=h, dpi=300)
+       width = 240, height=150, dpi=300, units="mm")
 
 p6 <- ggplot(df) + theme + scale +
   geom_errorbar(aes(x=averageTotalSize, ymin=memoryUsage-memoryUsageCI, ymax=memoryUsage+memoryUsageCI), width = 0.05) +
@@ -248,7 +257,7 @@ ggsave(plot = p6,
 
 p7 <- ggplot(df) + theme + scale +
   geom_point(stat = "identity", aes(x=df$averageTotalSize, y=df$passRate), colour = 'blue', fill = 'blue', pch = 4, size = 5) +
-  geom_label(aes(x=df$averageTotalSize, y=df$passRate, label = paste("RF: ", df$rf, "\nPRF: ", df$prf)), nudge_x = -0.3, nudge_y = -0.1, hjust = 0) +
+  geom_label(aes(x=df$averageTotalSize, y=df$passRate, label = paste("RF: ", df$rf, "\nPRF: ", df$prf, "\nN: ", df$n)), nudge_x = -0.3, nudge_y = -0.1, hjust = 0) +
   xlab("Average of Total Population Size") +
   ylab("Proportion of Valid Populations") +
   ggtitle("Population Validity against Total Population Size (labeled with \nsimulation 'Recovery Factor' and 'Proportional Recovery Factor')") +
