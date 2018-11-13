@@ -16,14 +16,13 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 
 import java.io.PrintStream;
-
 
 /**
  * An analytic class to analyse the distribution of deaths.
@@ -36,7 +35,7 @@ public class DeathAnalytics {
     private static final int ONE_HUNDRED = 100;
 
     private final int[] age_at_death = new int[MAX_AGE_AT_DEATH]; // tracks age of death over population
-    private final IPopulationExtended population;
+    private final IPopulation population;
 
     private PrintStream out;
 
@@ -45,7 +44,7 @@ public class DeathAnalytics {
      *
      * @param population the population to analyse
      */
-    public DeathAnalytics(final IPopulationExtended population, PrintStream resultsOutput) {
+    public DeathAnalytics(final IPopulation population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
@@ -72,11 +71,11 @@ public class DeathAnalytics {
 
         for (final IPerson person : population.getPeople()) {
 
-            final Date death_date = person.getDeathDate_ex();
+            final ValipopDate death_date = person.getDeathDate_ex();
 
             if (death_date != null) {
 
-                final Date birth_date = person.getBirthDate_ex();
+                final ValipopDate birth_date = person.getBirthDate_ex();
                 final int age_at_death_in_years = DateUtils.differenceInYears(birth_date, death_date).getCount();
                 if (age_at_death_in_years >= 0 && age_at_death_in_years < age_at_death.length) {
                     age_at_death[age_at_death_in_years]++;

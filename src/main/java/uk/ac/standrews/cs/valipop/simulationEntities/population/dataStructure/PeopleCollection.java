@@ -18,10 +18,10 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -37,7 +37,7 @@ import java.util.*;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PeopleCollection extends PersonCollection implements IPopulationExtended, Cloneable {
+public class PeopleCollection extends PersonCollection implements IPopulation, Cloneable {
 
     private String description = "";
 
@@ -80,7 +80,7 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
      * @param start the start
      * @param end   the end
      */
-    public PeopleCollection(AdvanceableDate start, Date end, CompoundTimeUnit divisionSize) {
+    public PeopleCollection(AdvanceableDate start, ValipopDate end, CompoundTimeUnit divisionSize) {
 
         super(start, end, divisionSize);
 

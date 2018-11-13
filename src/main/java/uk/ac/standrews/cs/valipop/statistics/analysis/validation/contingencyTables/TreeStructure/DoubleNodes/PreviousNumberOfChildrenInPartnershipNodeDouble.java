@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
@@ -45,7 +45,7 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
 
 
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
         incCountByOne();
 
         Integer numberOfPrevChildrenInAnyPartnership = person.numberOfChildrenBirthedBeforeDate(currentDate.getYearDate());
@@ -96,7 +96,7 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
         Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
 
         Collection<IntegerRange> birthOrders;

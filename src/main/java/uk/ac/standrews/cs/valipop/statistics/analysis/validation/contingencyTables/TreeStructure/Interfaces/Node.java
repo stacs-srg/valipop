@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.util.*;
 
@@ -52,7 +52,7 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     public abstract void incCountByOne();
 
-    public abstract void processPerson(IPerson person, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date currentDate);
+    public abstract void processPerson(IPerson person, ValipopDate currentDate);
 
     public Node<cOp, ?, childCount, ?> addChild(Node<cOp, ?, childCount, ?> child) {
         children.put(child.getOption(), child);
@@ -144,11 +144,11 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         return getAncestor(new CTtree()).getInputStats();
     }
 
-    public Date getStartDate() {
+    public ValipopDate getStartDate() {
         return getAncestor(new CTtree()).getStartDate();
     }
 
-    public Date getEndDate() {
+    public ValipopDate getEndDate() {
         return getAncestor(new CTtree()).getEndDate();
     }
 

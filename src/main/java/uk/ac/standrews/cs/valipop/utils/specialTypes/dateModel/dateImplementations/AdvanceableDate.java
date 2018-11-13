@@ -16,14 +16,14 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface AdvanceableDate extends Date {
+public interface AdvanceableDate extends ValipopDate {
 
     AdvanceableDate advanceTime(int numberOf, TimeUnit unit);
 

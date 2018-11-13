@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.model.gedcom;
+package uk.ac.standrews.cs.valipop.export.gedcom;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.gedcom4j.model.Family;
@@ -23,6 +23,7 @@ import org.gedcom4j.model.Individual;
 import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
@@ -30,7 +31,6 @@ import javax.annotation.Nonnull;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,7 +43,7 @@ public class GEDCOMPartnership implements IPartnership {
     protected int id;
     private int male_partner_id;
     private int female_partner_id;
-    protected Date marriage_date;
+    protected java.util.Date marriage_date;
     private String marriage_place;
     protected List<Integer> child_ids;
 
@@ -63,8 +63,8 @@ public class GEDCOMPartnership implements IPartnership {
         return id == male_partner_id ? female_partner_id : id == female_partner_id ? male_partner_id : -1;
     }
 
-    public Date getMarriageDate() {
-        return marriage_date != null ? (Date) marriage_date.clone() : null;
+    public java.util.Date getMarriageDate() {
+        return marriage_date != null ? (java.util.Date) marriage_date.clone() : null;
     }
 
     public String getMarriagePlace() {
@@ -164,12 +164,12 @@ public class GEDCOMPartnership implements IPartnership {
         return null;
     }
 
-    public void setMarriageDate(ExactDate marriageDate) {
+    public void setMarriageDate(ValipopDate marriageDate) {
 
     }
 
     @Override
-    public ExactDate getMarriageDate_ex() {
+    public ValipopDate getMarriageDate_ex() {
         return null;
     }
 
@@ -179,12 +179,12 @@ public class GEDCOMPartnership implements IPartnership {
     }
 
     @Override
-    public void setPartnershipDate(ExactDate startDate) {
+    public void setPartnershipDate(ValipopDate startDate) {
 
     }
 
     @Override
-    public void separate(ExactDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+    public void separate(ValipopDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
     }
 

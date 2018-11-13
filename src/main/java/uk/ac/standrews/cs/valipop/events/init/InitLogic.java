@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.ex
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.selectionApproaches.SharedLogic;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -42,7 +42,7 @@ public class InitLogic {
     private static int currentHypotheticalPopulationSize;
 
     private static CompoundTimeUnit initTimeStep;
-    private static Date endOfInitPeriod;
+    private static ValipopDate endOfInitPeriod;
 
     private static int numberOfBirthsInThisTimestep = 0;
 
@@ -117,7 +117,7 @@ public class InitLogic {
         numberOfBirthsInThisTimestep += n;
     }
 
-    public static boolean inInitPeriod(Date currentTime) {
+    public static boolean inInitPeriod(ValipopDate currentTime) {
         return DateUtils.dateBeforeOrEqual(currentTime, endOfInitPeriod);
     }
 

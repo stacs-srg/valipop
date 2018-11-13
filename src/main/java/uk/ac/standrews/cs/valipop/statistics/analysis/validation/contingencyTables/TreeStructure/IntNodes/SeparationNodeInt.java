@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
@@ -43,7 +43,7 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
 
     @SuppressWarnings("Duplicates")
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
 
         // TODO change this to resolve to the correct integer ranges
 

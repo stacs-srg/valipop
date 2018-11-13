@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
@@ -60,7 +60,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     }
 
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
 
         people.add(person);
 
@@ -98,7 +98,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
             YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+            ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
             //Date currentDate = yob.advanceTime(age + 1, TimeUnit.YEAR);
 
             SourceNodeDouble sN = (SourceNodeDouble) getAncestor(new SourceNodeDouble());
@@ -149,7 +149,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
             YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+            ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
             MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
                     .getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(),
@@ -201,7 +201,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
         Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 

@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.events.birth.partnering;
 
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
@@ -35,7 +35,7 @@ import java.util.Map;
 public class SeparationLogic {
 
     public static void handle(Map<Integer, ArrayList<IPerson>> continuingPartnedFemalesByChildren,
-                              CompoundTimeUnit consideredTimePeriod, Date currentDate,
+                              CompoundTimeUnit consideredTimePeriod, ValipopDate currentDate,
                               PopulationStatistics desiredPopulationStatistics, Population population, Config config) {
 
         // Consideration of separation is based on number of children in females current partnerships
@@ -73,10 +73,8 @@ public class SeparationLogic {
             }
 
             // Return achieved statistics to the statistics handler
-//            population.getPopulationCounts().partnershipEnd(count);
             dC.setFulfilledCount(count);
             desiredPopulationStatistics.returnAchievedCount(dC);
-
         }
     }
 }

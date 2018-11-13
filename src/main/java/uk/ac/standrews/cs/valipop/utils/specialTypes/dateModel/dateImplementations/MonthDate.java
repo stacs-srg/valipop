@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementati
 
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 
 import java.time.DateTimeException;
@@ -123,7 +123,7 @@ public final class MonthDate implements AdvanceableDate {
     }
 
     @Override
-    public int compareTo(Date o) {
+    public int compareTo(ValipopDate o) {
         if (equals(o)) {
             return 0;
         } else if (DateUtils.dateBeforeOrEqual(this, o)) {

@@ -17,11 +17,10 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
 
-
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -35,7 +34,7 @@ import java.util.List;
 public class PopulationAnalytics {
 
     private static final int ONE_HUNDRED = 100;
-    private final IPopulationExtended population;
+    private final IPopulation population;
     private PrintStream out;
 
     /**
@@ -43,7 +42,7 @@ public class PopulationAnalytics {
      *
      * @param population the population to analyse
      */
-    public PopulationAnalytics(final IPopulationExtended population, PrintStream resultsOutput) {
+    public PopulationAnalytics(final IPopulation population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
@@ -56,7 +55,7 @@ public class PopulationAnalytics {
 
     private void printDeathDate(final IPerson person) {
 
-        final Date death_date = person.getDeathDate_ex();
+        final ValipopDate death_date = person.getDeathDate_ex();
         if (death_date != null) {
             out.print(death_date.toString());
         }
@@ -158,7 +157,7 @@ public class PopulationAnalytics {
                 final IPerson partner = partnership.getPartnerOf(person);
                 out.println("\tPartner born: " + partner.getBirthDate_ex().toString());
 
-                final Date marriage_date = partnership.getPartnershipDate();
+                final ValipopDate marriage_date = partnership.getPartnershipDate();
                 if (marriage_date != null) {
                     out.println("\tMarriage on " + marriage_date.toString());
                 }

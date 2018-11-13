@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
@@ -42,7 +42,7 @@ public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
     }
 
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
 
 //        YearDate yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
 //        Integer age = getOption().getValue();

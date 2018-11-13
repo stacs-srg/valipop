@@ -1,6 +1,6 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 /**
@@ -8,7 +8,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.Compoun
  */
 public class IllegitimateBirthStatsKey extends StatsKey {
 
-    public IllegitimateBirthStatsKey(Integer age, double forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate) {
+    public IllegitimateBirthStatsKey(Integer age, double forNPeople, CompoundTimeUnit consideredTimePeriod, ValipopDate currentDate) {
         super(age, forNPeople, consideredTimePeriod, currentDate);
     }
 

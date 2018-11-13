@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
@@ -36,7 +36,7 @@ public class NumberOfChildrenInPartnershipNodeInt extends IntNode<IntegerRange, 
     }
 
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
         incCountByOne();
 
         IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);

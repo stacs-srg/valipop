@@ -24,10 +24,9 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.MarriageDateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -60,7 +59,7 @@ public class EntityFactory {
         List<IPerson> children = new ArrayList<>(numberOfChildren);
 
         // This ensures twins are born on the same day
-        ExactDate childrenBirthDate = null;
+        ValipopDate childrenBirthDate = null;
         IPerson aChild = null;
 
         // the loop here allows for the multiple children in pregnancies
@@ -85,12 +84,12 @@ public class EntityFactory {
             // first child - then death or divorce of previous spouses or coming of age
 
             // for mother
-            Date motherLastPrevPartneringEvent = mother.getDateOfLastLegitimatePartnershipEventBeforeDate(childrenBirthDate);
+            ValipopDate motherLastPrevPartneringEvent = mother.getDateOfLastLegitimatePartnershipEventBeforeDate(childrenBirthDate);
 
             // for father
-            Date fatherLastPrevPartneringEvent = father.getDateOfLastLegitimatePartnershipEventBeforeDate(childrenBirthDate);
+            ValipopDate fatherLastPrevPartneringEvent = father.getDateOfLastLegitimatePartnershipEventBeforeDate(childrenBirthDate);
 
-            Date earliestPossibleMarriageDate = DateUtils.getLatestDate(motherLastPrevPartneringEvent, fatherLastPrevPartneringEvent);
+            ValipopDate earliestPossibleMarriageDate = DateUtils.getLatestDate(motherLastPrevPartneringEvent, fatherLastPrevPartneringEvent);
 
             if (DateUtils.dateBefore(earliestPossibleMarriageDate, childrenBirthDate)) {
                 // if there is a tenable marriage date then select it
@@ -126,7 +125,7 @@ public class EntityFactory {
         return makePerson(currentDate, birthTimeStep, null, population, ps);
     }
 
-    private static char getSex(PopulationCounts pc, PopulationStatistics ps, Date currentDate) {
+    private static char getSex(PopulationCounts pc, PopulationStatistics ps, ValipopDate currentDate) {
 
         double sexBalance = pc.getAllTimeSexRatio();
 
@@ -141,7 +140,7 @@ public class EntityFactory {
         }
     }
 
-    public static IPerson makePerson(Date birthDate, IPartnership parentsPartnership, Population population, PopulationStatistics ps, boolean illegitimate) {
+    public static IPerson makePerson(ValipopDate birthDate, IPartnership parentsPartnership, Population population, PopulationStatistics ps, boolean illegitimate) {
 
         Person person = new Person(getSex(population.getPopulationCounts(), ps, birthDate), birthDate, parentsPartnership, ps, illegitimate);
 
@@ -150,17 +149,17 @@ public class EntityFactory {
         return person;
     }
 
-    public static IPerson makePerson(Date birthDate, IPartnership parentsPartnership, Population population, PopulationStatistics ps) {
+    public static IPerson makePerson(ValipopDate birthDate, IPartnership parentsPartnership, Population population, PopulationStatistics ps) {
 
         return makePerson(birthDate, parentsPartnership, population, ps, false);
     }
 
-    public static IPerson makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, Population population, PopulationStatistics ps) {
+    public static IPerson makePerson(ValipopDate currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, Population population, PopulationStatistics ps) {
 
         return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep, ps.getRandomGenerator()), parentsPartnership, population, ps);
     }
 
-    public static IPerson makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, Population population, PopulationStatistics ps, boolean illegitimate) {
+    public static IPerson makePerson(ValipopDate currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, Population population, PopulationStatistics ps, boolean illegitimate) {
 
         return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep, ps.getRandomGenerator()), parentsPartnership, population, ps, illegitimate);
     }

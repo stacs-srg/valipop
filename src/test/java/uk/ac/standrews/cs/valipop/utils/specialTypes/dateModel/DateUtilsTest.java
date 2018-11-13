@@ -16,8 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,12 +34,12 @@ public class DateUtilsTest {
     @Test
     public void calculateExactDate() throws Exception {
 
-        Date janDate = new MonthDate(1, 2015);
-        Date marDate = new MonthDate(3, 2015);
-        Date decDate = new MonthDate(12, 2015);
+        ValipopDate janDate = new MonthDate(1, 2015);
+        ValipopDate marDate = new MonthDate(3, 2015);
+        ValipopDate decDate = new MonthDate(12, 2015);
 
-        Date febDate = new MonthDate(2, 2015);
-        Date febDateLeapYear = new MonthDate(2, 2016);
+        ValipopDate febDate = new MonthDate(2, 2015);
+        ValipopDate febDateLeapYear = new MonthDate(2, 2016);
 
         CompoundTimeUnit oneMonth = new CompoundTimeUnit(1, TimeUnit.MONTH);
         CompoundTimeUnit sixMonth = new CompoundTimeUnit(6, TimeUnit.MONTH);
@@ -95,7 +93,7 @@ public class DateUtilsTest {
 
     }
 
-    private void calcExactDateHelper(Date tDate, CompoundTimeUnit tTimeUnit) {
+    private void calcExactDateHelper(ValipopDate tDate, CompoundTimeUnit tTimeUnit) {
 
         ExactDate d = DateUtils.calculateExactDate(tDate, DateUtils.getDaysInTimePeriod(tDate, tTimeUnit));
 
@@ -114,7 +112,7 @@ public class DateUtilsTest {
 
     }
 
-    private void calcExactDateHelper(Date tDate, int days, int exD, int exM, int exY) {
+    private void calcExactDateHelper(ValipopDate tDate, int days, int exD, int exM, int exY) {
 
         ExactDate d = DateUtils.calculateExactDate(tDate, days);
         Assert.assertEquals(exD, d.getDay());
@@ -126,32 +124,32 @@ public class DateUtilsTest {
     @Test
     public void differenceInDays() {
 
-        Date a = new ExactDate(1, 1, 2000);
-        Date b = new ExactDate(2, 1, 2000);
+        ValipopDate a = new ExactDate(1, 1, 2000);
+        ValipopDate b = new ExactDate(2, 1, 2000);
 
         Assert.assertEquals(1, DateUtils.differenceInDays(a, b));
         Assert.assertEquals(-1, DateUtils.differenceInDays(b, a));
 
-        Date c = new ExactDate(1, 2, 2000);
+        ValipopDate c = new ExactDate(1, 2, 2000);
 
         Assert.assertEquals(31, DateUtils.differenceInDays(a, c));
 
-        Date d = new ExactDate(1, 1, 2016);
-        Date e = new ExactDate(29, 2, 2016);
-        Date f = new ExactDate(1, 3, 2016);
+        ValipopDate d = new ExactDate(1, 1, 2016);
+        ValipopDate e = new ExactDate(29, 2, 2016);
+        ValipopDate f = new ExactDate(1, 3, 2016);
 
         Assert.assertEquals(59, DateUtils.differenceInDays(d, e));
         Assert.assertEquals(60, DateUtils.differenceInDays(d, f));
 
-        Date h = new ExactDate(1, 1, 2001);
+        ValipopDate h = new ExactDate(1, 1, 2001);
         Assert.assertEquals(366, DateUtils.differenceInDays(a, h));
 
-        Date g = new ExactDate(24, 1, 2034);
+        ValipopDate g = new ExactDate(24, 1, 2034);
 
         Assert.assertEquals(6598, DateUtils.differenceInDays(d, g));
 
-        Date i = new ExactDate(31, 12, 2000);
-        Date j = new ExactDate(2, 1, 2001);
+        ValipopDate i = new ExactDate(31, 12, 2000);
+        ValipopDate j = new ExactDate(2, 1, 2001);
 
 
         Assert.assertEquals(1, DateUtils.differenceInDays(e, f));
@@ -166,32 +164,32 @@ public class DateUtilsTest {
     @Test
     public void getDaysInTimePeriod() throws Exception {
 
-        Date janDate = new MonthDate(1, 2015);
-        Date janDateLeapYear = new MonthDate(1, 2016);
-        Date janDatePostLeapYear = new MonthDate(1, 2017);
+        ValipopDate janDate = new MonthDate(1, 2015);
+        ValipopDate janDateLeapYear = new MonthDate(1, 2016);
+        ValipopDate janDatePostLeapYear = new MonthDate(1, 2017);
 
-        Date febDate = new MonthDate(2, 2015);
-        Date febDateLeapYear = new MonthDate(2, 2016);
+        ValipopDate febDate = new MonthDate(2, 2015);
+        ValipopDate febDateLeapYear = new MonthDate(2, 2016);
 
-        Date marDate = new MonthDate(3, 2015);
-        Date marDateLeapYear = new MonthDate(3, 2016);
+        ValipopDate marDate = new MonthDate(3, 2015);
+        ValipopDate marDateLeapYear = new MonthDate(3, 2016);
 
-        Date offJanDate = new ExactDate(15, 1, 2015);
-        Date offJanDateLeapYear = new ExactDate(15, 1, 2016);
-        Date offJanDatePostLeapYear = new ExactDate(15, 1, 2017);
+        ValipopDate offJanDate = new ExactDate(15, 1, 2015);
+        ValipopDate offJanDateLeapYear = new ExactDate(15, 1, 2016);
+        ValipopDate offJanDatePostLeapYear = new ExactDate(15, 1, 2017);
 
-        Date offFebDate = new ExactDate(15, 2, 2015);
-        Date offFebDateLeapYear = new ExactDate(15, 2, 2016);
+        ValipopDate offFebDate = new ExactDate(15, 2, 2015);
+        ValipopDate offFebDateLeapYear = new ExactDate(15, 2, 2016);
 
-        Date leapMarA = new ExactDate(29, 3, 2016);
-        Date leapMarB = new ExactDate(31, 3, 2016);
+        ValipopDate leapMarA = new ExactDate(29, 3, 2016);
+        ValipopDate leapMarB = new ExactDate(31, 3, 2016);
 
-        Date leapFeb = new ExactDate(29, 2, 2016);
+        ValipopDate leapFeb = new ExactDate(29, 2, 2016);
 
-        Date leapJan = new ExactDate(31, 1, 2016);
-        Date postLeapJan = new ExactDate(31, 1, 2017);
+        ValipopDate leapJan = new ExactDate(31, 1, 2016);
+        ValipopDate postLeapJan = new ExactDate(31, 1, 2017);
 
-        Date postLeapApr = new ExactDate(30, 4, 2017);
+        ValipopDate postLeapApr = new ExactDate(30, 4, 2017);
 
         CompoundTimeUnit oneMonth = new CompoundTimeUnit(1, TimeUnit.MONTH);
         CompoundTimeUnit twoMonth = new CompoundTimeUnit(2, TimeUnit.MONTH);

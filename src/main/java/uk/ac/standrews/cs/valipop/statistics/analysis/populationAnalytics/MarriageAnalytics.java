@@ -16,10 +16,10 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
+import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
-import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -35,7 +35,7 @@ public class MarriageAnalytics {
     private static final int ONE_HUNDRED = 100;
 
     private final int[] count_marriages = new int[MAX_MARRIAGES]; // tracks marriage size
-    private final IPopulationExtended population;
+    private final IPopulation population;
 
     private PrintStream out;
 
@@ -44,7 +44,7 @@ public class MarriageAnalytics {
      *
      * @param population the population to analyse
      */
-    public MarriageAnalytics(final IPopulationExtended population, PrintStream resultsOutput) {
+    public MarriageAnalytics(final IPopulation population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;

@@ -16,10 +16,10 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
+import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
-import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -37,7 +37,7 @@ public class ChildrenAnalytics {
     private static final int ONE_HUNDRED = 100;
 
     private final int[] children_per_marriage = new int[MAX_CHILDREN]; // tracks family size
-    private final IPopulationExtended population;
+    private final IPopulation population;
     private PrintStream out;
 
     private final Map<Integer, Double> fertilityRateByYear = new TreeMap<>();
@@ -48,7 +48,7 @@ public class ChildrenAnalytics {
      * @param population the population to analyse
      * @throws Exception if the analysis cannot be completed
      */
-    public ChildrenAnalytics(final IPopulationExtended population, PrintStream resultsOutput) {
+    public ChildrenAnalytics(final IPopulation population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;

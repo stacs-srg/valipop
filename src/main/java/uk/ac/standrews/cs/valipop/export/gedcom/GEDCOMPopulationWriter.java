@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.model.gedcom;
+package uk.ac.standrews.cs.valipop.export.gedcom;
 
 import uk.ac.standrews.cs.utilities.DateManipulation;
-import uk.ac.standrews.cs.valipop.model.AbstractFilePopulationWriter;
+import uk.ac.standrews.cs.valipop.export.AbstractFilePopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 

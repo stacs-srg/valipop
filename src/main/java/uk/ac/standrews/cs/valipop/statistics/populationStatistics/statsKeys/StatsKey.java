@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 /**
@@ -29,9 +29,9 @@ public class StatsKey {
     private final Integer maxXLabel;
     private final double forNPeople;
     private final CompoundTimeUnit consideredTimePeriod;
-    private final Date date;
+    private final ValipopDate date;
 
-    public StatsKey(Integer yLabel, Integer xLabel, Integer maxXLabel, double forNPeople, CompoundTimeUnit consideredTimePeriod, Date date) {
+    public StatsKey(Integer yLabel, Integer xLabel, Integer maxXLabel, double forNPeople, CompoundTimeUnit consideredTimePeriod, ValipopDate date) {
         this.yLabel = yLabel;
         this.xLabel = xLabel;
         this.maxXLabel = maxXLabel;
@@ -40,11 +40,11 @@ public class StatsKey {
         this.date = date;
     }
 
-    public StatsKey(Integer yLabel, Integer xLabel, double forNPeople, CompoundTimeUnit consideredTimePeriod, Date date) {
+    public StatsKey(Integer yLabel, Integer xLabel, double forNPeople, CompoundTimeUnit consideredTimePeriod, ValipopDate date) {
         this(yLabel, xLabel, null, forNPeople, consideredTimePeriod, date);
     }
 
-    public StatsKey(Integer yLabel, double forNPeople, CompoundTimeUnit consideredTimePeriod, Date date) {
+    public StatsKey(Integer yLabel, double forNPeople, CompoundTimeUnit consideredTimePeriod, ValipopDate date) {
         this(yLabel, null, null, forNPeople, consideredTimePeriod, date);
     }
 
@@ -68,7 +68,7 @@ public class StatsKey {
         return consideredTimePeriod;
     }
 
-    public Date getDate() {
+    public ValipopDate getDate() {
         return date;
     }
 }

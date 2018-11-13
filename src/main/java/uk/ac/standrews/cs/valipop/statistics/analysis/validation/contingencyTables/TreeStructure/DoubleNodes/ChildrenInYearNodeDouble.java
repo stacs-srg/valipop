@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
@@ -59,7 +59,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
     }
 
     @Override
-    public void processPerson(IPerson person, Date currentDate) {
+    public void processPerson(IPerson person, ValipopDate currentDate) {
 
         incCountByOne();
 
@@ -101,7 +101,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
 
         Integer order = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
                                     getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
-        Date currentDate = yob.advanceTime(age - 1, TimeUnit.YEAR);
+        ValipopDate currentDate = yob.advanceTime(age - 1, TimeUnit.YEAR);
 
         double forNPeople = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getCount();
 
@@ -173,7 +173,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
             YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+            ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
             MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
                     .getDeterminedCount(new MultipleBirthStatsKey(age, getCount(),

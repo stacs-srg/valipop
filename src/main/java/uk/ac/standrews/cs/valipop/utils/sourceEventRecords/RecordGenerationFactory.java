@@ -6,7 +6,7 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRec
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat.RelationshipsTable;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat.SimplifiedSourceRecordGenerator;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -15,7 +15,7 @@ public class RecordGenerationFactory {
 
     public static final Logger log = new Logger(RecordGenerationFactory.class);
 
-    public static void outputRecords(RecordFormat recordFormat, String recordsOutputDir,  PeopleCollection population, Date startDate) {
+    public static void outputRecords(RecordFormat recordFormat, String recordsOutputDir,  PeopleCollection population, ValipopDate startDate) {
 
         switch(recordFormat) {
             case DS:
@@ -63,7 +63,7 @@ public class RecordGenerationFactory {
         }
     }
 
-    private static void extractEGSkyeRecords(PeopleCollection population, String recordsDirPath, Date startDate) {
+    private static void extractEGSkyeRecords(PeopleCollection population, String recordsDirPath, ValipopDate startDate) {
         log.info("OBDModel --- Outputting EG_SKYE records");
 
         try {

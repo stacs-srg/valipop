@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface Date extends Comparable<Date> {
+public interface ValipopDate extends Comparable<ValipopDate> {
 
     int getYear();
 

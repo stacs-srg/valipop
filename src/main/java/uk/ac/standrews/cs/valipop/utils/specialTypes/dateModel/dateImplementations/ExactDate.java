@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 
 import java.time.DateTimeException;
@@ -25,7 +25,7 @@ import java.util.Calendar;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public final class ExactDate implements Date {
+public final class ExactDate implements ValipopDate {
 
     private final int year;
     private final int month;
@@ -45,6 +45,7 @@ public final class ExactDate implements Date {
     }
 
     public ExactDate(String ddmmyyyy) {
+
         String[] split = ddmmyyyy.split("/");
 
         int day = Integer.parseInt(split[0]);
@@ -66,7 +67,7 @@ public final class ExactDate implements Date {
         this.year = year;
     }
 
-    public ExactDate(Date date) {
+    public ExactDate(ValipopDate date) {
         this(date.getDay(), date.getMonth(), date.getYear());
     }
 
@@ -141,7 +142,7 @@ public final class ExactDate implements Date {
     }
 
     @Override
-    public int compareTo(Date o) {
+    public int compareTo(ValipopDate o) {
         if (DateUtils.dateBeforeOrEqual(this, o)) {
             return -1;
         } else {

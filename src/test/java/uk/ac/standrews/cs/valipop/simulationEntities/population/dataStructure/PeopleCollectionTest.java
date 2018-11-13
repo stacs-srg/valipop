@@ -239,7 +239,6 @@ public class PeopleCollectionTest {
         assertTrue(all.contains(f3));
     }
 
-
     @Test
     public void femaleGivesBirthMoveOfBirthCountPosition() throws PersonNotFoundException  {
 
@@ -308,7 +307,6 @@ public class PeopleCollectionTest {
         people = living.getAll();
         assertTrue(people.contains(c2));
         assertTrue(people.contains(c3));
-
     }
 
     @Test(expected = PersonNotFoundException.class)
@@ -324,9 +322,7 @@ public class PeopleCollectionTest {
 
         Person f1 = new Person('f', start, null, ps);
         living.removePerson(f1);
-
     }
-
 
     @Test(expected = PersonNotFoundException.class)
     public void removeNonExistentFemale() throws PersonNotFoundException {

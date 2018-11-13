@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
@@ -31,7 +31,7 @@ import java.util.Collection;
  */
 public class PersonCharacteristicsIdentifier {
 
-    public static IPartnership getActivePartnership(IPerson person, Date currentDate) {
+    public static IPartnership getActivePartnership(IPerson person, ValipopDate currentDate) {
 
         ArrayList<IPartnership> partnershipsInYear = new ArrayList<>(person.getPartnershipsActiveInYear(currentDate.getYearDate()));
 
@@ -66,7 +66,7 @@ public class PersonCharacteristicsIdentifier {
     }
 
 
-    public static Integer getChildrenBirthedBeforeDate(IPartnership activePartnership, Date year) {
+    public static Integer getChildrenBirthedBeforeDate(IPartnership activePartnership, ValipopDate year) {
 
         if(activePartnership == null) {
             return 0;
@@ -107,7 +107,7 @@ public class PersonCharacteristicsIdentifier {
 
     public static boolean startedInYear(IPartnership activePartnership, YearDate y) {
 
-        Date startDate = activePartnership.getPartnershipDate();
+        ValipopDate startDate = activePartnership.getPartnershipDate();
 
         return startDate.getYear() == y.getYear();
 

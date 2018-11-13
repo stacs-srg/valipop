@@ -49,17 +49,17 @@ public class DateUtils {
     }
 
 
-    public static CompoundTimeUnit differenceInYears(Date a, Date b) {
+    public static CompoundTimeUnit differenceInYears(ValipopDate a, ValipopDate b) {
 
         int months = differenceInMonths(a, b).getCount();
 
         return new CompoundTimeUnit(months / MONTHS_IN_YEAR, TimeUnit.YEAR);
     }
 
-    public static CompoundTimeUnit differenceInMonths(Date a, Date b) {
+    public static CompoundTimeUnit differenceInMonths(ValipopDate a, ValipopDate b) {
 
         if (dateBeforeOrEqual(b, a)) {
-            Date temp = a;
+            ValipopDate temp = a;
             a = b;
             b = temp;
         }
@@ -83,7 +83,7 @@ public class DateUtils {
         return new CompoundTimeUnit( months, TimeUnit.MONTH);
     }
 
-    public static boolean datesEqual(Date a, Date b) {
+    public static boolean datesEqual(ValipopDate a, ValipopDate b) {
         return a.getDay() == b.getDay() && a. getMonth() == b.getMonth() && a.getYear() == b.getYear();
     }
 
@@ -94,7 +94,7 @@ public class DateUtils {
      * @param b The second date
      * @return returns true if date a is before day b (or is the same as date b) else returns false
      */
-    public static boolean dateBeforeOrEqual(Date a, Date b) {
+    public static boolean dateBeforeOrEqual(ValipopDate a, ValipopDate b) {
 
         if (a.getYear() < b.getYear()) {
             return true;
@@ -113,7 +113,7 @@ public class DateUtils {
 
     }
 
-    public static boolean dateBefore(Date a, Date b) {
+    public static boolean dateBefore(ValipopDate a, ValipopDate b) {
 
         if (a.getYear() < b.getYear()) {
             return true;
@@ -135,7 +135,7 @@ public class DateUtils {
 
 
 
-    public static boolean matchesInterval(Date currentDate, CompoundTimeUnit interval, Date startDate) {
+    public static boolean matchesInterval(ValipopDate currentDate, CompoundTimeUnit interval, ValipopDate startDate) {
 
         int dM = differenceInMonths(startDate, currentDate).getCount();
 
@@ -151,7 +151,7 @@ public class DateUtils {
         }
     }
 
-    public static Date getLatestDate(Date startDate, Date startDate1) {
+    public static ValipopDate getLatestDate(ValipopDate startDate, ValipopDate startDate1) {
         if (dateBeforeOrEqual(startDate, startDate1)) {
             return startDate1;
         } else {
@@ -180,7 +180,7 @@ public class DateUtils {
      * @param consideredTimePeriod the number of months/years to count days for
      * @return The number of days, inclusive of the starting day
      */
-    public static int getDaysInTimePeriod(Date date, CompoundTimeUnit consideredTimePeriod) {
+    public static int getDaysInTimePeriod(ValipopDate date, CompoundTimeUnit consideredTimePeriod) {
 
         if(consideredTimePeriod.getCount() < 0) {
             return (-1) * getDaysInNegativeTimePeriod(date, consideredTimePeriod);
@@ -191,7 +191,7 @@ public class DateUtils {
     }
 
 
-    private static int getDaysInPositiveTimePeriod(Date startingDate, CompoundTimeUnit consideredTimePeriod) {
+    private static int getDaysInPositiveTimePeriod(ValipopDate startingDate, CompoundTimeUnit consideredTimePeriod) {
 
         int days = 0;
 
@@ -276,7 +276,7 @@ public class DateUtils {
         }
     }
 
-    private static int getDaysInNegativeTimePeriod(Date startingDate, CompoundTimeUnit consideredTimePeriod) {
+    private static int getDaysInNegativeTimePeriod(ValipopDate startingDate, CompoundTimeUnit consideredTimePeriod) {
 
         int days = 0;
 
@@ -369,7 +369,7 @@ public class DateUtils {
         return days;
     }
 
-    public static ExactDate calculateExactDate(Date date, int chosenDay) {
+    public static ExactDate calculateExactDate(ValipopDate date, int chosenDay) {
 
         if(chosenDay < 0) {
             return calculateBWExactDate(date, Math.abs(chosenDay));
@@ -380,7 +380,7 @@ public class DateUtils {
 
     }
 
-    private static ExactDate calculateFWExactDate(Date startingDate, int chosenDay) {
+    private static ExactDate calculateFWExactDate(ValipopDate startingDate, int chosenDay) {
 
         int day = startingDate.getDay();
         int month = startingDate.getMonth();
@@ -426,7 +426,7 @@ public class DateUtils {
         return new ExactDate(day, month, year);
     }
 
-    private static ExactDate calculateBWExactDate(Date endingDate, int chosenDay) {
+    private static ExactDate calculateBWExactDate(ValipopDate endingDate, int chosenDay) {
 
         int day = endingDate.getDay();
         int month = endingDate.getMonth();
@@ -470,12 +470,12 @@ public class DateUtils {
         return new ExactDate(day, month, year);
     }
 
-    public static int differenceInDays(Date birthDate, Date latestDate) {
+    public static int differenceInDays(ValipopDate birthDate, ValipopDate latestDate) {
 
         int modifier = 1;
 
         if(dateBeforeOrEqual(latestDate, birthDate)) {
-            Date temp = latestDate;
+            ValipopDate temp = latestDate;
             latestDate = birthDate;
             birthDate = temp;
             modifier = -1;
@@ -545,7 +545,7 @@ public class DateUtils {
         }
     }
 
-    public static boolean dateInYear(Date date, YearDate year) {
+    public static boolean dateInYear(ValipopDate date, YearDate year) {
 
         return !DateUtils.dateBefore(date, year) && DateUtils.dateBefore(date, year.advanceTime(1, TimeUnit.YEAR));
 

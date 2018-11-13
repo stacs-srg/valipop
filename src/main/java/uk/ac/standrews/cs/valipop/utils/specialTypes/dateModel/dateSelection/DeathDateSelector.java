@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
@@ -36,11 +36,11 @@ public class DeathDateSelector extends DateSelector {
 
         if(child != null) {
 
-            Date birthDateOfLastChild = child.getBirthDate_ex().getExactDate();
+            ValipopDate birthDateOfLastChild = child.getBirthDate_ex().getExactDate();
 
             if (Character.toLowerCase(p.getSex()) == 'm') {
                 // If a male with a child then the man cannot die more than the minimum gestation period before the birth date
-                Date ePD = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * desiredPopulationStatistics.getMinGestationPeriod());
+                ValipopDate ePD = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * desiredPopulationStatistics.getMinGestationPeriod());
                 return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, ePD, desiredPopulationStatistics.getRandomGenerator());
             } else {
                 // If a female with a child then the cannot die before birth of child
@@ -54,7 +54,7 @@ public class DeathDateSelector extends DateSelector {
     }
 
     private ExactDate selectDateRestrictedByEPD(AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                                                Date earliestPossibleDate, RandomGenerator random) {
+                                                ValipopDate earliestPossibleDate, RandomGenerator random) {
 
         // if specified earliestPossibleDate is in consideredTimePeriod
         if(DateUtils.dateBeforeOrEqual(currentDate, earliestPossibleDate)) {

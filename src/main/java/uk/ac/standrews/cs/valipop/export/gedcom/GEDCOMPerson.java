@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.model.gedcom;
+package uk.ac.standrews.cs.valipop.export.gedcom;
 
 import org.gedcom4j.model.*;
 import uk.ac.standrews.cs.utilities.DateManipulation;
@@ -24,9 +24,8 @@ import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -246,12 +245,12 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public ExactDate getBirthDate_ex() {
+    public ValipopDate getBirthDate_ex() {
         return null;
     }
 
     @Override
-    public ExactDate getDeathDate_ex() {
+    public ValipopDate getDeathDate_ex() {
         return null;
     }
 
@@ -271,22 +270,22 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public List<IPartnership> getPartnershipsBeforeDate(Date date) {
+    public List<IPartnership> getPartnershipsBeforeDate(ValipopDate date) {
         return null;
     }
 
     @Override
-    public ExactDate getDateOfLastLegitimatePartnershipEventBeforeDate(ExactDate date) {
+    public ValipopDate getDateOfLastLegitimatePartnershipEventBeforeDate(ValipopDate date) {
         return null;
     }
 
     @Override
-    public boolean isWidow(Date onDate) {
+    public boolean isWidow(ValipopDate onDate) {
         return false;
     }
 
     @Override
-    public IPerson getPartner(Date onDate) {
+    public IPerson getPartner(ValipopDate onDate) {
         return null;
     }
 
@@ -301,7 +300,7 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public boolean recordDeath(Date date, Population population, PopulationStatistics desiredPopulationStatistics) {
+    public boolean recordDeath(ValipopDate date, Population population, PopulationStatistics desiredPopulationStatistics) {
         return false;
     }
 
@@ -311,7 +310,7 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public boolean aliveOnDate(Date date) {
+    public boolean aliveOnDate(ValipopDate date) {
         return false;
     }
 
@@ -336,7 +335,7 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public int ageOnDate(Date date) {
+    public int ageOnDate(ValipopDate date) {
         return 0;
     }
 
@@ -396,27 +395,27 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public boolean bornBefore(Date year) {
+    public boolean bornBefore(ValipopDate year) {
         return false;
     }
 
     @Override
-    public boolean bornOnDate(Date y) {
+    public boolean bornOnDate(ValipopDate y) {
         return false;
     }
 
     @Override
-    public Date getDateOfNextPostSeparationEvent(Date separationDate) {
+    public ValipopDate getDateOfNextPostSeparationEvent(ValipopDate separationDate) {
         return null;
     }
 
     @Override
-    public Date getDateOfPreviousPreMarriageEvent(Date latestPossibleMarriageDate) {
+    public ValipopDate getDateOfPreviousPreMarriageEvent(ValipopDate latestPossibleMarriageDate) {
         return null;
     }
 
     @Override
-    public boolean diedAfter(Date date) {
+    public boolean diedAfter(ValipopDate date) {
         return false;
     }
 

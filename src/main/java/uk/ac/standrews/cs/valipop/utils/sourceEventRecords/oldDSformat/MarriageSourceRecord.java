@@ -21,8 +21,8 @@ import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -139,9 +139,8 @@ public class MarriageSourceRecord extends SourceRecord {
 
         IPerson bride = population.findPerson(partnership.getFemalePartnerId());
         IPerson groom = population.findPerson(partnership.getMalePartnerId());
-        ;
 
-        final Date start_date = partnership.getMarriageDate();
+        final java.util.Date start_date = partnership.getMarriageDate();
 
         setMarriageDay(String.valueOf(DateManipulation.dateToDay(start_date)));
         setMarriageMonth(String.valueOf(DateManipulation.dateToMonth(start_date)));
@@ -190,7 +189,7 @@ public class MarriageSourceRecord extends SourceRecord {
         }
     }
 
-    public String identifyMaritalStatus(IPerson spouse, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date marriageDate) {
+    public String identifyMaritalStatus(IPerson spouse, ValipopDate marriageDate) {
 
         List<IPartnership> partnerships = spouse.getPartnershipsBeforeDate(marriageDate);
 

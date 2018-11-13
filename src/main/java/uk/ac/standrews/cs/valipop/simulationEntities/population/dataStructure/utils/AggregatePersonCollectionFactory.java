@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.u
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PersonCollection;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
@@ -58,7 +58,7 @@ public class AggregatePersonCollectionFactory {
     public static PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) {
 
         AdvanceableDate start = DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
-        Date end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());
+        ValipopDate end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());
 
         PeopleCollection cloneCol1 = col1.clone();
         PeopleCollection cloneCol2 = col2.clone();

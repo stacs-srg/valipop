@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure;
 
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.VariableNotFoundExcepction;
@@ -117,7 +117,7 @@ public abstract class CTRow<count extends Number> {
 
         if(Objects.equals(variable, "Age")) {
 
-            Date date;
+            ValipopDate date;
             int age;
 
             try {

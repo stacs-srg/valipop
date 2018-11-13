@@ -22,9 +22,9 @@ import uk.ac.standrews.cs.utilities.ProgressIndicator;
 import uk.ac.standrews.cs.utilities.TimeManipulation;
 import uk.ac.standrews.cs.utilities.archive.CommandLineArgs;
 import uk.ac.standrews.cs.utilities.archive.Diagnostic;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,24 +49,23 @@ public class EGSkyeSourceRecordGenerator {
     public static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 10;
     private static final String NUMBER_OF_PROGRESS_UPDATES_FLAG = "-u";
 
-    private IPopulationExtended population;
+    private IPopulation population;
 
-    public EGSkyeSourceRecordGenerator(IPopulationExtended population) {
+    public EGSkyeSourceRecordGenerator(IPopulation population) {
 
         this(population, "valipop/output");
     }
 
-    public EGSkyeSourceRecordGenerator(IPopulationExtended population, String outputDir) {
+    public EGSkyeSourceRecordGenerator(IPopulation population, String outputDir) {
 
         this.population = population;
 
         BIRTH_RECORDS_PATH = outputDir + "/" + BIRTH_RECORDS_PATH;
         DEATH_RECORDS_PATH = outputDir + "/" + DEATH_RECORDS_PATH;
         MARRIAGE_RECORDS_PATH = outputDir + "/" + MARRIAGE_RECORDS_PATH;
-
     }
 
-    public void generateEventRecords(Date startDate) throws Exception {
+    public void generateEventRecords(ValipopDate startDate) throws Exception {
 
         final long start_time = System.currentTimeMillis();
 
@@ -108,7 +107,6 @@ public class EGSkyeSourceRecordGenerator {
                 writer.println(record);
                 progress_indicator.progressStep();
             }
-
         }
 
         if (progress_indicator.getProportionComplete() < 1.0) {

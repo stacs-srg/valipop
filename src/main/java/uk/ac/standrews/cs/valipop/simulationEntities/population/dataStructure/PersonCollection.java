@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateBounds;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -29,7 +29,6 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.ex
 
 import java.util.*;
 
-
 /**
  * A PersonCollection contains a set of collections of people where the collections are organised by the year of birth
  * of the person.
@@ -39,7 +38,7 @@ import java.util.*;
 public abstract class PersonCollection implements DateBounds {
 
     private AdvanceableDate startDate;
-    private uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date endDate;
+    private ValipopDate endDate;
     private CompoundTimeUnit divisionSize;
 
     /**
@@ -51,7 +50,7 @@ public abstract class PersonCollection implements DateBounds {
      * @param startDate the start date
      * @param endDate   the end date
      */
-    public PersonCollection(AdvanceableDate startDate, Date endDate, CompoundTimeUnit divisionSize) {
+    public PersonCollection(AdvanceableDate startDate, ValipopDate endDate, CompoundTimeUnit divisionSize) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.divisionSize = divisionSize;
@@ -235,7 +234,7 @@ public abstract class PersonCollection implements DateBounds {
     }
 
     @Override
-    public Date getEndDate() {
+    public ValipopDate getEndDate() {
         return endDate;
     }
 
@@ -245,7 +244,7 @@ public abstract class PersonCollection implements DateBounds {
     }
 
     @Override
-    public void setEndDate(Date endDate) {
+    public void setEndDate(ValipopDate endDate) {
         this.endDate = endDate;
     }
 
@@ -288,7 +287,7 @@ public abstract class PersonCollection implements DateBounds {
         return DateUtils.matchesInterval(date, divisionSize, startDate);
     }
 
-    public MonthDate resolveDateToCorrectDivisionDate(Date date) {
+    public MonthDate resolveDateToCorrectDivisionDate(ValipopDate date) {
 
         int dM = date.getMonth();
         int dY = date.getYear();
