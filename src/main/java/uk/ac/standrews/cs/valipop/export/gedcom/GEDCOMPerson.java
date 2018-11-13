@@ -76,18 +76,8 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public java.util.Date getBirthDate() {
-        return (java.util.Date) birth_date.clone();
-    }
-
-    @Override
     public String getBirthPlace() {
         return birth_place;
-    }
-
-    @Override
-    public java.util.Date getDeathDate() {
-        return death_date == null ? null : (java.util.Date) death_date.clone();
     }
 
     @Override
@@ -103,16 +93,6 @@ public class GEDCOMPerson implements IPerson {
     @Override
     public String getOccupation() {
         return occupation;
-    }
-
-    @Override
-    public List<Integer> getPartnerships() {
-        return partnerships;
-    }
-
-    @Override
-    public int getParentsPartnership() {
-        return parents_partnership_id;
     }
 
     @SuppressWarnings("NonFinalFieldReferenceInEquals")
@@ -245,22 +225,22 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public ValipopDate getBirthDate_ex() {
+    public ValipopDate getBirthDate() {
         return null;
     }
 
     @Override
-    public ValipopDate getDeathDate_ex() {
+    public ValipopDate getDeathDate() {
         return null;
     }
 
     @Override
-    public List<IPartnership> getPartnerships_ex() {
+    public List<IPartnership> getPartnerships() {
         return null;
     }
 
     @Override
-    public IPartnership getParentsPartnership_ex() {
+    public IPartnership getParentsPartnership() {
         return null;
     }
 

@@ -23,7 +23,6 @@ public class FirstNameGenerator implements NameGenerator {
 
     @Override
     public String getName(IPerson personToBeNamed, PopulationStatistics ps) {
-        return ps.getForenameDistribution(personToBeNamed.getBirthDate_ex(), personToBeNamed.getSex()).getSample();
+        return ps.getForenameDistribution(personToBeNamed.getBirthDate(), personToBeNamed.getSex()).getSample();
     }
-
 }

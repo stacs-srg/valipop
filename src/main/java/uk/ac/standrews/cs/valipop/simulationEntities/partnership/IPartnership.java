@@ -26,8 +26,6 @@ import java.util.List;
 
 /**
  * Interface for partnership objects.
- *
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public interface IPartnership extends Comparable<IPartnership> {
 
@@ -69,7 +67,17 @@ public interface IPartnership extends Comparable<IPartnership> {
 
     void setMarriageDate(ValipopDate marriageDate);
 
-    ValipopDate getMarriageDate_ex();
+    /**
+     * Gets the date of the marriage between the partners in this partnership, or null if they are not married.
+     * @return the date of the marriage of this partnership
+     */
+    ValipopDate getMarriageDate();
+
+    /**
+     * Gets the place of marriage, or null if not recorded.
+     * @return the place of marriage
+     */
+    String getMarriagePlace();
 
     void addChildren(Collection<IPerson> children);
 
@@ -84,42 +92,4 @@ public interface IPartnership extends Comparable<IPartnership> {
      * @return the partnership's unique identifier
      */
     int getId();
-
-    /**
-     * Gets the identifier of the female in the partnership.
-     * @return the identifier of the female
-     */
-    int getFemalePartnerId();
-
-    /**
-     * Gets the identifier of the male in the partnership.
-     * @return the identifier of the male
-     */
-    int getMalePartnerId();
-
-    /**
-     * Gets the identifier of the partner of the person with the given identifier, or -1 if neither member
-     * of this partnership has the given identifier.
-     * @param id the identifier
-     * @return the identifier of the partner of the person with the given identifier
-     */
-    int getPartnerOf(int id);
-
-    /**
-     * Gets the date of the marriage between the partners in this partnership, or null if they are not married.
-     * @return the date of the marriage of this partnership
-     */
-    java.util.Date getMarriageDate();
-
-    /**
-     * Gets the place of marriage, or null if not recorded.
-     * @return the place of marriage
-     */
-    String getMarriagePlace();
-
-    /**
-     * Gets the identifiers of the partnership's child_ids, or null if none are recorded.
-     * @return the identifiers of the partnership's child_ids
-     */
-    List<Integer> getChildIds();
 }

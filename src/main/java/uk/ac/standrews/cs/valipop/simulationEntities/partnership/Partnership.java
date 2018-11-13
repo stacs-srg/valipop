@@ -73,15 +73,15 @@ public class Partnership implements IPartnership {
         s += male.getFirstName() + " ";
         s += male.getSurname() + " | ";
         s += male.getSex() + " | ";
-        s += male.getBirthDate().toString() + " | ";
-        s += male.getDeathDate() != null ? male.getDeathDate().toString() + "\n" : "no DOD\n";
+        s += male.getBirthDate().getDate() + " | ";
+        s += male.getDeathDate() != null ? male.getDeathDate() + "\n" : "no DOD\n";
 
         s += female.getId()+ " | ";
         s += female.getFirstName() + " ";
         s += female.getSurname() + " | ";
         s += female.getSex() + " | ";
-        s += female.getBirthDate().toString() + " | ";
-        s += female.getDeathDate() != null ? female.getDeathDate().toString() + "\n" : "no DOD\n";
+        s += female.getBirthDate().getDate() + " | ";
+        s += female.getDeathDate() != null ? female.getDeathDate() + "\n" : "no DOD\n";
 
         s += "----Children----\n";
 
@@ -90,8 +90,8 @@ public class Partnership implements IPartnership {
             s += c.getFirstName() + " ";
             s += c.getSurname() + " | ";
             s += c.getSex() + " | ";
-            s += c.getBirthDate().toString() + " | ";
-            s += c.getDeathDate() != null ? c.getDeathDate().toString() + "\n" : "no DOD\n";
+            s += c.getBirthDate().getDate() + " | ";
+            s += c.getDeathDate() != null ? c.getDeathDate() + "\n" : "no DOD\n";
         }
 
         s += "--End Partnership: " + id + "--\n";
@@ -116,57 +116,18 @@ public class Partnership implements IPartnership {
         nextId = 0;
     }
 
-    @Override
-    public int getFemalePartnerId() {
-        return getFemalePartner().getId();
-    }
-
-    @Override
-    public int getMalePartnerId() {
-        return getMalePartner().getId();
-    }
-
-    @Override
-    public int getPartnerOf(int i) {
-        if(getFemalePartnerId() == i) {
-            return getMalePartnerId();
-        } else {
-            return getFemalePartnerId();
-        }
-    }
-
-    @Override
-    public java.util.Date getMarriageDate() {
-        if(marriageDate == null) {
-            return null;
-        } else {
-            return marriageDate.getDate();
-        }
-    }
-
     public void setMarriageDate(ValipopDate marriageDate) {
         this.marriageDate = marriageDate;
     }
 
     @Override
-    public ValipopDate getMarriageDate_ex() {
+    public ValipopDate getMarriageDate() {
         return marriageDate;
     }
 
     @Override
     public String getMarriagePlace() {
         return null;
-    }
-
-    @Override
-    public List<Integer> getChildIds() {
-        List<Integer> childrenIDs = new ArrayList<>();
-
-        for(IPerson p : getChildren()) {
-            childrenIDs.add(p.getId());
-        }
-
-        return childrenIDs;
     }
 
     @Override
@@ -276,8 +237,8 @@ public class Partnership implements IPartnership {
         IPerson latestChild = null;
 
         for(IPerson c : getChildren()) {
-            if(DateUtils.dateBefore(latestBirthDate, c.getBirthDate_ex())) {
-                latestBirthDate = c.getBirthDate_ex();
+            if(DateUtils.dateBefore(latestBirthDate, c.getBirthDate())) {
+                latestBirthDate = c.getBirthDate();
                 latestChild = c;
             }
         }

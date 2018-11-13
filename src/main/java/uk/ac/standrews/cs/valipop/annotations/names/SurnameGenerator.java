@@ -27,11 +27,11 @@ public class SurnameGenerator implements NameGenerator {
 
         // OZGUR - surname stuff handled here
 
-        IPartnership parentsPartnership = personToBeNamed.getParentsPartnership_ex();
+        IPartnership parentsPartnership = personToBeNamed.getParentsPartnership();
         String surname;
 
         if(parentsPartnership == null || parentsPartnership.getMalePartner() == null) {
-            surname = ps.getSurnameDistribution(personToBeNamed.getBirthDate_ex()).getSample();
+            surname = ps.getSurnameDistribution(personToBeNamed.getBirthDate()).getSample();
         } else {
             surname = parentsPartnership.getMalePartner().getSurname();
         }

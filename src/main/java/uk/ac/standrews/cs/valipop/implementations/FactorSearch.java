@@ -16,16 +16,15 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.AnalysisThread;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
@@ -64,7 +63,6 @@ public class FactorSearch {
         double[] prfs = toDoubleArray(prfsArg);
 
         runFactorSearch(seedSize, rfs, prfs, precisions, dataFiles, numberOfRunsPerSim, runPurpose, resultsDir);
-
     }
 
     private static double[] toDoubleArray(String rfsArg) {
@@ -81,9 +79,6 @@ public class FactorSearch {
         return ret;
     }
 
-//    static double[] rfs;
-//    static double[] prfs;
-
     static double[] bfs;
     static double[] dfs;
 
@@ -91,9 +86,6 @@ public class FactorSearch {
     static int[] minBirthSpacings;
     static int[] t0_pop_size;
 
-    // "src/main/resources/scotland_test_population"
-//    static String var_data_files = "src/main/resources/proxy-scotland-population-JA";
-//    static String results_save_location = "src/main/resources/valipop/results/";
     static RecordFormat output_record_format = RecordFormat.NONE;
 
     static CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
@@ -105,9 +97,6 @@ public class FactorSearch {
 
     public static void runFactorSearch(int size0, double[] rfs, double[] prfs, double[] precisions, String dataFiles, int numberOfRunsPerSim, String runPurpose, String results_save_location) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning, InterruptedException {
 
-//        rfs = new double[]{0.0, 0.3, 0.6, 1.0};
-//        prfs = new double[]{0.0};
-
         iws = new CompoundTimeUnit[]{
                 new CompoundTimeUnit(10, TimeUnit.YEAR)
         };
@@ -117,7 +106,6 @@ public class FactorSearch {
         dfs = new double[]{0};
         t0_pop_size = new int[]{size0};
 
-
         for(double precision : precisions) {
             CTtree.NODE_MIN_COUNT = precision;
 
@@ -126,7 +114,6 @@ public class FactorSearch {
                     for (double prf : prfs) {
                         for (CompoundTimeUnit iw : iws) {
                             for (int minBirthSpacing : minBirthSpacings) {
-
                                 for (double bf : bfs) {
                                     for (double df : dfs) {
 
@@ -140,7 +127,6 @@ public class FactorSearch {
                                                 Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
                                                         simulation_time_step, dataFiles, results_save_location, runPurpose,
                                                         minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime, 0, false);
-
 
                                                 OBDModel model = new OBDModel(startTime, config);
                                                 try {
@@ -156,18 +142,6 @@ public class FactorSearch {
                                                 }
 
                                                 new AnalysisThread(model, runPurpose).start();
-
-//                                            ProgramTimer statsTimer = new ProgramTimer();
-//
-//                                            Integer maxBirthingAge = model.getDesiredPopulationStatistics()
-//                                                    .getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
-//                                            double v = MinimaSearch.getV(GEEGLM, maxBirthingAge, runPurpose, Control.BF);
-//
-//                                            model.getSummaryRow().setV(v);
-//                                            model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
-//
-//                                            model.getSummaryRow().outputSummaryRowToFile();
-
                                             }
 
                                         } catch (IOException e) {
@@ -175,14 +149,9 @@ public class FactorSearch {
                                                     "permission to read or write on disk. Also, check supporting input files are present at location " +
                                                     "specified in config setup code : " + e.getMessage();
                                             throw new IOException(message, e);
-                                        } catch (InvalidInputFileException | InconsistentWeightException e) {
-                                            String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
-                                            throw new InvalidInputFileException(message, e);
                                         }
-
                                     }
                                 }
-
                             }
                         }
                     }

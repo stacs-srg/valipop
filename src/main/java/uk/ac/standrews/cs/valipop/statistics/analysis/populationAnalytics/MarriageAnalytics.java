@@ -77,7 +77,7 @@ public class MarriageAnalytics {
 
             if (person.getSex() == IPerson.MALE) { // only look at Males to avoid counting marriages twice.
 
-                final List<IPartnership> partnership_ids = person.getPartnerships_ex();
+                final List<IPartnership> partnership_ids = person.getPartnerships();
                 if (partnership_ids == null) {
                     count_marriages[0]++;
                 } else {

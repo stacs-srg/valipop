@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
-
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.*;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
@@ -77,14 +76,14 @@ public class MaleCollection extends PersonCollection {
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
 
-        if(divisionsInPeriod <= 0) {
+        if (divisionsInPeriod <= 0) {
             throw new MisalignedTimeDivisionError("");
         }
 
         MonthDate divisionDate = firstDate.getMonthDate();
 
         // for all the division dates
-        for(int i = 0; i < divisionsInPeriod; i++) {
+        for (int i = 0; i < divisionsInPeriod; i++) {
 
             try {
                 people.addAll(byYear.get(divisionDate));
@@ -107,8 +106,8 @@ public class MaleCollection extends PersonCollection {
 
         Collection<IPerson> peopleAlive = new ArrayList<>();
 
-        for(IPerson p : peopleBorn) {
-            if(p.diedAfter(firstDate)) {
+        for (IPerson p : peopleBorn) {
+            if (p.diedAfter(firstDate)) {
                 peopleAlive.add(p);
             }
         }
@@ -118,7 +117,7 @@ public class MaleCollection extends PersonCollection {
 
     @Override
     public void addPerson(IPerson person) {
-        MonthDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate_ex());
+        MonthDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
 
         try {
             byYear.get(divisionDate).add(person);
@@ -130,9 +129,9 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public void removePerson(IPerson person) throws PersonNotFoundException {
+    public void removePerson(IPerson person) {
 
-        Collection<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate_ex()));
+        Collection<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate()));
 
         // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {
@@ -152,14 +151,14 @@ public class MaleCollection extends PersonCollection {
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
 
-        if(divisionsInPeriod <= 0) {
+        if (divisionsInPeriod <= 0) {
             throw new MisalignedTimeDivisionError("");
         }
 
         MonthDate divisionDate = firstDate.getMonthDate();
 
         // for all the division dates
-        for(int i = 0; i < divisionsInPeriod; i++) {
+        for (int i = 0; i < divisionsInPeriod; i++) {
 
             try {
                 count += byYear.get(firstDate.getMonthDate()).size();

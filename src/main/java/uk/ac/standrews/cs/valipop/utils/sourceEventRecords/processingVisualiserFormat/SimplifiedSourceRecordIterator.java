@@ -67,12 +67,11 @@ public class SimplifiedSourceRecordIterator {
 
             List<IPartnership> l = new ArrayList<>();
 
-            while(partnership_iterator.hasNext()) {
+            while (partnership_iterator.hasNext()) {
                 IPartnership p = partnership_iterator.next();
-                if(p.getMarriageDate() != null)
+                if (p.getMarriageDate() != null)
                     l.add(p);
             }
-
 
             Mapper<IPartnership, SimplifiedMarriageSourceRecord> person_to_marriage_record_mapper = partnership -> new SimplifiedMarriageSourceRecord(partnership, population);
 

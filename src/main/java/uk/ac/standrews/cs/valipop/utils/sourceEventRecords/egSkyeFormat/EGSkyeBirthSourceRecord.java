@@ -26,11 +26,11 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
         super(person, population);
 
         familyID = parents_partnership_id;
-        birthDate = new ExactDate(person.getBirthDate_ex());
+        birthDate = new ExactDate(person.getBirthDate());
 
         if(parents_partnership_id != -1) {
-            mothersOccupation = person.getParentsPartnership_ex().getFemalePartner().getOccupation();
-            fathers_surname = person.getParentsPartnership_ex().getMalePartner().getSurname();
+            mothersOccupation = person.getParentsPartnership().getFemalePartner().getOccupation();
+            fathers_surname = person.getParentsPartnership().getMalePartner().getSurname();
         }
 
         int registrationDay = rng.nextInt(43);
@@ -40,7 +40,7 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
 
         marriageBaby = person.getMarriageBaby() ? "true" : "false";
 
-        if(person.getDeathDate_ex() != null) {
+        if(person.getDeathDate() != null) {
             deathID = String.valueOf(uid);
         }
 

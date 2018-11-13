@@ -264,7 +264,7 @@ public class PeopleCollectionTest {
 
         living.removePerson(f1);
 
-        Partnership p1 = new Partnership(m1, f1, c1.getBirthDate_ex());
+        Partnership p1 = new Partnership(m1, f1, c1.getBirthDate());
         p1.addChildren(Collections.singletonList(c1));
         m1.recordPartnership(p1);
         f1.recordPartnership(p1);
@@ -273,11 +273,11 @@ public class PeopleCollectionTest {
         living.addPerson(f1);
 
         // are they in the new place
-        Collection<IPerson> people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate_ex().getYearDate(), y, 1);
+        Collection<IPerson> people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate().getYearDate(), y, 1);
         assertTrue(people.contains(f1));
 
         // and not in the old place
-        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate_ex().getYearDate(), y, 0);
+        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate().getYearDate(), y, 0);
         assertFalse(people.contains(f1));
 
         // check for children
@@ -296,11 +296,11 @@ public class PeopleCollectionTest {
         living.addPerson(f1);
 
         // are they in the new place
-        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate_ex().getYearDate(), y, 3);
+        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate().getYearDate(), y, 3);
         assertTrue(people.contains(f1));
 
         // and not in the old place
-        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate_ex().getYearDate(), y, 1);
+        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate().getYearDate(), y, 1);
         assertFalse(people.contains(f1));
 
         // check for children

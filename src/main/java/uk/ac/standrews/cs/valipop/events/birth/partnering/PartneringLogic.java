@@ -53,7 +53,7 @@ public class PartneringLogic {
 
     public static int handle(Collection<NewMother> needingPartners, PopulationStatistics desiredPopulationStatistics,
                              AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod, Population population,
-                             Config config) throws PersonNotFoundException {
+                             Config config)  {
 
         int forNFemales = needingPartners.size();
 
@@ -206,7 +206,7 @@ public class PartneringLogic {
 
                     cancelledChildren += m.getNumberOfChildrenInMaternity();
                     // cancel birth(s) as no father can be found
-                    mother.getPartnerships_ex().remove(mother.getLastPartnership());
+                    mother.getPartnerships().remove(mother.getLastPartnership());
 
                     population.getLivingPeople().addPerson(mother);
                 }
@@ -238,7 +238,7 @@ public class PartneringLogic {
                 IPartnership marriage = EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population, desiredPopulationStatistics, isIllegitimate, toBeMarriedBirth);
 
                 // checks if marriage was possible
-                if (marriage.getMarriageDate_ex() != null) {
+                if (marriage.getMarriageDate() != null) {
                     marriageCounts.setFulfilledCount(numChildrenInPartnership);
                 } else {
                     marriageCounts.setFulfilledCount(0);
@@ -339,28 +339,28 @@ public class PartneringLogic {
 
     private static boolean legallyEligible(IPerson man, IPerson woman) {
 
-        if (man.getParentsPartnership_ex() != null) {
+        if (man.getParentsPartnership() != null) {
 
             //  Mother
-            if (man.getParentsPartnership_ex().getFemalePartner() == woman)
+            if (man.getParentsPartnership().getFemalePartner() == woman)
                 return false;
 
             //  Sister and half sister
-            if (man.getParentsPartnership_ex().getMalePartner().getAllChildren().contains(woman))
+            if (man.getParentsPartnership().getMalePartner().getAllChildren().contains(woman))
                 return false;
 
-            if (man.getParentsPartnership_ex().getFemalePartner().getAllChildren().contains(woman))
+            if (man.getParentsPartnership().getFemalePartner().getAllChildren().contains(woman))
                 return false;
 
             //  Brother's daughter
             //  Sister's daughter
-            for (IPerson sibling : man.getParentsPartnership_ex().getChildren()) {
+            for (IPerson sibling : man.getParentsPartnership().getChildren()) {
                 if (sibling.getAllChildren().contains(woman))
                     return false;
             }
 
             //  Former wife of father
-            for (IPartnership fathersPart : man.getParentsPartnership_ex().getMalePartner().getPartnerships_ex()) {
+            for (IPartnership fathersPart : man.getParentsPartnership().getMalePartner().getPartnerships()) {
 
                 if (fathersPart.getFemalePartner() == woman)
                     return false;
@@ -368,23 +368,23 @@ public class PartneringLogic {
 
             // grand parents - fathers side
 
-            if (man.getParentsPartnership_ex().getMalePartner().getParentsPartnership_ex() != null) {
+            if (man.getParentsPartnership().getMalePartner().getParentsPartnership() != null) {
 
                 //  Father's mother
-                if (man.getParentsPartnership_ex().getMalePartner().getParentsPartnership_ex().getFemalePartner() == woman)
+                if (man.getParentsPartnership().getMalePartner().getParentsPartnership().getFemalePartner() == woman)
                     return false;
 
                 // Father's sister
                 // (Father's father's children)
-                if (man.getParentsPartnership_ex().getMalePartner().getParentsPartnership_ex().getMalePartner().getAllChildren().contains(woman))
+                if (man.getParentsPartnership().getMalePartner().getParentsPartnership().getMalePartner().getAllChildren().contains(woman))
                     return false;
 
                 // (Father's mothers's children)
-                if (man.getParentsPartnership_ex().getMalePartner().getParentsPartnership_ex().getFemalePartner().getAllChildren().contains(woman))
+                if (man.getParentsPartnership().getMalePartner().getParentsPartnership().getFemalePartner().getAllChildren().contains(woman))
                     return false;
 
                 //  Former wife of father's father
-                for (IPartnership gFathersPart : man.getParentsPartnership_ex().getMalePartner().getParentsPartnership_ex().getMalePartner().getPartnerships_ex()) {
+                for (IPartnership gFathersPart : man.getParentsPartnership().getMalePartner().getParentsPartnership().getMalePartner().getPartnerships()) {
 
                     if (gFathersPart.getFemalePartner() == woman)
                         return false;
@@ -394,18 +394,18 @@ public class PartneringLogic {
 
                 //  Father's father's mother
                 IPartnership ffP = man
-                        .getParentsPartnership_ex().getMalePartner()
-                        .getParentsPartnership_ex().getMalePartner()
-                        .getParentsPartnership_ex();
+                        .getParentsPartnership().getMalePartner()
+                        .getParentsPartnership().getMalePartner()
+                        .getParentsPartnership();
 
                 if (ffP != null && ffP.getFemalePartner() == woman)
                     return false;
 
                 //  Father's mother's mother
                 IPartnership fmP = man
-                        .getParentsPartnership_ex().getMalePartner()
-                        .getParentsPartnership_ex().getFemalePartner()
-                        .getParentsPartnership_ex();
+                        .getParentsPartnership().getMalePartner()
+                        .getParentsPartnership().getFemalePartner()
+                        .getParentsPartnership();
 
                 if (fmP != null && fmP.getFemalePartner() == woman)
                     return false;
@@ -414,32 +414,32 @@ public class PartneringLogic {
             // grand parents - mothers side
 
             if (man
-                    .getParentsPartnership_ex().getFemalePartner()
-                    .getParentsPartnership_ex() != null) {
+                    .getParentsPartnership().getFemalePartner()
+                    .getParentsPartnership() != null) {
 
                 //  Mother's mother
                 if (man
-                        .getParentsPartnership_ex().getFemalePartner()
-                        .getParentsPartnership_ex().getFemalePartner() == woman)
+                        .getParentsPartnership().getFemalePartner()
+                        .getParentsPartnership().getFemalePartner() == woman)
                     return false;
 
                 //  Mother's sister
                 // (Mother's father's children)
                 if (man
-                        .getParentsPartnership_ex().getFemalePartner()
-                        .getParentsPartnership_ex().getMalePartner().getAllChildren().contains(woman))
+                        .getParentsPartnership().getFemalePartner()
+                        .getParentsPartnership().getMalePartner().getAllChildren().contains(woman))
                     return false;
 
                 // (Mother's mothers's children)
                 if (man
-                        .getParentsPartnership_ex().getFemalePartner()
-                        .getParentsPartnership_ex().getFemalePartner().getAllChildren().contains(woman))
+                        .getParentsPartnership().getFemalePartner()
+                        .getParentsPartnership().getFemalePartner().getAllChildren().contains(woman))
                     return false;
 
                 //  Former wife of mother's father
                 for (IPartnership gFathersPart : man
-                        .getParentsPartnership_ex().getFemalePartner()
-                        .getParentsPartnership_ex().getMalePartner().getPartnerships_ex()) {
+                        .getParentsPartnership().getFemalePartner()
+                        .getParentsPartnership().getMalePartner().getPartnerships()) {
 
                     if (gFathersPart.getFemalePartner() == woman)
                         return false;
@@ -447,18 +447,18 @@ public class PartneringLogic {
 
                 //  Mother's father's mother
                 IPartnership mfP = man
-                        .getParentsPartnership_ex().getFemalePartner()
-                        .getParentsPartnership_ex().getMalePartner()
-                        .getParentsPartnership_ex();
+                        .getParentsPartnership().getFemalePartner()
+                        .getParentsPartnership().getMalePartner()
+                        .getParentsPartnership();
 
                 if (mfP != null && mfP.getFemalePartner() == woman)
                     return false;
 
                 //  Mother's mother's mother
                 IPartnership mmP = man
-                        .getParentsPartnership_ex().getFemalePartner()
-                        .getParentsPartnership_ex().getFemalePartner()
-                        .getParentsPartnership_ex();
+                        .getParentsPartnership().getFemalePartner()
+                        .getParentsPartnership().getFemalePartner()
+                        .getParentsPartnership();
 
                 if (mmP != null && mmP.getFemalePartner() == woman)
                     return false;
@@ -485,7 +485,7 @@ public class PartneringLogic {
 
         //  Former wife of son
         for (IPerson child : man.getAllChildren()) {
-            for (IPartnership childsPart : child.getPartnerships_ex()) {
+            for (IPartnership childsPart : child.getPartnerships()) {
                 if (childsPart.getFemalePartner() == woman)
                     return false;
             }
@@ -494,7 +494,7 @@ public class PartneringLogic {
         //  Former wife of son's son
         //  Former wife of daughter's son
         for (IPerson gChild : man.getAllGrandChildren()) {
-            for (IPartnership gChildPart : gChild.getPartnerships_ex()) {
+            for (IPartnership gChildPart : gChild.getPartnerships()) {
                 if (gChildPart.getFemalePartner() == woman)
                     return false;
             }
@@ -503,7 +503,7 @@ public class PartneringLogic {
         // Wives parents checks
 
         //  of former wife - level1
-        for (IPartnership part : man.getPartnerships_ex()) {
+        for (IPartnership part : man.getPartnerships()) {
 
             //  Daughter of former wife
             if (part.getFemalePartner().getAllChildren().contains(woman))
@@ -516,28 +516,28 @@ public class PartneringLogic {
         }
 
         //  of former wife - level2
-        for (IPartnership part : man.getPartnerships_ex()) {
+        for (IPartnership part : man.getPartnerships()) {
 
             //  Mother of former wife
-            IPartnership p = part.getFemalePartner().getParentsPartnership_ex();
+            IPartnership p = part.getFemalePartner().getParentsPartnership();
             if (p != null && p.getFemalePartner() == woman)
                 return false;
         }
 
         //  of former wife - level3
-        for (IPartnership part : man.getPartnerships_ex()) {
+        for (IPartnership part : man.getPartnerships()) {
 
             //  Mother of father of former wife
-            IPartnership p1 = part.getFemalePartner().getParentsPartnership_ex();
+            IPartnership p1 = part.getFemalePartner().getParentsPartnership();
             if (p1 != null) {
-                IPartnership p3 = p1.getMalePartner().getParentsPartnership_ex();
+                IPartnership p3 = p1.getMalePartner().getParentsPartnership();
                 if (p3 != null && p3.getFemalePartner() == woman)
                     return false;
             }
 
             //  Mother of mother of former wife
             if (p1 != null) {
-                IPartnership p3 = p1.getFemalePartner().getParentsPartnership_ex();
+                IPartnership p3 = p1.getFemalePartner().getParentsPartnership();
                 if (p3 != null && p3.getFemalePartner() == woman)
                     return false;
             }

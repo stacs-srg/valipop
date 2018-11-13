@@ -47,8 +47,8 @@ public abstract class IndividualSourceRecord extends SourceRecord {
     protected void setParentAttributes(IPerson person, IPopulation population, IPartnership parents_partnership) {
 
         // Attributes associated with individual's parents.
-        IPerson mother = population.findPerson(parents_partnership.getFemalePartnerId());
-        IPerson father = population.findPerson(parents_partnership.getMalePartnerId());
+        IPerson mother = parents_partnership.getFemalePartner();
+        IPerson father = parents_partnership.getMalePartner();
 
         setMothersId(String.valueOf(mother.getId()));
         setMothersForename(mother.getFirstName());

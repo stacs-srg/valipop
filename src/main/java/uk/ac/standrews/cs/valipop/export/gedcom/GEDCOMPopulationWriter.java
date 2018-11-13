@@ -35,298 +35,294 @@ import java.util.List;
  */
 public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
 
-	private static final String CHAR_SET = "ASCII";
-	private static final String GEDCOM_FORM = "LINEAGE-LINKED";
-	private static final String GEDCOM_VERSION = "5.5.1";
-	private static final String SOURCE_SOFTWARE = "Digitising_Scotland";
-	private static final String SUBMITTER = "Digitising Scotland Project";
-	private static final String SUBMITTER_ID = "@S1@";
-
-	private static final String HEADER_TAG = "HEAD";
-	private static final String TRAILER_TAG = "TRLR";
-	private static final String SOURCE_TAG = "SOUR";
-	private static final String SUBMITTER_TAG = "SUBM";
-	private static final String GEDCOM_TAG = "GEDC";
-	private static final String GEDCOM_VERSION_TAG = "VERS";
-	private static final String GEDCOM_FORMAT_TAG = "FORM";
-	private static final String CHARACTER_SET_TAG = "CHAR";
-	private static final String INDIVIDUAL_TAG = "INDI";
-	private static final String FAMILY_TAG = "FAM";
-	private static final String MARRIAGE_TAG = "MARR";
-	private static final String HUSBAND_TAG = "HUSB";
-	private static final String WIFE_TAG = "WIFE";
-	private static final String CHILD_TAG = "CHIL";
-	private static final String NAME_TAG = "NAME";
-	private static final String SEX_TAG = "SEX";
-	private static final String BIRTH_TAG = "BIRT";
-	private static final String DEATH_TAG = "DEAT";
-	private static final String DATE_TAG = "DATE";
-	private static final String PLACE_TAG = "PLAC";
-	private static final String DEATH_CAUSE_TAG = "CAUS";
-	private static final String OCCUPATION_TAG = "OCCU";
-	private static final String FAMILY_AS_SPOUSE_TAG = "FAMS";
-	private static final String FAMILY_AS_CHILD_TAG = "FAMC";
-
-	private int level = 0;
-
-	/**
-	 * Initialises the exporter. This includes potentially expensive scanning of the population graph.
-	 *
-	 * @param path the path for the output file
-	 * @throws IOException if the file does not exist and cannot be created
-	 */
-	public GEDCOMPopulationWriter(final Path path) throws IOException {
-
-		super(path);
-	}
-
-	@Override
-	protected void outputHeader(final PrintWriter writer) {
-
-		write(HEADER_TAG);
-		incrementLevel();
-
-		write(SOURCE_TAG, SOURCE_SOFTWARE);
-		write(SUBMITTER_TAG, SUBMITTER_ID);
-
-		write(GEDCOM_TAG);
-		incrementLevel();
-		write(GEDCOM_VERSION_TAG, GEDCOM_VERSION);
-		write(GEDCOM_FORMAT_TAG, GEDCOM_FORM);
-		decrementLevel();
-
-		write(CHARACTER_SET_TAG, CHAR_SET);
-		decrementLevel();
-	}
+    private static final String CHAR_SET = "ASCII";
+    private static final String GEDCOM_FORM = "LINEAGE-LINKED";
+    private static final String GEDCOM_VERSION = "5.5.1";
+    private static final String SOURCE_SOFTWARE = "Digitising_Scotland";
+    private static final String SUBMITTER = "Digitising Scotland Project";
+    private static final String SUBMITTER_ID = "@S1@";
+
+    private static final String HEADER_TAG = "HEAD";
+    private static final String TRAILER_TAG = "TRLR";
+    private static final String SOURCE_TAG = "SOUR";
+    private static final String SUBMITTER_TAG = "SUBM";
+    private static final String GEDCOM_TAG = "GEDC";
+    private static final String GEDCOM_VERSION_TAG = "VERS";
+    private static final String GEDCOM_FORMAT_TAG = "FORM";
+    private static final String CHARACTER_SET_TAG = "CHAR";
+    private static final String INDIVIDUAL_TAG = "INDI";
+    private static final String FAMILY_TAG = "FAM";
+    private static final String MARRIAGE_TAG = "MARR";
+    private static final String HUSBAND_TAG = "HUSB";
+    private static final String WIFE_TAG = "WIFE";
+    private static final String CHILD_TAG = "CHIL";
+    private static final String NAME_TAG = "NAME";
+    private static final String SEX_TAG = "SEX";
+    private static final String BIRTH_TAG = "BIRT";
+    private static final String DEATH_TAG = "DEAT";
+    private static final String DATE_TAG = "DATE";
+    private static final String PLACE_TAG = "PLAC";
+    private static final String DEATH_CAUSE_TAG = "CAUS";
+    private static final String OCCUPATION_TAG = "OCCU";
+    private static final String FAMILY_AS_SPOUSE_TAG = "FAMS";
+    private static final String FAMILY_AS_CHILD_TAG = "FAMC";
+
+    private int level = 0;
+
+    /**
+     * Initialises the exporter. This includes potentially expensive scanning of the population graph.
+     *
+     * @param path the path for the output file
+     * @throws IOException if the file does not exist and cannot be created
+     */
+    public GEDCOMPopulationWriter(final Path path) throws IOException {
+
+        super(path);
+    }
+
+    @Override
+    protected void outputHeader(final PrintWriter writer) {
+
+        write(HEADER_TAG);
+        incrementLevel();
+
+        write(SOURCE_TAG, SOURCE_SOFTWARE);
+        write(SUBMITTER_TAG, SUBMITTER_ID);
+
+        write(GEDCOM_TAG);
+        incrementLevel();
+        write(GEDCOM_VERSION_TAG, GEDCOM_VERSION);
+        write(GEDCOM_FORMAT_TAG, GEDCOM_FORM);
+        decrementLevel();
+
+        write(CHARACTER_SET_TAG, CHAR_SET);
+        decrementLevel();
+    }
 
-	@SuppressWarnings("FeatureEnvy")
-	@Override
-	public void recordPerson(final IPerson person) {
+    @SuppressWarnings("FeatureEnvy")
+    @Override
+    public void recordPerson(final IPerson person) {
 
-		writeIndividualLabel(person);
-		incrementLevel();
-
-		writeName(person);
-		writeSex(person);
-		writeBirth(person);
-		writeDeath(person);
-		writeOccupation(person);
-		writePartnerships(person);
-		writeParentsPartnership(person);
+        writeIndividualLabel(person);
+        incrementLevel();
+
+        writeName(person);
+        writeSex(person);
+        writeBirth(person);
+        writeDeath(person);
+        writeOccupation(person);
+        writePartnerships(person);
+        writeParentsPartnership(person);
 
-		decrementLevel();
-	}
+        decrementLevel();
+    }
 
-	@SuppressWarnings("FeatureEnvy")
-	@Override
-	public void recordPartnership(final IPartnership partnership) {
+    @SuppressWarnings("FeatureEnvy")
+    @Override
+    public void recordPartnership(final IPartnership partnership) {
 
-		writeFamilyLabel(partnership);
-		incrementLevel();
+        writeFamilyLabel(partnership);
+        incrementLevel();
 
-		writeMarriage(partnership);
-		writeWife(partnership);
-		writeHusband(partnership);
-		writeChildren(partnership);
+        writeMarriage(partnership);
+        writeWife(partnership);
+        writeHusband(partnership);
+        writeChildren(partnership);
 
-		decrementLevel();
-	}
+        decrementLevel();
+    }
 
-	@Override
-	protected void outputTrailer(final PrintWriter writer) {
+    @Override
+    protected void outputTrailer(final PrintWriter writer) {
 
-		write(SUBMITTER_ID + ' ' + SUBMITTER_TAG);
-		incrementLevel();
-		writeName(SUBMITTER);
-		decrementLevel();
-		write(TRAILER_TAG);
-	}
+        write(SUBMITTER_ID + ' ' + SUBMITTER_TAG);
+        incrementLevel();
+        writeName(SUBMITTER);
+        decrementLevel();
+        write(TRAILER_TAG);
+    }
 
-	protected static int idToInt(final String id) {
+    protected static int idToInt(final String id) {
 
-		// Assume the string starts with an @ and another character, and ends with an @.
-		return Integer.parseInt(id.substring(2, id.length() - 1));
-	}
+        // Assume the string starts with an @ and another character, and ends with an @.
+        return Integer.parseInt(id.substring(2, id.length() - 1));
+    }
 
-	private void writeIndividualLabel(final IPerson person) {
+    private void writeIndividualLabel(final IPerson person) {
 
-		write(makeIndividualReference(person.getId()) + ' ' + INDIVIDUAL_TAG);
+        write(makeIndividualReference(person.getId()) + ' ' + INDIVIDUAL_TAG);
 
-	}
+    }
 
-	private void writeFamilyLabel(final IPartnership partnership) {
+    private void writeFamilyLabel(final IPartnership partnership) {
 
-		write(makeFamilyReference(partnership.getId()) + ' ' + FAMILY_TAG);
-	}
+        write(makeFamilyReference(partnership.getId()) + ' ' + FAMILY_TAG);
+    }
 
-	private void writeName(final String name) {
+    private void writeName(final String name) {
 
-		write(NAME_TAG, name);
-	}
+        write(NAME_TAG, name);
+    }
 
-	private void writeName(final IPerson person) {
+    private void writeName(final IPerson person) {
 
-		writeName(person.getFirstName() + " /" + person.getSurname() + '/');
-	}
+        writeName(person.getFirstName() + " /" + person.getSurname() + '/');
+    }
 
-	private void writeSex(final IPerson person) {
+    private void writeSex(final IPerson person) {
 
-		write(SEX_TAG, String.valueOf(person.getSex()));
-	}
+        write(SEX_TAG, String.valueOf(person.getSex()));
+    }
 
-	private void writeBirth(final IPerson person) {
+    private void writeBirth(final IPerson person) {
 
-		final Date birth_date = person.getBirthDate();
-		if (birth_date != null) {
+        final Date birth_date = person.getBirthDate().getDate();
+        if (birth_date != null) {
 
-			write(BIRTH_TAG);
-			incrementLevel();
+            write(BIRTH_TAG);
+            incrementLevel();
 
-			writeDate(birth_date);
-			writePlace(person.getBirthPlace());
+            writeDate(birth_date);
+            writePlace(person.getBirthPlace());
 
-			decrementLevel();
-		}
-	}
+            decrementLevel();
+        }
+    }
 
-	@SuppressWarnings("FeatureEnvy")
-	private void writeDeath(final IPerson person) {
+    @SuppressWarnings("FeatureEnvy")
+    private void writeDeath(final IPerson person) {
 
-		final Date death_date = person.getDeathDate();
-		if (death_date != null) {
+        final Date death_date = person.getDeathDate().getDate();
+        if (death_date != null) {
 
-			write(DEATH_TAG);
-			incrementLevel();
+            write(DEATH_TAG);
+            incrementLevel();
 
-			writeDate(death_date);
-			writePlace(person.getDeathPlace());
-			writeDeathCause(person.getDeathCause());
+            writeDate(death_date);
+            writePlace(person.getDeathPlace());
+            writeDeathCause(person.getDeathCause());
 
-			decrementLevel();
-		}
-	}
+            decrementLevel();
+        }
+    }
 
-	private void writeMarriage(final IPartnership partnership) {
+    private void writeMarriage(final IPartnership partnership) {
 
-		final Date marriage_date = partnership.getMarriageDate();
-		if (marriage_date != null) {
+        if (partnership.getMarriageDate() != null) {
 
-			write(MARRIAGE_TAG);
-			incrementLevel();
+            final Date marriage_date = partnership.getMarriageDate().getDate();
 
-			writeDate(marriage_date);
-			writePlace(partnership.getMarriagePlace());
+            write(MARRIAGE_TAG);
+            incrementLevel();
 
-			decrementLevel();
-		}
-	}
+            writeDate(marriage_date);
+            writePlace(partnership.getMarriagePlace());
 
-	private void writeDate(final Date date) {
+            decrementLevel();
+        }
+    }
 
-		write(DATE_TAG, DateManipulation.formatDate(date));
-	}
+    private void writeDate(final Date date) {
 
-	private void writePlace(final String place) {
+        write(DATE_TAG, DateManipulation.formatDate(date));
+    }
 
-		checkAndWrite(PLACE_TAG, place);
-	}
+    private void writePlace(final String place) {
 
-	private void writeDeathCause(final String cause) {
+        checkAndWrite(PLACE_TAG, place);
+    }
 
-		checkAndWrite(DEATH_CAUSE_TAG, cause);
-	}
+    private void writeDeathCause(final String cause) {
 
-	private void writeOccupation(final String occupation) {
+        checkAndWrite(DEATH_CAUSE_TAG, cause);
+    }
 
-		checkAndWrite(OCCUPATION_TAG, occupation);
-	}
+    private void writeOccupation(final String occupation) {
 
-	private void checkAndWrite(final String tag, final String data) {
+        checkAndWrite(OCCUPATION_TAG, occupation);
+    }
 
-		if (data != null) {
-			write(tag, data);
-		}
-	}
+    private void checkAndWrite(final String tag, final String data) {
 
-	private void writeOccupation(final IPerson person) {
+        if (data != null) {
+            write(tag, data);
+        }
+    }
 
-		writeOccupation(person.getOccupation());
-	}
+    private void writeOccupation(final IPerson person) {
 
-	private void writePartnerships(final IPerson person) {
+        writeOccupation(person.getOccupation());
+    }
 
-		final List<Integer> partnership_ids = person.getPartnerships();
+    private void writePartnerships(final IPerson person) {
 
-		if (partnership_ids != null) {
-			for (final int partnership_id : partnership_ids) {
-				write(FAMILY_AS_SPOUSE_TAG, makeFamilyReference(partnership_id));
-			}
-		}
-	}
+        final List<IPartnership> partnership_ids = person.getPartnerships();
 
-	private void writeParentsPartnership(final IPerson person) {
+        for (final IPartnership partnership : partnership_ids) {
+            write(FAMILY_AS_SPOUSE_TAG, makeFamilyReference(partnership.getId()));
+        }
+    }
 
-		final int parents_partnership_id = person.getParentsPartnership();
-		if (parents_partnership_id != -1) {
-			write(FAMILY_AS_CHILD_TAG, makeFamilyReference(parents_partnership_id));
-		}
-	}
+    private void writeParentsPartnership(final IPerson person) {
 
-	private void writeChildren(final IPartnership partnership) {
+        final int parents_partnership_id = person.getParentsPartnership().getId();
+        if (parents_partnership_id != -1) {
+            write(FAMILY_AS_CHILD_TAG, makeFamilyReference(parents_partnership_id));
+        }
+    }
 
-		final List<Integer> child_ids = partnership.getChildIds();
-		if (child_ids != null) {
-			for (final int child_id : child_ids) {
-				writeChild(child_id);
-			}
-		}
-	}
+    private void writeChildren(final IPartnership partnership) {
 
-	private void writeWife(final IPartnership partnership) {
+        for (final IPerson child : partnership.getChildren()) {
+            writeChild(child.getId());
+        }
+    }
 
-		write(WIFE_TAG, makeIndividualReference(partnership.getFemalePartnerId()));
-	}
+    private void writeWife(final IPartnership partnership) {
 
-	private void writeHusband(final IPartnership partnership) {
+        write(WIFE_TAG, makeIndividualReference(partnership.getFemalePartner().getId()));
+    }
 
-		write(HUSBAND_TAG, makeIndividualReference(partnership.getMalePartnerId()));
-	}
+    private void writeHusband(final IPartnership partnership) {
 
-	private void writeChild(final int child_id) {
+        write(HUSBAND_TAG, makeIndividualReference(partnership.getMalePartner().getId()));
+    }
 
-		write(CHILD_TAG, makeIndividualReference(child_id));
-	}
+    private void writeChild(final int child_id) {
 
-	private static String makeIndividualReference(final int id) {
+        write(CHILD_TAG, makeIndividualReference(child_id));
+    }
 
-		return makeReference(individualLabel(id));
-	}
+    private static String makeIndividualReference(final int id) {
 
-	private static String makeFamilyReference(final int id) {
+        return makeReference(individualLabel(id));
+    }
 
-		return makeReference(familyLabel(id));
-	}
+    private static String makeFamilyReference(final int id) {
 
-	private static String makeReference(final String label) {
+        return makeReference(familyLabel(id));
+    }
 
-		return '@' + label + '@';
-	}
+    private static String makeReference(final String label) {
 
-	private void incrementLevel() {
-		level++;
-	}
+        return '@' + label + '@';
+    }
 
-	private void decrementLevel() {
-		level--;
-	}
+    private void incrementLevel() {
+        level++;
+    }
 
-	private void write(final String tag, final String data) {
+    private void decrementLevel() {
+        level--;
+    }
 
-		write(tag + ' ' + data);
-	}
+    private void write(final String tag, final String data) {
 
-	private void write(final String data) {
+        write(tag + ' ' + data);
+    }
 
-		writer.println(level + " " + data);
-	}
+    private void write(final String data) {
+
+        writer.println(level + " " + data);
+    }
 }

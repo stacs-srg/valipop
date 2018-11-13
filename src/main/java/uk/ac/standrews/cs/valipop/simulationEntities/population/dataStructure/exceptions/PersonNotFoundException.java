@@ -21,7 +21,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.e
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PersonNotFoundException extends Exception {
+public class PersonNotFoundException extends RuntimeException {
 
     private final String message;
 
@@ -35,5 +35,4 @@ public class PersonNotFoundException extends Exception {
     public String getMessage() {
         return message;
     }
-
 }

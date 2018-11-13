@@ -16,25 +16,21 @@
  */
 package uk.ac.standrews.cs.valipop.events;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface EventLogic {
 
-    int handleEvent(Config config,
-                    AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                    Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException, PersonNotFoundException;
+    int handleEvent(Config config, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+                    Population population, PopulationStatistics desiredPopulationStatistics);
 
     int getEventCount();
 
     void resetEventCount();
-
 }

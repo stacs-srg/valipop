@@ -25,5 +25,4 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStat
 public interface NameGenerator {
 
     String getName(IPerson personToBeNamed, PopulationStatistics populationStatistics);
-
 }

@@ -24,8 +24,6 @@ import uk.ac.standrews.cs.valipop.events.init.InitLogic;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.FemaleCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
@@ -56,7 +54,7 @@ public class NBirthLogic implements EventLogic {
 
     @Override
     public int handleEvent(Config config, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                           Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException, PersonNotFoundException {
+                           Population population, PopulationStatistics desiredPopulationStatistics) {
 
         int bornAtTS = 0;
 
@@ -242,7 +240,7 @@ public class NBirthLogic implements EventLogic {
 
         if (lastChild != null) {
             ExactDate earliestDateOfNextChild = DateUtils.
-                    calculateExactDate(lastChild.getBirthDate_ex(), desiredPopulationStatistics.getMinBirthSpacing());
+                    calculateExactDate(lastChild.getBirthDate(), desiredPopulationStatistics.getMinBirthSpacing());
 
             // Returns true if last child was born far enough in the past for another child to be born at currentDate
             return DateUtils.dateBefore(earliestDateOfNextChild, currentDate);

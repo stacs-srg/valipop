@@ -179,9 +179,6 @@ public class MinimaSearch {
                     "permission to read or write on disk. Also, check supporting input files are present at location " +
                     "specified in config setup code : " + e.getMessage();
             throw new IOException(message, e);
-        } catch (InvalidInputFileException e) {
-            String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
-            throw new InvalidInputFileException(message, e);
         } catch (StatsException e) {
             String message = "Stats failure - could not execute RScript command - do you have R installed?";
             throw new StatsException(message);

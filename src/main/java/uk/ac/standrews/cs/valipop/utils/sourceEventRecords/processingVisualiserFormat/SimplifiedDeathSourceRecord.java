@@ -71,25 +71,22 @@ public class SimplifiedDeathSourceRecord extends IndividualSourceRecord {
         setOccupation(person.getOccupation());
         setDeathCauseA(person.getDeathCause());
 
-        List<Integer> partnerships = Collections.emptyList();
-
-        partnerships = person.getPartnerships();
+        List<IPartnership> partnerships = person.getPartnerships();
 
         if (partnerships.size() != 0) {
-            IPerson spouse = population.findPerson(population.findPartnership(partnerships.get(partnerships.size() - 1)).getPartnerOf(person.getId()));
+            IPerson spouse = partnerships.get(partnerships.size() - 1).getPartnerOf(person);
             setSpousesNames(spouse.getFirstName() + " " + spouse.getSurname());
             setSpousesId(String.valueOf(spouse.getId()));
         }
 
-        Date birth_date = person.getBirthDate();
-        Date death_date = person.getDeathDate();
+        Date birth_date = person.getBirthDate().getDate();
+        Date death_date = person.getDeathDate().getDate();
 
         processDates(birth_date, death_date);
 
-        int parents_partnership_id = person.getParentsPartnership();
-        if (parents_partnership_id != -1) {
+        final IPartnership parents_partnership = person.getParentsPartnership();
+        if (parents_partnership != null) {
 
-            final IPartnership parents_partnership = population.findPartnership(parents_partnership_id);
             setParentAttributes(person, population, parents_partnership);
         }
     }
