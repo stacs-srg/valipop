@@ -1,9 +1,9 @@
 syntax: glob
 
-.DS_Store
 .idea
 target
 .Rproj.user
 .Rhistory
 .RData
-
+results
+*.log
