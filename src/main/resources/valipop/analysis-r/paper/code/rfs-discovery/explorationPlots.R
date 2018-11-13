@@ -56,7 +56,7 @@ plot3D <- function(seed, summaryDF, rf.min = NA, rf.max = NA, prf.min = NA, prf.
 }
   
 
-labelPlot2D(20000, summary)
+labelPlot2D(40000, summary)
 plot3D(20000, summary)
 labelPlot2D(15625, summary, rf.min = 0.3390, rf.max = 0.3396, prf.max = 0.005, detail = TRUE)
 
