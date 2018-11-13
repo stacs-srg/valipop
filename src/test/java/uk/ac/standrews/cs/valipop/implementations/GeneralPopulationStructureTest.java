@@ -159,7 +159,7 @@ public abstract class GeneralPopulationStructureTest {
 
     private static void assertBirthInfoConsistent(final IPerson person) {
 
-        assertFalse(person.getBirthDate() == null && person.getBirthPlace() != null);
+        assertFalse(person.getBirthDate().getDate() == null && person.getBirthPlace() != null);
     }
 
     @Test
@@ -228,15 +228,6 @@ public abstract class GeneralPopulationStructureTest {
     }
 
     @Test
-    public void childrenExist() {
-
-        for (final IPerson person : population.getPeople()) {
-
-            assertChildrenExist(person);
-        }
-    }
-
-    @Test
     public void noSiblingPartners() {
 
         for (final IPerson person : population.getPeople()) {
@@ -274,100 +265,69 @@ public abstract class GeneralPopulationStructureTest {
 
     private void assertParentsAndChildrenConsistent(final IPartnership partnership) {
 
-        final List<Integer> child_ids = partnership.getChildIds();
+        for (final IPerson child : partnership.getChildren()) {
 
-        if (child_ids != null) {
-
-            for (final int child_id : child_ids) {
-
-                final IPerson child = population.findPerson(child_id);
-                assertEquals(child.getParentsPartnership(), partnership.getId());
-            }
+            assertEquals(child.getParentsPartnership(), partnership);
         }
     }
 
     private void assertParentsHaveSensibleAgesAtBirth(final IPartnership partnership) {
 
-        final IPerson mother = population.findPerson(partnership.getFemalePartnerId());
-        final IPerson father = population.findPerson(partnership.getMalePartnerId());
+        final IPerson mother = partnership.getFemalePartner();
+        final IPerson father = partnership.getMalePartner();
 
-        for (final int child_id : partnership.getChildIds()) {
+        for (final IPerson child : partnership.getChildren()) {
 
-            final IPerson child = population.findPerson(child_id);
             assertTrue(PopulationLogic.parentsHaveSensibleAgesAtChildBirth(father, mother, child));
         }
     }
 
     private static void assertParentNotPartnerOfChild(final IPartnership partnership) {
 
-        final List<Integer> child_ids = partnership.getChildIds();
-        if (child_ids != null) {
+        for (final IPerson child : partnership.getChildren()) {
 
-            for (final int child_id : child_ids) {
-
-                assertNotEquals(child_id, partnership.getFemalePartnerId());
-                assertNotEquals(child_id, partnership.getMalePartnerId());
-            }
-        }
-    }
-
-    private void assertChildrenExist(final IPerson person) {
-
-        if (person.getPartnerships() != null) {
-
-            for (final int partnership_id : person.getPartnerships()) {
-                List<Integer> childIds = population.findPartnership(partnership_id).getChildIds();
-                for (final int child_id : childIds) {
-
-                    IPerson child = population.findPerson(child_id);
-                    assertNotNull(child);
-                }
-            }
+            assertNotEquals(child, partnership.getFemalePartner());
+            assertNotEquals(child, partnership.getMalePartner());
         }
     }
 
     private void assertNoneOfChildrenAreSiblingPartners(final IPerson person) {
 
         // Include half-siblings.
-        final Set<Integer> sibling_ids = new HashSet<>();
+        final Set<IPerson> siblings = new HashSet<>();
 
-        if (person.getPartnerships() != null) {
-            for (final int partnership_id : person.getPartnerships()) {
-                final IPartnership partnership = population.findPartnership(partnership_id);
+        for (final IPartnership partnership : person.getPartnerships()) {
 
-                for (final int child_id : partnership.getChildIds()) {
+            for (final IPerson child : partnership.getChildren()) {
 
-                    assertNotPartnerOfAny(child_id, sibling_ids);
-                    sibling_ids.add(child_id);
-                }
+                assertNotPartnerOfAny(child, siblings);
+                siblings.add(child);
             }
         }
     }
 
     private void assertSexesConsistent(final IPartnership partnership) {
 
-        assertEquals(Character.toLowerCase(IPerson.FEMALE), Character.toLowerCase(population.findPerson(partnership.getFemalePartnerId()).getSex()));
-        assertEquals(Character.toLowerCase(IPerson.MALE), Character.toLowerCase(population.findPerson(partnership.getMalePartnerId()).getSex()));
+        assertEquals(Character.toLowerCase(IPerson.FEMALE), Character.toLowerCase(partnership.getFemalePartner().getSex()));
+        assertEquals(Character.toLowerCase(IPerson.MALE), Character.toLowerCase(partnership.getMalePartner().getSex()));
     }
 
-    private void assertNotPartnerOfAny(final int person_id, final Set<Integer> people_ids) {
+    private void assertNotPartnerOfAny(final IPerson person, final Set<IPerson> people) {
 
-        for (final int another_person_id : people_ids) {
-            assertFalse(partnerOf(person_id, another_person_id));
+        for (final IPerson another_person : people) {
+            assertFalse(isPartnerOf(person, another_person));
         }
     }
 
-    private boolean partnerOf(final int p1_id, final int p2_id) {
+    private boolean isPartnerOf(final IPerson p1, final IPerson p2) {
 
-        final List<Integer> partnership_ids = population.findPerson(p1_id).getPartnerships();
-        if (partnership_ids != null) {
-            for (final int partnership_id : partnership_ids) {
-                final IPartnership partnership = population.findPartnership(partnership_id);
-                if (partnership.getPartnerOf(p1_id) == p2_id) {
-                    return true;
-                }
+        for (final IPartnership partnership : p1.getPartnerships()) {
+
+            if (partnership.getPartnerOf(p1).equals(p2)) {
+                return true;
             }
         }
+
         return false;
     }
 
@@ -375,23 +335,14 @@ public abstract class GeneralPopulationStructureTest {
 
         if (person.getSex() == IPerson.MALE) {
 
-            final List<Integer> partnership_ids = person.getPartnerships();
-            if (partnership_ids != null) {
-                for (final int partnership_id : partnership_ids) {
+            for (final IPartnership partnership : person.getPartnerships()) {
 
-                    final IPartnership partnership = population.findPartnership(partnership_id);
-                    final List<Integer> child_ids = partnership.getChildIds();
+                for (final IPerson child : partnership.getChildren()) {
 
-                    if (child_ids != null) {
+                    assertEquals(person.getSurname(), child.getSurname());
 
-                        for (final int child_id : child_ids) {
-                            final IPerson child = population.findPerson(child_id);
-                            assertEquals(person.getSurname(), child.getSurname());
-
-                            if (child.getSex() == IPerson.MALE) {
-                                assertSurnameInheritedOnMaleLine(child);
-                            }
-                        }
+                    if (child.getSex() == IPerson.MALE) {
+                        assertSurnameInheritedOnMaleLine(child);
                     }
                 }
             }
@@ -400,29 +351,24 @@ public abstract class GeneralPopulationStructureTest {
 
     private static void assertBirthBeforeDeath(final IPerson person) {
 
-        final Date death_date = person.getDeathDate();
+        if (person.getDeathDate() != null) {
 
-        if (death_date != null) {
-
-            final Date birth_date = person.getBirthDate();
+            final Date death_date = person.getDeathDate().getDate();
+            final Date birth_date = person.getBirthDate().getDate();
             assertTrue(DateManipulation.differenceInYears(birth_date, death_date) >= 0);
         }
     }
 
     private void assertBirthBeforeMarriages(final IPerson person) {
 
-        final Date birth_date = person.getBirthDate();
+        if (person.getBirthDate() != null) {
 
-        if (birth_date != null) {
-            final List<Integer> partnership_ids = person.getPartnerships();
-            if (partnership_ids != null) {
-                for (final int partnership_id : partnership_ids) {
+            final Date birth_date = person.getBirthDate().getDate();
 
-                    final IPartnership partnership = population.findPartnership(partnership_id);
-                    final Date marriage_date = partnership.getMarriageDate();
-                    if (marriage_date != null) {
-                        assertTrue(DateManipulation.differenceInYears(birth_date, marriage_date) >= 0);
-                    }
+            for (final IPartnership partnership : person.getPartnerships()) {
+                if (partnership.getMarriageDate() != null) {
+                    final Date marriage_date = partnership.getMarriageDate().getDate();
+                    assertTrue(DateManipulation.differenceInYears(birth_date, marriage_date) >= 0);
                 }
             }
         }
@@ -430,19 +376,14 @@ public abstract class GeneralPopulationStructureTest {
 
     private void assertMarriagesBeforeDeath(final IPerson person) {
 
-        final Date death_date = person.getDeathDate();
+        if (person.getDeathDate() != null) {
 
-        if (death_date != null) {
-            final List<Integer> partnership_ids = person.getPartnerships();
-            if (partnership_ids != null) {
+            final Date death_date = person.getDeathDate().getDate();
 
-                for (final int partnership_id : partnership_ids) {
-
-                    final IPartnership partnership = population.findPartnership(partnership_id);
-                    final Date marriage_date = partnership.getMarriageDate();
-                    if (marriage_date != null) {
-                        assertTrue(DateManipulation.differenceInDays(marriage_date, death_date) >= 0);
-                    }
+            for (final IPartnership partnership : person.getPartnerships()) {
+                if (partnership.getMarriageDate() != null) {
+                    final Date marriage_date = partnership.getMarriageDate().getDate();
+                    assertTrue(DateManipulation.differenceInDays(marriage_date, death_date) >= 0);
                 }
             }
         }

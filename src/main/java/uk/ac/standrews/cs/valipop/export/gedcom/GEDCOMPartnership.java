@@ -63,10 +63,6 @@ public class GEDCOMPartnership implements IPartnership {
         return id == male_partner_id ? female_partner_id : id == female_partner_id ? male_partner_id : -1;
     }
 
-    public java.util.Date getMarriageDate() {
-        return marriage_date != null ? (java.util.Date) marriage_date.clone() : null;
-    }
-
     public String getMarriagePlace() {
         return marriage_place;
     }
@@ -169,7 +165,7 @@ public class GEDCOMPartnership implements IPartnership {
     }
 
     @Override
-    public ValipopDate getMarriageDate_ex() {
+    public ValipopDate getMarriageDate() {
         return null;
     }
 

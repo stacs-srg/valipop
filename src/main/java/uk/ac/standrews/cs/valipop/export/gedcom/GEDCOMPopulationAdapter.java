@@ -141,11 +141,6 @@ public class GEDCOMPopulationAdapter implements IPopulation {
     }
 
     @Override
-    public void setConsistentAcrossIterations(final boolean consistent_across_iterations) {
-
-    }
-
-    @Override
     public String toString() {
 
         return description;

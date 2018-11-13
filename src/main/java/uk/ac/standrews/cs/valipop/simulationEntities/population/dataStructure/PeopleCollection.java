@@ -19,10 +19,9 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
@@ -48,7 +47,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     private final Map<Integer, IPartnership> partnershipIndex = new HashMap<>();
 
     // TODO decide on which part approach using either line above or below
-    private ArrayList<IPartnership> partTemp = new ArrayList<>();
+    private List<IPartnership> partTemp = new ArrayList<>();
 
     public PeopleCollection clone() {
 
@@ -156,7 +155,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     }
 
     @Override
-    public void removePerson(IPerson person) throws PersonNotFoundException {
+    public void removePerson(IPerson person) {
 
         if (person.getSex() == 'm') {
             males.removePerson(person);
@@ -177,7 +176,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     }
 
     @Override
-    public TreeSet<AdvanceableDate> getDivisionDates() {
+    public Set<AdvanceableDate> getDivisionDates() {
         return females.getDivisionDates();
     }
 
@@ -217,11 +216,6 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         this.description = description;
     }
 
-    @Override
-    public void setConsistentAcrossIterations(boolean consistent_across_iterations) {
-
-    }
-
     private Collection<IPerson> getPeopleBetweenDates(PersonCollection collection,
                                                       AdvanceableDate firstDateOfInterest,
                                                       AdvanceableDate lastDateOfInterest) {
@@ -241,7 +235,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
                 for (IPerson p : temp) {
 
-                    if (!DateUtils.dateBefore(p.getBirthDate_ex(), firstDateOfInterest)) {
+                    if (!DateUtils.dateBefore(p.getBirthDate(), firstDateOfInterest)) {
                         people.add(p);
                     }
                 }
@@ -250,7 +244,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
                 for (IPerson p : temp) {
 
-                    if (DateUtils.dateBefore(p.getBirthDate_ex(), lastDateOfInterest)) {
+                    if (DateUtils.dateBefore(p.getBirthDate(), lastDateOfInterest)) {
                         people.add(p);
                     }
                 }

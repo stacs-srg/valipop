@@ -68,7 +68,7 @@ public class SourceNodeInt extends IntNode<SourceType, YearDate> {
         incCountByOne();
 
         // pass person to appropriate child node
-        YearDate yob = person.getBirthDate_ex().getYearDate();
+        YearDate yob = person.getBirthDate().getYearDate();
 
         try {
             getChild(yob).processPerson(person, currentDate);

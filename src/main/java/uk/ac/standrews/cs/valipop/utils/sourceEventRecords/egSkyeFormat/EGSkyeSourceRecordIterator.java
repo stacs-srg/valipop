@@ -39,7 +39,7 @@ public class EGSkyeSourceRecordIterator {
 
         return () -> {
 
-            Predicate<IPerson> check_in_sim_dates = person -> DateUtils.dateBefore(startDate, person.getBirthDate_ex());
+            Predicate<IPerson> check_in_sim_dates = person -> DateUtils.dateBefore(startDate, person.getBirthDate());
 
             Iterator<IPerson> person_iterator = new FilteredIterator<>(population.getPeople().iterator(), check_in_sim_dates);
 
@@ -53,7 +53,7 @@ public class EGSkyeSourceRecordIterator {
 
         return () -> {
 
-            Predicate<IPerson> check_dead_and_in_sim_dates = person -> person.getDeathDate() != null && DateUtils.dateBefore(startDate, person.getDeathDate_ex());
+            Predicate<IPerson> check_dead_and_in_sim_dates = person -> person.getDeathDate() != null && DateUtils.dateBefore(startDate, person.getDeathDate());
 
             Iterator<IPerson> dead_person_iterator = new FilteredIterator<>(population.getPeople().iterator(), check_dead_and_in_sim_dates);
 
@@ -73,7 +73,7 @@ public class EGSkyeSourceRecordIterator {
 
             while(partnership_iterator.hasNext()) {
                 IPartnership p = partnership_iterator.next();
-                if(p.getMarriageDate() != null && DateUtils.dateBefore(startDate, p.getMarriageDate_ex()))
+                if(p.getMarriageDate() != null && DateUtils.dateBefore(startDate, p.getMarriageDate()))
                     l.add(p);
             }
 

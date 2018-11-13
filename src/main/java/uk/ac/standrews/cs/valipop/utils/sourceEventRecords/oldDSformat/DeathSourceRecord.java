@@ -117,15 +117,14 @@ public class DeathSourceRecord extends IndividualSourceRecord {
         setOccupation(person.getOccupation());
         setDeathCauseA(person.getDeathCause());
 
-        Date birth_date = person.getBirthDate();
-        Date death_date = person.getDeathDate();
+        Date birth_date = person.getBirthDate().getDate();
+        Date death_date = person.getDeathDate().getDate();
 
         processDates(birth_date, death_date);
 
-        int parents_partnership_id = person.getParentsPartnership();
-        if (parents_partnership_id != -1) {
+        IPartnership parents_partnership = person.getParentsPartnership();
+        if (parents_partnership != null) {
 
-            final IPartnership parents_partnership = population.findPartnership(parents_partnership_id);
             setParentAttributes(person, population, parents_partnership);
         }
     }

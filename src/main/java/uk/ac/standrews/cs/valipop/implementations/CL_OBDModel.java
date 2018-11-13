@@ -1,12 +1,11 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
-import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
 import java.io.IOException;
@@ -38,6 +37,7 @@ public class CL_OBDModel {
     }
 
     public static OBDModel runOBDModel(String pathToConfigFile, String resultsPath, String runPurpose) throws Error, InvalidInputFileException, IOException, PreEmptiveOutOfMemoryWarning, StatsException {
+
         String startTime = FileUtils.getDateTime();
 
         Config config;
@@ -73,14 +73,12 @@ public class CL_OBDModel {
             model.getSummaryRow().outputSummaryRowToFile();
 
             return model;
+
         } catch (IOException e) {
             String message = "Model failed due to Input/Output exception, check that this program has " +
                     "permission to read or write on disk. Also, check supporting input files are present at location " +
                     "specified in config file : " + e.getMessage();
             throw new IOException(message, e);
-        } catch (InvalidInputFileException | InconsistentWeightException e) {
-            String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
-            throw new InvalidInputFileException(message, e);
         }
     }
 }

@@ -66,7 +66,7 @@ public class SeparationLogic {
                 }
 
                 // else mark partnership for separation
-                p.getLastPartnership().separate(p.getLastChild().getBirthDate_ex(), new CompoundTimeUnit(1, TimeUnit.MONTH));
+                p.getLastPartnership().separate(p.getLastChild().getBirthDate(), new CompoundTimeUnit(1, TimeUnit.MONTH));
 
                 count++;
 

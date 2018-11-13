@@ -18,9 +18,8 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
         super(partnership, population);
 
         marriageDate = new ExactDate(partnership.getPartnershipDate());
-        groomID = partnership.getMalePartnerId();
-        brideID = partnership.getFemalePartnerId();
-
+        groomID = partnership.getMalePartner().getId();
+        brideID = partnership.getFemalePartner().getId();
     }
 
     @Override

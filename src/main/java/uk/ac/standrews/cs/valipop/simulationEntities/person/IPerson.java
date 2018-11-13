@@ -74,16 +74,10 @@ public interface IPerson extends Comparable<IPerson> {
 
     /**
      * Gets the person's date of birth.
-     * @return the person's date of birth
-     */
-    java.util.Date getBirthDate();
-
-    /**
-     * Gets the person's date of birth.
      *
      * @return the person's date of birth
      */
-    ValipopDate getBirthDate_ex();
+    ValipopDate getBirthDate();
 
     /**
      * Gets the person's place of birth, or null if not recorded.
@@ -93,16 +87,10 @@ public interface IPerson extends Comparable<IPerson> {
 
     /**
      * Gets the person's date of death, or null if they are living.
-     * @return the person's date of death
-     */
-    java.util.Date getDeathDate();
-
-    /**
-     * Gets the person's date of death, or null if they are living.
      *
      * @return the person's date of death
      */
-    ValipopDate getDeathDate_ex();
+    ValipopDate getDeathDate();
 
     /**
      * Gets the person's place of death, or null if not recorded.
@@ -123,30 +111,18 @@ public interface IPerson extends Comparable<IPerson> {
     String getDeathCause();
 
     /**
-     * Gets the identifiers of the person's partnerships, or null if none are recorded.
-     * @return the identifiers of the person's partnerships
-     */
-    List<Integer> getPartnerships();
-
-    /**
-     * Gets the identifiers of the person's partnerships, or null if none are recorded.
+     * Gets the person's partnerships.
      *
      * @return the identifiers of the person's partnerships
      */
-    List<IPartnership> getPartnerships_ex();
+    List<IPartnership> getPartnerships();
 
     /**
-     * Gets the identifier of the person's parents' partnership, or -1 if none are recorded.
-     * @return the identifier of the person's parents' partnership
-     */
-    int getParentsPartnership();
-
-    /**
-     * Gets the identifier of the person's parents' partnership, or -1 if none are recorded.
+     * Gets the person's parents' partnership, or null if none are recorded.
      *
-     * @return the identifier of the person's parents' partnership
+     * @return the person's parents' partnership
      */
-    IPartnership getParentsPartnership_ex();
+    IPartnership getParentsPartnership();
 
     boolean isIllegitimate();
 

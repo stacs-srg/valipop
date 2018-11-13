@@ -23,21 +23,23 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
     protected String marriageIDs;
 
     public EGSkyeDeathSourceRecord(IPerson person, IPopulation population) {
+
         super(person, population);
 
-        deathDate = new ExactDate(person.getDeathDate_ex());
+        deathDate = new ExactDate(person.getDeathDate());
 
-        if(person.getParentsPartnership() != -1) {
-            mothersOccupation = person.getParentsPartnership_ex().getFemalePartner().getOccupation();
+        if(person.getParentsPartnership() != null) {
 
-            if(!person.getParentsPartnership_ex().getMalePartner().aliveOnDate(person.getDeathDate_ex())) {
+            mothersOccupation = person.getParentsPartnership().getFemalePartner().getOccupation();
+
+            if(!person.getParentsPartnership().getMalePartner().aliveOnDate(person.getDeathDate())) {
                 // father is dead
                 setFatherDeceased("D"); // deceased
             }
 
-            fathers_surname = person.getParentsPartnership_ex().getMalePartner().getSurname();
+            fathers_surname = person.getParentsPartnership().getMalePartner().getSurname();
 
-            if(!person.getParentsPartnership_ex().getFemalePartner().aliveOnDate(person.getDeathDate_ex())) {
+            if(!person.getParentsPartnership().getFemalePartner().aliveOnDate(person.getDeathDate())) {
                 // mother is dead
                 setMotherDeceased("D"); // deceased
             }
@@ -51,16 +53,11 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
         setSpousesNames(spousesInfo[0]);
         setSpousesOccupations(spousesInfo[1]);
         marriageIDs = spousesInfo[2];
-
-
-
-
-
     }
 
     public String identifyMarritalStatus(IPerson deceased) {
 
-        List<IPartnership> partnerships = deceased.getPartnerships_ex();
+        List<IPartnership> partnerships = deceased.getPartnerships();
 
         if(partnerships.size() == 0) {
             if(Character.toLowerCase(deceased.getSex()) == 'm') {
@@ -71,7 +68,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
         } else {
             if(deceased.getLastPartnership().getSeparationDate(new JDKRandomGenerator()) == null) {
                 // not separated from last partner
-                if(deceased.getLastPartnership().getPartnerOf(deceased).aliveOnDate(deceased.getDeathDate_ex())) {
+                if(deceased.getLastPartnership().getPartnerOf(deceased).aliveOnDate(deceased.getDeathDate())) {
                     // last spouse alive on death date of deceased
                     if(partnerships.size() > 1) {
                         return "R"; // remarried
@@ -96,7 +93,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
         StringBuilder occupations = new StringBuilder();
         StringBuilder marIDs = new StringBuilder();
 
-        for(IPartnership partnership : deceased.getPartnerships_ex()) {
+        for(IPartnership partnership : deceased.getPartnerships()) {
 
             IPerson spouse = partnership.getPartnerOf(deceased);
 
@@ -112,7 +109,6 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
                 occupations.append("+" + spousesOccupation);
                 marIDs.append("+" + partnership.getId());
             }
-
         }
 
         ret[0] = names.toString();
@@ -121,7 +117,6 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
 
         return ret;
     }
-
 
     @Override
     public String toString() {

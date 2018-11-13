@@ -88,7 +88,7 @@ public class ChildrenAnalytics {
         for (final IPerson person : population.getPeople()) {
 
             if (Character.toLowerCase(person.getSex()) == 'f') {
-                final List<IPartnership> partnerships = person.getPartnerships_ex();
+                final List<IPartnership> partnerships = person.getPartnerships();
                 if (partnerships != null) {
 
                     for (final IPartnership partnership : partnerships) {
@@ -115,7 +115,7 @@ public class ChildrenAnalytics {
         for (final IPerson person : population.getPeople()) {
 
             if (Character.toLowerCase(person.getSex()) == 'f') {
-                final List<IPartnership> partnerships = person.getPartnerships_ex();
+                final List<IPartnership> partnerships = person.getPartnerships();
                 if (partnerships != null) {
 
                     for (final IPartnership partnership : partnerships) {
@@ -126,7 +126,7 @@ public class ChildrenAnalytics {
 
                             for (final IPerson child : child_ids) {
 
-                                int yob = child.getBirthDate_ex().getYear();
+                                int yob = child.getBirthDate().getYear();
 
                                 try {
                                     childrenBornInEachYear.put(yob, childrenBornInEachYear.get(yob) + 1);
@@ -138,7 +138,7 @@ public class ChildrenAnalytics {
                     }
                 }
 
-                int femalesYOB = person.getBirthDate_ex().getYear();
+                int femalesYOB = person.getBirthDate().getYear();
                 for (int y = femalesYOB + MIN_CB_AGE; y < femalesYOB + MAX_CB_AGE; y++) {
 
                     try {

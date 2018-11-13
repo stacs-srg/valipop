@@ -76,7 +76,6 @@ public class FileUtils {
         Path log = Paths.get(run.toString(), "log");
         mkDirs(log);
         tracePath = mkBlankFile(log, "trace.txt");
-
     }
 
     public static PrintWriter mkDumpFile(String name) {
@@ -105,7 +104,6 @@ public class FileUtils {
         }
 
         return blankFilePath;
-
     }
 
     private static Path mkSummaryFile(Path parent, String fileName) throws IOException {

@@ -50,12 +50,12 @@ public class PopulationAnalytics {
 
     private void printBirthDate(final IPerson person) {
 
-        out.print(person.getBirthDate_ex().toString());
+        out.print(person.getBirthDate().toString());
     }
 
     private void printDeathDate(final IPerson person) {
 
-        final ValipopDate death_date = person.getDeathDate_ex();
+        final ValipopDate death_date = person.getDeathDate();
         if (death_date != null) {
             out.print(death_date.toString());
         }
@@ -136,7 +136,7 @@ public class PopulationAnalytics {
         if (partnership.getChildren() != null) {
             for (final IPerson child : partnership.getChildren()) {
 
-                out.println("\t\tChild born: " + child.getBirthDate_ex().toString());
+                out.println("\t\tChild born: " + child.getBirthDate().toString());
             }
         }
     }
@@ -149,13 +149,13 @@ public class PopulationAnalytics {
     @SuppressWarnings("FeatureEnvy")
     public void printPartnerships(final IPerson person) {
 
-        final List<IPartnership> partnership_ids = person.getPartnerships_ex();
+        final List<IPartnership> partnership_ids = person.getPartnerships();
         if (partnership_ids != null) {
             for (final IPartnership partnership : partnership_ids) {
 
 
                 final IPerson partner = partnership.getPartnerOf(person);
-                out.println("\tPartner born: " + partner.getBirthDate_ex().toString());
+                out.println("\tPartner born: " + partner.getBirthDate().toString());
 
                 final ValipopDate marriage_date = partnership.getPartnershipDate();
                 if (marriage_date != null) {

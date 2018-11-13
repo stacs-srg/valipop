@@ -36,7 +36,7 @@ public class DeathDateSelector extends DateSelector {
 
         if(child != null) {
 
-            ValipopDate birthDateOfLastChild = child.getBirthDate_ex().getExactDate();
+            ValipopDate birthDateOfLastChild = child.getBirthDate().getExactDate();
 
             if (Character.toLowerCase(p.getSex()) == 'm') {
                 // If a male with a child then the man cannot die more than the minimum gestation period before the birth date
@@ -48,7 +48,7 @@ public class DeathDateSelector extends DateSelector {
             }
 
         } else {
-            return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, p.getBirthDate_ex(), desiredPopulationStatistics.getRandomGenerator());
+            return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, p.getBirthDate(), desiredPopulationStatistics.getRandomGenerator());
         }
 
     }

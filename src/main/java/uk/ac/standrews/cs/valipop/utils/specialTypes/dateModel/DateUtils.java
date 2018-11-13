@@ -40,7 +40,7 @@ public class DateUtils {
     public static int getDaysInMonthNonLeapYear(int month) {
         // Jan 1 > Dec 12
 
-        if(month < 1 || month > 12) {
+        if (month < 1 || month > 12) {
             throw new DateTimeException("Month number invalid");
         } else {
             return DAYS_IN_MONTH[month - 1];
@@ -68,23 +68,23 @@ public class DateUtils {
 
         int months = yearDiffInMonths + (b.getMonth() - a.getMonth());
 
-        if(a.getDay() > b.getDay()) {
+        if (a.getDay() > b.getDay()) {
 
             int daysInMonthA = getDaysInMonth(a.getMonth(), a.getYear());
             int daysInMonthB = getDaysInMonth(b.getMonth(), b.getYear());
 
-            if(daysInMonthB > daysInMonthA && b.getDay() > daysInMonthA && a.getDay() == daysInMonthA) {
+            if (daysInMonthB > daysInMonthA && b.getDay() > daysInMonthA && a.getDay() == daysInMonthA) {
 
             } else {
                 months--;
             }
         }
 
-        return new CompoundTimeUnit( months, TimeUnit.MONTH);
+        return new CompoundTimeUnit(months, TimeUnit.MONTH);
     }
 
     public static boolean datesEqual(ValipopDate a, ValipopDate b) {
-        return a.getDay() == b.getDay() && a. getMonth() == b.getMonth() && a.getYear() == b.getYear();
+        return a.getDay() == b.getDay() && a.getMonth() == b.getMonth() && a.getYear() == b.getYear();
     }
 
     /**
@@ -128,19 +128,13 @@ public class DateUtils {
         } else {
             return false;
         }
-
-
     }
-
-
-
 
     public static boolean matchesInterval(ValipopDate currentDate, CompoundTimeUnit interval, ValipopDate startDate) {
 
         int dM = differenceInMonths(startDate, currentDate).getCount();
 
         return dM % monthsInTimeUnit(interval) == 0;
-
     }
 
     public static AdvanceableDate getEarliestDate(AdvanceableDate startDate, AdvanceableDate startDate1) {
@@ -176,18 +170,17 @@ public class DateUtils {
      * Counts the number of days in the following time period given the starting date of the time period. The returned
      * count is inclusive the first date given.
      *
-     * @param date the day to count from
+     * @param date                 the day to count from
      * @param consideredTimePeriod the number of months/years to count days for
      * @return The number of days, inclusive of the starting day
      */
     public static int getDaysInTimePeriod(ValipopDate date, CompoundTimeUnit consideredTimePeriod) {
 
-        if(consideredTimePeriod.getCount() < 0) {
+        if (consideredTimePeriod.getCount() < 0) {
             return (-1) * getDaysInNegativeTimePeriod(date, consideredTimePeriod);
         } else {
             return getDaysInPositiveTimePeriod(date, consideredTimePeriod);
         }
-
     }
 
 
@@ -203,9 +196,9 @@ public class DateUtils {
                 int month = startingDate.getMonth();
                 int day = startingDate.getDay();
 
-                for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
+                for (int i = 0; i < consideredTimePeriod.getCount(); i++) {
 
-                    if(day < getDaysInNextMonth(month, year)) {
+                    if (day < getDaysInNextMonth(month, year)) {
                         days += getDaysInMonth(month, year);
 
                     } else {
@@ -214,8 +207,8 @@ public class DateUtils {
 
                     }
 
-                    month ++;
-                    if(month >= 13) {
+                    month++;
+                    if (month >= 13) {
                         month = 1;
                         year++;
                     }
@@ -224,17 +217,17 @@ public class DateUtils {
                 break;
             case YEAR:
 
-                for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
+                for (int i = 0; i < consideredTimePeriod.getCount(); i++) {
 
                     year = startingDate.getYear() + i;
 
                     // Does the year stradle the potential leap day
-                    if(startingDate.getMonth() == FEB && startingDate.getDay() == DAYS_IN_LEAP_FEB
+                    if (startingDate.getMonth() == FEB && startingDate.getDay() == DAYS_IN_LEAP_FEB
                             || startingDate.getMonth() > FEB) {
                         year++;
                     }
 
-                    if(isLeapYear(year)) {
+                    if (isLeapYear(year)) {
                         days += DAYS_IN_LEAP_YEAR;
                     } else {
                         days += DAYS_IN_YEAR;
@@ -243,9 +236,7 @@ public class DateUtils {
                 }
 
                 break;
-
         }
-
 
         return days;
     }
@@ -258,7 +249,6 @@ public class DateUtils {
             // We're making a transfer from months denoted from 1-12 to 0-11, hence the -1
             return DAYS_IN_MONTH[month - 1];
         }
-
     }
 
     private static int getDaysInNextMonth(int currentMonth, int year) {
@@ -268,7 +258,7 @@ public class DateUtils {
         } else {
             // We're making a transfer from months denoted from 1-12 to 0-11, so really the index is:
             // DAYS_IN_MONTH[ (currentMonth + 1) - 1 ]
-            if(currentMonth == 12) {
+            if (currentMonth == 12) {
                 return DAYS_IN_MONTH[0];
             } else {
                 return DAYS_IN_MONTH[currentMonth];
@@ -284,28 +274,28 @@ public class DateUtils {
 
             case MONTH:
 
-                for(int i = 0; i < Math.abs(consideredTimePeriod.getCount()); i++) {
+                for (int i = 0; i < Math.abs(consideredTimePeriod.getCount()); i++) {
 
                     int year = startingDate.getYear();
                     int month = startingDate.getMonth() - i;
 
 
-                    if(month < 1) {
-                        int y =  month / MONTHS_IN_YEAR - 1;
+                    if (month < 1) {
+                        int y = month / MONTHS_IN_YEAR - 1;
                         year += y;
                         month += MONTHS_IN_YEAR;
                     }
 
-                    if(month - 1 == FEB) {
+                    if (month - 1 == FEB) {
 
-                        if(isLeapYear(year)) {
-                            if(startingDate.getDay() > DAYS_IN_LEAP_FEB) {
+                        if (isLeapYear(year)) {
+                            if (startingDate.getDay() > DAYS_IN_LEAP_FEB) {
                                 days += DAYS_IN_MONTH[month - 1];
                             } else {
                                 days += DAYS_IN_LEAP_FEB;
                             }
                         } else {
-                            if(startingDate.getDay() > DAYS_IN_MONTH[FEB - 1]) {
+                            if (startingDate.getDay() > DAYS_IN_MONTH[FEB - 1]) {
                                 days += DAYS_IN_MONTH[month - 1];
                             } else {
                                 days += DAYS_IN_MONTH[month - 2];
@@ -313,15 +303,15 @@ public class DateUtils {
                         }
 
                     } else {
-                        if(month == 1) {
-                            if(startingDate.getDay() >= DAYS_IN_MONTH[month - 1]) {
+                        if (month == 1) {
+                            if (startingDate.getDay() >= DAYS_IN_MONTH[month - 1]) {
                                 days += DAYS_IN_MONTH[month - 1];
                             } else {
                                 days += DAYS_IN_MONTH[11];
                             }
-                        } else if(month == FEB) {
-                            if(startingDate.getDay() >= DAYS_IN_MONTH[month - 1]) {
-                                if(isLeapYear(year)) {
+                        } else if (month == FEB) {
+                            if (startingDate.getDay() >= DAYS_IN_MONTH[month - 1]) {
+                                if (isLeapYear(year)) {
                                     days += DAYS_IN_LEAP_FEB;
                                 } else {
                                     days += DAYS_IN_MONTH[month - 1];
@@ -330,54 +320,48 @@ public class DateUtils {
                                 days += DAYS_IN_MONTH[month - 2];
                             }
                         } else {
-                            if(startingDate.getDay() >= DAYS_IN_MONTH[month - 1]) {
+                            if (startingDate.getDay() >= DAYS_IN_MONTH[month - 1]) {
                                 days += DAYS_IN_MONTH[month - 1];
                             } else {
                                 days += DAYS_IN_MONTH[month - 2];
                             }
                         }
                     }
-
                 }
 
                 break;
             case YEAR:
 
-                for(int i = 0; i < Math.abs(consideredTimePeriod.getCount()); i++) {
+                for (int i = 0; i < Math.abs(consideredTimePeriod.getCount()); i++) {
 
                     int year = startingDate.getYear() - i;
 
                     // Does the year stradle the potential leap day
-                    if(startingDate.getMonth() == FEB && startingDate.getDay() != DAYS_IN_LEAP_FEB
+                    if (startingDate.getMonth() == FEB && startingDate.getDay() != DAYS_IN_LEAP_FEB
                             || startingDate.getMonth() < FEB) {
                         year--;
                     }
 
-                    if(isLeapYear(year)) {
+                    if (isLeapYear(year)) {
                         days += DAYS_IN_LEAP_YEAR;
                     } else {
                         days += DAYS_IN_YEAR;
                     }
-
                 }
 
                 break;
-
         }
-
 
         return days;
     }
 
     public static ExactDate calculateExactDate(ValipopDate date, int chosenDay) {
 
-        if(chosenDay < 0) {
+        if (chosenDay < 0) {
             return calculateBWExactDate(date, Math.abs(chosenDay));
         } else {
             return calculateFWExactDate(date, chosenDay);
         }
-
-
     }
 
     private static ExactDate calculateFWExactDate(ValipopDate startingDate, int chosenDay) {
@@ -386,29 +370,28 @@ public class DateUtils {
         int month = startingDate.getMonth();
         int year = startingDate.getYear();
 
-
         while (chosenDay != 0) {
 
             int daysLeft;
 
             // get days left in current month
-            if(month == FEB) {
-                if(isLeapYear(year)) {
+            if (month == FEB) {
+                if (isLeapYear(year)) {
                     daysLeft = DAYS_IN_LEAP_FEB - day;
                 } else {
-                    daysLeft = DAYS_IN_MONTH[month-1] - day;
+                    daysLeft = DAYS_IN_MONTH[month - 1] - day;
                 }
             } else {
-                daysLeft = DAYS_IN_MONTH[month-1] - day;
+                daysLeft = DAYS_IN_MONTH[month - 1] - day;
             }
 
-            if(chosenDay <= daysLeft) {
+            if (chosenDay <= daysLeft) {
                 day += chosenDay;
                 chosenDay = 0;
             } else {
                 chosenDay -= daysLeft;
 
-                if(chosenDay != 0) {
+                if (chosenDay != 0) {
                     day = 1;
                     chosenDay--;
                     month++;
@@ -416,7 +399,7 @@ public class DateUtils {
                     day = daysLeft;
                 }
 
-                if(month > 12) {
+                if (month > 12) {
                     month = 1;
                     year++;
                 }
@@ -432,38 +415,33 @@ public class DateUtils {
         int month = endingDate.getMonth();
         int year = endingDate.getYear();
 
-
         while (chosenDay != 0) {
 
             int daysLeft = day;
 
             // get days left in current month
 
-            if(chosenDay < daysLeft) {
+            if (chosenDay < daysLeft) {
                 day -= chosenDay;
                 chosenDay = 0;
             } else {
                 chosenDay -= daysLeft;
 
                 month--;
-                if(month < 1) {
+                if (month < 1) {
                     month = 12;
                     year--;
                 }
 
-                if(month == FEB) {
-                    if(isLeapYear(year)) {
+                if (month == FEB) {
+                    if (isLeapYear(year)) {
                         day = DAYS_IN_LEAP_FEB;
                     } else {
-                        day = DAYS_IN_MONTH[month-1];
+                        day = DAYS_IN_MONTH[month - 1];
                     }
                 } else {
-                    day = DAYS_IN_MONTH[month-1];
+                    day = DAYS_IN_MONTH[month - 1];
                 }
-
-//                if(chosenDay != 0) {
-//                    chosenDay--;
-//                }
             }
         }
 
@@ -474,7 +452,7 @@ public class DateUtils {
 
         int modifier = 1;
 
-        if(dateBeforeOrEqual(latestDate, birthDate)) {
+        if (dateBeforeOrEqual(latestDate, birthDate)) {
             ValipopDate temp = latestDate;
             latestDate = birthDate;
             birthDate = temp;
@@ -487,41 +465,38 @@ public class DateUtils {
 
         int counts = 0;
 
-        if(day != 1) {
+        if (day != 1) {
             counts += (getDaysInMonth(month, year) - day) + 1;
-            month ++;
+            month++;
         }
 
-        for(int y = year; y < latestDate.getYear(); y++) {
+        for (int y = year; y < latestDate.getYear(); y++) {
 
-            for(int m = month; m <= MONTHS_IN_YEAR; m++) {
+            for (int m = month; m <= MONTHS_IN_YEAR; m++) {
                 counts += getDaysInMonth(m, y);
             }
 
             month = 1;
-
         }
 
-        for(int m = month; m < latestDate.getMonth(); m++) {
+        for (int m = month; m < latestDate.getMonth(); m++) {
             counts += getDaysInMonth(m, latestDate.getYear());
         }
 
-        if(day != latestDate.getDay()) {
+        if (day != latestDate.getDay()) {
             counts += latestDate.getDay() - 1;
         }
-
 
         return counts * modifier;
     }
 
     public static double stepsInYear(CompoundTimeUnit timeStep) {
 
-        if(timeStep.getUnit() == TimeUnit.YEAR) {
+        if (timeStep.getUnit() == TimeUnit.YEAR) {
             return 1 / (double) timeStep.getCount();
         } else { // unit == MONTH
             return MONTHS_IN_YEAR / (double) timeStep.getCount();
         }
-
     }
 
     public static int calcSubTimeUnitsInTimeUnit(CompoundTimeUnit subTimeUnit, CompoundTimeUnit timeUnit) {
@@ -529,16 +504,15 @@ public class DateUtils {
         // div by 0?
         double n = monthsInTimeUnit(timeUnit) / (double) monthsInTimeUnit(subTimeUnit);
 
-        if(n % 1 == 0) {
+        if (n % 1 == 0) {
             return (int) Math.floor(n);
         }
 
         return -1;
-
     }
 
     public static int monthsInTimeUnit(CompoundTimeUnit timeUnit) {
-        if(timeUnit.getUnit() == TimeUnit.MONTH) {
+        if (timeUnit.getUnit() == TimeUnit.MONTH) {
             return timeUnit.getCount();
         } else {
             return timeUnit.getCount() * MONTHS_IN_YEAR;
@@ -548,7 +522,6 @@ public class DateUtils {
     public static boolean dateInYear(ValipopDate date, YearDate year) {
 
         return !DateUtils.dateBefore(date, year) && DateUtils.dateBefore(date, year.advanceTime(1, TimeUnit.YEAR));
-
     }
 
     public static CompoundTimeUnit combineCompoundTimeUnits(CompoundTimeUnit tP1, CompoundTimeUnit tP2) {
@@ -559,19 +532,18 @@ public class DateUtils {
         CompoundTimeUnit ctu1 = tP1;
         CompoundTimeUnit ctu2 = tP2;
 
-        if(u1 == TimeUnit.MONTH) {
-            if(u2 != TimeUnit.MONTH) {
+        if (u1 == TimeUnit.MONTH) {
+            if (u2 != TimeUnit.MONTH) {
                 ctu2 = new CompoundTimeUnit(tP2.getCount() * DateUtils.MONTHS_IN_YEAR, TimeUnit.MONTH);
                 ctu1 = tP1;
             }
 
-        } else if(u2 == TimeUnit.MONTH) {
+        } else if (u2 == TimeUnit.MONTH) {
             ctu1 = new CompoundTimeUnit(tP1.getCount() * DateUtils.MONTHS_IN_YEAR, TimeUnit.MONTH);
             ctu2 = tP2;
         }
 
         // By this point we know they are both in the same units
         return new CompoundTimeUnit(ctu1.getCount() + ctu2.getCount(), ctu1.getUnit());
-
     }
 }

@@ -72,7 +72,7 @@ public class EntityFactory {
                 // Make subsequent children
                 child = makePerson(childrenBirthDate, partnership, population, ps, illegitimate);
             }
-            childrenBirthDate = child.getBirthDate_ex();
+            childrenBirthDate = child.getBirthDate();
             children.add(child);
 
             aChild = child;
@@ -110,9 +110,6 @@ public class EntityFactory {
 
         mother.recordPartnership(partnership);
         father.recordPartnership(partnership);
-
-//        System.out.println("re-added mother: " + mother.getId());
-//        System.out.println("re-added father: " + father.getId());
 
         // re-insert parents into population, this allows their position in the data structure to be updated
         population.getLivingPeople().addPerson(mother);

@@ -119,27 +119,22 @@ public class Person implements IPerson {
     }
 
     @Override
-    public java.util.Date getBirthDate() {
-        return getBirthDate_ex().getDate();
-    }
-
-    @Override
-    public ValipopDate getBirthDate_ex() {
+    public ValipopDate getBirthDate() {
         return birthDate;
     }
 
     @Override
-    public ValipopDate getDeathDate_ex() {
+    public ValipopDate getDeathDate() {
         return deathDate;
     }
 
     @Override
-    public List<IPartnership> getPartnerships_ex() {
+    public List<IPartnership> getPartnerships() {
         return partnerships;
     }
 
     @Override
-    public IPartnership getParentsPartnership_ex() {
+    public IPartnership getParentsPartnership() {
         return parentsPartnership;
     }
 
@@ -188,7 +183,7 @@ public class Person implements IPerson {
                         }
 
                         // partner death date
-                        ValipopDate partnerDeath = partnership.getPartnerOf(this).getDeathDate_ex();
+                        ValipopDate partnerDeath = partnership.getPartnerOf(this).getDeathDate();
                         if (partnerDeath != null && DateUtils.dateBefore(latestDate, partnerDeath)) {
                             latestDate = partnerDeath;
                         }
@@ -227,15 +222,6 @@ public class Person implements IPerson {
     }
 
     @Override
-    public java.util.Date getDeathDate() {
-        if (getDeathDate_ex() == null) {
-            return null;
-        } else {
-            return getDeathDate_ex().getDate();
-        }
-    }
-
-    @Override
     public String getDeathPlace() {
         return null;
     }
@@ -253,27 +239,6 @@ public class Person implements IPerson {
     }
 
     @Override
-    public List<Integer> getPartnerships() {
-
-        List<Integer> partnerIDs = new ArrayList<>();
-
-        for (IPartnership partnership : getPartnerships_ex()) {
-            partnerIDs.add(partnership.getId());
-        }
-
-        return partnerIDs;
-    }
-
-    @Override
-    public int getParentsPartnership() {
-        if (getParentsPartnership_ex() == null) {
-            return -1;
-        } else {
-            return getParentsPartnership_ex().getId();
-        }
-    }
-
-    @Override
     public int compareTo(IPerson o) {
         return this.id == o.getId() ? 0 : -1;
     }
@@ -281,9 +246,9 @@ public class Person implements IPerson {
     @Override
     public boolean noRecentChildren(MonthDate currentDate, CompoundTimeUnit timePeriod) {
 
-        for (IPartnership p : getPartnerships_ex()) {
+        for (IPartnership p : getPartnerships()) {
             for (IPerson c : p.getChildren()) {
-                if (DateUtils.dateBeforeOrEqual(currentDate.advanceTime(timePeriod), c.getBirthDate_ex())) {
+                if (DateUtils.dateBeforeOrEqual(currentDate.advanceTime(timePeriod), c.getBirthDate())) {
                     return false;
                 }
             }
@@ -337,8 +302,8 @@ public class Person implements IPerson {
         for (IPartnership p : partnerships) {
             for (IPerson c : p.getChildren()) {
 
-                if (DateUtils.dateBeforeOrEqual(latestChildBirthDate, c.getBirthDate_ex())) {
-                    latestChildBirthDate = c.getBirthDate_ex();
+                if (DateUtils.dateBeforeOrEqual(latestChildBirthDate, c.getBirthDate())) {
+                    latestChildBirthDate = c.getBirthDate();
                     child = c;
                 }
             }
@@ -399,7 +364,7 @@ public class Person implements IPerson {
         }
 
         IPerson lastChild = getLastChild();
-        IPartnership last = lastChild.getParentsPartnership_ex();
+        IPartnership last = lastChild.getParentsPartnership();
         IPerson child = null;
 
         ValipopDate birthDate = null;
@@ -410,7 +375,7 @@ public class Person implements IPerson {
             if (birthDate == null) {
                 child = EntityFactory.makePerson(onDate, birthTimeStep, last, population, ps);
                 last.addChildren(Collections.singleton(child));
-                birthDate = child.getBirthDate_ex();
+                birthDate = child.getBirthDate();
             } else {
                 child = EntityFactory.makePerson(onDate, last, population, ps);
                 last.addChildren(Collections.singleton(child));
@@ -428,7 +393,7 @@ public class Person implements IPerson {
         MarriageStatsKey marriageKey = new MarriageStatsKey(this.ageOnDate(birthDate), numberOfChildren, birthTimeStep, birthDate);
         SingleDeterminedCount marriageCounts = (SingleDeterminedCount) ps.getDeterminedCount(marriageKey, config);
 
-        if (last.getMarriageDate_ex() != null) {
+        if (last.getMarriageDate() != null) {
             // is already married - so return as married
             marriageCounts.setFulfilledCount(numberOfChildren);
         } else {
@@ -436,7 +401,7 @@ public class Person implements IPerson {
 
             if (toBeMarriedBirth) {
                 marriageCounts.setFulfilledCount(numberOfChildren);
-                last.setMarriageDate(EntityFactory.marriageDateSelector.selectDate(lastChild.getBirthDate_ex(), birthDate, ps.getRandomGenerator()));
+                last.setMarriageDate(EntityFactory.marriageDateSelector.selectDate(lastChild.getBirthDate(), birthDate, ps.getRandomGenerator()));
                 child.setMarriageBaby(true);
             } else {
                 marriageCounts.setFulfilledCount(0);
@@ -474,7 +439,7 @@ public class Person implements IPerson {
 
     private boolean lastPartnerDied(ValipopDate currentDate) {
         try {
-            return !getLastChild().getParentsPartnership_ex().getMalePartner().aliveOnDate(currentDate);
+            return !getLastChild().getParentsPartnership().getMalePartner().aliveOnDate(currentDate);
         } catch (NullPointerException e) {
             return true;
         }
@@ -482,14 +447,14 @@ public class Person implements IPerson {
 
     @Override
     public int numberOfChildrenInLatestPartnership() {
-        return getLastChild().getParentsPartnership_ex().getChildren().size();
+        return getLastChild().getParentsPartnership().getChildren().size();
     }
 
     @Override
     public Collection<IPerson> getAllChildren() {
         Collection<IPerson> children = new ArrayList<>();
 
-        for (IPartnership part : getPartnerships_ex()) {
+        for (IPartnership part : getPartnerships()) {
             children.addAll(part.getChildren());
         }
 
@@ -524,11 +489,11 @@ public class Person implements IPerson {
 
     @Override
     public boolean diedInYear(YearDate year) {
-        if (getDeathDate_ex() == null) {
+        if (getDeathDate() == null) {
             return false;
         }
 
-        return DateUtils.dateInYear(getDeathDate_ex(), year);
+        return DateUtils.dateInYear(getDeathDate(), year);
     }
 
     @Override
@@ -536,14 +501,14 @@ public class Person implements IPerson {
 
         Collection<IPartnership> activePartnerships = new ArrayList<>();
 
-        for (IPartnership part : getPartnerships_ex()) {
+        for (IPartnership part : getPartnerships()) {
             ValipopDate startDate = part.getPartnershipDate();
 
             if (DateUtils.dateInYear(startDate, year)) {
                 activePartnerships.add(part);
             } else {
                 for (IPerson p : part.getChildren()) {
-                    if (DateUtils.dateInYear(p.getBirthDate_ex(), year)) {
+                    if (DateUtils.dateInYear(p.getBirthDate(), year)) {
                         activePartnerships.add(part);
                         break;
                     }
@@ -556,11 +521,11 @@ public class Person implements IPerson {
 
     @Override
     public boolean bornInYear(YearDate year) {
-        if (getBirthDate_ex() == null) {
+        if (getBirthDate() == null) {
             return false;
         }
 
-        return DateUtils.dateInYear(getBirthDate_ex(), year);
+        return DateUtils.dateInYear(getBirthDate(), year);
     }
 
     @Override
@@ -588,9 +553,9 @@ public class Person implements IPerson {
 
         int count = 0;
 
-        for (IPartnership p : getPartnerships_ex()) {
+        for (IPartnership p : getPartnerships()) {
             for (IPerson c : p.getChildren()) {
-                if (DateUtils.dateBefore(c.getBirthDate_ex(), y)) {
+                if (DateUtils.dateBefore(c.getBirthDate(), y)) {
                     count++;
                 }
             }
@@ -601,7 +566,7 @@ public class Person implements IPerson {
 
     @Override
     public boolean bornBefore(ValipopDate date) {
-        return DateUtils.dateBefore(getBirthDate_ex(), date);
+        return DateUtils.dateBefore(getBirthDate(), date);
     }
 
     @Override
@@ -623,7 +588,7 @@ public class Person implements IPerson {
                 }
             }
 
-            date = part.getMarriageDate_ex();
+            date = part.getMarriageDate();
 
             if (date != null) {
                 if (DateUtils.dateBefore(separationDate, date)) {
@@ -661,7 +626,7 @@ public class Person implements IPerson {
                 } else {
 
                     ValipopDate sepDate = p.getEarliestPossibleSeparationDate();
-                    ValipopDate spouseDeathDate = p.getPartnerOf(this).getDeathDate_ex();
+                    ValipopDate spouseDeathDate = p.getPartnerOf(this).getDeathDate();
 
                     // TODO prevent selection of dates after latestPossibleMarriageDate
 

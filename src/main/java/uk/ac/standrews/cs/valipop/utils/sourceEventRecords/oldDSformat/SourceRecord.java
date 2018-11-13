@@ -98,12 +98,11 @@ public abstract class SourceRecord {
 
     protected String getMaidenSurname(IPopulation population, IPerson female) {
 
-        int parents_partnership_id = female.getParentsPartnership();
+        IPartnership parents_partnership = female.getParentsPartnership();
 
-        if (parents_partnership_id != -1) {
+        if (parents_partnership != null) {
 
-            IPartnership parents_partnership = population.findPartnership(parents_partnership_id);
-            IPerson femalesFather = population.findPerson(parents_partnership.getMalePartnerId());
+            IPerson femalesFather = parents_partnership.getMalePartner();
             return femalesFather.getSurname();
 
         } else return null;
