@@ -36,7 +36,7 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerR
     public NumberOfChildrenInPartnershipNodeDouble(IntegerRange option, NumberOfChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
 
-        if(!init) {
+        if (!init) {
             makeChildren();
         }
     }
@@ -62,13 +62,11 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerR
         try {
             getChild(option).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-//            SeparationNodeDouble n = (SeparationNodeDouble) addChild(option);
 
             SeparationNodeDouble n = (SeparationNodeDouble) addChild(new SeparationNodeDouble(option, this, 0.0, true));
             n.processPerson(person, currentDate);
             addDelayedTask(n);
         }
-
     }
 
     @Override
@@ -79,15 +77,13 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerR
     @Override
     public void makeChildren() {
 
-        ChildrenInYearOption childrenInYear = ((ChildrenInYearNodeDouble)
-                getAncestor(new ChildrenInYearNodeDouble())).getOption();
+        ChildrenInYearOption childrenInYear = ((ChildrenInYearNodeDouble) getAncestor(new ChildrenInYearNodeDouble())).getOption();
 
-        if(getOption().getValue() == 0 || childrenInYear == ChildrenInYearOption.NO) {
+        if (getOption().getValue() == 0 || childrenInYear == ChildrenInYearOption.NO) {
             addChild(SeparationOption.NA, getCount());
         } else {
             addChild(SeparationOption.YES);
             addChild(SeparationOption.NO);
         }
-
     }
 }

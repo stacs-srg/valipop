@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.valipop.export.gedcom;
 import org.gedcom4j.model.*;
 import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.events.death.NotDeadException;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
@@ -27,7 +26,6 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
@@ -43,18 +41,18 @@ import java.util.List;
 public class GEDCOMPerson implements IPerson {
 
     protected int id;
-    protected String first_name;
+    private String first_name;
     protected String surname;
     protected SexOption sex;
-    protected java.util.Date birth_date;
-    protected String birth_place;
-    protected java.util.Date death_date;
-    protected String death_place;
+    private java.util.Date birth_date;
+    private String birth_place;
+    private java.util.Date death_date;
+    private String death_place;
     protected String death_cause;
     protected String occupation;
-    protected String string_rep;
+    private String string_rep;
     protected List<Integer> partnerships;
-    protected int parents_partnership_id;
+    private int parents_partnership_id;
 
     @Override
     public int getId() {
@@ -121,7 +119,7 @@ public class GEDCOMPerson implements IPerson {
      * @param individual the GEDCOM person representation
      * @throws ParseException if the birth or death date is incorrectly formatted
      */
-    public GEDCOMPerson(final Individual individual) throws ParseException {
+    GEDCOMPerson(final Individual individual) throws ParseException {
 
         setId(individual);
         setSex(individual);
@@ -251,43 +249,12 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public List<IPartnership> getPartnershipsBeforeDate(ValipopDate date) {
-        return null;
-    }
-
-    @Override
-    public ValipopDate getDateOfLastLegitimatePartnershipEventBeforeDate(ValipopDate date) {
-        return null;
-    }
-
-    @Override
-    public boolean isWidow(ValipopDate onDate) {
-        return false;
-    }
-
-    @Override
-    public IPerson getPartner(ValipopDate onDate) {
-        return null;
-    }
-
-    @Override
-    public boolean noRecentChildren(MonthDate currentDate, CompoundTimeUnit timePeriod) {
-        return false;
-    }
-
-    @Override
     public void recordPartnership(IPartnership partnership) {
 
     }
 
     @Override
-    public boolean recordDeath(ValipopDate date, Population population, PopulationStatistics desiredPopulationStatistics) {
-        return false;
-    }
-
-    @Override
-    public int ageAtDeath() throws NotDeadException {
-        return 0;
+    public void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics) {
     }
 
     @Override
@@ -336,16 +303,6 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public Collection<IPerson> getAllGrandChildren() {
-        return null;
-    }
-
-    @Override
-    public Collection<IPerson> getAllGreatGrandChildren() {
-        return null;
-    }
-
-    @Override
     public boolean diedInYear(YearDate year) {
         return false;
     }
@@ -361,11 +318,6 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public boolean aliveInYear(YearDate y) {
-        return false;
-    }
-
-    @Override
     public IPartnership getLastPartnership() {
         return null;
     }
@@ -376,22 +328,7 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public boolean bornBefore(ValipopDate year) {
-        return false;
-    }
-
-    @Override
-    public boolean bornOnDate(ValipopDate y) {
-        return false;
-    }
-
-    @Override
     public ValipopDate getDateOfNextPostSeparationEvent(ValipopDate separationDate) {
-        return null;
-    }
-
-    @Override
-    public ValipopDate getDateOfPreviousPreMarriageEvent(ValipopDate latestPossibleMarriageDate) {
         return null;
     }
 

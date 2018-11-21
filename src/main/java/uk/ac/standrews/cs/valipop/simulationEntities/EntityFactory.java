@@ -28,9 +28,11 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStat
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.MarriageDateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,8 @@ import java.util.List;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class EntityFactory {
+
+    private static final int EARLIEST_AGE_OF_MARRIAGE = 16;
 
     public static MarriageDateSelector marriageDateSelector = new MarriageDateSelector();
 
@@ -85,10 +89,10 @@ public class EntityFactory {
             // first child - then death or divorce of previous spouses or coming of age
 
             // for mother
-            ValipopDate motherLastPrevPartneringEvent = mother.getDateOfLastLegitimatePartnershipEventBeforeDate(childrenBirthDate);
+            ValipopDate motherLastPrevPartneringEvent = getDateOfLastLegitimatePartnershipEventBeforeDate(mother, childrenBirthDate);
 
             // for father
-            ValipopDate fatherLastPrevPartneringEvent = father.getDateOfLastLegitimatePartnershipEventBeforeDate(childrenBirthDate);
+            ValipopDate fatherLastPrevPartneringEvent = getDateOfLastLegitimatePartnershipEventBeforeDate(father, childrenBirthDate);
 
             ValipopDate earliestPossibleMarriageDate = DateUtils.getLatestDate(motherLastPrevPartneringEvent, fatherLastPrevPartneringEvent);
 
@@ -117,6 +121,48 @@ public class EntityFactory {
         population.getLivingPeople().addPerson(father);
 
         return partnership;
+    }
+
+    private static ValipopDate getDateOfLastLegitimatePartnershipEventBeforeDate(IPerson person, ValipopDate date) {
+
+        ValipopDate latestDate;
+
+        ValipopDate birthDate = person.getBirthDate();
+
+        // Handle the leap year baby... TODO clean up date code in general - this really should be in the Date implementation
+        ValipopDate temp = birthDate.getMonthDate().advanceTime(EARLIEST_AGE_OF_MARRIAGE, TimeUnit.YEAR);
+        if (temp.getMonth() == DateUtils.FEB && !DateUtils.isLeapYear(temp.getYear()) && birthDate.getDay() == DateUtils.DAYS_IN_LEAP_FEB) {
+            latestDate = new ExactDate(birthDate.getDay() - 1, temp.getMonth(), temp.getYear());
+        } else {
+            latestDate = new ExactDate(birthDate.getDay(), temp.getMonth(), temp.getYear());
+        }
+
+        for (IPartnership partnership : person.getPartnerships()) {
+            if (DateUtils.dateBefore(partnership.getPartnershipDate(), date)) {
+                List<IPerson> children = partnership.getChildren();
+                if (!children.isEmpty()) {
+                    if (!children.get(0).isIllegitimate()) {
+                        // this partnership has legitimate children
+
+                        // thus check separation date
+                        ValipopDate sepDate = partnership.getEarliestPossibleSeparationDate();
+                        if (sepDate != null && DateUtils.dateBefore(latestDate, sepDate)) {
+                            latestDate = sepDate;
+                        }
+
+                        // partner death date
+                        ValipopDate partnerDeath = partnership.getPartnerOf(person).getDeathDate();
+                        if (partnerDeath != null && DateUtils.dateBefore(latestDate, partnerDeath)) {
+                            latestDate = partnerDeath;
+                        }
+                    }
+                } else {
+                    System.err.println("Do we now have childless marriages? - If so write this code!");
+                }
+            }
+        }
+
+        return latestDate;
     }
 
     public static IPerson formOrphanChild(AdvanceableDate currentDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps) {
