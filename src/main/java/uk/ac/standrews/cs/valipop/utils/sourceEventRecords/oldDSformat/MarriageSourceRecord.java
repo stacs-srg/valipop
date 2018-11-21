@@ -22,8 +22,10 @@ import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -186,9 +188,22 @@ public class MarriageSourceRecord extends SourceRecord {
         }
     }
 
+    private List<IPartnership> getPartnershipsBeforeDate(IPerson person, ValipopDate date) {
+
+        List<IPartnership> partnershipsBeforeDate = new ArrayList<>();
+
+        for (IPartnership partnership : person.getPartnerships()) {
+            if (DateUtils.dateBefore(partnership.getPartnershipDate(), date)) {
+                partnershipsBeforeDate.add(partnership);
+            }
+        }
+
+        return partnershipsBeforeDate;
+    }
+
     public String identifyMaritalStatus(IPerson spouse, ValipopDate marriageDate) {
 
-        List<IPartnership> partnerships = spouse.getPartnershipsBeforeDate(marriageDate);
+        List<IPartnership> partnerships = getPartnershipsBeforeDate(spouse, marriageDate);
 
         if (partnerships.size() == 0) {
             if (spouse.getSex() == SexOption.MALE) {

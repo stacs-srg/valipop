@@ -53,10 +53,8 @@ public class InitLogic {
         currentHypotheticalPopulationSize = calculateStartingPopulationSize(config);
         log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
-        endOfInitPeriod = config.getTS().advanceTime(new CompoundTimeUnit(
-                desiredPopulationStatistics.getOrderedBirthRates(config.getTS().getYearDate()).getLargestLabel().getValue(),
-                TimeUnit.YEAR
-        ));
+        endOfInitPeriod = config.getTS().advanceTime(
+                new CompoundTimeUnit(desiredPopulationStatistics.getOrderedBirthRates(config.getTS().getYearDate()).getLargestLabel().getValue(), TimeUnit.YEAR));
 
         log.info("End of Initialisation Period set: " + endOfInitPeriod.toString());
 
@@ -130,11 +128,11 @@ public class InitLogic {
         return (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpBR() - config.getSetUpDR() + 1, DateUtils.differenceInYears(config.getTS(), config.getT0()).getCount()));
     }
 
-    public static int calculateChildrenToBeBorn(int sizeOfCohort, Double birthRate) {
+    private static int calculateChildrenToBeBorn(int sizeOfCohort, Double birthRate) {
         return SharedLogic.calculateNumberToHaveEvent(sizeOfCohort, birthRate, randomNumberGenerator);
     }
 
-    public static int calculateNumberToDie(int people, Double deathRate) {
+    private static int calculateNumberToDie(int people, Double deathRate) {
         return SharedLogic.calculateNumberToHaveEvent(people, deathRate, randomNumberGenerator);
     }
 }

@@ -18,10 +18,11 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,87 +32,84 @@ import java.util.Collection;
  */
 public class PersonCharacteristicsIdentifier {
 
+    private static final JDKRandomGenerator RANDOM_GENERATOR;
+    private static final int DETERMINISTIC_SEED = 458457824;
+
+    static {
+        RANDOM_GENERATOR = new JDKRandomGenerator();
+        RANDOM_GENERATOR.setSeed(DETERMINISTIC_SEED);
+    }
+
     public static IPartnership getActivePartnership(IPerson person, ValipopDate currentDate) {
 
         ArrayList<IPartnership> partnershipsInYear = new ArrayList<>(person.getPartnershipsActiveInYear(currentDate.getYearDate()));
 
-        if(partnershipsInYear.size() > 1) {
+        if (partnershipsInYear.size() > 1) {
             throw new UnsupportedOperationException("Lots of partners in year - likely for a female to get this error");
         } else if (partnershipsInYear.size() == 0) {
             return null;
         } else {
             return partnershipsInYear.get(0);
         }
-
     }
 
     public static Integer getChildrenBirthedInYear(IPartnership activePartnership, YearDate year) {
 
-        if(activePartnership == null) {
+        if (activePartnership == null) {
             return 0;
         }
 
         Collection<IPerson> children = activePartnership.getChildren();
 
-        int c = 0;
+        int count = 0;
 
-        for(IPerson child : children) {
-            if(child.bornInYear(year)) {
-                c++;
+        for (IPerson child : children) {
+            if (child.bornInYear(year)) {
+                count++;
             }
         }
 
-        return c;
-
+        return count;
     }
-
 
     public static Integer getChildrenBirthedBeforeDate(IPartnership activePartnership, ValipopDate year) {
 
-        if(activePartnership == null) {
+        if (activePartnership == null) {
             return 0;
         }
 
         Collection<IPerson> children = activePartnership.getChildren();
 
-        int c = 0;
+        int count = 0;
 
-        for(IPerson child : children) {
-            if(child.bornBefore(year)) {
-                c++;
+        for (IPerson child : children) {
+            if (DateUtils.dateBefore(child.getBirthDate(), year)) {
+                count++;
             }
         }
 
-        return c;
-
+        return count;
     }
 
+    public static SeparationOption toSeparate(IPartnership activePartnership, YearDate year) {
 
-    public static SeparationOption toSeparate(IPartnership activePartnership, YearDate y) {
-
-        if(activePartnership == null) {
+        if (activePartnership == null) {
             return SeparationOption.NA;
         }
 
         IPerson lastChild = activePartnership.getLastChild();
 
-        if (!lastChild.bornInYear(y)) {
+        if (!lastChild.bornInYear(year)) {
             return SeparationOption.NO;
-        } else if (activePartnership.getSeparationDate(new JDKRandomGenerator()) != null) { // TODO Would this be better to use earliest possible sep date?
+        } else if (activePartnership.getSeparationDate(RANDOM_GENERATOR) != null) { // TODO Would this be better to use earliest possible sep date?
             return SeparationOption.YES;
         } else {
             return SeparationOption.NO;
         }
-
     }
 
-    public static boolean startedInYear(IPartnership activePartnership, YearDate y) {
+    public static boolean startedInYear(IPartnership activePartnership, YearDate year) {
 
-        ValipopDate startDate = activePartnership.getPartnershipDate();
-
-        return startDate.getYear() == y.getYear();
-
-//        return !DateUtils.dateBefore(startDate, y) && DateUtils.dateBefore(startDate, y.advanceTime(1, TimeUnit.YEAR));
+        return activePartnership.getPartnershipDate().getYear() == year.getYear();
     }
-
 }

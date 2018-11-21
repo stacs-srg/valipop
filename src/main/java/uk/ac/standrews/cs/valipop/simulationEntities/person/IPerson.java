@@ -17,14 +17,12 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.person;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.events.death.NotDeadException;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
@@ -117,21 +115,9 @@ public interface IPerson extends Comparable<IPerson> {
 
     boolean isIllegitimate();
 
-    List<IPartnership> getPartnershipsBeforeDate(ValipopDate date);
-
-    ValipopDate getDateOfLastLegitimatePartnershipEventBeforeDate(ValipopDate date);
-
-    boolean isWidow(ValipopDate onDate);
-
-    IPerson getPartner(ValipopDate onDate);
-
-    boolean noRecentChildren(MonthDate currentDate, CompoundTimeUnit timePeriod);
-
     void recordPartnership(IPartnership partnership);
 
-    boolean recordDeath(ValipopDate date, Population population, PopulationStatistics desiredPopulationStatistics);
-
-    int ageAtDeath() throws NotDeadException;
+    void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics);
 
     boolean aliveOnDate(ValipopDate date);
 
@@ -151,29 +137,17 @@ public interface IPerson extends Comparable<IPerson> {
 
     Collection<IPerson> getAllChildren();
 
-    Collection<IPerson> getAllGrandChildren();
-
-    Collection<IPerson> getAllGreatGrandChildren();
-
     boolean diedInYear(YearDate year);
 
     Collection<IPartnership> getPartnershipsActiveInYear(YearDate year);
 
     boolean bornInYear(YearDate year);
 
-    boolean aliveInYear(YearDate y);
-
     IPartnership getLastPartnership();
 
     Integer numberOfChildrenBirthedBeforeDate(YearDate y);
 
-    boolean bornBefore(ValipopDate year);
-
-    boolean bornOnDate(ValipopDate y);
-
     ValipopDate getDateOfNextPostSeparationEvent(ValipopDate separationDate);
-
-    ValipopDate getDateOfPreviousPreMarriageEvent(ValipopDate latestPossibleMarriageDate);
 
     boolean diedAfter(ValipopDate date);
 

@@ -18,10 +18,6 @@ package uk.ac.standrews.cs.valipop.simulationEntities.person;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.annotations.names.FirstNameGenerator;
-import uk.ac.standrews.cs.valipop.annotations.names.NameGenerator;
-import uk.ac.standrews.cs.valipop.annotations.names.SurnameGenerator;
-import uk.ac.standrews.cs.valipop.events.death.NotDeadException;
 import uk.ac.standrews.cs.valipop.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
@@ -35,12 +31,13 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -48,8 +45,6 @@ import java.util.*;
 public class Person implements IPerson {
 
     private static RandomGenerator random = null;
-    private static NameGenerator firstNameGenerator = new FirstNameGenerator();
-    private static NameGenerator surnameGenerator = new SurnameGenerator();
 
     private static int nextId = 0;
     private int id;
@@ -57,54 +52,42 @@ public class Person implements IPerson {
     private ExactDate birthDate;
     private ExactDate deathDate = null;
     private List<IPartnership> partnerships = new ArrayList<>();
-    private IPartnership parentsPartnership = null;
-    private String firstName;
-    private String surname;
+    private IPartnership parentsPartnership;
+
+    private final String firstName;
+    private final String surname;
+    private final String representation;
 
     private String deathCause = "";
 
     private boolean illegitimate = false;
-
     private boolean toSeparate = false;
+    private boolean marriageBaby = false;
 
-    public boolean marriageBaby = false;
+    public Person(SexOption sex, ValipopDate birthDate, IPartnership parents, PopulationStatistics statistics) {
 
-    // TODO extract as variable
-    private static int earliestAgeOfMarriage = 16;
-
-    public Person(SexOption sex, ValipopDate birthDate, IPartnership parentsPartnership, PopulationStatistics ps) {
-
-        if (random == null) {
-            random = ps.getRandomGenerator();
-        }
+        initRandomGenerator(statistics);
 
         id = getNewId();
 
         this.sex = sex;
         this.birthDate = birthDate.getExactDate();
-        this.parentsPartnership = parentsPartnership;
+        this.parentsPartnership = parents;
 
-        setFirstName(firstNameGenerator.getName(this, ps));
-        setSurname(surnameGenerator.getName(this, ps));
+        firstName = statistics.getForenameDistribution(getBirthDate(), getSex()).getSample();
+        surname = getSurname(statistics);
+
+        representation = firstName + " " + surname + ": " + id;
     }
 
-    public Person(SexOption sex, ValipopDate birthDate, IPartnership parentsPartnership, PopulationStatistics ps, boolean illegitimate) {
+    public Person(SexOption sex, ValipopDate birthDate, IPartnership parentsPartnership, PopulationStatistics statistics, boolean illegitimate) {
 
-        this(sex, birthDate, parentsPartnership, ps);
+        this(sex, birthDate, parentsPartnership, statistics);
         this.illegitimate = illegitimate;
     }
 
     public String toString() {
-
-        return firstName + " " + surname + ": " + id;
-    }
-
-    private static int getNewId() {
-        return nextId++;
-    }
-
-    public static void resetIds() {
-        nextId = 0;
+        return representation;
     }
 
     @Override
@@ -143,75 +126,13 @@ public class Person implements IPerson {
     }
 
     @Override
-    public List<IPartnership> getPartnershipsBeforeDate(ValipopDate date) {
-        List<IPartnership> partnershipsBeforeDate = new ArrayList<>();
-
-        for (IPartnership partnership : partnerships) {
-            if (DateUtils.dateBefore(partnership.getPartnershipDate(), date)) {
-                partnershipsBeforeDate.add(partnership);
-            }
-        }
-
-        return partnershipsBeforeDate;
-    }
-
-    @Override
-    public ValipopDate getDateOfLastLegitimatePartnershipEventBeforeDate(ValipopDate date) {
-
-        ValipopDate latestDate;
-
-        // Handle the leap year baby... TODO clean up date code in general - this really should be in the Date implementation
-        ValipopDate temp = birthDate.getMonthDate().advanceTime(earliestAgeOfMarriage, TimeUnit.YEAR);
-        if (temp.getMonth() == DateUtils.FEB && !DateUtils.isLeapYear(temp.getYear()) && birthDate.getDay() == DateUtils.DAYS_IN_LEAP_FEB) {
-            latestDate = new ExactDate(birthDate.getDay() - 1, temp.getMonth(), temp.getYear());
-        } else {
-            latestDate = new ExactDate(birthDate.getDay(), temp.getMonth(), temp.getYear());
-        }
-
-        for (IPartnership partnership : partnerships) {
-            if (DateUtils.dateBefore(partnership.getPartnershipDate(), date)) {
-                List<IPerson> children = partnership.getChildren();
-                if (!children.isEmpty()) {
-                    if (!children.get(0).isIllegitimate()) {
-                        // this partnership has legitimate children
-
-                        // thus check separation date
-                        ValipopDate sepDate = partnership.getEarliestPossibleSeparationDate();
-                        if (sepDate != null && DateUtils.dateBefore(latestDate, sepDate)) {
-                            latestDate = sepDate;
-                        }
-
-                        // partner death date
-                        ValipopDate partnerDeath = partnership.getPartnerOf(this).getDeathDate();
-                        if (partnerDeath != null && DateUtils.dateBefore(latestDate, partnerDeath)) {
-                            latestDate = partnerDeath;
-                        }
-                    }
-                } else {
-                    System.err.println("Do we now have childless marriages? - If so write this code!");
-                }
-            }
-        }
-
-        return latestDate;
-    }
-
-    @Override
     public String getFirstName() {
         return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 
     @Override
     public String getSurname() {
         return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
     }
 
     // TODO Implement geography model
@@ -238,15 +159,15 @@ public class Person implements IPerson {
     }
 
     @Override
-    public int compareTo(IPerson o) {
-        return Integer.compare(id, o.getId());
+    public int compareTo(IPerson other) {
+        return Integer.compare(id, other.getId());
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        Person person = (Person) other;
         return id == person.id;
     }
 
@@ -256,44 +177,17 @@ public class Person implements IPerson {
     }
 
     @Override
-    public boolean noRecentChildren(MonthDate currentDate, CompoundTimeUnit timePeriod) {
-
-        for (IPartnership p : getPartnerships()) {
-            for (IPerson c : p.getChildren()) {
-                if (DateUtils.dateBeforeOrEqual(currentDate.advanceTime(timePeriod), c.getBirthDate())) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    @Override
     public void recordPartnership(IPartnership partnership) {
         partnerships.add(partnership);
     }
 
     @Override
-    public boolean recordDeath(ValipopDate date, Population population, PopulationStatistics desiredPopulationStatistics) {
+    public void recordDeath(ValipopDate date, PopulationStatistics statistics) {
 
         deathDate = date.getExactDate();
 
-        try {
-            deathCause = desiredPopulationStatistics.getDeathCauseRates(deathDate, getSex(), ageAtDeath()).getSample();
-        } catch (NotDeadException e) {
-            throw new Error("Living dead person...");
-        }
-
-        return true;
-    }
-
-    @Override
-    public int ageAtDeath() throws NotDeadException {
-        if (deathDate == null) {
-            throw new NotDeadException();
-        }
-        return DateUtils.differenceInYears(birthDate, deathDate).getCount();
+        int ageAtDeath = DateUtils.differenceInYears(birthDate, deathDate).getCount();
+        deathCause = statistics.getDeathCauseRates(deathDate, getSex(), ageAtDeath).getSample();
     }
 
     @Override
@@ -322,48 +216,6 @@ public class Person implements IPerson {
         }
 
         return child;
-    }
-
-    @Override
-    public boolean isWidow(ValipopDate onDate) {
-
-        IPerson partner = getPartner(onDate);
-
-        if (partner == null) {
-            return false;
-        } else {
-            return !partner.aliveOnDate(onDate);
-        }
-    }
-
-    @Override
-    public IPerson getPartner(ValipopDate onDate) {
-
-        IPartnership currentPartnership = null;
-
-        for (IPartnership p : partnerships) {
-
-            if (DateUtils.dateBeforeOrEqual(p.getPartnershipDate(), onDate)) {
-
-                if (currentPartnership != null) {
-
-                    if (DateUtils.dateBeforeOrEqual(currentPartnership.getPartnershipDate(), p.getPartnershipDate())) {
-                        currentPartnership = p;
-                    }
-
-                } else {
-                    currentPartnership = p;
-                }
-            }
-        }
-
-        if (currentPartnership == null) {
-            return null;
-        } else if (sex == SexOption.MALE) {
-            return currentPartnership.getFemalePartner();
-        } else {
-            return currentPartnership.getMalePartner();
-        }
     }
 
     @Override
@@ -474,38 +326,11 @@ public class Person implements IPerson {
     }
 
     @Override
-    public Collection<IPerson> getAllGrandChildren() {
-        Collection<IPerson> grandChildren = new ArrayList<>();
-
-        Collection<IPerson> children = getAllChildren();
-
-        for (IPerson c : children) {
-            grandChildren.addAll(c.getAllChildren());
-        }
-
-        return grandChildren;
-    }
-
-    @Override
-    public Collection<IPerson> getAllGreatGrandChildren() {
-        Collection<IPerson> greatGrandChildren = new ArrayList<>();
-
-        Collection<IPerson> grandChildren = getAllGrandChildren();
-
-        for (IPerson gC : grandChildren) {
-            greatGrandChildren.addAll(gC.getAllChildren());
-        }
-
-        return greatGrandChildren;
-    }
-
-    @Override
     public boolean diedInYear(YearDate year) {
-        if (getDeathDate() == null) {
-            return false;
-        }
 
-        return DateUtils.dateInYear(getDeathDate(), year);
+        ValipopDate deathDate = getDeathDate();
+
+        return deathDate != null && DateUtils.dateInYear(deathDate, year);
     }
 
     @Override
@@ -533,16 +358,10 @@ public class Person implements IPerson {
 
     @Override
     public boolean bornInYear(YearDate year) {
-        if (getBirthDate() == null) {
-            return false;
-        }
 
-        return DateUtils.dateInYear(getBirthDate(), year);
-    }
+        ValipopDate birthDate = getBirthDate();
 
-    @Override
-    public boolean aliveInYear(YearDate y) {
-        return bornInYear(y) || diedInYear(y) || aliveOnDate(y);
+        return birthDate != null && DateUtils.dateInYear(birthDate, year);
     }
 
     @Override
@@ -574,16 +393,6 @@ public class Person implements IPerson {
         }
 
         return count;
-    }
-
-    @Override
-    public boolean bornBefore(ValipopDate date) {
-        return DateUtils.dateBefore(getBirthDate(), date);
-    }
-
-    @Override
-    public boolean bornOnDate(ValipopDate y) {
-        return DateUtils.datesEqual(y, birthDate);
     }
 
     @Override
@@ -620,58 +429,9 @@ public class Person implements IPerson {
     }
 
     @Override
-    public ValipopDate getDateOfPreviousPreMarriageEvent(ValipopDate latestPossibleMarriageDate) {
-
-        ValipopDate earliestPossibleMarriageDate =
-                new ExactDate(birthDate.getMonthDate().advanceTime(16, TimeUnit.YEAR)).advanceTime(birthDate.getDay());
-
-        if (partnerships.size() == 0) {
-            return earliestPossibleMarriageDate;
-        } else {
-
-            ValipopDate latestEventDate = earliestPossibleMarriageDate;
-
-            for (IPartnership p : partnerships) {
-
-                if (p.getChildren().get(0).isIllegitimate()) {
-                    // dont care
-                } else {
-
-                    ValipopDate sepDate = p.getEarliestPossibleSeparationDate();
-                    ValipopDate spouseDeathDate = p.getPartnerOf(this).getDeathDate();
-
-                    // TODO prevent selection of dates after latestPossibleMarriageDate
-
-                    if (sepDate != null) {
-                        if (DateUtils.dateBefore(latestEventDate, sepDate) && DateUtils.dateBefore(sepDate, latestPossibleMarriageDate)) {
-                            latestEventDate = sepDate;
-                        }
-                    }
-
-                    if (spouseDeathDate != null) {
-                        if (DateUtils.dateBefore(latestEventDate, spouseDeathDate) && DateUtils.dateBefore(spouseDeathDate, latestPossibleMarriageDate)) {
-                            latestEventDate = spouseDeathDate;
-                        }
-                    }
-                }
-            }
-
-            return latestEventDate;
-        }
-
-        // we want to find the last event before the latestPossibleMarriageDate
-        // the events we are looking for are:
-        // - previous child with current partner
-        // - date of separation from previous partner
-        // - NOT interested in events where the partner produced illegitimate children
-    }
-
-    @Override
     public boolean diedAfter(ValipopDate date) {
-        if (deathDate == null) {
-            return true;
-        }
-        return DateUtils.dateBefore(date, deathDate);
+
+        return deathDate == null || DateUtils.dateBefore(date, deathDate);
     }
 
     @Override
@@ -682,5 +442,31 @@ public class Person implements IPerson {
     @Override
     public boolean getMarriageBaby() {
         return marriageBaby;
+    }
+
+    private synchronized static void initRandomGenerator(PopulationStatistics statistics) {
+
+        if (random == null) {
+            random = statistics.getRandomGenerator();
+        }
+    }
+
+    private static int getNewId() {
+        return nextId++;
+    }
+
+    public static void resetIds() {
+        nextId = 0;
+    }
+
+    private String getSurname(PopulationStatistics ps) {
+
+        IPartnership parents = getParentsPartnership();
+
+        if (parents != null) {
+            return parents.getMalePartner().getSurname();
+        }
+
+        return ps.getSurnameDistribution(getBirthDate()).getSample();
     }
 }

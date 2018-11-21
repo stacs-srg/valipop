@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.valipop.events.death;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.events.EventLogic;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
@@ -45,8 +46,7 @@ public class NDeathLogic implements EventLogic {
     private DeathDateSelector deathDateSelector = new DeathDateSelector();
 
     // Move from year to sim date and time step
-    public int handleEvent(Config config,
-                           AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+    public int handleEvent(Config config, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                            Population population, PopulationStatistics desiredPopulationStatistics) {
 
         int killedAtTS = 0;
@@ -100,20 +100,19 @@ public class NDeathLogic implements EventLogic {
                 }
             }
 
-            Collection<IPerson> peopleToKill;
             try {
-                peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
+                Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
+
+                int killed = killPeople(peopleToKill, desiredPopulationStatistics, currentDate, consideredTimePeriod, population);
+                killedAtTS += killed + killAdjust;
+
+                // Returns the number killed to the distribution manager
+                determinedCount.setFulfilledCount(killed);
+                desiredPopulationStatistics.returnAchievedCount(determinedCount);
 
             } catch (InsufficientNumberOfPeopleException e) {
-                throw new Error("Insufficient number of people to kill, - this has occurred when selecting a less than 1 proportion of a population");
+                throw new RuntimeException("Insufficient number of people to kill, - this has occurred when selecting a less than 1 proportion of a population");
             }
-
-            int killed = killPeople(peopleToKill, desiredPopulationStatistics, currentDate, consideredTimePeriod, population);
-            killedAtTS += killed + killAdjust;
-
-            // Returns the number killed to the distribution manager
-            determinedCount.setFulfilledCount(killed);
-            desiredPopulationStatistics.returnAchievedCount(determinedCount);
         }
 
         tKilled += killedAtTS;
@@ -131,9 +130,8 @@ public class NDeathLogic implements EventLogic {
             ValipopDate deathDate = deathDateSelector.selectDate(person, desiredPopulationStatistics, currentDate, consideredTimePeriod);
 
             // execute death
-            if (person.recordDeath(deathDate, population, desiredPopulationStatistics)) {
-                killed++;
-            }
+            person.recordDeath(deathDate, desiredPopulationStatistics);
+            killed++;
 
             // move person to correct place in data structure
             population.getDeadPeople().addPerson(person);
@@ -143,14 +141,8 @@ public class NDeathLogic implements EventLogic {
     }
 
     private PersonCollection getLivingPeopleOfSex(SexOption sex, Population population) {
-        PersonCollection ofSexLiving;
 
-        if (sex == SexOption.MALE) {
-            ofSexLiving = population.getLivingPeople().getMales();
-        } else {
-            ofSexLiving = population.getLivingPeople().getFemales();
-        }
-
-        return ofSexLiving;
+        PeopleCollection livingPeople = population.getLivingPeople();
+        return sex == SexOption.MALE ? livingPeople.getMales() : livingPeople.getFemales();
     }
 }

@@ -24,5 +24,4 @@ public enum SeparationOption {
     YES,
     NO,
     NA
-
 }

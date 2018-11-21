@@ -50,11 +50,11 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
         ValipopDate currentDate = yob.advanceTime(ageI, TimeUnit.YEAR);
 
-        if(DateUtils.dateBefore(currentDate, getStartDate())) {
+        if (DateUtils.dateBefore(currentDate, getStartDate())) {
             initNode = true;
         }
 
-        if(!init) {
+        if (!init) {
             makeChildren();
         }
     }
@@ -76,7 +76,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
     @Override
     public void makeChildren() {
 
-        for(DiedOption o : DiedOption.values()) {
+        for (DiedOption o : DiedOption.values()) {
             addChild(o);
         }
 
@@ -91,22 +91,11 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
         incCountByOne();
 
-//        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-//        Integer age = getOption().getValue();
-//
-//        Date calcCurrentDate = yob.advanceTime(age, TimeUnit.YEAR);
-
-        DiedOption option;
-
-        if(person.diedInYear(currentDate.getYearDate())) {
-            option = DiedOption.YES;
-        } else {
-            option = DiedOption.NO;
-        }
+        DiedOption option = person.diedInYear(currentDate.getYearDate()) ? DiedOption.YES : DiedOption.NO;
 
         try {
             getChild(option).processPerson(person, currentDate);
-        } catch(ChildNotFoundException e) {
+        } catch (ChildNotFoundException e) {
             DiedNodeDouble n = (DiedNodeDouble) addChild(new DiedNodeDouble(option, this, true));
             n.processPerson(person, currentDate);
             addDelayedTask(n);
@@ -127,20 +116,19 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
         double count = 0;
 
-        for(Node c : getChildren()) {
+        for (Node c : getChildren()) {
             // c is of type died
             DiedNodeDouble cD = (DiedNodeDouble) c;
-            for(Node gc : cD.getChildren()) {
+            for (Node gc : cD.getChildren()) {
                 // gc is of type pncip
                 PreviousNumberOfChildrenInPartnershipNodeDouble gcP = (PreviousNumberOfChildrenInPartnershipNodeDouble) gc;
-                for(Node ggc : gcP.getChildren()) {
+                for (Node ggc : gcP.getChildren()) {
                     // ggc is of type NPCIAP
                     NumberOfPreviousChildrenInAnyPartnershipNodeDouble ggcN = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) ggc;
 
-                    if(ggcN.getOption().hash() == option.hash()) {
+                    if (ggcN.getOption().hash() == option.hash()) {
                         count += ggcN.getCount();
                     }
-
                 }
             }
         }
@@ -149,7 +137,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
     public CTRow<Double> toCTRow() {
 
-        if(initNode) {
+        if (initNode) {
             return null;
         } else {
 
@@ -158,9 +146,6 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
                 r.setVariable(getVariableName(), getOption().toString());
             }
             return r;
-
         }
-
-
     }
 }
