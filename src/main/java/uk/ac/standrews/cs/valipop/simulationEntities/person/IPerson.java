@@ -119,8 +119,6 @@ public interface IPerson extends Comparable<IPerson> {
 
     void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics);
 
-    boolean aliveOnDate(ValipopDate date);
-
     IPerson getLastChild();
 
     void addChildrenToCurrentPartnership(int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config);

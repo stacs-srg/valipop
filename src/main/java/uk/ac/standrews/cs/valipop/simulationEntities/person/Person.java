@@ -20,6 +20,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
@@ -191,15 +192,6 @@ public class Person implements IPerson {
     }
 
     @Override
-    public boolean aliveOnDate(ValipopDate date) {
-
-        if (DateUtils.dateBeforeOrEqual(birthDate, date)) {
-            return deathDate == null || DateUtils.dateBefore(date, deathDate);
-        }
-        return false;
-    }
-
-    @Override
     public IPerson getLastChild() {
 
         ValipopDate latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
@@ -302,8 +294,11 @@ public class Person implements IPerson {
     }
 
     private boolean lastPartnerDied(ValipopDate currentDate) {
+
         try {
-            return !getLastChild().getParentsPartnership().getMalePartner().aliveOnDate(currentDate);
+            IPerson lastPartner = getLastChild().getParentsPartnership().getPartnerOf(this);
+            return !PopulationNavigation.aliveOnDate(lastPartner,currentDate);
+
         } catch (NullPointerException e) {
             return true;
         }

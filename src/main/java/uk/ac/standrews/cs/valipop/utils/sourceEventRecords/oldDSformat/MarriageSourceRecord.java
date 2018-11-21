@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
@@ -217,7 +218,7 @@ public class MarriageSourceRecord extends SourceRecord {
 
             if (lastPartnership.getSeparationDate(new JDKRandomGenerator()) == null) {
                 // not separated from last partner
-                if (lastPartnership.getPartnerOf(spouse).aliveOnDate(marriageDate)) {
+                if (PopulationNavigation.aliveOnDate(lastPartnership.getPartnerOf(spouse),marriageDate)) {
                     // last spouse alive on death date of deceased
                     return "M-ERROR?";
                 } else {

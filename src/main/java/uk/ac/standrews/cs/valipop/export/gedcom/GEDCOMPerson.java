@@ -257,10 +257,6 @@ public class GEDCOMPerson implements IPerson {
     public void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics) {
     }
 
-    @Override
-    public boolean aliveOnDate(ValipopDate date) {
-        return false;
-    }
 
     @Override
     public IPerson getLastChild() {
