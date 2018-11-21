@@ -111,6 +111,51 @@ public class OBDModel {
         recordFinalSummary();
     }
 
+    public Population getPopulation() {
+        return population;
+    }
+
+    public PopulationStatistics getDesiredPopulationStatistics() {
+        return desired;
+    }
+
+    public SummaryRow getSummaryRow() {
+        return summary;
+    }
+
+    public void analyseAndOutputPopulation(boolean outputSummaryRow) {
+
+        if (config.getOutputTables()) {
+            // the 5 year step back is to combat the kick in the early stages of the CTtables for STAT - run in RStudio with no cleaning to see - potential bug in CTtree?
+            ContingencyTableFactory.generateContingencyTables(population.getAllPeople(), desired, config, summary, 0, 5);
+        }
+
+        ProgramTimer recordTimer = new ProgramTimer();
+        if (config.getOutputRecordFormat() != RecordFormat.NONE) {
+            RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), FileUtils.getRecordsDirPath().toString(), population.getAllPeople(), config.getT0());
+        }
+        summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
+
+        try {
+            PrintStream resultsOutput = new PrintStream(FileUtils.getDetailedResultsPath().toFile(), "UTF-8");
+            AnalyticsRunner.runAnalytics(population.getAllPeople(config.getT0(), config.getTE(), MAX_AGE), resultsOutput);
+
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
+        MemoryUsageAnalysis.log();
+
+        summary.setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
+        MemoryUsageAnalysis.reset();
+
+        if (outputSummaryRow) {
+            summary.outputSummaryRowToFile();
+        }
+
+        log.info("OBDModel --- Output complete");
+    }
+
     private boolean successfulRun() {
 
         try {
@@ -250,43 +295,6 @@ public class OBDModel {
         summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());
     }
 
-    public void analyseAndOutputPopulation() throws PreEmptiveOutOfMemoryWarning {
-        analyseAndOutputPopulation(true);
-    }
-
-    public void analyseAndOutputPopulation(boolean outputSummaryRow) {
-
-        if (config.getOutputTables()) {
-            // the 5 year step back is to combat the kick in the early stages of the CTtables for STAT - run in RStudio with no cleaning to see - potential bug in CTtree?
-            ContingencyTableFactory.generateContingencyTables(population.getAllPeople(), desired, config, summary, 0, 5);
-        }
-
-        ProgramTimer recordTimer = new ProgramTimer();
-        if (config.getOutputRecordFormat() != RecordFormat.NONE) {
-            RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), FileUtils.getRecordsDirPath().toString(), population.getAllPeople(), config.getT0());
-        }
-        summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
-
-        try {
-            PrintStream resultsOutput = new PrintStream(FileUtils.getDetailedResultsPath().toFile(), "UTF-8");
-            AnalyticsRunner.runAnalytics(population.getAllPeople(config.getT0(), config.getTE(), MAX_AGE), resultsOutput);
-
-        } catch (FileNotFoundException | UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-
-        MemoryUsageAnalysis.log();
-
-        summary.setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
-        MemoryUsageAnalysis.reset();
-
-        if (outputSummaryRow) {
-            summary.outputSummaryRowToFile();
-        }
-
-        log.info("OBDModel --- Output complete");
-    }
-
     private boolean populationTooSmall() {
 
         return population.getLivingPeople().getAll().size() < MINIMUM_POPULATION_SIZE;
@@ -310,17 +318,5 @@ public class OBDModel {
 
     private boolean timeFromInitialisationStartIsWholeTimeUnit() {
         return DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS());
-    }
-
-    public Population getPopulation() {
-        return population;
-    }
-
-    public PopulationStatistics getDesiredPopulationStatistics() {
-        return desired;
-    }
-
-    public SummaryRow getSummaryRow() {
-        return summary;
     }
 }

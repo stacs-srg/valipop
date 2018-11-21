@@ -26,12 +26,13 @@ import uk.ac.standrews.cs.valipop.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.MarriageStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.IllegitimateBirthStatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
@@ -39,10 +40,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -55,7 +53,7 @@ public class Person implements IPerson {
 
     private static int nextId = 0;
     private int id;
-    private char sex;
+    private SexOption sex;
     private ExactDate birthDate;
     private ExactDate deathDate = null;
     private List<IPartnership> partnerships = new ArrayList<>();
@@ -74,7 +72,7 @@ public class Person implements IPerson {
     // TODO extract as variable
     private static int earliestAgeOfMarriage = 16;
 
-    public Person(char sex, ValipopDate birthDate, IPartnership parentsPartnership, PopulationStatistics ps) {
+    public Person(SexOption sex, ValipopDate birthDate, IPartnership parentsPartnership, PopulationStatistics ps) {
 
         if (random == null) {
             random = ps.getRandomGenerator();
@@ -82,7 +80,7 @@ public class Person implements IPerson {
 
         id = getNewId();
 
-        this.sex = Character.toLowerCase(sex);
+        this.sex = sex;
         this.birthDate = birthDate.getExactDate();
         this.parentsPartnership = parentsPartnership;
 
@@ -90,7 +88,8 @@ public class Person implements IPerson {
         setSurname(surnameGenerator.getName(this, ps));
     }
 
-    public Person(char sex, ValipopDate birthDate, IPartnership parentsPartnership, PopulationStatistics ps, boolean illegitimate) {
+    public Person(SexOption sex, ValipopDate birthDate, IPartnership parentsPartnership, PopulationStatistics ps, boolean illegitimate) {
+
         this(sex, birthDate, parentsPartnership, ps);
         this.illegitimate = illegitimate;
     }
@@ -114,7 +113,7 @@ public class Person implements IPerson {
     }
 
     @Override
-    public char getSex() {
+    public SexOption getSex() {
         return sex;
     }
 
@@ -240,7 +239,20 @@ public class Person implements IPerson {
 
     @Override
     public int compareTo(IPerson o) {
-        return this.id == o.getId() ? 0 : -1;
+        return Integer.compare(id, o.getId());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return id == person.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     @Override
@@ -347,7 +359,7 @@ public class Person implements IPerson {
 
         if (currentPartnership == null) {
             return null;
-        } else if (sex == MALE) {
+        } else if (sex == SexOption.MALE) {
             return currentPartnership.getFemalePartner();
         } else {
             return currentPartnership.getMalePartner();

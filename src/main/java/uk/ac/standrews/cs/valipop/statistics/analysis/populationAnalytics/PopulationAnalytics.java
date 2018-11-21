@@ -20,6 +20,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.io.PrintStream;
@@ -86,7 +87,7 @@ public class PopulationAnalytics {
 
         int count = 0;
         for (final IPerson person : population.getPeople()) {
-            if (Character.toUpperCase(person.getSex()) == IPerson.MALE) {
+            if (person.getSex() == SexOption.MALE) {
                 count++;
             }
         }
@@ -97,7 +98,7 @@ public class PopulationAnalytics {
 
         int count = 0;
         for (final IPerson person : population.getPeople()) {
-            if (Character.toUpperCase(person.getSex()) == IPerson.FEMALE) {
+            if (person.getSex() == SexOption.FEMALE) {
                 count++;
             }
         }

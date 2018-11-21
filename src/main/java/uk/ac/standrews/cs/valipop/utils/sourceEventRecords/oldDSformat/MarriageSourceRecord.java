@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.util.List;
@@ -190,7 +191,7 @@ public class MarriageSourceRecord extends SourceRecord {
         List<IPartnership> partnerships = spouse.getPartnershipsBeforeDate(marriageDate);
 
         if (partnerships.size() == 0) {
-            if (Character.toLowerCase(spouse.getSex()) == 'm') {
+            if (spouse.getSex() == SexOption.MALE) {
                 return "B"; // bachelor
             } else {
                 return "S"; // single/spinster

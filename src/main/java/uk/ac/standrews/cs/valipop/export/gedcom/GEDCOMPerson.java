@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.valipop.events.death.NotDeadException;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
@@ -44,7 +45,7 @@ public class GEDCOMPerson implements IPerson {
     protected int id;
     protected String first_name;
     protected String surname;
-    protected char sex;
+    protected SexOption sex;
     protected java.util.Date birth_date;
     protected String birth_place;
     protected java.util.Date death_date;
@@ -71,7 +72,7 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public char getSex() {
+    public SexOption getSex() {
         return sex;
     }
 
@@ -112,7 +113,7 @@ public class GEDCOMPerson implements IPerson {
         return string_rep;
     }
 
-    private static final String MALE_STRING = String.valueOf(IPerson.MALE);
+    private static final String MALE_STRING = SexOption.MALE.toString();
 
     /**
      * Initialises the partnership.
@@ -137,7 +138,7 @@ public class GEDCOMPerson implements IPerson {
 
     private void setSex(final Individual individual) {
 
-        sex = individual.sex.toString().equals(MALE_STRING) ? IPerson.MALE : IPerson.FEMALE;
+        sex = individual.sex.toString().equals(MALE_STRING) ? SexOption.MALE : SexOption.FEMALE;
     }
 
     private void setNames(final Individual individual) {

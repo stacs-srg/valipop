@@ -17,23 +17,25 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.EventRateTables;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
-import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
-
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.EventRateTables;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * The PopulationStatistics holds data about the rate at which specified events occur to specified subsets of
@@ -204,8 +206,8 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
-    public SelfCorrectingOneDimensionDataDistribution getDeathRates(ValipopDate year, char gender) {
-        if (Character.toLowerCase(gender) == 'm') {
+    public SelfCorrectingOneDimensionDataDistribution getDeathRates(ValipopDate year, SexOption sex) {
+        if (sex == SexOption.MALE) {
             return maleDeath.get(getNearestYearInMap(year.getYearDate(), maleDeath));
         } else {
             return femaleDeath.get(getNearestYearInMap(year.getYearDate(), femaleDeath));
@@ -213,8 +215,8 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
-    public EnumeratedDistribution getDeathCauseRates(ValipopDate year, char gender, int age) {
-        if (Character.toLowerCase(gender) == 'm') {
+    public EnumeratedDistribution getDeathCauseRates(ValipopDate year, SexOption sex, int age) {
+        if (sex == SexOption.MALE) {
             return maleDeathCauses.get(getNearestYearInMap(year.getYearDate(), maleDeathCauses)).getDistributionForAge(age);
         } else {
             return femaleDeathCauses.get(getNearestYearInMap(year.getYearDate(), femaleDeathCauses)).getDistributionForAge(age);
@@ -252,8 +254,8 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
-    public EnumeratedDistribution getForenameDistribution(ValipopDate year, char gender) {
-        if (Character.toLowerCase(gender) == 'm') {
+    public EnumeratedDistribution getForenameDistribution(ValipopDate year, SexOption sex) {
+        if (sex == SexOption.MALE) {
             return maleForename.get(getNearestYearInMap(year.getYearDate(), maleForename));
         } else {
             return femaleForename.get(getNearestYearInMap(year.getYearDate(), femaleForename));

@@ -114,6 +114,7 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
     }
 
     public Node<cOp, ?, childCount, ?> getChild(cOp childOption) throws ChildNotFoundException {
+
         Node<cOp, ?, childCount, ?> n = children.get(childOption);
 
         if (n == null) {

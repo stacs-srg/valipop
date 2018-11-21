@@ -45,9 +45,7 @@ public class DateUtils {
         } else {
             return DAYS_IN_MONTH[month - 1];
         }
-
     }
-
 
     public static CompoundTimeUnit differenceInYears(ValipopDate a, ValipopDate b) {
 
@@ -109,8 +107,6 @@ public class DateUtils {
         } else {
             return false;
         }
-
-
     }
 
     public static boolean dateBefore(ValipopDate a, ValipopDate b) {
@@ -182,7 +178,6 @@ public class DateUtils {
             return getDaysInPositiveTimePeriod(date, consideredTimePeriod);
         }
     }
-
 
     private static int getDaysInPositiveTimePeriod(ValipopDate startingDate, CompoundTimeUnit consideredTimePeriod) {
 

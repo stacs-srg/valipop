@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -87,7 +88,7 @@ public class ChildrenAnalytics {
 
         for (final IPerson person : population.getPeople()) {
 
-            if (Character.toLowerCase(person.getSex()) == 'f') {
+            if (person.getSex() == SexOption.FEMALE) {
                 final List<IPartnership> partnerships = person.getPartnerships();
                 if (partnerships != null) {
 
@@ -114,7 +115,7 @@ public class ChildrenAnalytics {
 
         for (final IPerson person : population.getPeople()) {
 
-            if (Character.toLowerCase(person.getSex()) == 'f') {
+            if (person.getSex() == SexOption.FEMALE) {
                 final List<IPartnership> partnerships = person.getPartnerships();
                 if (partnerships != null) {
 

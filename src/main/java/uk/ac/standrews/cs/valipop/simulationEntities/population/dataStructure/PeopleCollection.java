@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
@@ -144,7 +145,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     @Override
     public void addPerson(IPerson person) {
 
-        if (person.getSex() == 'm') {
+        if (person.getSex() == SexOption.MALE) {
             males.addPerson(person);
 
         } else {
@@ -157,7 +158,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     @Override
     public void removePerson(IPerson person) {
 
-        if (person.getSex() == 'm') {
+        if (person.getSex() == SexOption.MALE) {
             males.removePerson(person);
 
         } else {

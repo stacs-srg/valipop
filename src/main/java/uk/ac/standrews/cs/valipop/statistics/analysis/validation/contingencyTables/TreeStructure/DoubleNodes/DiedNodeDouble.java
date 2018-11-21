@@ -43,15 +43,14 @@ import java.util.List;
 public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> implements ControlSelfNode, RunnableNode, ControlChildrenNode {
 
 
-
     public DiedNodeDouble(DiedOption option, AgeNodeDouble parentNode, boolean init) {
         super(option, parentNode);
 
-        if(!init) {
+        if (!init) {
             calcCount();
 
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
-            if(age == 0) {
+            if (age == 0) {
                 makeChildren();
             }
 
@@ -70,7 +69,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
         ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-        if(getOption() == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && getCount() > CTtree.NODE_MIN_COUNT) {
+        if (getOption() == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && getCount() > CTtree.NODE_MIN_COUNT) {
 
 
             SexNodeDouble sN = (SexNodeDouble) getAncestor(new SexNodeDouble());
@@ -82,7 +81,6 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
                 sN.addChild(ageR, getCount());
             }
         }
-
     }
 
     @Override
@@ -96,27 +94,18 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
         double forNPeople = getParent().getCount();
         CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
 
-        char sex;
-
         SexOption sexOption = (SexOption) getAncestor(new SexNodeDouble()).getOption();
 
-        if(sexOption == SexOption.MALE) {
-            sex = 'm';
-        } else {
-            sex = 'f';
-        }
-
         SingleDeterminedCount rDC = (SingleDeterminedCount) getInputStats()
-                .getDeterminedCount(new DeathStatsKey(age, forNPeople, timePeriod, currentDate, sex), null);
+                .getDeterminedCount(new DeathStatsKey(age, forNPeople, timePeriod, currentDate, sexOption), null);
 
-        if(getOption() == DiedOption.YES) {
+        if (getOption() == DiedOption.YES) {
             setCount(rDC.getRawUncorrectedCount());
         } else {
             setCount(forNPeople - rDC.getRawUncorrectedCount());
         }
 
         advanceCount();
-
     }
 
     @Override
@@ -124,18 +113,18 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
         incCountByOne();
 
-        if(Character.toUpperCase(person.getSex()) == 'F') {
+        if (person.getSex() == SexOption.FEMALE) {
             ArrayList<IPartnership> partnershipsInYear = new ArrayList<>(
                     person.getPartnershipsActiveInYear(currentDate.getYearDate()));
 
-            if(partnershipsInYear.size() == 0) {
+            if (partnershipsInYear.size() == 0) {
                 IntegerRange range = resolveToChildRange(0);
                 try {
                     getChild(range).processPerson(person, currentDate);
                 } catch (ChildNotFoundException e) {
                     addChild(range).processPerson(person, currentDate);
                 }
-            } else if(partnershipsInYear.size() == 1) {
+            } else if (partnershipsInYear.size() == 1) {
                 IPartnership partnership = partnershipsInYear.remove(0);
                 int numberOfChildren = partnership.getChildren().size();
                 IntegerRange range = resolveToChildRange(numberOfChildren);
@@ -147,9 +136,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
             } else {
                 throw new UnsupportedOperationException("Woman in too many partnerships in year");
             }
-
         }
-
     }
 
     @Override
@@ -167,16 +154,15 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
         SexOption sex = ((SexNodeDouble) getAncestor(new SexNodeDouble())).getOption();
 
-        if(sex == SexOption.FEMALE) {
+        if (sex == SexOption.FEMALE) {
 
             YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
 
             Collection<IntegerRange> ranges = getInputStats().getOrderedBirthRates(yob).getColumnLabels();
 
-            for(IntegerRange iR : ranges) {
-                if(iR.contains(0)) {
-                    PreviousNumberOfChildrenInPartnershipNodeDouble pncip =
-                            new PreviousNumberOfChildrenInPartnershipNodeDouble(iR, this, getCount());
+            for (IntegerRange iR : ranges) {
+                if (iR.contains(0)) {
+                    PreviousNumberOfChildrenInPartnershipNodeDouble pncip = new PreviousNumberOfChildrenInPartnershipNodeDouble(iR, this, getCount());
 
                     addChild(pncip);
 
@@ -185,22 +171,19 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
                     pncip.addChild(npciap);
 
-
                     addDelayedTask(npciap);
 
                     break;
                 }
             }
-
         }
-
     }
 
     @SuppressWarnings("Duplicates")
     public IntegerRange resolveToChildRange(Integer pncip) {
 
-        for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
-            if(aN.getOption().contains(pncip)) {
+        for (Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
+            if (aN.getOption().contains(pncip)) {
                 return aN.getOption();
             }
         }
@@ -212,17 +195,17 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 
-        for(IntegerRange o : sepRanges) {
-            if(o.contains(pncip)) {
+        for (IntegerRange o : sepRanges) {
+            if (o.contains(pncip)) {
                 return o;
             }
         }
 
-        if(pncip == 0) {
+        if (pncip == 0) {
             return new IntegerRange(0);
         }
 
-        throw new Error("Did not resolve any permissable ranges");
+        throw new Error("Did not resolve any permissible ranges");
     }
 
     public List<String> toStringAL() {
@@ -235,7 +218,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
     public CTRow<Double> toCTRow() {
         CTRow r = getParent().toCTRow();
 
-        if(r != null) {
+        if (r != null) {
             r.setVariable(getVariableName(), getOption().toString());
             r.setCount(getCount());
         }

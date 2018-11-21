@@ -23,9 +23,10 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.MarriageDateSelector;
@@ -122,18 +123,18 @@ public class EntityFactory {
         return makePerson(currentDate, birthTimeStep, null, population, ps);
     }
 
-    private static char getSex(PopulationCounts pc, PopulationStatistics ps, ValipopDate currentDate) {
+    private static SexOption getSex(PopulationCounts pc, PopulationStatistics ps, ValipopDate currentDate) {
 
         double sexBalance = pc.getAllTimeSexRatio();
 
         if (sexBalance < ps.getMaleProportionOfBirths(currentDate)) {
 
             pc.newMale();
-            return 'M';
+            return SexOption.MALE;
         } else {
 
             pc.newFemale();
-            return 'F';
+            return SexOption.FEMALE;
         }
     }
 
