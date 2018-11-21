@@ -27,8 +27,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.Compoun
  */
 public interface EventLogic {
 
-    int handleEvent(Config config, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                    Population population, PopulationStatistics desiredPopulationStatistics);
+    int handleEvent(Config config, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod, Population population, PopulationStatistics desiredPopulationStatistics);
 
     int getEventCount();
 

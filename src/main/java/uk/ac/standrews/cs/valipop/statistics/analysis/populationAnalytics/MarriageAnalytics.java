@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -75,7 +76,7 @@ public class MarriageAnalytics {
 
         for (final IPerson person : population.getPeople()) {
 
-            if (person.getSex() == IPerson.MALE) { // only look at Males to avoid counting marriages twice.
+            if (person.getSex() == SexOption.MALE) { // only look at Males to avoid counting marriages twice.
 
                 final List<IPartnership> partnership_ids = person.getPartnerships();
                 if (partnership_ids == null) {

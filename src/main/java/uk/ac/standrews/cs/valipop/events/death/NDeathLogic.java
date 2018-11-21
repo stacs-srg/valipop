@@ -16,22 +16,23 @@
  */
 package uk.ac.standrews.cs.valipop.events.death;
 
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.events.EventLogic;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PersonCollection;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.DeathStatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DeathDateSelector;
-import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DeathDateSelector;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -50,8 +51,8 @@ public class NDeathLogic implements EventLogic {
 
         int killedAtTS = 0;
 
-        killedAtTS += handleDeathsForSex('M', config, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
-        killedAtTS += handleDeathsForSex('F', config, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
+        killedAtTS += handleDeathsForSex(SexOption.MALE, config, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
+        killedAtTS += handleDeathsForSex(SexOption.FEMALE, config, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
 
         return killedAtTS;
     }
@@ -68,8 +69,7 @@ public class NDeathLogic implements EventLogic {
 
     private int tKilled = 0;
 
-    private int handleDeathsForSex(char sex, Config config,
-                                   AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+    private int handleDeathsForSex(SexOption sex, Config config, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                                    Population population, PopulationStatistics desiredPopulationStatistics) {
 
         int killedAtTS = 0;
@@ -102,14 +102,13 @@ public class NDeathLogic implements EventLogic {
 
             Collection<IPerson> peopleToKill;
             try {
-                peopleToKill =
-                        ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
+                peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
+
             } catch (InsufficientNumberOfPeopleException e) {
-                throw new Error("Insufficient number of people to kill, - this has occurred when selecting a less " +
-                        "than 1 proportion of a population");
+                throw new Error("Insufficient number of people to kill, - this has occurred when selecting a less than 1 proportion of a population");
             }
 
-            int killed = killPeople(peopleToKill, desiredPopulationStatistics, currentDate, consideredTimePeriod, population, config);
+            int killed = killPeople(peopleToKill, desiredPopulationStatistics, currentDate, consideredTimePeriod, population);
             killedAtTS += killed + killAdjust;
 
             // Returns the number killed to the distribution manager
@@ -122,9 +121,7 @@ public class NDeathLogic implements EventLogic {
         return killedAtTS;
     }
 
-    private int killPeople(Collection<IPerson> people,
-                           PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                           Population population, Config config) {
+    private int killPeople(Collection<IPerson> people, PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod, Population population) {
 
         int killed = 0;
 
@@ -145,10 +142,10 @@ public class NDeathLogic implements EventLogic {
         return killed;
     }
 
-    private PersonCollection getLivingPeopleOfSex(char sex, Population population) {
+    private PersonCollection getLivingPeopleOfSex(SexOption sex, Population population) {
         PersonCollection ofSexLiving;
 
-        if (Character.toLowerCase(sex) == 'm') {
+        if (sex == SexOption.MALE) {
             ofSexLiving = population.getLivingPeople().getMales();
         } else {
             ofSexLiving = population.getLivingPeople().getFemales();

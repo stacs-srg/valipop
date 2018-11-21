@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -34,14 +35,16 @@ public class DeathDateSelector extends DateSelector {
 
         IPerson child = p.getLastChild();
 
-        if(child != null) {
+        if (child != null) {
 
             ValipopDate birthDateOfLastChild = child.getBirthDate().getExactDate();
 
-            if (Character.toLowerCase(p.getSex()) == 'm') {
+            if (p.getSex() == SexOption.MALE) {
+
                 // If a male with a child then the man cannot die more than the minimum gestation period before the birth date
                 ValipopDate ePD = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * desiredPopulationStatistics.getMinGestationPeriod());
                 return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, ePD, desiredPopulationStatistics.getRandomGenerator());
+
             } else {
                 // If a female with a child then the cannot die before birth of child
                 return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, birthDateOfLastChild, desiredPopulationStatistics.getRandomGenerator());
@@ -50,22 +53,17 @@ public class DeathDateSelector extends DateSelector {
         } else {
             return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, p.getBirthDate(), desiredPopulationStatistics.getRandomGenerator());
         }
-
     }
 
-    private ExactDate selectDateRestrictedByEPD(AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                                                ValipopDate earliestPossibleDate, RandomGenerator random) {
+    private ExactDate selectDateRestrictedByEPD(AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod, ValipopDate earliestPossibleDate, RandomGenerator random) {
 
         // if specified earliestPossibleDate is in consideredTimePeriod
-        if(DateUtils.dateBeforeOrEqual(currentDate, earliestPossibleDate)) {
+        if (DateUtils.dateBeforeOrEqual(currentDate, earliestPossibleDate)) {
             // The select date between earliestPossibleDate and currentDate + consideredTimePeriod
             return selectDate(earliestPossibleDate, currentDate.advanceTime(consideredTimePeriod), random);
         } else {
             // else all days in consideredTimePeriod are an option
             return selectDate(currentDate, consideredTimePeriod, random);
         }
-
     }
-
-
 }

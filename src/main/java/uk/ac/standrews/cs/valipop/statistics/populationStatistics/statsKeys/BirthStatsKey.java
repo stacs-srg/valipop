@@ -24,7 +24,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.Compoun
  */
 public class BirthStatsKey extends StatsKey {
 
-
     public BirthStatsKey(Integer age, Integer order, double forNPeople, CompoundTimeUnit consideredTimePeriod, ValipopDate currentDate) {
         super(order, age, forNPeople, consideredTimePeriod, currentDate);
     }

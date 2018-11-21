@@ -4,6 +4,7 @@ import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
@@ -28,18 +29,18 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
 
         deathDate = new ExactDate(person.getDeathDate());
 
-        if(person.getParentsPartnership() != null) {
+        if (person.getParentsPartnership() != null) {
 
             mothersOccupation = person.getParentsPartnership().getFemalePartner().getOccupation();
 
-            if(!person.getParentsPartnership().getMalePartner().aliveOnDate(person.getDeathDate())) {
+            if (!person.getParentsPartnership().getMalePartner().aliveOnDate(person.getDeathDate())) {
                 // father is dead
                 setFatherDeceased("D"); // deceased
             }
 
             fathers_surname = person.getParentsPartnership().getMalePartner().getSurname();
 
-            if(!person.getParentsPartnership().getFemalePartner().aliveOnDate(person.getDeathDate())) {
+            if (!person.getParentsPartnership().getFemalePartner().aliveOnDate(person.getDeathDate())) {
                 // mother is dead
                 setMotherDeceased("D"); // deceased
             }
@@ -59,18 +60,18 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
 
         List<IPartnership> partnerships = deceased.getPartnerships();
 
-        if(partnerships.size() == 0) {
-            if(Character.toLowerCase(deceased.getSex()) == 'm') {
+        if (partnerships.size() == 0) {
+            if (deceased.getSex() == SexOption.MALE) {
                 return "B"; // bachelor
             } else {
                 return "S"; // single/spinster
             }
         } else {
-            if(deceased.getLastPartnership().getSeparationDate(new JDKRandomGenerator()) == null) {
+            if (deceased.getLastPartnership().getSeparationDate(new JDKRandomGenerator()) == null) {
                 // not separated from last partner
-                if(deceased.getLastPartnership().getPartnerOf(deceased).aliveOnDate(deceased.getDeathDate())) {
+                if (deceased.getLastPartnership().getPartnerOf(deceased).aliveOnDate(deceased.getDeathDate())) {
                     // last spouse alive on death date of deceased
-                    if(partnerships.size() > 1) {
+                    if (partnerships.size() > 1) {
                         return "R"; // remarried
                     } else {
                         return "M"; // married
@@ -87,20 +88,21 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
     }
 
     public String[] identifyNameAndOccupationOfSpouses(IPerson deceased) {
+
         String[] ret = new String[3];
 
         StringBuilder names = new StringBuilder();
         StringBuilder occupations = new StringBuilder();
         StringBuilder marIDs = new StringBuilder();
 
-        for(IPartnership partnership : deceased.getPartnerships()) {
+        for (IPartnership partnership : deceased.getPartnerships()) {
 
             IPerson spouse = partnership.getPartnerOf(deceased);
 
             String spousesName = spouse.getFirstName() + " " + spouse.getSurname();
             String spousesOccupation = spouse.getOccupation();
 
-            if(names.length() == 0) {
+            if (names.length() == 0) {
                 names.append(spousesName);
                 occupations.append(spousesOccupation);
                 marIDs.append(partnership.getId());

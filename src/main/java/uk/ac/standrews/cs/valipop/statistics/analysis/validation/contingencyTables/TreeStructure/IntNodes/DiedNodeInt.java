@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
@@ -47,12 +48,12 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
 
         incCountByOne();
 
-        if(Character.toUpperCase(person.getSex()) == 'F') {
+        if (person.getSex() == SexOption.FEMALE) {
 
             IPartnership partnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
             int numberOfChildren;
 
-            if(partnership == null) {
+            if (partnership == null) {
                 numberOfChildren = 0;
             } else {
                 numberOfChildren = PersonCharacteristicsIdentifier.getChildrenBirthedBeforeDate(partnership, currentDate);
@@ -75,8 +76,8 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
 
     private IntegerRange resolveToChildRange(Integer pncip) {
 
-        for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
-            if(aN.getOption().contains(pncip)) {
+        for (Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
+            if (aN.getOption().contains(pncip)) {
                 return aN.getOption();
             }
         }
@@ -88,13 +89,13 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 
-        for(IntegerRange o : sepRanges) {
-            if(o.contains(pncip)) {
+        for (IntegerRange o : sepRanges) {
+            if (o.contains(pncip)) {
                 return o;
             }
         }
 
-        if(pncip == 0) {
+        if (pncip == 0) {
             return new IntegerRange(0);
         }
 

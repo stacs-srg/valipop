@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -69,14 +70,14 @@ public class Partnership implements IPartnership {
 
         s += "--Partnership: " + id + "--\n";
 
-        s += male.getId()+ " | ";
+        s += male.getId() + " | ";
         s += male.getFirstName() + " ";
         s += male.getSurname() + " | ";
         s += male.getSex() + " | ";
         s += male.getBirthDate().getDate() + " | ";
         s += male.getDeathDate() != null ? male.getDeathDate() + "\n" : "no DOD\n";
 
-        s += female.getId()+ " | ";
+        s += female.getId() + " | ";
         s += female.getFirstName() + " ";
         s += female.getSurname() + " | ";
         s += female.getSex() + " | ";
@@ -85,8 +86,8 @@ public class Partnership implements IPartnership {
 
         s += "----Children----\n";
 
-        for(IPerson c : children) {
-            s += c.getId()+ " | ";
+        for (IPerson c : children) {
+            s += c.getId() + " | ";
             s += c.getFirstName() + " ";
             s += c.getSurname() + " | ";
             s += c.getSex() + " | ";
@@ -141,8 +142,9 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public IPerson getPartnerOf(IPerson id) {
-        if (id.getSex() == 'm') {
+    public IPerson getPartnerOf(IPerson person) {
+
+        if (person.getSex() == SexOption.MALE) {
             return female;
         } else {
             return male;
@@ -162,11 +164,11 @@ public class Partnership implements IPartnership {
     @Override
     public ValipopDate getSeparationDate(RandomGenerator random) {
 
-        if(earliestPossibleSeparationDate == null) {
+        if (earliestPossibleSeparationDate == null) {
             return null;
         } else {
 
-            if(separationDate == null) {
+            if (separationDate == null) {
 
                 ValipopDate maleMovedOnDate = male.getDateOfNextPostSeparationEvent(earliestPossibleSeparationDate);
                 ValipopDate femaleMovedOnDate = female.getDateOfNextPostSeparationEvent(earliestPossibleSeparationDate);
@@ -177,7 +179,7 @@ public class Partnership implements IPartnership {
                     if (femaleMovedOnDate != null) {
                         // if female not null and male not null
                         // pick earliest
-                        if(DateUtils.dateBefore(maleMovedOnDate, femaleMovedOnDate)) {
+                        if (DateUtils.dateBefore(maleMovedOnDate, femaleMovedOnDate)) {
                             earliestMovedOnDate = maleMovedOnDate;
                         } else {
                             earliestMovedOnDate = femaleMovedOnDate;
@@ -236,8 +238,8 @@ public class Partnership implements IPartnership {
         ValipopDate latestBirthDate = new YearDate(Integer.MIN_VALUE);
         IPerson latestChild = null;
 
-        for(IPerson c : getChildren()) {
-            if(DateUtils.dateBefore(latestBirthDate, c.getBirthDate())) {
+        for (IPerson c : getChildren()) {
+            if (DateUtils.dateBefore(latestBirthDate, c.getBirthDate())) {
                 latestBirthDate = c.getBirthDate();
                 latestChild = c;
             }

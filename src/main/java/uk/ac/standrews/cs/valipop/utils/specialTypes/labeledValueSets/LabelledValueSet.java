@@ -63,6 +63,4 @@ public interface LabelledValueSet<L,V> {
     int countPositiveValues();
 
     LabelledValueSet<L,Double> divisionOfValuesByN(V n);
-
-
 }

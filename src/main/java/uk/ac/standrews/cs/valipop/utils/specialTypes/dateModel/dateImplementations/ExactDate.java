@@ -16,11 +16,14 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.time.DateTimeException;
 import java.util.Calendar;
+import java.util.Date;
+
+import static uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils.getDaysInMonth;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -31,40 +34,20 @@ public final class ExactDate implements ValipopDate {
     private final int month;
     private final int day;
 
+    private final String representation;
+    private final Date real_date;
+
+    private static final Calendar CALENDAR = Calendar.getInstance();
+
     public ExactDate(int day, int month, int year) {
 
-        if (day <= 0 || day > DateUtils.getDaysInMonthNonLeapYear(month)) {
-            if (month != DateUtils.FEB || (DateUtils.isLeapYear(year) && day != DateUtils.DAYS_IN_LEAP_FEB) || (!DateUtils.isLeapYear(year) && day >= DateUtils.DAYS_IN_LEAP_FEB)) {
-                throw new DateTimeException("Days should be indexed between 1 and the number of days in the given month inclusive.");
-            }
-        }
-
         this.day = day;
         this.month = month;
         this.year = year;
-    }
 
-    public ExactDate(String ddmmyyyy) {
-
-        String[] split = ddmmyyyy.split("/");
-
-        int day = Integer.parseInt(split[0]);
-        int month = Integer.parseInt(split[1]);
-        int year = Integer.parseInt(split[2]);
-
-        if (month <= 0 || month > 12) {
-            month = 0;
-            throw new DateTimeException("Months should be indexed between 1 and 12 inclusive.");
-        }
-        if (day <= 0 || day > DateUtils.getDaysInMonthNonLeapYear(month)) {
-            if (month != DateUtils.FEB || (DateUtils.isLeapYear(year) && day != DateUtils.DAYS_IN_LEAP_FEB || (!DateUtils.isLeapYear(year) && day >= DateUtils.DAYS_IN_LEAP_FEB))) {
-                throw new DateTimeException("Days should be indexed between 1 and the number of days in the given month inclusive.");
-            }
-        }
-
-        this.day = day;
-        this.month = month;
-        this.year = year;
+        checkBounds(day, month, year);
+        real_date = makeDate(day, month, year);
+        representation = makeDateString(day, month, year);
     }
 
     public ExactDate(ValipopDate date) {
@@ -79,10 +62,11 @@ public final class ExactDate implements ValipopDate {
 
         while (numberOfDays >= 0) {
 
-            int daysLeftInMonth = DateUtils.getDaysInMonth(month, year) - day;
+            int daysLeftInMonth = getDaysInMonth(month, year) - day;
 
             if (daysLeftInMonth > numberOfDays) {
                 return new ExactDate(day + numberOfDays, month, year);
+
             } else {
                 numberOfDays -= daysLeftInMonth;
                 day = 1;
@@ -116,14 +100,13 @@ public final class ExactDate implements ValipopDate {
 
     @Override
     public String toString() {
-        return day + "/" + month + "/" + year;
+        return representation;
     }
 
     @Override
-    public java.util.Date getDate() {
-        Calendar c = Calendar.getInstance();
-        c.set(year, month, day, 0, 0);
-        return c.getTime();
+    public Date getDate() {
+
+        return real_date;
     }
 
     @Override
@@ -142,11 +125,41 @@ public final class ExactDate implements ValipopDate {
     }
 
     @Override
-    public int compareTo(ValipopDate o) {
-        if (DateUtils.dateBeforeOrEqual(this, o)) {
-            return -1;
-        } else {
-            return 1;
+    public int compareTo(ValipopDate other) {
+
+        if (DateUtils.dateBefore(this, other)) return -1;
+        if (DateUtils.datesEqual(this, other)) return 0;
+
+        return 1;
+    }
+
+    private static synchronized Date makeDate(int day, int month, int year) {
+
+        CALENDAR.clear();
+        CALENDAR.set(year, month - 1, day, 12, 0, 0);
+        return CALENDAR.getTime();
+    }
+
+    private void checkBounds(int day, int month, int year) {
+
+        if (day < 1) throw new DateTimeException("illegal day: " + day);
+        if (month < 1) throw new DateTimeException("illegal month: " + month);
+        if (month > 12) throw new DateTimeException("illegal month: " + month);
+
+        if (day > getDaysInMonth(month, year)) throw new DateTimeException("too many days in month: " + day);
+    }
+
+    static String makeDateString(int day, int month, int year) {
+
+        return pad(day, 2) + "/" + pad(month, 2) + "/" + pad(year, 4);
+    }
+
+    private static String pad(int i, int width) {
+
+        String result = String.valueOf(i);
+        while (result.length() < width) {
+            result = "0" + result;
         }
+        return result;
     }
 }

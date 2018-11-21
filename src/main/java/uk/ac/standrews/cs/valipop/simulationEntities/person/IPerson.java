@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.events.death.NotDeadException;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
@@ -36,16 +37,6 @@ import java.util.List;
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public interface IPerson extends Comparable<IPerson> {
-
-    /**
-     * Representation of female sex.
-     */
-    char FEMALE = 'F';
-
-    /**
-     * Representation of male sex.
-     */
-    char MALE = 'M';
 
     /**
      * Gets the person's unique identifier. It can be assumed that identifiers are allocated in temporal
@@ -67,10 +58,10 @@ public interface IPerson extends Comparable<IPerson> {
     String getSurname();
 
     /**
-     * Gets the person's sex, either {@link #FEMALE} or {@link #MALE}.
+     * Gets the person's sex.
      * @return the person's sex
      */
-    char getSex();
+    SexOption getSex();
 
     /**
      * Gets the person's date of birth.

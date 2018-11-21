@@ -34,7 +34,7 @@ public class RCaller {
         Process proc = runRScript(pathOfScript, params);
         String[] res = waitOnReturn(proc).split(" ");
 
-        if(res.length != 2) {
+        if (res.length != 2) {
             throw new StatsException("Too many values returned from RScript for given script");
         }
 
@@ -49,18 +49,18 @@ public class RCaller {
         Process proc = runRScript(pathOfScript, params);
         String[] res = waitOnReturn(proc).split(" ");
 
-        if(res.length != 2) {
+        if (res.length != 2) {
             throw new StatsException("Too many values returned from RScript for given script");
         }
 
         return Double.parseDouble(res[1]);
     }
 
-    public static double getGeeglmV(String title, String pathOfRunDir, String pathOfTablesDir, int maxBirthingAge, String startTime) throws IOException, StatsException {
+    public static double getGeeglmV(String title, String pathOfRunDir, int maxBirthingAge, String startTime) throws IOException, StatsException {
 
         Double result = null;
 
-        while(result == null) {
+        while (result == null) {
             Process p = generateAnalysisHTML(pathOfRunDir, maxBirthingAge, title);
             waitOnReturn(p);
 
@@ -100,8 +100,8 @@ public class RCaller {
 
         String s = null;
 
-        while((s = stdInput.readLine())!=null) {
-              result += s + "\n";
+        while ((s = stdInput.readLine()) != null) {
+            result += s + "\n";
         }
 
         while ((s = stdError.readLine()) != null) {

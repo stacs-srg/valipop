@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
@@ -76,15 +77,15 @@ public class PeopleCollectionTest {
         ExactDate b3 = new ExactDate(31,12,1900);
         ExactDate b4 = new ExactDate(1,1,1901);
 
-        Person m1 = new Person('m', b1, null, ps);
-        Person m2 = new Person('m', b2, null, ps);
-        Person m3 = new Person('m', b3, null, ps);
-        Person m4 = new Person('m', b4, null, ps);
+        Person m1 = new Person(SexOption.MALE, b1, null, ps);
+        Person m2 = new Person(SexOption.MALE, b2, null, ps);
+        Person m3 = new Person(SexOption.MALE, b3, null, ps);
+        Person m4 = new Person(SexOption.MALE, b4, null, ps);
 
-        Person f1 = new Person('f', b1, null, ps);
-        Person f2 = new Person('f', b2, null, ps);
-        Person f3 = new Person('f', b3, null, ps);
-        Person f4 = new Person('f', b4, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, b1, null, ps);
+        Person f2 = new Person(SexOption.FEMALE, b2, null, ps);
+        Person f3 = new Person(SexOption.FEMALE, b3, null, ps);
+        Person f4 = new Person(SexOption.FEMALE, b4, null, ps);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -108,7 +109,6 @@ public class PeopleCollectionTest {
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
         assertFalse(males.contains(m4));
-
     }
 
     @Test
@@ -123,13 +123,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person('m', start, null, ps);
-        Person m2 = new Person('m', start, null, ps);
-        Person m3 = new Person('m', start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps);
+        Person m2 = new Person(SexOption.MALE, start, null, ps);
+        Person m3 = new Person(SexOption.MALE, start, null, ps);
 
-        Person f1 = new Person('f', start, null, ps);
-        Person f2 = new Person('f', start, null, ps);
-        Person f3 = new Person('f', start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f2 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f3 = new Person(SexOption.FEMALE, start, null, ps);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -144,7 +144,6 @@ public class PeopleCollectionTest {
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
-
     }
 
     @Test
@@ -158,13 +157,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person('m', start, null, ps);
-        Person m2 = new Person('m', start, null, ps);
-        Person m3 = new Person('m', start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps);
+        Person m2 = new Person(SexOption.MALE, start, null, ps);
+        Person m3 = new Person(SexOption.MALE, start, null, ps);
 
-        Person f1 = new Person('f', start, null, ps);
-        Person f2 = new Person('f', start, null, ps);
-        Person f3 = new Person('f', start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f2 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f3 = new Person(SexOption.FEMALE, start, null, ps);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -172,7 +171,6 @@ public class PeopleCollectionTest {
         living.addPerson(f1);
         living.addPerson(f2);
         living.addPerson(f3);
-
 
         // are people added present in the correct place
         // for males
@@ -187,8 +185,6 @@ public class PeopleCollectionTest {
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
-
-
     }
 
     @Test
@@ -202,13 +198,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person('m', start, null, ps);
-        Person m2 = new Person('m', start, null, ps);
-        Person m3 = new Person('m', start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps);
+        Person m2 = new Person(SexOption.MALE, start, null, ps);
+        Person m3 = new Person(SexOption.MALE, start, null, ps);
 
-        Person f1 = new Person('f', start, null, ps);
-        Person f2 = new Person('f', start, null, ps);
-        Person f3 = new Person('f', start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f2 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f3 = new Person(SexOption.FEMALE, start, null, ps);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -250,13 +246,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person f1 = new Person('f', start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
 
-        Person m1 = new Person('m', start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps);
 
-        Person c1 = new Person('m', start.advanceTime(19, TimeUnit.YEAR), null, ps);
-        Person c2 = new Person('f', start.advanceTime(25, TimeUnit.YEAR), null, ps);
-        Person c3 = new Person('m', start.advanceTime(32, TimeUnit.YEAR), null, ps);
+        Person c1 = new Person(SexOption.MALE, start.advanceTime(19, TimeUnit.YEAR), null, ps);
+        Person c2 = new Person(SexOption.FEMALE, start.advanceTime(25, TimeUnit.YEAR), null, ps);
+        Person c3 = new Person(SexOption.MALE, start.advanceTime(32, TimeUnit.YEAR), null, ps);
 
         living.addPerson(f1);
 
@@ -320,7 +316,7 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person f1 = new Person('f', start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
         living.removePerson(f1);
     }
 
@@ -335,14 +331,12 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person f1 = new Person('f', start, null, ps);
-        Person f2 = new Person('f', start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f2 = new Person(SexOption.FEMALE, start, null, ps);
 
         living.addPerson(f2);
 
         living.removePerson(f1);
-
-
     }
 
     @Test(expected = PersonNotFoundException.class)
@@ -356,11 +350,9 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person('m', start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps);
         living.removePerson(m1);
-
     }
-
 
     @Test(expected = PersonNotFoundException.class)
     public void removeNonExistentMale() throws PersonNotFoundException {
@@ -373,15 +365,11 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person('m', start, null, ps);
-        Person m2 = new Person('m', start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps);
+        Person m2 = new Person(SexOption.MALE, start, null, ps);
 
         living.addPerson(m2);
 
         living.removePerson(m1);
-
-
     }
-
-
 }

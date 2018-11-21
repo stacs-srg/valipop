@@ -1,10 +1,6 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
-
-import java.io.IOException;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -14,14 +10,13 @@ public class CL_RunNModels {
     public static void main(String[] args) {
 
         CL_RunNModels.runNModels(args);
-
     }
 
     public static void runNModels(String[] args) {
         // Expects 4 args: path to config file, results path, run purpose, number of runs
 
         String[] pArgs = ProcessArgs.process(args, "N-RUNS");
-        if(!ProcessArgs.check(pArgs, "N-RUNS")) {
+        if (!ProcessArgs.check(pArgs, "N-RUNS")) {
             System.err.println("Incorrect arguments given");
             throw new Error("Incorrect arguments given");
         }
@@ -40,18 +35,14 @@ public class CL_RunNModels {
 
         try {
 
-            for(int n = 0 ; n < nRuns; n++) {
+            for (int n = 0; n < nRuns; n++) {
 
                 CL_OBDModel.runOBDModel(pathToConfigFile, resultsPath, runPurpose);
-
                 System.gc();
             }
 
-        } catch (InvalidInputFileException | IOException | Error | PreEmptiveOutOfMemoryWarning | StatsException e) {
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-
     }
-
-
 }
