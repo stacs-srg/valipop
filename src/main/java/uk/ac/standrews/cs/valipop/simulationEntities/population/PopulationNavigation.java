@@ -3,6 +3,8 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -172,5 +174,15 @@ public class PopulationNavigation {
             partners.addAll(partnersOf(person));
         }
         return partners;
+    }
+
+    public static boolean aliveOnDate(IPerson person, ValipopDate date) {
+
+        if (DateUtils.dateBeforeOrEqual(person.getBirthDate(), date)) {
+
+            ValipopDate deathDate = person.getDeathDate();
+            return deathDate == null || DateUtils.dateBefore(date, deathDate);
+        }
+        return false;
     }
 }
