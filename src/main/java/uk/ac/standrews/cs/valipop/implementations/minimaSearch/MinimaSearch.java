@@ -90,7 +90,7 @@ public class MinimaSearch {
         }
     }
 
-    private static void runSearch(int populationSize, String dataFiles, double startFactor, double step, String runPurpose, int repeatRuns, Minimise minimiseFor, Control controlBy) throws IOException, InvalidInputFileException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning, InconsistentWeightException {
+    private static void runSearch(int populationSize, String dataFiles, double startFactor, double step, String runPurpose, int repeatRuns, Minimise minimiseFor, Control controlBy) throws IOException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning {
 
         MinimaSearch.startFactor = startFactor;
         MinimaSearch.step = step;

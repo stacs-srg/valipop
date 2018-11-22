@@ -40,7 +40,12 @@ public class PopulationTestCases {
                 fullPopulation(20000, 56854688),
                 fullPopulation(30000, 56854688),
                 fullPopulation(40000, 56854688),
-                fullPopulation(50000, 56854688)
+                fullPopulation(50000, 56854688),
+                fullPopulation(10000, 23425234),
+                fullPopulation(70000, 23425234),
+                fullPopulation(150000, 23425234),
+                fullPopulation(300000, 23425234),
+                fullPopulation(500000, 23425234),
         };
     }
 

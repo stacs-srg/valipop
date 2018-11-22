@@ -24,5 +24,5 @@ public class MisalignedTimeDivisionError extends Error {
         super(s);
     }
 
-    public MisalignedTimeDivisionError() {};
+    public MisalignedTimeDivisionError() {}
 }

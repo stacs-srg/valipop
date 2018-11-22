@@ -44,7 +44,6 @@ public class FileUtils {
 
     public static void makeDirectoryStructure(String runPurpose, String startTime, String resultPath) throws IOException {
 
-
         // check results dir exists
         Path results = Paths.get(resultPath);
         mkDirs(results);
@@ -91,7 +90,7 @@ public class FileUtils {
 
         Path blankFilePath = Paths.get(parent.toString(), fileName);
 
-        if(!Files.exists(blankFilePath)) {
+        if (!Files.exists(blankFilePath)) {
             // if not, initialise summary file with headings
 
             try {
@@ -110,7 +109,7 @@ public class FileUtils {
         // Check if summary file exists
         Path summary = Paths.get(parent.toString(), fileName);
 
-        if(!Files.exists(summary)) {
+        if (!Files.exists(summary)) {
             // if not, initialise summary file with headings
 
             try {
@@ -130,27 +129,18 @@ public class FileUtils {
 
         Path path = Paths.get(parent.toString(), newDir);
         return mkDirs(path);
-
     }
 
     private static boolean mkDirs(Path path) {
-        if(!Files.exists(path)) {
+        if (!Files.exists(path)) {
             // if not make one
             return new File(path.toString()).mkdirs();
         }
         return true;
     }
 
-    public static Path getGlobalSummaryPath() {
-        return globalSummaryPath;
-    }
-
     public static Path getDetailedResultsPath() {
         return detailedResultsPath;
-    }
-
-    public static Path getTracePath() {
-        return tracePath;
     }
 
     public static Path getRecordsDirPath() {
@@ -187,5 +177,4 @@ public class FileUtils {
         DateFormat dF = new SimpleDateFormat("yyyyMMdd-HHmmss:SSS");
         return dF.format(Calendar.getInstance().getTime());
     }
-
 }

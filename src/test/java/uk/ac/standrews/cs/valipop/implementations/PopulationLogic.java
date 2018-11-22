@@ -34,7 +34,6 @@ public class PopulationLogic {
     private static final int MAXIMUM_MOTHER_AGE_AT_CHILDBIRTH = 55;
     private static final int MAX_GESTATION_IN_DAYS = 300;
     private static final int MINIMUM_FATHER_AGE_AT_CHILDBIRTH = 12;
-    private static final int MAXIMUM_FATHER_AGE_AT_CHILDBIRTH = 100;
 
     /**
      * Checks whether the ages of the given parents are sensible for the given child.
@@ -55,7 +54,18 @@ public class PopulationLogic {
 
         final ValipopDate child_birth_date = child.getBirthDate();
 
-        return parentsHaveSensibleAgesAtChildBirth(father_birth_date, father_death_date, mother_birth_date, mother_death_date, child_birth_date);
+        boolean sensible = parentsHaveSensibleAgesAtChildBirth(father_birth_date, father_death_date, mother_birth_date, mother_death_date, child_birth_date);
+
+        if (!sensible) {
+            System.err.println("father: " + father + " mother: " + mother + " child: " + child);
+            System.err.println("mother birth: " +  mother_birth_date);
+            System.err.println("mother death: " +  mother_death_date);
+            System.err.println("father birth: " +  father_birth_date);
+            System.err.println("father death: " +  father_death_date);
+            System.err.println("child birth: " +  child_birth_date);
+        }
+
+        return sensible;
     }
 
     private static boolean parentsHaveSensibleAgesAtChildBirth(final ValipopDate father_birth_date, final ValipopDate father_death_date, final ValipopDate mother_birth_date, final ValipopDate mother_death_date, final ValipopDate child_birth_date) {
@@ -65,9 +75,14 @@ public class PopulationLogic {
         boolean motherNotTooOld = motherNotTooOldAtBirth(mother_birth_date, child_birth_date);
         boolean fatherAliveAtConception = fatherAliveAtConception(father_death_date, child_birth_date);
         boolean fatherNotTooYoung = fatherNotTooYoungAtBirth(father_birth_date, child_birth_date);
-        boolean fatherNotTooOld = fatherNotTooOldAtBirth(father_birth_date, child_birth_date);
 
-        return motherAlive && motherNotTooYoung && motherNotTooOld && fatherAliveAtConception && fatherNotTooYoung && fatherNotTooOld;
+        if (!motherAlive) System.err.println("mother not alive");
+        if (!motherNotTooYoung) System.err.println("mother too young");
+        if (!motherNotTooOld) System.err.println("mother too old");
+        if (!fatherAliveAtConception) System.err.println("father not alive at conception");
+        if (!fatherNotTooYoung) System.err.println("father too young");
+
+        return motherAlive && motherNotTooYoung && motherNotTooOld && fatherAliveAtConception && fatherNotTooYoung;
     }
 
     private static boolean motherAliveAtBirth(final ValipopDate mother_death_date, final ValipopDate child_birth_date) {
@@ -99,13 +114,6 @@ public class PopulationLogic {
         final int fathers_age_at_birth = parentsAgeAtChildBirth(father_birth_date, child_birth_date);
 
         return notLessThan(fathers_age_at_birth, MINIMUM_FATHER_AGE_AT_CHILDBIRTH);
-    }
-
-    private static boolean fatherNotTooOldAtBirth(final ValipopDate father_birth_date, final ValipopDate child_birth_date) {
-
-        final int fathers_age_at_birth = parentsAgeAtChildBirth(father_birth_date, child_birth_date);
-
-        return notGreaterThan(fathers_age_at_birth, MAXIMUM_FATHER_AGE_AT_CHILDBIRTH);
     }
 
     private static int parentsAgeAtChildBirth(final ValipopDate parent_birth_date, final ValipopDate child_birth_date) {

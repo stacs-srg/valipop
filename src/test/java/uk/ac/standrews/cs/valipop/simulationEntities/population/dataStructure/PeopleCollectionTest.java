@@ -52,7 +52,7 @@ public class PeopleCollectionTest {
     PopulationStatistics ps;
 
     @Before
-    public void setUpPopulationStatistics() throws InconsistentWeightException, IOException, InvalidInputFileException {
+    public void setUpPopulationStatistics() {
         Config config = new Config(new MonthDate(1,1), new MonthDate(1,100),
                 new MonthDate(1,200), 0, 0, 0, null,
                 "src/test/resources/valipop/test-pop", "", "",

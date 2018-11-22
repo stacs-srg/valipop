@@ -65,7 +65,7 @@ public abstract class AbstractFilePopulationWriter implements IPopulationWriter 
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
 
         outputTrailer(writer);
         writer.close();
