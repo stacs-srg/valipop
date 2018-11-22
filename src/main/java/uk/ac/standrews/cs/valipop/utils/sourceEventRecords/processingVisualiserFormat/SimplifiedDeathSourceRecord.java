@@ -84,7 +84,7 @@ public class SimplifiedDeathSourceRecord extends IndividualSourceRecord {
 
         processDates(birth_date, death_date);
 
-        final IPartnership parents_partnership = person.getParentsPartnership();
+        final IPartnership parents_partnership = person.getParents();
         if (parents_partnership != null) {
 
             setParentAttributes(person, population, parents_partnership);

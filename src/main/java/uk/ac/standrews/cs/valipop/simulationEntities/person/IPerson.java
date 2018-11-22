@@ -20,8 +20,6 @@ import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
 import java.util.Collection;
 import java.util.List;
@@ -108,7 +106,7 @@ public interface IPerson extends Comparable<IPerson> {
      *
      * @return the person's parents' partnership
      */
-    IPartnership getParentsPartnership();
+    IPartnership getParents();
 
     boolean isIllegitimate();
 
@@ -116,35 +114,5 @@ public interface IPerson extends Comparable<IPerson> {
 
     void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics);
 
-//    void addChildrenToCurrentPartnership(int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config);
-
-    boolean toSeparate();
-
-    void willSeparate(boolean b);
-
-//    int ageOnDate(ValipopDate date);
-
-    boolean needsNewPartner(AdvanceableDate currentDate);
-
-    int numberOfChildrenInLatestPartnership();
-
     Collection<IPerson> getAllChildren();
-
-    boolean diedInYear(YearDate year);
-
-    Collection<IPartnership> getPartnershipsActiveInYear(YearDate year);
-
-    boolean bornInYear(YearDate year);
-
-    IPartnership getLastPartnership();
-
-    Integer numberOfChildrenBirthedBeforeDate(YearDate y);
-
-    ValipopDate getDateOfNextPostSeparationEvent(ValipopDate separationDate);
-
-    boolean diedAfter(ValipopDate date);
-
-    void setMarriageBaby(boolean b);
-
-    boolean getMarriageBaby();
 }

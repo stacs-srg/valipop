@@ -26,6 +26,10 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.bornInYear;
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.getPartnershipsActiveInYear;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -42,10 +46,10 @@ public class PersonCharacteristicsIdentifier {
 
     public static IPartnership getActivePartnership(IPerson person, ValipopDate currentDate) {
 
-        ArrayList<IPartnership> partnershipsInYear = new ArrayList<>(person.getPartnershipsActiveInYear(currentDate.getYearDate()));
+        List<IPartnership> partnershipsInYear = new ArrayList<>(getPartnershipsActiveInYear(person, currentDate.getYearDate()));
 
         if (partnershipsInYear.size() > 1) {
-            throw new UnsupportedOperationException("Lots of partners in year - likely for a female to get this error");
+            throw new RuntimeException("Lots of partners in year - likely for a female to get this error");
         } else if (partnershipsInYear.size() == 0) {
             return null;
         } else {
@@ -64,7 +68,7 @@ public class PersonCharacteristicsIdentifier {
         int count = 0;
 
         for (IPerson child : children) {
-            if (child.bornInYear(year)) {
+            if (bornInYear(child, year)) {
                 count++;
             }
         }
@@ -99,7 +103,7 @@ public class PersonCharacteristicsIdentifier {
 
         IPerson lastChild = activePartnership.getLastChild();
 
-        if (!lastChild.bornInYear(year)) {
+        if (!bornInYear(lastChild, year)) {
             return SeparationOption.NO;
         } else if (activePartnership.getSeparationDate(RANDOM_GENERATOR) != null) { // TODO Would this be better to use earliest possible sep date?
             return SeparationOption.YES;

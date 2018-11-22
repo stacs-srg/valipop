@@ -99,7 +99,6 @@ public class EntityFactory {
             if (DateUtils.dateBefore(earliestPossibleMarriageDate, childrenBirthDate)) {
                 // if there is a tenable marriage date then select it
                 partnership.setMarriageDate(marriageDateSelector.selectDate(earliestPossibleMarriageDate, childrenBirthDate, ps.getRandomGenerator()));
-                aChild.setMarriageBaby(true);
             } else {
                 partnership.setMarriageDate(null);
             }

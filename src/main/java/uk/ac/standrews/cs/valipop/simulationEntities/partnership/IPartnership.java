@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.util.Collection;
 import java.util.List;
@@ -65,6 +64,8 @@ public interface IPartnership extends Comparable<IPartnership> {
 
     ValipopDate getEarliestPossibleSeparationDate();
 
+    void setEarliestPossibleSeparationDate(ValipopDate date);
+
     void setMarriageDate(ValipopDate marriageDate);
 
     /**
@@ -82,8 +83,6 @@ public interface IPartnership extends Comparable<IPartnership> {
     void addChildren(Collection<IPerson> children);
 
     void setPartnershipDate(ValipopDate startDate);
-
-    void separate(ValipopDate currentDate, CompoundTimeUnit consideredTimePeriod);
 
     IPerson getLastChild();
 

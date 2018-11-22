@@ -16,54 +16,47 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.diedInYear;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
 
-    ArrayList<IPerson> people = new ArrayList<>();
+    private List<IPerson> people = new ArrayList<>();
 
-    public AgeNodeInt(IntegerRange option, SexNodeInt parentNode, Integer initCount) {
+    AgeNodeInt(IntegerRange option, SexNodeInt parentNode, Integer initCount) {
         super(option, parentNode, initCount);
     }
 
-    public AgeNodeInt() {
+    AgeNodeInt() {
         super();
     }
 
     @Override
     public void processPerson(IPerson person, ValipopDate currentDate) {
 
-//        YearDate yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
-//        Integer age = getOption().getValue();
-//
-//        Date calcCurrentDate = yob.advanceTime(age, TimeUnit.YEAR);
-
         people.add(person);
 
         incCountByOne();
 
-        DiedOption option;
-
-        if(person.diedInYear(currentDate.getYearDate())) {
-            option = DiedOption.YES;
-        } else {
-            option = DiedOption.NO;
-        }
+        DiedOption option = diedInYear(person, currentDate.getYearDate()) ? DiedOption.YES : DiedOption.NO;
 
         try {
             getChild(option).processPerson(person, currentDate);
-        } catch(ChildNotFoundException e) {
+
+        } catch (ChildNotFoundException e) {
             addChild(option).processPerson(person, currentDate);
         }
     }

@@ -21,7 +21,7 @@ public class PopulationNavigation {
         // Include half-siblings.
 
         final Collection<IPerson> siblings = new TreeSet<>();
-        final IPartnership parents = person.getParentsPartnership();
+        final IPartnership parents = person.getParents();
 
         if (parents != null) {
 
@@ -150,7 +150,7 @@ public class PopulationNavigation {
 
         if (generations > 0) {
 
-            IPartnership parentsPartnership = person.getParentsPartnership();
+            IPartnership parentsPartnership = person.getParents();
 
             if (parentsPartnership != null) {
                 IPerson mother = parentsPartnership.getFemalePartner();
@@ -208,7 +208,7 @@ public class PopulationNavigation {
     public static boolean lastPartnerDied(IPerson person, ValipopDate currentDate) {
 
         try {
-            IPerson lastPartner = getLastChild(person).getParentsPartnership().getPartnerOf(person);
+            IPerson lastPartner = getLastChild(person).getParents().getPartnerOf(person);
             return !aliveOnDate(lastPartner, currentDate);
 
         } catch (NullPointerException e) {
@@ -226,5 +226,110 @@ public class PopulationNavigation {
         } else {
             return DateUtils.differenceInYears(birthDate, currentDate).getCount();
         }
+    }
+
+    public static int numberOfChildrenInLatestPartnership(IPerson person) {
+        return getLastChild(person).getParents().getChildren().size();
+    }
+
+    public static boolean bornInYear(IPerson person, YearDate year) {
+
+        ValipopDate birthDate = person.getBirthDate();
+        return birthDate != null && DateUtils.dateInYear(birthDate, year);
+    }
+
+    public static boolean diedInYear(IPerson person, YearDate year) {
+
+        ValipopDate deathDate = person.getDeathDate();
+        return deathDate != null && DateUtils.dateInYear(deathDate, year);
+    }
+
+    public static boolean diedAfter(IPerson person, ValipopDate date) {
+
+        ValipopDate deathDate = person.getDeathDate();
+        return deathDate == null || DateUtils.dateBefore(date, deathDate);
+    }
+
+    public static Collection<IPartnership> getPartnershipsActiveInYear(IPerson person, YearDate year) {
+
+        Collection<IPartnership> activePartnerships = new ArrayList<>();
+
+        for (IPartnership partnership : person.getPartnerships()) {
+            ValipopDate startDate = partnership.getPartnershipDate();
+
+            if (DateUtils.dateInYear(startDate, year)) {
+                activePartnerships.add(partnership);
+            } else {
+                for (IPerson p : partnership.getChildren()) {
+                    if (DateUtils.dateInYear(p.getBirthDate(), year)) {
+                        activePartnerships.add(partnership);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return activePartnerships;
+    }
+
+    public static IPartnership getLastPartnership(IPerson person) {
+
+        ValipopDate latestPartnershipDate = new YearDate(Integer.MIN_VALUE);
+        IPartnership partnership = null;
+
+        for (IPartnership p : person.getPartnerships()) {
+            if (DateUtils.dateBefore(latestPartnershipDate, p.getPartnershipDate())) {
+                latestPartnershipDate = p.getPartnershipDate();
+                partnership = p;
+            }
+        }
+        return partnership;
+    }
+
+    public static Integer numberOfChildrenBirthedBeforeDate(IPerson person, YearDate y) {
+
+        int count = 0;
+
+        for (IPartnership p : person.getPartnerships()) {
+            for (IPerson c : p.getChildren()) {
+                if (DateUtils.dateBefore(c.getBirthDate(), y)) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public static ValipopDate getDateOfNextPostSeparationEvent(IPerson person, ValipopDate separationDate) {
+
+        ValipopDate earliestDate = null;
+
+        for (IPartnership partnership : person.getPartnerships()) {
+            ValipopDate date = partnership.getPartnershipDate();
+            if (DateUtils.dateBefore(separationDate, date)) {
+
+                if (earliestDate == null || DateUtils.dateBefore(date, earliestDate)) {
+                    earliestDate = date;
+                }
+            }
+
+            date = partnership.getMarriageDate();
+
+            if (date != null) {
+                if (DateUtils.dateBefore(separationDate, date)) {
+
+                    if (earliestDate == null || DateUtils.dateBefore(date, earliestDate)) {
+                        earliestDate = date;
+                    }
+                }
+            }
+        }
+
+        if (earliestDate == null) {
+            earliestDate = person.getDeathDate();
+        }
+
+        return earliestDate;
     }
 }

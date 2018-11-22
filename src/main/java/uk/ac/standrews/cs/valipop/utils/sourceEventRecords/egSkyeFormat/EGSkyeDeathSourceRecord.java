@@ -12,6 +12,8 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import java.util.List;
 import java.util.Random;
 
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.getLastPartnership;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -30,12 +32,12 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
 
         deathDate = new ExactDate(person.getDeathDate());
 
-        if (person.getParentsPartnership() != null) {
+        if (person.getParents() != null) {
 
-            IPerson mother = person.getParentsPartnership().getFemalePartner();
+            IPerson mother = person.getParents().getFemalePartner();
             mothersOccupation = mother.getOccupation();
 
-            IPerson father = person.getParentsPartnership().getMalePartner();
+            IPerson father = person.getParents().getMalePartner();
             if (!PopulationNavigation.aliveOnDate(father, person.getDeathDate())) {
                 // father is dead
                 setFatherDeceased("D"); // deceased
@@ -70,10 +72,10 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
                 return "S"; // single/spinster
             }
         } else {
-            if (deceased.getLastPartnership().getSeparationDate(new JDKRandomGenerator()) == null) {
+            if (getLastPartnership(deceased).getSeparationDate(new JDKRandomGenerator()) == null) {
                 // not separated from last partner
 
-                IPerson lastPartner = deceased.getLastPartnership().getPartnerOf(deceased);
+                IPerson lastPartner = getLastPartnership(deceased).getPartnerOf(deceased);
                 if (PopulationNavigation.aliveOnDate(lastPartner, deceased.getDeathDate())) {
 
                     // last spouse alive on death date of deceased

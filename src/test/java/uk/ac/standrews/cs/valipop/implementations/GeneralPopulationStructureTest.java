@@ -269,7 +269,7 @@ public abstract class GeneralPopulationStructureTest {
 
         for (final IPerson child : partnership.getChildren()) {
 
-            assertEquals(child.getParentsPartnership(), partnership);
+            assertEquals(child.getParents(), partnership);
         }
 
     }

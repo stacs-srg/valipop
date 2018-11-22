@@ -19,24 +19,23 @@ package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.utils.Logger;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DateSelector;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.getDateOfNextPostSeparationEvent;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class Partnership implements IPartnership {
 
-    private static Logger log = new Logger(Partnership.class);
     private static int nextId = 0;
     private int id;
     private IPerson male;
@@ -170,8 +169,8 @@ public class Partnership implements IPartnership {
 
             if (separationDate == null) {
 
-                ValipopDate maleMovedOnDate = male.getDateOfNextPostSeparationEvent(earliestPossibleSeparationDate);
-                ValipopDate femaleMovedOnDate = female.getDateOfNextPostSeparationEvent(earliestPossibleSeparationDate);
+                ValipopDate maleMovedOnDate = getDateOfNextPostSeparationEvent(male, earliestPossibleSeparationDate);
+                ValipopDate femaleMovedOnDate = getDateOfNextPostSeparationEvent(female, earliestPossibleSeparationDate);
 
                 ValipopDate earliestMovedOnDate;
 
@@ -214,6 +213,11 @@ public class Partnership implements IPartnership {
     }
 
     @Override
+    public void setEarliestPossibleSeparationDate(ValipopDate date) {
+        earliestPossibleSeparationDate = date;
+    }
+
+    @Override
     public int compareTo(IPartnership o) {
         return this.id == o.getId() ? 0 : -1;
     }
@@ -224,24 +228,15 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public void separate(ValipopDate currentDate, CompoundTimeUnit consideredTimePeriod) {
-
-        earliestPossibleSeparationDate = currentDate;
-
-        female.willSeparate(true);
-        male.willSeparate(true);
-    }
-
-    @Override
     public IPerson getLastChild() {
 
         ValipopDate latestBirthDate = new YearDate(Integer.MIN_VALUE);
         IPerson latestChild = null;
 
-        for (IPerson c : getChildren()) {
-            if (DateUtils.dateBefore(latestBirthDate, c.getBirthDate())) {
-                latestBirthDate = c.getBirthDate();
-                latestChild = c;
+        for (IPerson child : getChildren()) {
+            if (DateUtils.dateBefore(latestBirthDate, child.getBirthDate())) {
+                latestBirthDate = child.getBirthDate();
+                latestChild = child;
             }
         }
 

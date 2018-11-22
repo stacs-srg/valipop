@@ -25,7 +25,6 @@ import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import javax.annotation.Nonnull;
 import java.text.ParseException;
@@ -160,6 +159,11 @@ public class GEDCOMPartnership implements IPartnership {
         return null;
     }
 
+    @Override
+    public void setEarliestPossibleSeparationDate(ValipopDate date) {
+
+    }
+
     public void setMarriageDate(ValipopDate marriageDate) {
 
     }
@@ -176,11 +180,6 @@ public class GEDCOMPartnership implements IPartnership {
 
     @Override
     public void setPartnershipDate(ValipopDate startDate) {
-
-    }
-
-    @Override
-    public void separate(ValipopDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
     }
 

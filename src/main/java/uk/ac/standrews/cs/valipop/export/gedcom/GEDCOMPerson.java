@@ -23,8 +23,6 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -236,7 +234,7 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public IPartnership getParentsPartnership() {
+    public IPartnership getParents() {
         return null;
     }
 
@@ -255,73 +253,8 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public boolean toSeparate() {
-        return false;
-    }
-
-    @Override
-    public void willSeparate(boolean b) {
-
-    }
-
-    @Override
-    public boolean needsNewPartner(AdvanceableDate currentDate) {
-        return false;
-    }
-
-    @Override
-    public int numberOfChildrenInLatestPartnership() {
-        return 0;
-    }
-
-    @Override
     public Collection<IPerson> getAllChildren() {
         return null;
-    }
-
-    @Override
-    public boolean diedInYear(YearDate year) {
-        return false;
-    }
-
-    @Override
-    public Collection<IPartnership> getPartnershipsActiveInYear(YearDate year) {
-        return null;
-    }
-
-    @Override
-    public boolean bornInYear(YearDate year) {
-        return false;
-    }
-
-    @Override
-    public IPartnership getLastPartnership() {
-        return null;
-    }
-
-    @Override
-    public Integer numberOfChildrenBirthedBeforeDate(YearDate y) {
-        return null;
-    }
-
-    @Override
-    public ValipopDate getDateOfNextPostSeparationEvent(ValipopDate separationDate) {
-        return null;
-    }
-
-    @Override
-    public boolean diedAfter(ValipopDate date) {
-        return false;
-    }
-
-    @Override
-    public void setMarriageBaby(boolean b) {
-
-    }
-
-    @Override
-    public boolean getMarriageBaby() {
-        return false;
     }
 
     @Override

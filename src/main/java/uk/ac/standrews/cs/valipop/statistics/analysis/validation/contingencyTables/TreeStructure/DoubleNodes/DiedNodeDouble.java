@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.getPartnershipsActiveInYear;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -114,8 +116,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
         incCountByOne();
 
         if (person.getSex() == SexOption.FEMALE) {
-            ArrayList<IPartnership> partnershipsInYear = new ArrayList<>(
-                    person.getPartnershipsActiveInYear(currentDate.getYearDate()));
+            List<IPartnership> partnershipsInYear = new ArrayList<>(getPartnershipsActiveInYear(person, currentDate.getYearDate()));
 
             if (partnershipsInYear.size() == 0) {
                 IntegerRange range = resolveToChildRange(0);
@@ -124,7 +125,8 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
                 } catch (ChildNotFoundException e) {
                     addChild(range).processPerson(person, currentDate);
                 }
-            } else if (partnershipsInYear.size() == 1) {
+            }
+            else if (partnershipsInYear.size() == 1) {
                 IPartnership partnership = partnershipsInYear.remove(0);
                 int numberOfChildren = partnership.getChildren().size();
                 IntegerRange range = resolveToChildRange(numberOfChildren);
@@ -134,7 +136,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
                     addChild(range).processPerson(person, currentDate);
                 }
             } else {
-                throw new UnsupportedOperationException("Woman in too many partnerships in year");
+                throw new RuntimeException("Woman in too many partnerships in year");
             }
         }
     }
@@ -195,9 +197,9 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 
-        for (IntegerRange o : sepRanges) {
-            if (o.contains(pncip)) {
-                return o;
+        for (IntegerRange range : sepRanges) {
+            if (range.contains(pncip)) {
+                return range;
             }
         }
 
@@ -205,7 +207,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
             return new IntegerRange(0);
         }
 
-        throw new Error("Did not resolve any permissible ranges");
+        throw new RuntimeException("Did not resolve any permissible ranges");
     }
 
     public List<String> toStringAL() {

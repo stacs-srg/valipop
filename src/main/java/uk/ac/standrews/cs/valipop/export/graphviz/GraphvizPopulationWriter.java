@@ -173,6 +173,6 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
 
     private boolean personHasParents(final IPerson person) {
 
-        return person.getParentsPartnership() != null;
+        return person.getParents() != null;
     }
 }

@@ -29,6 +29,8 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeEx
 
 import java.util.Collection;
 
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.numberOfChildrenBirthedBeforeDate;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -44,13 +46,14 @@ public class PreviousNumberOfChildrenInPartnershipNodeInt extends IntNode<Intege
 
     @Override
     public void processPerson(IPerson person, ValipopDate currentDate) {
+
         incCountByOne();
 
-        Integer numberOfPrevChildrenInAnyPartnership = person.numberOfChildrenBirthedBeforeDate(currentDate.getYearDate());
-        IntegerRange range = resolveToChildRange(numberOfPrevChildrenInAnyPartnership);
+        IntegerRange range = resolveToChildRange(numberOfChildrenBirthedBeforeDate(person, currentDate.getYearDate()));
         try {
             getChild(range).processPerson(person, currentDate);
-        } catch(ChildNotFoundException e) {
+
+        } catch (ChildNotFoundException e) {
             addChild(range).processPerson(person, currentDate);
         }
     }
@@ -67,8 +70,8 @@ public class PreviousNumberOfChildrenInPartnershipNodeInt extends IntNode<Intege
 
     private IntegerRange resolveToChildRange(Integer npciap) {
 
-        for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
-            if(aN.getOption().contains(npciap)) {
+        for (Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
+            if (aN.getOption().contains(npciap)) {
                 return aN.getOption();
             }
         }
@@ -78,7 +81,6 @@ public class PreviousNumberOfChildrenInPartnershipNodeInt extends IntNode<Intege
 
         ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-
         Collection<IntegerRange> birthOrders;
         try {
             birthOrders = getInputStats().getOrderedBirthRates(currentDate).getData(age).getLabels();
@@ -87,9 +89,8 @@ public class PreviousNumberOfChildrenInPartnershipNodeInt extends IntNode<Intege
             birthOrders = data.getData(data.getSmallestLabel().getValue()).getLabels();
         }
 
-
-        for(IntegerRange o : birthOrders) {
-            if(o.contains(npciap)) {
+        for (IntegerRange o : birthOrders) {
+            if (o.contains(npciap)) {
                 return o;
             }
         }

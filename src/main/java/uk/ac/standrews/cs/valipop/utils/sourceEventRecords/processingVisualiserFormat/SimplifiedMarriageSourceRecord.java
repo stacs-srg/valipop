@@ -111,7 +111,7 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
         setBrideOccupation(bride.getOccupation());
         setBrideAgeOrDateOfBirth(String.valueOf(fullYearsBetween(bride.getBirthDate().getDate(), start_date)));
 
-        IPartnership groom_parents_partnership = groom.getParentsPartnership();
+        IPartnership groom_parents_partnership = groom.getParents();
         if (groom_parents_partnership != null) {
 
             IPerson groom_mother = groom_parents_partnership.getFemalePartner();
@@ -127,7 +127,7 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
             setGroomMothersMaidenSurname(getMaidenSurname(population, groom_mother));
         }
 
-        IPartnership bride_parents_partnership = bride.getParentsPartnership();
+        IPartnership bride_parents_partnership = bride.getParents();
         if (bride_parents_partnership != null) {
 
             IPerson bride_mother = bride_parents_partnership.getFemalePartner();

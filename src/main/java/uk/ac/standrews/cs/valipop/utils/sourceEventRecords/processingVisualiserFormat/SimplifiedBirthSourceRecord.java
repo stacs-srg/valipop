@@ -67,7 +67,7 @@ public class SimplifiedBirthSourceRecord extends IndividualSourceRecord {
         setBirthMonth(String.valueOf(birth_month));
         setBirthYear(String.valueOf(birth_year));
 
-        final IPartnership parents_partnership = person.getParentsPartnership();
+        final IPartnership parents_partnership = person.getParents();
 
         if (parents_partnership != null) {
 

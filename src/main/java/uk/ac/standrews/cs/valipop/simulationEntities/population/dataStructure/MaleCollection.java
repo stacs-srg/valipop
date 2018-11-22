@@ -26,6 +26,8 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.ex
 
 import java.util.*;
 
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.diedAfter;
+
 /**
  * The class MaleCollection is a concrete instance of the PersonCollection class.
  *
@@ -107,7 +109,7 @@ public class MaleCollection extends PersonCollection {
         Collection<IPerson> peopleAlive = new ArrayList<>();
 
         for (IPerson p : peopleBorn) {
-            if (p.diedAfter(firstDate)) {
+            if (diedAfter(p, firstDate)) {
                 peopleAlive.add(p);
             }
         }
