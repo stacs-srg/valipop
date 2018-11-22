@@ -61,7 +61,7 @@ public class PartneringLogic {
 
             LinkedList<NewMother> women = new LinkedList<>(needingPartners);
 
-            int age = women.getFirst().getNewMother().ageOnDate(currentDate);
+            int age = ageOnDate(women.getFirst().getNewMother(), currentDate);
 
             PartneringStatsKey key = new PartneringStatsKey(age, forNFemales, consideredTimePeriod, currentDate);
 
@@ -206,7 +206,7 @@ public class PartneringLogic {
                 final int numChildrenInPartnership = partnership.getNumberOfChildren();
 
                 // Decide on marriage
-                final MarriageStatsKey marriageKey = new MarriageStatsKey(mother.ageOnDate(currentDate), numChildrenInPartnership, consideredTimePeriod, currentDate);
+                final MarriageStatsKey marriageKey = new MarriageStatsKey(ageOnDate(mother, currentDate), numChildrenInPartnership, consideredTimePeriod, currentDate);
                 final SingleDeterminedCount marriageCounts = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(marriageKey, config);
 
                 final boolean isIllegitimate = !father.needsNewPartner(currentDate);
@@ -272,7 +272,7 @@ public class PartneringLogic {
 
     private static IntegerRange resolveAgeToIntegerRange(IPerson male, Set<IntegerRange> labels, ValipopDate currentDate) {
 
-        int age = male.ageOnDate(currentDate);
+        int age = ageOnDate(male, currentDate);
 
         for (IntegerRange iR : labels) {
             if (iR.contains(age)) {
@@ -316,7 +316,7 @@ public class PartneringLogic {
         }
 
         // Get access to illegitimacy rates
-        IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(man.ageOnDate(currentDate), childrenInPregnancy, consideredTimePeriod, currentDate);
+        IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(ageOnDate(man, currentDate), childrenInPregnancy, consideredTimePeriod, currentDate);
         SingleDeterminedCount illegitimateCounts = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(illegitimateKey, config);
         int permitted = (int) Math.round(illegitimateCounts.getDeterminedCount() / (double) childrenInPregnancy);
 

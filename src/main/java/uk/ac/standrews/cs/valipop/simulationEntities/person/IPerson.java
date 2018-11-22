@@ -16,15 +16,12 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.person;
 
-import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.util.Collection;
 import java.util.List;
@@ -119,15 +116,13 @@ public interface IPerson extends Comparable<IPerson> {
 
     void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics);
 
-    IPerson getLastChild();
-
-    void addChildrenToCurrentPartnership(int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config);
+//    void addChildrenToCurrentPartnership(int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config);
 
     boolean toSeparate();
 
     void willSeparate(boolean b);
 
-    int ageOnDate(ValipopDate date);
+//    int ageOnDate(ValipopDate date);
 
     boolean needsNewPartner(AdvanceableDate currentDate);
 

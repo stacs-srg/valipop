@@ -18,16 +18,13 @@ package uk.ac.standrews.cs.valipop.export.gedcom;
 
 import org.gedcom4j.model.*;
 import uk.ac.standrews.cs.utilities.DateManipulation;
-import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -257,17 +254,6 @@ public class GEDCOMPerson implements IPerson {
     public void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics) {
     }
 
-
-    @Override
-    public IPerson getLastChild() {
-        return null;
-    }
-
-    @Override
-    public void addChildrenToCurrentPartnership(int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config) {
-
-    }
-
     @Override
     public boolean toSeparate() {
         return false;
@@ -276,11 +262,6 @@ public class GEDCOMPerson implements IPerson {
     @Override
     public void willSeparate(boolean b) {
 
-    }
-
-    @Override
-    public int ageOnDate(ValipopDate date) {
-        return 0;
     }
 
     @Override

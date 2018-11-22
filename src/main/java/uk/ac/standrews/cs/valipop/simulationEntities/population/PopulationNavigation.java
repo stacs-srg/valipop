@@ -5,6 +5,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -184,5 +185,46 @@ public class PopulationNavigation {
             return deathDate == null || DateUtils.dateBefore(date, deathDate);
         }
         return false;
+    }
+
+    public static IPerson getLastChild(IPerson person) {
+
+        ValipopDate latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
+        IPerson child = null;
+
+        for (IPartnership p : person.getPartnerships()) {
+            for (IPerson c : p.getChildren()) {
+
+                if (DateUtils.dateBeforeOrEqual(latestChildBirthDate, c.getBirthDate())) {
+                    latestChildBirthDate = c.getBirthDate();
+                    child = c;
+                }
+            }
+        }
+
+        return child;
+    }
+
+    public static boolean lastPartnerDied(IPerson person, ValipopDate currentDate) {
+
+        try {
+            IPerson lastPartner = getLastChild(person).getParentsPartnership().getPartnerOf(person);
+            return !aliveOnDate(lastPartner, currentDate);
+
+        } catch (NullPointerException e) {
+            return true;
+        }
+    }
+
+    public static int ageOnDate(IPerson person, ValipopDate currentDate) {
+
+        ValipopDate birthDate = person.getBirthDate();
+
+        if (birthDate.getDay() == 1 && birthDate.getMonth() == 1) {
+            int age = DateUtils.differenceInYears(birthDate, currentDate).getCount() - 1;
+            return age == -1 ? 0 : age;
+        } else {
+            return DateUtils.differenceInYears(birthDate, currentDate).getCount();
+        }
     }
 }

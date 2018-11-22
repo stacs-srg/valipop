@@ -14,6 +14,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.Compoun
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.ageOnDate;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -40,17 +41,17 @@ public class PersonTest {
 
         ExactDate e = new ExactDate(31,12,1901);
 
-        assertEquals(0, p1.ageOnDate(y1));
+        assertEquals(0, ageOnDate(p1, y1));
 
-        assertEquals(0, p3.ageOnDate(y2));
-        assertEquals(0, p1.ageOnDate(y2));
+        assertEquals(0, ageOnDate(p3,y2));
+        assertEquals(0, ageOnDate(p1,y2));
 
-        assertEquals(1, p1.ageOnDate(y3));
+        assertEquals(1, ageOnDate(p1,y3));
 
         Person p2 = new Person(SexOption.MALE, new ExactDate(31,12,1900), null, ps);
 
-        assertEquals(0, p2.ageOnDate(y2));
-        assertEquals(1, p2.ageOnDate(e));
-        assertEquals(1, p2.ageOnDate(y3));
+        assertEquals(0, ageOnDate(p2,y2));
+        assertEquals(1, ageOnDate(p2,e));
+        assertEquals(1, ageOnDate(p2,y3));
     }
 }
