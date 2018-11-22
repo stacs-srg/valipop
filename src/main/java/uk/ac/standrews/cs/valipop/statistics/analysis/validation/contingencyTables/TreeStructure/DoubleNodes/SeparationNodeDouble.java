@@ -39,6 +39,8 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeEx
 
 import java.util.Set;
 
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.ageOnDate;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -47,7 +49,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     public SeparationNodeDouble(SeparationOption option, NumberOfChildrenInPartnershipNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
 
-        if(!init) {
+        if (!init) {
             calcCount();
             makeChildren();
         }
@@ -62,51 +64,48 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void processPerson(IPerson person, ValipopDate currentDate) {
 
-
         incCountByOne();
 
         IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
 
         Integer newPartnerAge = null;
 
-        if(activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, currentDate.getYearDate())) {
+        if (activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, currentDate.getYearDate())) {
             IPerson partner = activePartnership.getPartnerOf(person);
-            newPartnerAge = partner.ageOnDate(activePartnership.getPartnershipDate());
+            newPartnerAge = ageOnDate(partner, activePartnership.getPartnershipDate());
         }
 
         // check if the partner falls into one of the child ranges
-        for(Node<IntegerRange, ?, Double, ?> node : getChildren()) {
+        for (Node<IntegerRange, ?, Double, ?> node : getChildren()) {
 
             Boolean in;
             try {
                 in = node.getOption().contains(newPartnerAge);
-            } catch (InvalidRangeException e) {
+            } catch (InvalidRangeException | NullPointerException e) {
                 in = null;
-            } catch (NullPointerException e) {
-                in = false;
             }
 
             // if partners age is in the considered range then process this person using this NPA range and return
-            if (in != null && in){
+            if (in != null && in) {
                 node.processPerson(person, currentDate);
                 return;
             }
 
             // if in is null due to range being 'na' and there is no new partner (thus NPA == null) then process this person using the current NPA range (na)
-            if(newPartnerAge == null && in == null) {
+            if (newPartnerAge == null && in == null) {
                 node.processPerson(person, currentDate);
                 return;
             }
-
         }
 
         // if we get here then the age range we want hasn't been created yet
 
-        if(newPartnerAge == null) {
+        if (newPartnerAge == null) {
+
             // if no NPA then a 'na' range hasn't been created yet - so we create it
-            addChild(
-                    new NewPartnerAgeNodeDouble(new IntegerRange("na"), this, 0.0, true)
-            ).processPerson(person, currentDate);
+            NewPartnerAgeNodeDouble node = new NewPartnerAgeNodeDouble(new IntegerRange("na"), this, 0.0, true);
+            addChild(node).processPerson(person, currentDate);
+
         } else {
 
             // this accessing of the statistical code isn't to calculate new values - we just use it to get the age
@@ -116,46 +115,21 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
             double numberOfFemales = getCount();
             CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
 
-            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                    .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
+            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
             // getting the age range labels
             Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
 
             // finding which the persons partner is in and creating it
-            for (IntegerRange o : options) {
-                if (o.contains(newPartnerAge)) {
-                    addChild(
-                            new NewPartnerAgeNodeDouble(o, this, 0.0, true)
-                    ).processPerson(person, currentDate);
+            for (IntegerRange range : options) {
+                if (range.contains(newPartnerAge)) {
+
+                    NewPartnerAgeNodeDouble node = new NewPartnerAgeNodeDouble(range, this, 0.0, true);
+                    addChild(node).processPerson(person, currentDate);
                     return;
                 }
             }
         }
-
-
-//        incCountByOne();
-//
-//        IPartnershipExtended activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
-//
-//        IntegerRange newPartnerAge = null;
-//
-//        if(activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, currentDate.getYearDate())) {
-//            IPersonExtended partner = activePartnership.getPartnerOf(person);
-//            newPartnerAge = new IntegerRange(partner.ageOnDate(activePartnership.getPartnershipDate()));
-//        }
-//
-//        if(newPartnerAge == null) {
-//            newPartnerAge = new IntegerRange("na");
-//        }
-//
-//        try {
-//            getChild(newPartnerAge).processPerson(person, currentDate);
-//        } catch (ChildNotFoundException e) {
-//            addChild(new NewPartnerAgeNodeDouble(newPartnerAge, this, 0.0, true)).processPerson(person, currentDate);
-//        }
-
-
     }
 
     @Override
@@ -173,10 +147,9 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
         ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-        if(died == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && diedN.getCount() > CTtree.NODE_MIN_COUNT) {
+        if (died == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && diedN.getCount() > CTtree.NODE_MIN_COUNT) {
 
             SexNodeDouble s = (SexNodeDouble) getAncestor(new SexNodeDouble());
-//            s.incCount(getCount());
 
             AgeNodeDouble a;
             try {
@@ -185,13 +158,9 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 throw new Error("Age Node should have already been created");
             }
 
-//            a.incCount(getCount());
-
-//            DiedOption died = ((DiedOption) getAncestor(new DiedNodeDouble()).getOption());
-
             // Split count between branches
 
-            for(Node<DiedOption, ?, Double, ?> n : a.getChildren()) {
+            for (Node<DiedOption, ?, Double, ?> n : a.getChildren()) {
 
                 DiedNodeDouble d = (DiedNodeDouble) n;
 
@@ -214,7 +183,6 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
                 IntegerRange numberOfPrevChildrenInAnyPartnership = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption();
 
-
                 int childrenInYear = ((NumberOfChildrenInYearNodeDouble) getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
 
                 int numberOfChildrenInAnyPartnership = numberOfPrevChildrenInAnyPartnership.getValue() + childrenInYear;
@@ -232,27 +200,21 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
                 nciap.incCount(partOfCount);
             }
-
         }
-
     }
 
     @Override
     public void calcCount() {
 
-        if(getOption() == SeparationOption.NA) {
+        if (getOption() == SeparationOption.NA) {
             setCount(getParent().getCount());
         } else {
 
-            IntegerRange numberOfChildrenInPartnership = ((NumberOfChildrenInPartnershipNodeDouble)
-                    getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
-
-//            Integer numberOfChildrenInYear = ((NumberOfChildrenInYearNodeDouble)
-//                    getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
+            IntegerRange numberOfChildrenInPartnership = ((NumberOfChildrenInPartnershipNodeDouble) getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
 
             if (numberOfChildrenInPartnership.getValue() == 0) {
-
                 setCount(getParent().getCount());
+
             } else {
 
                 double forNPeople = getParent().getCount();
@@ -264,47 +226,43 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
                 SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
-                        new SeparationStatsKey(
-                                numberOfChildrenInPartnership.getValue(), age, forNPeople, timePeriod, currentDate), null);
+                        new SeparationStatsKey(numberOfChildrenInPartnership.getValue(), age, forNPeople, timePeriod, currentDate), null);
 
                 if (getOption() == SeparationOption.YES) {
                     setCount(sDC.getRawUncorrectedCount());
                 } else {
                     setCount(forNPeople - sDC.getRawUncorrectedCount());
                 }
-
             }
         }
 
         advanceCount();
-
-
     }
 
     @Override
     public void makeChildren() {
 
         // WHY DO WE NEVER CONSIDER THE SEPARATION STATUS IN THIS NODE? SURELY IT SHOULD IMPACT ON THE CHILDREN?
-            // Answer: No, you need to remember that the New Partner Age is to do with the person who children have been
-            // had with in the current year (NOT the next partner who will be moved onto). The fact this node comes
-            // beneath the 'Separation' node in the tree is a misnoma, this age does not pertain to the partner who will
-            // be moved onto post separation.
-            // Also it is possible for there to partner ages below both the YES and NO separation nodes as you may
-            // get a female who had no children entering the year (PNCIP = 0) who then has children (CIY = YES) who thus
-            // has a new partner (thus NPA will be set) but who also separates from the partner in the same year
-            // (Separation = YES).
+        // Answer: No, you need to remember that the New Partner Age is to do with the person who children have been
+        // had with in the current year (NOT the next partner who will be moved onto). The fact this node comes
+        // beneath the 'Separation' node in the tree is a misnoma, this age does not pertain to the partner who will
+        // be moved onto post separation.
+        // Also it is possible for there to partner ages below both the YES and NO separation nodes as you may
+        // get a female who had no children entering the year (PNCIP = 0) who then has children (CIY = YES) who thus
+        // has a new partner (thus NPA will be set) but who also separates from the partner in the same year
+        // (Separation = YES).
 
-        IntegerRange ncip = ((NumberOfChildrenInPartnershipNodeDouble)
-                getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
+        IntegerRange ncip = ((NumberOfChildrenInPartnershipNodeDouble) getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
 
-        if(ncip.getValue() == 0) { // i.e. no current partner and no children in year, therefore no NPA as no NP
+        if (ncip.getValue() == 0) { // i.e. no current partner and no children in year, therefore no NPA as no NP
             addChild(new IntegerRange("na"));
-        } else {
-            ChildrenInYearOption ciy = ((ChildrenInYearNodeDouble)
-                    getAncestor(new ChildrenInYearNodeDouble())).getOption();
 
-            if(ciy == ChildrenInYearOption.NO) { // if no children in year then by definition no new partner can exit - thus no NPA
+        } else {
+            ChildrenInYearOption ciy = ((ChildrenInYearNodeDouble) getAncestor(new ChildrenInYearNodeDouble())).getOption();
+
+            if (ciy == ChildrenInYearOption.NO) { // if no children in year then by definition no new partner can exit - thus no NPA
                 addChild(new IntegerRange("na"));
+
             } else {
 
                 IntegerRange pncip = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
@@ -313,7 +271,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 // at this point we know this partnership has borne children, paired with the knowledge of if there has
                 // been any previous children in this partnership we can decide
 
-                if(pncip.getValue() != 0) { // if it is an ongoing partnership - then no NP and thus no NPA
+                if (pncip.getValue() != 0) { // if it is an ongoing partnership - then no NP and thus no NPA
                     addChild(new IntegerRange("na"));
                 } else {
                     // or is a new partnership - thus record NPA
@@ -326,13 +284,12 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                     double numberOfFemales = getCount();
                     CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
 
-                    MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                            .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
+                    MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
                     Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
 
-                    for (IntegerRange o : options) {
-                        addChild(o);
+                    for (IntegerRange range : options) {
+                        addChild(range);
                     }
                 }
             }

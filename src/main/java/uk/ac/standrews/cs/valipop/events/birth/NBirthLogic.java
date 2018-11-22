@@ -21,13 +21,18 @@ import uk.ac.standrews.cs.valipop.events.EventLogic;
 import uk.ac.standrews.cs.valipop.events.birth.partnering.PartneringLogic;
 import uk.ac.standrews.cs.valipop.events.birth.partnering.SeparationLogic;
 import uk.ac.standrews.cs.valipop.events.init.InitLogic;
+import uk.ac.standrews.cs.valipop.simulationEntities.EntityFactory;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.FemaleCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.MarriageStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.IllegitimateBirthStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
@@ -43,6 +48,8 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.OperableLa
 
 import java.io.PrintWriter;
 import java.util.*;
+
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.ageOnDate;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -150,9 +157,9 @@ public class NBirthLogic implements EventLogic {
         }
 
         // TODO adjust this to also permit age variations
-        ArrayList<IPerson> femalesAL = new ArrayList<>(females);
+        List<IPerson> femalesAL = new ArrayList<>(females);
 
-        int ageOfMothers = femalesAL.get(0).ageOnDate(currentDate);
+        int ageOfMothers = ageOnDate(femalesAL.get(0), currentDate);
 
         MultipleDeterminedCount requiredBirths = calcNumberOfPreganciesOfMultipleBirth(ageOfMothers, numberOfChildren,
                 desiredPopulationStatistics, currentDate, consideredTimePeriod, config);
@@ -191,7 +198,7 @@ public class NBirthLogic implements EventLogic {
                     needPartners.add(new NewMother(female, highestBirthOption.getValue()));
                 } else {
 
-                    female.addChildrenToCurrentPartnership(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population, desiredPopulationStatistics, config);
+                    addChildrenToCurrentPartnership(female, highestBirthOption.getValue(), currentDate, consideredTimePeriod, population, desiredPopulationStatistics, config);
                     havePartners.add(female);
 
                     try {
@@ -236,7 +243,7 @@ public class NBirthLogic implements EventLogic {
 
     private boolean eligible(IPerson potentialMother, PopulationStatistics desiredPopulationStatistics, ValipopDate currentDate) {
 
-        IPerson lastChild = potentialMother.getLastChild();
+        IPerson lastChild = PopulationNavigation.getLastChild(potentialMother);
 
         if (lastChild != null) {
             ExactDate earliestDateOfNextChild = DateUtils.
@@ -248,5 +255,58 @@ public class NBirthLogic implements EventLogic {
             // i.e. there is no previous child and thus no limitation to birth
             return true;
         }
+    }
+
+    private void addChildrenToCurrentPartnership(IPerson mother, int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config) {
+
+        population.getLivingPeople().removePerson(mother);
+
+        IPerson lastChild = PopulationNavigation.getLastChild(mother);
+        IPartnership last = lastChild.getParentsPartnership();
+        IPerson child = null;
+
+        ValipopDate birthDate = null;
+
+        IPerson man = last.getMalePartner();
+
+        for (int c = 0; c < numberOfChildren; c++) {
+            if (birthDate == null) {
+                child = EntityFactory.makePerson(onDate, birthTimeStep, last, population, ps);
+                last.addChildren(Collections.singleton(child));
+                birthDate = child.getBirthDate();
+            } else {
+                child = EntityFactory.makePerson(onDate, last, population, ps);
+                last.addChildren(Collections.singleton(child));
+            }
+        }
+
+        // record that child is legitimate
+        IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(ageOnDate(man, birthDate), numberOfChildren, birthTimeStep, birthDate);
+        SingleDeterminedCount illegitimateCounts = (SingleDeterminedCount) ps.getDeterminedCount(illegitimateKey, config);
+        illegitimateCounts.setFulfilledCount(0);
+        ps.returnAchievedCount(illegitimateCounts);
+
+        // decide if to cause marriage
+        // Decide on marriage
+        MarriageStatsKey marriageKey = new MarriageStatsKey(ageOnDate(mother, birthDate), numberOfChildren, birthTimeStep, birthDate);
+        SingleDeterminedCount marriageCounts = (SingleDeterminedCount) ps.getDeterminedCount(marriageKey, config);
+
+        if (last.getMarriageDate() != null) {
+            // is already married - so return as married
+            marriageCounts.setFulfilledCount(numberOfChildren);
+        } else {
+            boolean toBeMarriedBirth = (int) Math.round(marriageCounts.getDeterminedCount() / (double) numberOfChildren) == 1;
+
+            if (toBeMarriedBirth) {
+                marriageCounts.setFulfilledCount(numberOfChildren);
+                last.setMarriageDate(EntityFactory.marriageDateSelector.selectDate(lastChild.getBirthDate(), birthDate, ps.getRandomGenerator()));
+                child.setMarriageBaby(true);
+            } else {
+                marriageCounts.setFulfilledCount(0);
+            }
+        }
+        ps.returnAchievedCount(marriageCounts);
+
+        population.getLivingPeople().addPerson(mother);
     }
 }

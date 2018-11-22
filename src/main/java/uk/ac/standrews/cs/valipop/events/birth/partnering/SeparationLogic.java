@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.valipop.events.birth.partnering;
 
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
@@ -29,6 +30,8 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUni
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.ageOnDate;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -49,7 +52,7 @@ public class SeparationLogic {
             List<IPerson> mothers = entry.getValue();
 
             if (mothers.size() != 0) {
-                ageOfMothers = mothers.get(0).ageOnDate(currentDate);
+                ageOfMothers = ageOnDate(mothers.get(0), currentDate);
             }
 
             // Get determined count for separations for this group of mothers
@@ -67,10 +70,9 @@ public class SeparationLogic {
                 }
 
                 // else mark partnership for separation
-                p.getLastPartnership().separate(p.getLastChild().getBirthDate(), new CompoundTimeUnit(1, TimeUnit.MONTH));
+                p.getLastPartnership().separate(PopulationNavigation.getLastChild(p).getBirthDate(), new CompoundTimeUnit(1, TimeUnit.MONTH));
 
                 count++;
-
             }
 
             // Return achieved statistics to the statistics handler

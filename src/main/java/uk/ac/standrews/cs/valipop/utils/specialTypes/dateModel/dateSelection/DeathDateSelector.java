@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
@@ -33,7 +34,7 @@ public class DeathDateSelector extends DateSelector {
 
     public ExactDate selectDate(IPerson p, PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
-        IPerson child = p.getLastChild();
+        IPerson child = PopulationNavigation.getLastChild(p);
 
         if (child != null) {
 

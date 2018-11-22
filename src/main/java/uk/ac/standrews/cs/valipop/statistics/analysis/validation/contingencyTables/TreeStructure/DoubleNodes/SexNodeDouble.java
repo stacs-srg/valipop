@@ -24,6 +24,8 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.ageOnDate;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -48,18 +50,13 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
 
     @Override
     public void processPerson(IPerson person, ValipopDate currentDate) {
-//        incCountByOne();
 
-//        int age = person.ageOnDate(new ExactDate(31, 12, currentDate.getYear() - 1));
-        int age = person.ageOnDate(currentDate);
+        int age = ageOnDate(person, currentDate);
 
         try {
             resolveChildNodeForAge(age).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
             addChild(new AgeNodeDouble(new IntegerRange(age), this, 0, true)).processPerson(person, currentDate);
-
-//            addChild(new IntegerRange(age)).processPerson(person, currentDate);
-
         }
     }
 
@@ -80,10 +77,8 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
         throw new ChildNotFoundException();
     }
 
-
     public Node<IntegerRange, ?, Double, ?> getChild(IntegerRange childOption) throws ChildNotFoundException {
 
         return resolveChildNodeForAge(childOption.getValue());
-
     }
 }

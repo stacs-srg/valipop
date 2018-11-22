@@ -17,27 +17,18 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.person;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.MarriageStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.IllegitimateBirthStatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -192,83 +183,6 @@ public class Person implements IPerson {
     }
 
     @Override
-    public IPerson getLastChild() {
-
-        ValipopDate latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
-        IPerson child = null;
-
-        for (IPartnership p : partnerships) {
-            for (IPerson c : p.getChildren()) {
-
-                if (DateUtils.dateBeforeOrEqual(latestChildBirthDate, c.getBirthDate())) {
-                    latestChildBirthDate = c.getBirthDate();
-                    child = c;
-                }
-            }
-        }
-
-        return child;
-    }
-
-    @Override
-    public void addChildrenToCurrentPartnership(int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config) {
-
-        try {
-            population.getLivingPeople().removePerson(this);
-        } catch (PersonNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        IPerson lastChild = getLastChild();
-        IPartnership last = lastChild.getParentsPartnership();
-        IPerson child = null;
-
-        ValipopDate birthDate = null;
-
-        IPerson man = last.getMalePartner();
-
-        for (int c = 0; c < numberOfChildren; c++) {
-            if (birthDate == null) {
-                child = EntityFactory.makePerson(onDate, birthTimeStep, last, population, ps);
-                last.addChildren(Collections.singleton(child));
-                birthDate = child.getBirthDate();
-            } else {
-                child = EntityFactory.makePerson(onDate, last, population, ps);
-                last.addChildren(Collections.singleton(child));
-            }
-        }
-
-        // record that child is legitimate
-        IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(man.ageOnDate(birthDate), numberOfChildren, birthTimeStep, birthDate);
-        SingleDeterminedCount illegitimateCounts = (SingleDeterminedCount) ps.getDeterminedCount(illegitimateKey, config);
-        illegitimateCounts.setFulfilledCount(0);
-        ps.returnAchievedCount(illegitimateCounts);
-
-        // decide if to cause marriage
-        // Decide on marriage
-        MarriageStatsKey marriageKey = new MarriageStatsKey(this.ageOnDate(birthDate), numberOfChildren, birthTimeStep, birthDate);
-        SingleDeterminedCount marriageCounts = (SingleDeterminedCount) ps.getDeterminedCount(marriageKey, config);
-
-        if (last.getMarriageDate() != null) {
-            // is already married - so return as married
-            marriageCounts.setFulfilledCount(numberOfChildren);
-        } else {
-            boolean toBeMarriedBirth = (int) Math.round(marriageCounts.getDeterminedCount() / (double) numberOfChildren) == 1;
-
-            if (toBeMarriedBirth) {
-                marriageCounts.setFulfilledCount(numberOfChildren);
-                last.setMarriageDate(EntityFactory.marriageDateSelector.selectDate(lastChild.getBirthDate(), birthDate, ps.getRandomGenerator()));
-                child.setMarriageBaby(true);
-            } else {
-                marriageCounts.setFulfilledCount(0);
-            }
-        }
-        ps.returnAchievedCount(marriageCounts);
-
-        population.getLivingPeople().addPerson(this);
-    }
-
-    @Override
     public boolean toSeparate() {
         return toSeparate;
     }
@@ -279,34 +193,13 @@ public class Person implements IPerson {
     }
 
     @Override
-    public int ageOnDate(ValipopDate currentDate) {
-        if (birthDate.getDay() == 1 && birthDate.getMonth() == 1) {
-            int age = DateUtils.differenceInYears(birthDate, currentDate).getCount() - 1;
-            return age == -1 ? 0 : age;
-        } else {
-            return DateUtils.differenceInYears(birthDate, currentDate).getCount();
-        }
-    }
-
-    @Override
     public boolean needsNewPartner(AdvanceableDate currentDate) {
-        return partnerships.size() == 0 || toSeparate() || lastPartnerDied(currentDate);
-    }
-
-    private boolean lastPartnerDied(ValipopDate currentDate) {
-
-        try {
-            IPerson lastPartner = getLastChild().getParentsPartnership().getPartnerOf(this);
-            return !PopulationNavigation.aliveOnDate(lastPartner,currentDate);
-
-        } catch (NullPointerException e) {
-            return true;
-        }
+        return partnerships.size() == 0 || toSeparate() || PopulationNavigation.lastPartnerDied(this, currentDate);
     }
 
     @Override
     public int numberOfChildrenInLatestPartnership() {
-        return getLastChild().getParentsPartnership().getChildren().size();
+        return PopulationNavigation.getLastChild(this).getParentsPartnership().getChildren().size();
     }
 
     @Override
