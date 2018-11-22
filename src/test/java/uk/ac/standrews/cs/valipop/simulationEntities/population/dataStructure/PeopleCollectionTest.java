@@ -19,16 +19,14 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulationStatisticsFactory;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
@@ -36,7 +34,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -77,15 +74,15 @@ public class PeopleCollectionTest {
         ExactDate b3 = new ExactDate(31,12,1900);
         ExactDate b4 = new ExactDate(1,1,1901);
 
-        Person m1 = new Person(SexOption.MALE, b1, null, ps);
-        Person m2 = new Person(SexOption.MALE, b2, null, ps);
-        Person m3 = new Person(SexOption.MALE, b3, null, ps);
-        Person m4 = new Person(SexOption.MALE, b4, null, ps);
+        Person m1 = new Person(SexOption.MALE, b1, null, ps, false);
+        Person m2 = new Person(SexOption.MALE, b2, null, ps, false);
+        Person m3 = new Person(SexOption.MALE, b3, null, ps, false);
+        Person m4 = new Person(SexOption.MALE, b4, null, ps, false);
 
-        Person f1 = new Person(SexOption.FEMALE, b1, null, ps);
-        Person f2 = new Person(SexOption.FEMALE, b2, null, ps);
-        Person f3 = new Person(SexOption.FEMALE, b3, null, ps);
-        Person f4 = new Person(SexOption.FEMALE, b4, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, b1, null, ps, false);
+        Person f2 = new Person(SexOption.FEMALE, b2, null, ps, false);
+        Person f3 = new Person(SexOption.FEMALE, b3, null, ps, false);
+        Person f4 = new Person(SexOption.FEMALE, b4, null, ps, false);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -123,13 +120,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person(SexOption.MALE, start, null, ps);
-        Person m2 = new Person(SexOption.MALE, start, null, ps);
-        Person m3 = new Person(SexOption.MALE, start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps, false);
+        Person m2 = new Person(SexOption.MALE, start, null, ps, false);
+        Person m3 = new Person(SexOption.MALE, start, null, ps, false);
 
-        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
-        Person f2 = new Person(SexOption.FEMALE, start, null, ps);
-        Person f3 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
+        Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
+        Person f3 = new Person(SexOption.FEMALE, start, null, ps, false);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -157,13 +154,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person(SexOption.MALE, start, null, ps);
-        Person m2 = new Person(SexOption.MALE, start, null, ps);
-        Person m3 = new Person(SexOption.MALE, start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps, false);
+        Person m2 = new Person(SexOption.MALE, start, null, ps, false);
+        Person m3 = new Person(SexOption.MALE, start, null, ps, false);
 
-        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
-        Person f2 = new Person(SexOption.FEMALE, start, null, ps);
-        Person f3 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
+        Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
+        Person f3 = new Person(SexOption.FEMALE, start, null, ps, false);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -198,13 +195,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person(SexOption.MALE, start, null, ps);
-        Person m2 = new Person(SexOption.MALE, start, null, ps);
-        Person m3 = new Person(SexOption.MALE, start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps, false);
+        Person m2 = new Person(SexOption.MALE, start, null, ps, false);
+        Person m3 = new Person(SexOption.MALE, start, null, ps, false);
 
-        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
-        Person f2 = new Person(SexOption.FEMALE, start, null, ps);
-        Person f3 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
+        Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
+        Person f3 = new Person(SexOption.FEMALE, start, null, ps, false);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -246,13 +243,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
 
-        Person m1 = new Person(SexOption.MALE, start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps, false);
 
-        Person c1 = new Person(SexOption.MALE, start.advanceTime(19, TimeUnit.YEAR), null, ps);
-        Person c2 = new Person(SexOption.FEMALE, start.advanceTime(25, TimeUnit.YEAR), null, ps);
-        Person c3 = new Person(SexOption.MALE, start.advanceTime(32, TimeUnit.YEAR), null, ps);
+        Person c1 = new Person(SexOption.MALE, start.advanceTime(19, TimeUnit.YEAR), null, ps, false);
+        Person c2 = new Person(SexOption.FEMALE, start.advanceTime(25, TimeUnit.YEAR), null, ps, false);
+        Person c3 = new Person(SexOption.MALE, start.advanceTime(32, TimeUnit.YEAR), null, ps, false);
 
         living.addPerson(f1);
 
@@ -316,7 +313,7 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
         living.removePerson(f1);
     }
 
@@ -331,11 +328,10 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person f1 = new Person(SexOption.FEMALE, start, null, ps);
-        Person f2 = new Person(SexOption.FEMALE, start, null, ps);
+        Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
+        Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
 
         living.addPerson(f2);
-
         living.removePerson(f1);
     }
 
@@ -350,7 +346,7 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person(SexOption.MALE, start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps, false);
         living.removePerson(m1);
     }
 
@@ -365,11 +361,10 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person(SexOption.MALE, start, null, ps);
-        Person m2 = new Person(SexOption.MALE, start, null, ps);
+        Person m1 = new Person(SexOption.MALE, start, null, ps, false);
+        Person m2 = new Person(SexOption.MALE, start, null, ps, false);
 
         living.addPerson(m2);
-
         living.removePerson(m1);
     }
 }

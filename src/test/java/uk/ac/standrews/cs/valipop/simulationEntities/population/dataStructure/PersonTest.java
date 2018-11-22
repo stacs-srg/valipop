@@ -32,8 +32,8 @@ public class PersonTest {
         // use config to make make ps
         PopulationStatistics ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
 
-        Person p1 = new Person(SexOption.MALE, new ExactDate(1,1,1900), null, ps);
-        Person p3 = new Person(SexOption.MALE, new ExactDate(2,1,1900), null, ps);
+        Person p1 = new Person(SexOption.MALE, new ExactDate(1,1,1900), null, ps, false);
+        Person p3 = new Person(SexOption.MALE, new ExactDate(2,1,1900), null, ps, false);
 
         YearDate y1 = new YearDate(1900);
         YearDate y2 = new YearDate(1901);
@@ -48,7 +48,7 @@ public class PersonTest {
 
         assertEquals(1, ageOnDate(p1,y3));
 
-        Person p2 = new Person(SexOption.MALE, new ExactDate(31,12,1900), null, ps);
+        Person p2 = new Person(SexOption.MALE, new ExactDate(31,12,1900), null, ps, false);
 
         assertEquals(0, ageOnDate(p2,y2));
         assertEquals(1, ageOnDate(p2,e));

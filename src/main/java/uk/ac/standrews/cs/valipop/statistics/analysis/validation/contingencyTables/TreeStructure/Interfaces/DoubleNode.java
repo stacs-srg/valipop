@@ -77,7 +77,6 @@ public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> 
         }
 
         return child;
-
     }
 
     @Override

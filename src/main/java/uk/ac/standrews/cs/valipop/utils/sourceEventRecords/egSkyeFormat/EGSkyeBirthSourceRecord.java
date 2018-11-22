@@ -23,14 +23,15 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
     protected String deathID = "";
 
     public EGSkyeBirthSourceRecord(IPerson person, IPopulation population) {
+
         super(person, population);
 
         familyID = parents_partnership_id;
         birthDate = new ExactDate(person.getBirthDate());
 
-        if(parents_partnership_id != -1) {
-            mothersOccupation = person.getParentsPartnership().getFemalePartner().getOccupation();
-            fathers_surname = person.getParentsPartnership().getMalePartner().getSurname();
+        if (parents_partnership_id != -1) {
+            mothersOccupation = person.getParents().getFemalePartner().getOccupation();
+            fathers_surname = person.getParents().getMalePartner().getSurname();
         }
 
         int registrationDay = rng.nextInt(43);
@@ -38,14 +39,10 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
 
         illegitimate = person.isIllegitimate() ? "illegitimate" : "";
 
-        marriageBaby = person.getMarriageBaby() ? "true" : "false";
-
-        if(person.getDeathDate() != null) {
+        if (person.getDeathDate() != null) {
             deathID = String.valueOf(uid);
         }
-
     }
-
 
     @Override
     public String toString() {

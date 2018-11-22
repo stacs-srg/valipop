@@ -122,7 +122,7 @@ public class DeathSourceRecord extends IndividualSourceRecord {
 
         processDates(birth_date, death_date);
 
-        IPartnership parents_partnership = person.getParentsPartnership();
+        IPartnership parents_partnership = person.getParents();
         if (parents_partnership != null) {
 
             setParentAttributes(person, population, parents_partnership);

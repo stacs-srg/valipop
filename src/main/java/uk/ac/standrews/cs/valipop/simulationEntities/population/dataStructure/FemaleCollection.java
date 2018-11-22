@@ -30,6 +30,8 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.*;
 
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.diedAfter;
+
 
 /**
  * The FemaleCollection is a specialised concrete implementation of a PersonCollection. The implementation offers an
@@ -382,7 +384,7 @@ public class FemaleCollection extends PersonCollection {
         Collection<IPerson> peopleAlive = new ArrayList<>();
 
         for (IPerson p : peopleBorn) {
-            if (p.diedAfter(firstDate)) {
+            if (diedAfter(p, firstDate)) {
                 peopleAlive.add(p);
             }
         }
@@ -415,8 +417,8 @@ public class FemaleCollection extends PersonCollection {
 
     @Override
     public void removePerson(IPerson person) throws PersonNotFoundException {
-        Collection<IPerson> people = byBirthYearAndNumberOfChildren.get(
-                resolveDateToCorrectDivisionDate(person.getBirthDate())).get(countChildren(person));
+
+        Collection<IPerson> people = byBirthYearAndNumberOfChildren.get(resolveDateToCorrectDivisionDate(person.getBirthDate())).get(countChildren(person));
 
         // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {

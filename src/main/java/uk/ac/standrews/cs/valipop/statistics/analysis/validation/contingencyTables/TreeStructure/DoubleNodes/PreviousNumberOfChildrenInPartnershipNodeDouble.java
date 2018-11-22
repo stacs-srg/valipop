@@ -29,11 +29,12 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 import java.util.Collection;
 
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.numberOfChildrenBirthedBeforeDate;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerRange, IntegerRange> {
-
 
     public PreviousNumberOfChildrenInPartnershipNodeDouble(IntegerRange option, DiedNodeDouble parentNode, double initCount) {
         super(option, parentNode, initCount);
@@ -43,17 +44,16 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
         super();
     }
 
-
     @Override
     public void processPerson(IPerson person, ValipopDate currentDate) {
         incCountByOne();
 
-        Integer numberOfPrevChildrenInAnyPartnership = person.numberOfChildrenBirthedBeforeDate(currentDate.getYearDate());
+        Integer numberOfPrevChildrenInAnyPartnership = numberOfChildrenBirthedBeforeDate(person, currentDate.getYearDate());
         IntegerRange range = resolveToChildRange(numberOfPrevChildrenInAnyPartnership);
 
         try {
             getChild(range).processPerson(person, currentDate);
-        } catch(ChildNotFoundException e) {
+        } catch (ChildNotFoundException e) {
             addChild(range).processPerson(person, currentDate);
         }
     }
@@ -65,13 +65,12 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
         try {
             child = getChild(childOption);
             child.incCount(initCount);
-        } catch (ChildNotFoundException e)  {
+        } catch (ChildNotFoundException e) {
             child = makeChildInstance(childOption, initCount);
             super.addChild(child);
         }
 
         return child;
-
     }
 
     @Override
@@ -87,8 +86,8 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
     @SuppressWarnings("Duplicates")
     public IntegerRange resolveToChildRange(Integer npciap) {
 
-        for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
-            if(aN.getOption().contains(npciap)) {
+        for (Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
+            if (aN.getOption().contains(npciap)) {
                 return aN.getOption();
             }
         }
@@ -98,7 +97,6 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
 
         ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-
         Collection<IntegerRange> birthOrders;
         try {
             birthOrders = getInputStats().getOrderedBirthRates(currentDate).getData(age).getLabels();
@@ -107,13 +105,12 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
             birthOrders = data.getData(data.getSmallestLabel().getValue()).getLabels();
         }
 
-
-        for(IntegerRange o : birthOrders) {
-            if(o.contains(npciap)) {
+        for (IntegerRange o : birthOrders) {
+            if (o.contains(npciap)) {
                 return o;
             }
         }
 
-        throw new Error("Did not resolve any permissable ranges");
+        throw new RuntimeException("Did not resolve any permissible ranges");
     }
 }
