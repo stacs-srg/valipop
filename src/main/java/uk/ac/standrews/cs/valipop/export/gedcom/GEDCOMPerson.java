@@ -212,7 +212,7 @@ public class GEDCOMPerson implements IPerson {
                 final int start = name.indexOf('/');
                 final int end = name.lastIndexOf('/');
                 if (end > start) {
-                    name = name.substring(0, start) + name.substring(end + 1, name.length());
+                    name = name.substring(0, start) + name.substring(end + 1);
                 }
             }
             builder.append(name);

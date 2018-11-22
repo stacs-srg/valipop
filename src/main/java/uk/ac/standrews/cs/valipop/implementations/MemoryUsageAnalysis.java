@@ -23,30 +23,29 @@ import java.lang.management.ManagementFactory;
  */
 public class MemoryUsageAnalysis {
 
-    private static boolean checkMemory = true;
+    private static boolean checkMemory = false;
 
     private static long maxSimUsage = 0L;
     private static long maxRunUsage = 0L;
 
     private static double threshold = 0.975;
 
-    public static void main(String[] args) throws StatsException {
+    public static void main(String[] args) {
 
         checkMemory = true;
 
         CL_RunNModels.runNModels(args);
 
-        // We do this to force the latest maxSimUsage to be checked against the maxRunUsage and force the value update if nessersary
+        // We do this to force the latest maxSimUsage to be checked against the maxRunUsage and force the value update if necessary
         reset();
 
         System.out.println("---------------------------------\n");
         System.out.println("Max Memory Usage : " + (maxRunUsage / 1e6) + " MB");
         System.out.println("We recommend to increase by 10% to give adequate headroom\n");
-
     }
 
     public static void reset() {
-        if(maxSimUsage > maxRunUsage) {
+        if (maxSimUsage > maxRunUsage) {
             maxRunUsage = maxSimUsage;
         }
         maxSimUsage = 0L;
@@ -54,20 +53,18 @@ public class MemoryUsageAnalysis {
 
     public static void log() throws PreEmptiveOutOfMemoryWarning {
 
-        if(checkMemory) {
+        if (checkMemory) {
             long currentUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
-            if(currentUsage > maxSimUsage) {
+            if (currentUsage > maxSimUsage) {
                 maxSimUsage = currentUsage;
             }
 
             long mM = Runtime.getRuntime().maxMemory();
 
-            if(mM * threshold < currentUsage) {
+            if (mM * threshold < currentUsage) {
                 throw new PreEmptiveOutOfMemoryWarning();
             }
-
         }
-
     }
 
     public static void setCheckMemory(boolean b) {

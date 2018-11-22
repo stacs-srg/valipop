@@ -48,19 +48,19 @@ public abstract class GeneralPopulationStructureTest {
     }
 
     @Test
-    public void findNonExistentPerson() {
+    public void nonExistentPersonIsntFound() {
 
         assertNull(population.findPerson(-1));
     }
 
     @Test
-    public void findNonExistentPartnership() {
+    public void nonExistentPartnershipIsntFound() {
 
         assertNull(population.findPartnership(-1));
     }
 
     @Test
-    public void iterateOverPopulation() throws Exception {
+    public void numberOfPeopleIsConsistent() throws Exception {
 
         final Set<Integer> people = new HashSet<>();
         for (final IPerson person : population.getPeople()) {
@@ -68,6 +68,10 @@ public abstract class GeneralPopulationStructureTest {
             people.add(person.getId());
         }
         assertEquals(population.getNumberOfPeople(), people.size());
+    }
+
+    @Test
+    public void numberOfPartnershipsIsConsistent() throws Exception {
 
         final Set<Integer> partnerships = new HashSet<>();
         for (final IPartnership partnership : population.getPartnerships()) {
@@ -86,10 +90,7 @@ public abstract class GeneralPopulationStructureTest {
     @Test(expected = NoSuchElementException.class)
     public void tooManyPartnershipIterations() throws Exception {
 
-        final Iterator<IPartnership> iterator = population.getPartnerships().iterator();
-        final int numberOfPartnerships = population.getNumberOfPartnerships();
-
-        doTooManyIterations(iterator, numberOfPartnerships);
+        doTooManyIterations(population.getPartnerships().iterator(), population.getNumberOfPartnerships());
     }
 
     @Test
@@ -270,6 +271,7 @@ public abstract class GeneralPopulationStructureTest {
 
             assertEquals(child.getParentsPartnership(), partnership);
         }
+
     }
 
     private void assertParentsHaveSensibleAgesAtBirth(final IPartnership partnership) {
@@ -357,8 +359,8 @@ public abstract class GeneralPopulationStructureTest {
 
             final Date death_date = person.getDeathDate().getDate();
             final Date birth_date = person.getBirthDate().getDate();
-            int i = DateManipulation.differenceInYears(birth_date, death_date);
-            assertTrue(i >= 0);
+
+            assertTrue(DateManipulation.differenceInYears(birth_date, death_date) >= 0);
         }
     }
 
@@ -370,6 +372,7 @@ public abstract class GeneralPopulationStructureTest {
 
             for (final IPartnership partnership : person.getPartnerships()) {
                 if (partnership.getMarriageDate() != null) {
+
                     final Date marriage_date = partnership.getMarriageDate().getDate();
                     assertTrue(DateManipulation.differenceInYears(birth_date, marriage_date) >= 0);
                 }
@@ -385,6 +388,7 @@ public abstract class GeneralPopulationStructureTest {
 
             for (final IPartnership partnership : person.getPartnerships()) {
                 if (partnership.getMarriageDate() != null) {
+
                     final Date marriage_date = partnership.getMarriageDate().getDate();
                     assertTrue(DateManipulation.differenceInDays(marriage_date, death_date) >= 0);
                 }

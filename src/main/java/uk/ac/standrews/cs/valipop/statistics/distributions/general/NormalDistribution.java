@@ -75,7 +75,7 @@ public class NormalDistribution extends RestrictedDistribution<Double> {
 
 	@Override
 	public Double getSample(final double earliestReturnValue, final double latestReturnValue) throws NoPermissableValueException, NotSetUpAtClassInitilisationException {
-		if (minimumSpecifiedValue == (Double) null || maximumSpecifiedValue == (Double) null) {
+		if (minimumSpecifiedValue == null || maximumSpecifiedValue == null) {
 			throw new NotSetUpAtClassInitilisationException();
 		}
 

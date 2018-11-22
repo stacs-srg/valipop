@@ -37,7 +37,7 @@ public class GEDCOMTestCaseRecorder extends AbstractTestCaseRecorder {
     }
 
     @Override
-    protected IPopulationWriter getPopulationWriter(final Path path, final IPopulation population) throws IOException, InconsistentWeightException {
+    protected IPopulationWriter getPopulationWriter(final Path path, final IPopulation population) throws IOException {
 
         return new GEDCOMPopulationWriter(path);
     }
