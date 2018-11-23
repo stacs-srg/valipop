@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
@@ -123,7 +122,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
     @Override
     public Collection<IPerson> getAll() {
-        return AggregatePersonCollectionFactory.makeCollectionOfPersons(females, males);
+
+        Collection<IPerson> people = ((PersonCollection) females).getAll();
+        people.addAll(((PersonCollection) males).getAll());
+
+        return people;
     }
 
     @Override

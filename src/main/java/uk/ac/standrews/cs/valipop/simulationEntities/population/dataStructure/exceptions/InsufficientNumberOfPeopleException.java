@@ -16,17 +16,13 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-
-import java.util.Collection;
-
 /**
  * The {@link InsufficientNumberOfPeopleException} is thrown when there is not enough people to meet a request made of
  * a PersonCollection data structure.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class InsufficientNumberOfPeopleException extends Exception {
+public class InsufficientNumberOfPeopleException extends RuntimeException {
 
     private final String message;
 
@@ -34,11 +30,6 @@ public class InsufficientNumberOfPeopleException extends Exception {
      * @param message the message
      */
     public InsufficientNumberOfPeopleException(String message) {
-        this.message = message;
-    }
-
-
-    public InsufficientNumberOfPeopleException(String message, Collection<IPerson> chosen) {
         this.message = message;
     }
 

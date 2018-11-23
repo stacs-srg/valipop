@@ -17,21 +17,16 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -45,7 +40,7 @@ public class PopulationStatisticsTest {
     public void testA() {
         Path p = Paths.get("src/test/resources/valipop/config-ps.txt");
         Config config = new Config(p,"TEST", "...");
-        PopulationStatistics ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
+        PopulationStatistics ps = new PopulationStatistics(config);
 
         int age = 20;
         int order = 0;
@@ -58,11 +53,10 @@ public class PopulationStatisticsTest {
 
         int numberOfChildren = determinedCount.getDeterminedCount();
 
-
         MultipleBirthStatsKey keyM = new MultipleBirthStatsKey(age, numberOfChildren, consideredTimePeriod, currentDate);
         MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps.getDeterminedCount(keyM, null);
 
-        int numberOfMothers = mDC.getDeterminedCount().getSumOfValues();
+        mDC.getDeterminedCount().getSumOfValues();
     }
 
     @Test
@@ -70,7 +64,7 @@ public class PopulationStatisticsTest {
 
         Path p = Paths.get("src/test/resources/valipop/config-ps.txt");
         Config config = new Config(p,"TEST", "...");
-        PopulationStatistics ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
+        PopulationStatistics ps = new PopulationStatistics(config);
 
         int age = 20;
         int order = 0;
@@ -88,13 +82,11 @@ public class PopulationStatisticsTest {
 
         double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
 
-
         MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps
                 .getDeterminedCount(new MultipleBirthStatsKey(age, numberOfMothers, new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate), null);
 
-        double numberOfChildrenB = new IntegerRangeToDoubleSet(mDC.getRawUncorrectedCount())
-                                            .productOfLabelsAndValues().getSumOfValues();
+        new IntegerRangeToDoubleSet(mDC.getRawUncorrectedCount()).productOfLabelsAndValues().getSumOfValues();
 
-        LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
+        mDC.getRawUncorrectedCount();
     }
 }

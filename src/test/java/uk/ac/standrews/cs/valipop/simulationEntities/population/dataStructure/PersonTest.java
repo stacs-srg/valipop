@@ -4,7 +4,6 @@ import org.junit.Test;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulationStatisticsFactory;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
@@ -30,7 +29,7 @@ public class PersonTest {
                 0, 0, true, 0, 0, 0,
                 0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null, 0, true);
         // use config to make make ps
-        PopulationStatistics ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
+        PopulationStatistics ps = new PopulationStatistics(config);
 
         Person p1 = new Person(SexOption.MALE, new ExactDate(1,1,1900), null, ps, false);
         Person p3 = new Person(SexOption.MALE, new ExactDate(2,1,1900), null, ps, false);
