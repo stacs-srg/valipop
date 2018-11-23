@@ -42,7 +42,6 @@ import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.utils.selectionApproaches.SharedLogic;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordGenerationFactory;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -73,8 +72,10 @@ public class OBDModel {
 
     private static final String CODE_VERSION = "dev-bf";
     private static final int MINIMUM_POPULATION_SIZE = 100;
+    private static final int MAX_ATTEMPTS = 10;
+    private static final CompoundTimeUnit MAX_AGE = new CompoundTimeUnit(110, TimeUnit.YEAR);
 
-    private static Logger log = new Logger(OBDModel.class);
+    private static final Logger log = new Logger(OBDModel.class);
 
     private Config config;
     private SummaryRow summary;
@@ -83,114 +84,20 @@ public class OBDModel {
     private AdvanceableDate currentTime;
     private ProgramTimer simTimer;
 
-    private static final int MAX_ATTEMPTS = 10;
+    private PrintWriter birthOrders;
 
-    private static final CompoundTimeUnit MAX_AGE = new CompoundTimeUnit(110, TimeUnit.YEAR);
-
-    private static PrintWriter birthOrders;
     private int birthsCount = 0;
     private int deathCount = 0;
     private DeathDateSelector deathDateSelector = new DeathDateSelector();
 
-    private static RandomGenerator randomNumberGenerator;
+    private RandomGenerator randomNumberGenerator;
 
-    private static int currentHypotheticalPopulationSize;
+    private int currentHypotheticalPopulationSize;
 
-    private static CompoundTimeUnit initTimeStep;
-    private static ValipopDate endOfInitPeriod;
+    private CompoundTimeUnit initTimeStep;
+    private ValipopDate endOfInitPeriod;
 
-    private static int numberOfBirthsInThisTimestep = 0;
-
-    public static void setUpInitParameters(Config config, PopulationStatistics desiredPopulationStatistics) {
-
-        randomNumberGenerator = desiredPopulationStatistics.getRandomGenerator();
-
-        currentHypotheticalPopulationSize = calculateStartingPopulationSize(config);
-        log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
-
-        endOfInitPeriod = config.getTS().advanceTime(
-                new CompoundTimeUnit(desiredPopulationStatistics.getOrderedBirthRates(config.getTS().getYearDate()).getLargestLabel().getValue(), TimeUnit.YEAR));
-
-        log.info("End of Initialisation Period set: " + endOfInitPeriod.toString());
-
-        initTimeStep = config.getSimulationTimeStep();
-    }
-
-    public static int handleInitPeople(Config config, AdvanceableDate currentTime, Population population, PopulationStatistics ps) {
-
-        // calculate hypothetical number of expected births
-        int hypotheticalBirths = calculateChildrenToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR() * initTimeStep.toDecimalRepresentation());
-
-        int shortFallInBirths = hypotheticalBirths - numberOfBirthsInThisTimestep;
-        numberOfBirthsInThisTimestep = 0;
-
-        // calculate hypothetical number of expected deaths
-        int hypotheticalDeaths = calculateNumberToDie(currentHypotheticalPopulationSize, config.getSetUpDR() * initTimeStep.toDecimalRepresentation());
-
-        // update hypothetical population
-        currentHypotheticalPopulationSize = currentHypotheticalPopulationSize + hypotheticalBirths - hypotheticalDeaths;
-
-        if (shortFallInBirths >= 0) {
-            // add Orphan Children to the population
-            for (int i = 0; i < shortFallInBirths; i++) {
-                EntityFactory.formOrphanChild(currentTime, getTimeStep(), population, ps);
-            }
-        } else {
-            double removeN = Math.abs(shortFallInBirths) / 2.0;
-            int removeMales;
-            int removeFemales;
-
-            if (removeN % 1 != 0) {
-                removeMales = (int) Math.ceil(removeN);
-                removeFemales = (int) Math.floor(removeN);
-            } else {
-                removeMales = (int) removeN;
-                removeFemales = (int) removeN;
-            }
-
-            try {
-                for (int i = 0; i < removeMales; i++) {
-                    population.getLivingPeople().getMales().removeNPersons(removeMales, currentTime, initTimeStep, true);
-                }
-
-                for (int i = 0; i < removeFemales; i++) {
-                    population.getLivingPeople().getFemales().removeNPersons(removeFemales, currentTime, initTimeStep, true);
-                }
-
-            } catch (InsufficientNumberOfPeopleException e) {
-                // Never should happen
-                throw new Error();
-            }
-        }
-
-        return shortFallInBirths;
-    }
-
-    public static void incrementBirthCount(int n) {
-        numberOfBirthsInThisTimestep += n;
-    }
-
-    public static boolean inInitPeriod(ValipopDate currentTime) {
-        return DateUtils.dateBeforeOrEqual(currentTime, endOfInitPeriod);
-    }
-
-    public static CompoundTimeUnit getTimeStep() {
-        return initTimeStep;
-    }
-
-    private static int calculateStartingPopulationSize(Config config) {
-        // Performs compound growth in reverse to work backwards from the target population to the
-        return (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpBR() - config.getSetUpDR() + 1, DateUtils.differenceInYears(config.getTS(), config.getT0()).getCount()));
-    }
-
-    private static int calculateChildrenToBeBorn(int sizeOfCohort, Double birthRate) {
-        return SharedLogic.calculateNumberToHaveEvent(sizeOfCohort, birthRate, randomNumberGenerator);
-    }
-
-    private static int calculateNumberToDie(int people, Double deathRate) {
-        return SharedLogic.calculateNumberToHaveEvent(people, deathRate, randomNumberGenerator);
-    }
-
+    private int numberOfBirthsInThisTimestep = 0;
 
     public static void setUpFileStructureAndLogs(String runPurpose, String startTime, String resultsPath) throws IOException {
 
@@ -200,10 +107,7 @@ public class OBDModel {
 
         FileUtils.makeDirectoryStructure(runPurpose, startTime, resultsPath);
         Logger.setLogFilePath(FileUtils.pathToLogDir(runPurpose, startTime, resultsPath));
-        birthOrders = FileUtils.mkDumpFile("order.csv");
     }
-
-
 
     public OBDModel(String startTime, Config config) {
 
@@ -217,7 +121,19 @@ public class OBDModel {
         // get desired population info
         desired = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
 
-        setUpInitParameters(config, desired);
+        randomNumberGenerator = desired.getRandomGenerator();
+
+        currentHypotheticalPopulationSize = calculateStartingPopulationSize(config);
+        log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
+
+        endOfInitPeriod = config.getTS().advanceTime(
+                new CompoundTimeUnit(desired.getOrderedBirthRates(config.getTS().getYearDate()).getLargestLabel().getValue(), TimeUnit.YEAR));
+
+        log.info("End of Initialisation Period set: " + endOfInitPeriod.toString());
+
+        initTimeStep = config.getSimulationTimeStep();
+
+        birthOrders = FileUtils.mkDumpFile("order.csv");
 
         summary = new SummaryRow(Paths.get(config.getResultsSavePath().toString(), config.getRunPurpose(), startTime),
                 config.getVarPath(), startTime, config.getRunPurpose(), CODE_VERSION, config.getSimulationTimeStep(),
@@ -343,6 +259,42 @@ public class OBDModel {
         log.info(logEntry.toString());
     }
 
+    private void incrementBirthCount(int n) {
+        numberOfBirthsInThisTimestep += n;
+    }
+
+    private boolean inInitPeriod(ValipopDate currentTime) {
+        return DateUtils.dateBeforeOrEqual(currentTime, endOfInitPeriod);
+    }
+
+    private static int calculateStartingPopulationSize(Config config) {
+        // Performs compound growth in reverse to work backwards from the target population to the
+        return (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpBR() - config.getSetUpDR() + 1, DateUtils.differenceInYears(config.getTS(), config.getT0()).getCount()));
+    }
+
+    private int calculateChildrenToBeBorn(int sizeOfCohort, Double birthRate) {
+        return calculateNumberToHaveEvent(sizeOfCohort, birthRate);
+    }
+
+    private int calculateNumberToDie(int people, Double deathRate) {
+        return calculateNumberToHaveEvent(people, deathRate);
+    }
+
+    private int calculateNumberToHaveEvent(int people, Double eventRate) {
+
+        double toHaveEvent = people * eventRate;
+        int flooredToHaveEvent = (int) toHaveEvent;
+        toHaveEvent -= flooredToHaveEvent;
+
+        // this is a random dice roll to see if the fraction of a has the event or not
+
+        if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
+            flooredToHaveEvent++;
+        }
+
+        return flooredToHaveEvent;
+    }
+
     private void recordPeopleCounts(StringBuilder logEntry) {
 
         logEntry.append(population.getLivingPeople().getNumberOfPeople() + "\t");
@@ -394,8 +346,52 @@ public class OBDModel {
 
     private void initialisePeople(StringBuilder logEntry) {
 
-        int numberInitialised = handleInitPeople(config, currentTime, population, desired);
-        logEntry.append(numberInitialised + "\t");
+        // calculate hypothetical number of expected births
+        int hypotheticalBirths = calculateChildrenToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR() * initTimeStep.toDecimalRepresentation());
+
+        int shortFallInBirths = hypotheticalBirths - numberOfBirthsInThisTimestep;
+        numberOfBirthsInThisTimestep = 0;
+
+        // calculate hypothetical number of expected deaths
+        int hypotheticalDeaths = calculateNumberToDie(currentHypotheticalPopulationSize, config.getSetUpDR() * initTimeStep.toDecimalRepresentation());
+
+        // update hypothetical population
+        currentHypotheticalPopulationSize = currentHypotheticalPopulationSize + hypotheticalBirths - hypotheticalDeaths;
+
+        if (shortFallInBirths >= 0) {
+            // add Orphan Children to the population
+            for (int i = 0; i < shortFallInBirths; i++) {
+                EntityFactory.formOrphanChild(currentTime, initTimeStep, population, desired);
+            }
+        } else {
+            double removeN = Math.abs(shortFallInBirths) / 2.0;
+            int removeMales;
+            int removeFemales;
+
+            if (removeN % 1 != 0) {
+                removeMales = (int) Math.ceil(removeN);
+                removeFemales = (int) Math.floor(removeN);
+            } else {
+                removeMales = (int) removeN;
+                removeFemales = (int) removeN;
+            }
+
+            try {
+                for (int i = 0; i < removeMales; i++) {
+                    population.getLivingPeople().getMales().removeNPersons(removeMales, currentTime, initTimeStep, true);
+                }
+
+                for (int i = 0; i < removeFemales; i++) {
+                    population.getLivingPeople().getFemales().removeNPersons(removeFemales, currentTime, initTimeStep, true);
+                }
+
+            } catch (InsufficientNumberOfPeopleException e) {
+                // Never should happen
+                throw new Error();
+            }
+        }
+
+        logEntry.append(shortFallInBirths + "\t");
     }
 
     private void createDeaths(StringBuilder logEntry) {
@@ -438,7 +434,7 @@ public class OBDModel {
     }
 
     private boolean timeFromInitialisationStartIsWholeTimeUnit() {
-        return DateUtils.matchesInterval(currentTime, getTimeStep(), config.getTS());
+        return DateUtils.matchesInterval(currentTime, initTimeStep, config.getTS());
     }
 
     private int birthEvent(Config config, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod,
@@ -532,7 +528,7 @@ public class OBDModel {
         Collection<IPerson> havePartners = new ArrayList<>();
 
         if (females.size() == 0) {
-            return new MotherSet( needPartners);
+            return new MotherSet(needPartners);
         }
 
         // TODO adjust this to also permit age variations
@@ -558,7 +554,7 @@ public class OBDModel {
         try {
             highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
         } catch (NoSuchElementException e) {
-            return new MotherSet( needPartners);
+            return new MotherSet(needPartners);
         }
 
         CollectionUtils.shuffle(femalesAL, desiredPopulationStatistics.getRandomGenerator());
@@ -613,7 +609,7 @@ public class OBDModel {
         requiredBirths.setFulfilledCount(motherCountsByMaternities);
         desiredPopulationStatistics.returnAchievedCount(requiredBirths);
 
-        return new MotherSet( needPartners, childrenMade);
+        return new MotherSet(needPartners, childrenMade);
     }
 
     private MultipleDeterminedCount calcNumberOfPregnanciesOfMultipleBirth(int ageOfMothers, int numberOfChildren, PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate,
@@ -1046,7 +1042,7 @@ public class OBDModel {
                 }
 
                 // else mark partnership for separation
-                separate(getLastPartnership(p),getLastChild(p).getBirthDate(), new CompoundTimeUnit(1, TimeUnit.MONTH));
+                separate(getLastPartnership(p), getLastChild(p).getBirthDate(), new CompoundTimeUnit(1, TimeUnit.MONTH));
 
                 count++;
             }
@@ -1158,7 +1154,7 @@ public class OBDModel {
         return person.getPartnerships().size() == 0 || partnersToSeparate.contains(person) || lastPartnerDied(person, currentDate);
     }
 
-    public void separate(IPartnership partnership, ValipopDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+    private void separate(IPartnership partnership, ValipopDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
         partnership.setEarliestPossibleSeparationDate(currentDate);
 
@@ -1166,7 +1162,7 @@ public class OBDModel {
         partnersToSeparate.add(partnership.getMalePartner());
     }
 
-    Collection<IPerson> partnersToSeparate = new HashSet<>();
+    private Collection<IPerson> partnersToSeparate = new HashSet<>();
 
     private class ProposedPartnership {
 
@@ -1185,12 +1181,12 @@ public class OBDModel {
         }
     }
 
-     private class NewMother {
+    private class NewMother {
 
         private final IPerson newMother;
         private final int numberOfChildrenInMaternity;
 
-         NewMother(IPerson newMother, int numberOfChildrenInMaternity) {
+        NewMother(IPerson newMother, int numberOfChildrenInMaternity) {
 
             this.newMother = newMother;
             this.numberOfChildrenInMaternity = numberOfChildrenInMaternity;
