@@ -78,7 +78,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         }
 
         // to apply to
-        Double tAT = key.getForNPeople();
+        double tAT = key.getForNPeople();
 
         // applied rate
         double aD = appliedRates.get(age);
@@ -191,14 +191,12 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     private double calcAppliedYearRateFromSubRate(double subRate, CompoundTimeUnit timePeriod) {
         double stepsInYear = DateUtils.stepsInYear(timePeriod);
 
-        double appliedYearRate = 1 - Math.pow(1 - subRate, stepsInYear);
-        return appliedYearRate;
+        return 1 - Math.pow(1 - subRate, stepsInYear);
     }
 
     private double calcSubRateFromYearRate(double yearRate, CompoundTimeUnit timePeriod) {
         double stepsInYear = DateUtils.stepsInYear(timePeriod);
 
-        double subRate = 1 - Math.pow(1 - yearRate, 1 / stepsInYear);
-        return subRate;
+        return 1 - Math.pow(1 - yearRate, 1 / stepsInYear);
     }
 }
