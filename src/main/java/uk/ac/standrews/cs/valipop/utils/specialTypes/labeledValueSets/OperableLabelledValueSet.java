@@ -26,7 +26,4 @@ public interface OperableLabelledValueSet<L,V> extends LabelledValueSet<L,V> {
     L smallestLabel();
 
     OperableLabelledValueSet<L,Double> valuesAddNWhereCorrespondingLabelNegativeInLVS(double n, OperableLabelledValueSet<L, ? extends Number> lvs);
-
-
-
 }

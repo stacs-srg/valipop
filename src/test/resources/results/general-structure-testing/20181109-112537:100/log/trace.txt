@@ -1,4 +1,0 @@
-[2018-11-09 11:25:37.281] DesiredPopulationStatisticsFactory | Creating PopulationStatistics instance
-[2018-11-09 11:25:38.068] InitLogic | Initial hypothetical population size set: 37734
-[2018-11-09 11:25:38.069] InitLogic | End of Initialisation Period set: 1/1/1649
-[2018-11-09 11:26:28.67] OBDModel | 1/1/1599	0	502	3	499	3

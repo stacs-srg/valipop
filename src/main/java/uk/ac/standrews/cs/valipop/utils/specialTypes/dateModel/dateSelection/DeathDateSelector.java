@@ -43,20 +43,20 @@ public class DeathDateSelector extends DateSelector {
             if (p.getSex() == SexOption.MALE) {
 
                 // If a male with a child then the man cannot die more than the minimum gestation period before the birth date
-                ValipopDate ePD = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * desiredPopulationStatistics.getMinGestationPeriod());
-                return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, ePD, desiredPopulationStatistics.getRandomGenerator());
+                ValipopDate earliestPossibleDate = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * desiredPopulationStatistics.getMinGestationPeriod());
+                return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, earliestPossibleDate, desiredPopulationStatistics.getRandomGenerator());
 
             } else {
                 // If a female with a child then the cannot die before birth of child
-                return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, birthDateOfLastChild, desiredPopulationStatistics.getRandomGenerator());
+                return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, birthDateOfLastChild, desiredPopulationStatistics.getRandomGenerator());
             }
 
         } else {
-            return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, p.getBirthDate(), desiredPopulationStatistics.getRandomGenerator());
+            return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, p.getBirthDate(), desiredPopulationStatistics.getRandomGenerator());
         }
     }
 
-    private ExactDate selectDateRestrictedByEPD(AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod, ValipopDate earliestPossibleDate, RandomGenerator random) {
+    private ExactDate selectDateRestrictedByEarliestPossibleDate(AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod, ValipopDate earliestPossibleDate, RandomGenerator random) {
 
         // if specified earliestPossibleDate is in consideredTimePeriod
         if (DateUtils.dateBeforeOrEqual(currentDate, earliestPossibleDate)) {
