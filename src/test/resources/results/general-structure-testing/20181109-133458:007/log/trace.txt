@@ -1,3 +1,0 @@
-[2018-11-09 13:34:58.189] DesiredPopulationStatisticsFactory | Creating PopulationStatistics instance
-[2018-11-09 13:34:58.844] InitLogic | Initial hypothetical population size set: 37734
-[2018-11-09 13:34:58.848] InitLogic | End of Initialisation Period set: 1/1/1649
