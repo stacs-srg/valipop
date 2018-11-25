@@ -164,13 +164,13 @@ public class FileUtils {
     }
 
     public static void writeSummaryRowToSummaryFiles(SummaryRow row) throws IOException {
-        Files.write(globalSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
-        Files.write(resultsSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
+        Files.write(globalSummaryPath, row.toSeparatedString(',').getBytes(), StandardOpenOption.APPEND);
+        Files.write(resultsSummaryPath, row.toSeparatedString(',').getBytes(), StandardOpenOption.APPEND);
     }
 
     public static void writeSummaryRowToSummaryFiles(SummaryRow row, Path currentResultsSummaryPath) throws IOException {
-        Files.write(globalSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
-        Files.write(currentResultsSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
+        Files.write(globalSummaryPath, row.toSeparatedString(',').getBytes(), StandardOpenOption.APPEND);
+        Files.write(currentResultsSummaryPath, row.toSeparatedString(',').getBytes(), StandardOpenOption.APPEND);
     }
 
     public static String getDateTime() {
