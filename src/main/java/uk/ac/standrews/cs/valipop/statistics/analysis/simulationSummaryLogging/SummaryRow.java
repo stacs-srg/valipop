@@ -48,7 +48,7 @@ public class SummaryRow {
     private double proportionalRecoveryFactor;
     private int minBirthSpacing;
 
-    private RecordFormat outputRecordFormat = RecordFormat.NONE;
+    private RecordFormat outputRecordFormat;
 
     private int seedPop;
 
@@ -58,7 +58,6 @@ public class SummaryRow {
     private String inputsDirectory;
 
     private int startPop;
-
     private int totalPop;
     private int endPop;
     private int peakPop;
@@ -77,7 +76,6 @@ public class SummaryRow {
 
     private long maxMemoryUsage = -1L;
     private Double v = Double.NaN;
-
 
     public SummaryRow(Path resultsDirectory,
                       String inputsDirectory,
@@ -116,7 +114,6 @@ public class SummaryRow {
         this.outputRecordFormat = outputFormat;
         this.proportionalRecoveryFactor = proportionalRecoveryFactor;
         this.seedPop = seedPopSize;
-
     }
 
     public void setStartPop(int startPop) {
@@ -167,7 +164,7 @@ public class SummaryRow {
         this.failedEligibilityChecks = failedEligibilityChecks;
     }
 
-    public String toSeperatedString(char sep) {
+    public String toSeparatedString(char sep) {
         return startTime + sep + reason + sep + codeVersion + sep + inputsDirectory + sep + totalPop + sep + seedPop
                 + sep + completed + sep + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
                 + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
@@ -205,8 +202,6 @@ public class SummaryRow {
             System.err.println(e.getMessage());
         }
     }
-
-
 
     public void setV(double v) {
         this.v = v;
