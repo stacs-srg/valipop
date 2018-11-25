@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.person;
 
-import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
@@ -33,7 +32,6 @@ import java.util.List;
  */
 public class Person implements IPerson {
 
-    private static RandomGenerator random = null;
     private static int nextId = 0;
 
     private int id;
@@ -50,11 +48,7 @@ public class Person implements IPerson {
 
     private String deathCause = "";
 
-    private boolean toSeparate = false;
-
     public Person(SexOption sex, ValipopDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean illegitimate) {
-
-        initRandomGenerator(statistics);
 
         id = getNewId();
 
@@ -185,13 +179,6 @@ public class Person implements IPerson {
         return children;
     }
 
-    private synchronized static void initRandomGenerator(PopulationStatistics statistics) {
-
-        if (random == null) {
-            random = statistics.getRandomGenerator();
-        }
-    }
-
     private static int getNewId() {
         return nextId++;
     }
@@ -201,6 +188,7 @@ public class Person implements IPerson {
     }
 
     private String getForename(PopulationStatistics statistics) {
+
         return statistics.getForenameDistribution(getBirthDate(), getSex()).getSample();
     }
 
