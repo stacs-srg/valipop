@@ -110,7 +110,6 @@ public class Config {
     private final String startTime;
 
     private boolean binomialSampling = true;
-    private int seed = 0;
     private boolean deterministic = false;
 
     // Filter method to exclude dot files from data file directory streams
@@ -457,6 +456,7 @@ public class Config {
     }
 
     public int getSeed() {
+        int seed = 0;
         return seed;
     }
 
