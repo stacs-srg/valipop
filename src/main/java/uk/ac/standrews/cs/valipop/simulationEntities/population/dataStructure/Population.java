@@ -94,7 +94,7 @@ public class Population {
 
     private PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) {
 
-        AdvanceableDate start = DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
+        AdvanceableDate start = (AdvanceableDate) DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
         ValipopDate end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());
 
         PeopleCollection cloneCol1 = col1.clone();

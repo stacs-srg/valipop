@@ -32,39 +32,46 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
  */
 public class DeathDateSelector extends DateSelector {
 
-    public ExactDate selectDate(IPerson p, PopulationStatistics desiredPopulationStatistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+    public DeathDateSelector(RandomGenerator random) {
 
-        IPerson child = PopulationNavigation.getLastChild(p);
+        super(random);
+    }
+
+    public ExactDate selectDate(IPerson person, PopulationStatistics statistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+
+        IPerson child = PopulationNavigation.getLastChild(person);
 
         if (child != null) {
 
             ValipopDate birthDateOfLastChild = child.getBirthDate().getExactDate();
 
-            if (p.getSex() == SexOption.MALE) {
+            if (person.getSex() == SexOption.MALE) {
 
                 // If a male with a child then the man cannot die more than the minimum gestation period before the birth date
-                ValipopDate earliestPossibleDate = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * desiredPopulationStatistics.getMinGestationPeriod());
-                return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, earliestPossibleDate, desiredPopulationStatistics.getRandomGenerator());
+                ValipopDate earliestPossibleDate = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * statistics.getMinGestationPeriod());
+                return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, earliestPossibleDate);
 
             } else {
                 // If a female with a child then the cannot die before birth of child
-                return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, birthDateOfLastChild, desiredPopulationStatistics.getRandomGenerator());
+                return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, birthDateOfLastChild);
             }
 
         } else {
-            return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, p.getBirthDate(), desiredPopulationStatistics.getRandomGenerator());
+            return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, person.getBirthDate());
         }
     }
 
-    private ExactDate selectDateRestrictedByEarliestPossibleDate(AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod, ValipopDate earliestPossibleDate, RandomGenerator random) {
+    private ExactDate selectDateRestrictedByEarliestPossibleDate(AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod, ValipopDate earliestPossibleDate) {
 
         // if specified earliestPossibleDate is in consideredTimePeriod
         if (DateUtils.dateBeforeOrEqual(currentDate, earliestPossibleDate)) {
+
             // The select date between earliestPossibleDate and currentDate + consideredTimePeriod
-            return selectDate(earliestPossibleDate, currentDate.advanceTime(consideredTimePeriod), random);
+            return selectRandomDate(earliestPossibleDate, currentDate.advanceTime(consideredTimePeriod));
+
         } else {
             // else all days in consideredTimePeriod are an option
-            return selectDate(currentDate, consideredTimePeriod, random);
+            return selectRandomDate(currentDate, consideredTimePeriod);
         }
     }
 }

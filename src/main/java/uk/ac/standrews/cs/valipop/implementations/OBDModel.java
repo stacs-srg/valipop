@@ -119,10 +119,6 @@ public class OBDModel {
 
         currentTime = config.getTS();
 
-        birthDateSelector = new DateSelector();
-        deathDateSelector = new DeathDateSelector();
-        marriageDateSelector = new MarriageDateSelector();
-
         partnersToSeparate = new HashSet<>();
         population = new Population(config);
         desired = new PopulationStatistics(config);
@@ -130,6 +126,10 @@ public class OBDModel {
         birthOrders = FileUtils.mkDumpFile("order.csv");
         randomNumberGenerator = desired.getRandomGenerator();
         currentHypotheticalPopulationSize = calculateStartingPopulationSize();
+
+        birthDateSelector = new DateSelector(randomNumberGenerator);
+        deathDateSelector = new DeathDateSelector(randomNumberGenerator);
+        marriageDateSelector = new MarriageDateSelector(randomNumberGenerator);
 
         log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
@@ -714,8 +714,9 @@ public class OBDModel {
             final ValipopDate earliestPossibleMarriageDate = DateUtils.getLatestDate(motherLastPrevPartneringEvent, fatherLastPrevPartneringEvent);
 
             if (DateUtils.dateBefore(earliestPossibleMarriageDate, childrenBirthDate)) {
+
                 // if there is a tenable marriage date then select it
-                partnership.setMarriageDate(marriageDateSelector.selectDate(earliestPossibleMarriageDate, childrenBirthDate, desired.getRandomGenerator()));
+                partnership.setMarriageDate(marriageDateSelector.selectRandomDate(earliestPossibleMarriageDate, childrenBirthDate));
             } else {
                 partnership.setMarriageDate(null);
             }
@@ -809,7 +810,7 @@ public class OBDModel {
 
     private IPerson makePersonWithRandomBirthDate(final ValipopDate currentDate, final IPartnership parents, final boolean illegitimate) {
 
-        final ValipopDate birthDate = birthDateSelector.selectDate(currentDate, config.getSimulationTimeStep(), desired.getRandomGenerator());
+        final ValipopDate birthDate = birthDateSelector.selectRandomDate(currentDate, config.getSimulationTimeStep());
         return makePerson(birthDate, parents, illegitimate);
     }
 
@@ -819,11 +820,17 @@ public class OBDModel {
     }
 
     private boolean initialisationFinished() {
+
         return !inInitPeriod(currentTime);
     }
 
     private boolean inInitPeriod(ValipopDate currentTime) {
-        return DateUtils.dateBeforeOrEqual(currentTime, endOfInitPeriod);
+
+        boolean beforeOrEqual = DateUtils.dateBeforeOrEqual(currentTime, endOfInitPeriod);
+        boolean beforeOrEqual2 = DateUtils.dateBeforeOrEqual2(currentTime, endOfInitPeriod);
+
+        if (beforeOrEqual != beforeOrEqual2) System.out.println("different >>>>>>>>>");
+        return beforeOrEqual;
     }
 
     private boolean simulationStarted() {
@@ -1006,7 +1013,7 @@ public class OBDModel {
 
             if (toBeMarriedBirth) {
                 marriageCounts.setFulfilledCount(numberOfChildren);
-                last.setMarriageDate(marriageDateSelector.selectDate(lastChild.getBirthDate(), birthDate, desired.getRandomGenerator()));
+                last.setMarriageDate(marriageDateSelector.selectRandomDate(lastChild.getBirthDate(), birthDate));
             } else {
                 marriageCounts.setFulfilledCount(0);
             }

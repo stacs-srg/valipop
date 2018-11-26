@@ -47,8 +47,6 @@ public class Partnership implements IPartnership {
     private ValipopDate separationDate = null;
     private ValipopDate earliestPossibleSeparationDate = null;
 
-    private static DateSelector dateSelector = new DateSelector();
-
     public Partnership(IPerson male, IPerson female, ValipopDate partnershipDate) {
 
         this(male, female);
@@ -200,7 +198,7 @@ public class Partnership implements IPartnership {
                     }
                 }
 
-                separationDate = dateSelector.selectDate(earliestPossibleSeparationDate, earliestMovedOnDate, random);
+                separationDate = new DateSelector(random).selectRandomDate(earliestPossibleSeparationDate, earliestMovedOnDate);
             }
 
             return separationDate;
