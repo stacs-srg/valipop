@@ -16,18 +16,20 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateBounds;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.MisalignedTimeDivisionError;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.*;
+
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.diedAfter;
 
 /**
  * A PersonCollection contains a set of collections of people where the collections are organised by the year of birth
@@ -36,6 +38,8 @@ import java.util.*;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public abstract class PersonCollection implements DateBounds {
+
+    // TODO what's the difference between a PersonCollection and a PeopleCollection?
 
     private AdvanceableDate startDate;
     private ValipopDate endDate;
@@ -64,22 +68,6 @@ public abstract class PersonCollection implements DateBounds {
      * @return All people in the PersonCollection
      */
     public abstract Collection<IPerson> getAll();
-
-    /**
-     * Gets all the people in the PersonCollection who were born in the given years.
-     *
-     * @param firstDate the year of birth of the desired cohort
-     * @return the desired cohort
-     */
-    public abstract Collection<IPerson> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod);
-
-    /**
-     * Gets all the people in the PersonCollection who were alive in the given years.
-     *
-     * @param firstDate the year of birth of the desired cohort
-     * @return the desired cohort
-     */
-    public abstract Collection<IPerson> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge);
 
     /**
      * Adds the given person to the PersonCollection.
@@ -113,6 +101,29 @@ public abstract class PersonCollection implements DateBounds {
      * @return the number of persons in the PersonCollection
      */
     public abstract int getNumberOfPersons(AdvanceableDate firstDate, CompoundTimeUnit timePeriod);
+
+    /**
+     * Gets all the people in the PersonCollection who were alive in the given years.
+     *
+     * @param firstDate the year of birth of the desired cohort
+     * @return the desired cohort
+     */
+    public Collection<IPerson> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
+
+        CompoundTimeUnit tP = DateUtils.combineCompoundTimeUnits(timePeriod, maxAge);
+
+        Collection<IPerson> peopleBorn = getAllPersonsBornInTimePeriod(firstDate.advanceTime(maxAge.negative()), tP);
+
+        Collection<IPerson> peopleAlive = new ArrayList<>();
+
+        for (IPerson p : peopleBorn) {
+            if (diedAfter(p, firstDate)) {
+                peopleAlive.add(p);
+            }
+        }
+
+        return peopleAlive;
+    }
 
     /**
      * Removes n people with the specified year of birth from the PersonCollection. If there are not enough people then
@@ -196,6 +207,39 @@ public abstract class PersonCollection implements DateBounds {
         }
 
         return people;
+    }
+
+    /**
+     * Gets all the people in the PersonCollection who were born in the given years.
+     *
+     * @param firstDate the year of birth of the desired cohort
+     * @return the desired cohort
+     */
+    public Collection<IPerson> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
+
+        Collection<IPerson> people = new ArrayList<>();
+
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
+
+        if (divisionsInPeriod <= 0) {
+            throw new MisalignedTimeDivisionError();
+        }
+
+        MonthDate divisionDate = firstDate.getMonthDate();
+
+        // for all the division dates
+        for (int i = 0; i < divisionsInPeriod; i++) {
+
+            addPeople(people, divisionDate);
+
+            divisionDate = divisionDate.advanceTime(getDivisionSize());
+        }
+
+        return people;
+    }
+
+    void addPeople(Collection<IPerson> people, MonthDate divisionDate) {
+
     }
 
     private Collection<IPerson> removeNPersonsFromDivision(int numberToRemove, AdvanceableDate divisionDate) {

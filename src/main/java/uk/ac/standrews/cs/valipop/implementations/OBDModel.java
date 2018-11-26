@@ -318,6 +318,13 @@ public class OBDModel {
         // update hypothetical population
         currentHypotheticalPopulationSize += hypotheticalBirths - hypotheticalDeaths;
 
+        adjustPopulationNumbers(shortFallInBirths);
+
+        return shortFallInBirths;
+    }
+
+    private void adjustPopulationNumbers(final int shortFallInBirths) {
+
         if (shortFallInBirths >= 0) {
             // add Orphan Children to the population
             for (int i = 0; i < shortFallInBirths; i++) {
@@ -327,29 +334,21 @@ public class OBDModel {
             }
         } else {
 
-            final double removeN = Math.abs(shortFallInBirths) / 2.0;
-            final int removeMales;
-            final int removeFemales;
+            final int excessBirths = Math.abs(shortFallInBirths);
+            final int numberOfFemalesToRemove = excessBirths / 2;
+            final int numberOfMalesToRemove = excessBirths - numberOfFemalesToRemove;
 
-            if (removeN % 1 != 0) {
-                removeMales = (int) Math.ceil(removeN);
-                removeFemales = (int) Math.floor(removeN);
+            CompoundTimeUnit timeStep = config.getSimulationTimeStep();
 
-            } else {
-                removeMales = (int) removeN;
-                removeFemales = (int) removeN;
+            // TODO why is this a loop? Seems to try to remove n people n times...
+            for (int i = 0; i < numberOfMalesToRemove; i++) {
+                population.getLivingPeople().getMales().removeNPersons(numberOfMalesToRemove, currentTime, timeStep, true);
             }
 
-            for (int i = 0; i < removeMales; i++) {
-                population.getLivingPeople().getMales().removeNPersons(removeMales, currentTime, initTimeStep, true);
-            }
-
-            for (int i = 0; i < removeFemales; i++) {
-                population.getLivingPeople().getFemales().removeNPersons(removeFemales, currentTime, initTimeStep, true);
+            for (int i = 0; i < numberOfFemalesToRemove; i++) {
+                population.getLivingPeople().getFemales().removeNPersons(numberOfFemalesToRemove, currentTime, timeStep, true);
             }
         }
-
-        return shortFallInBirths;
     }
 
     private int createBirths() {
@@ -362,7 +361,7 @@ public class OBDModel {
 
         AdvanceableDate divDate;
 
-        // For each division in the population data store upto the current date
+        // For each division in the population data store up to the current date
         while (divisionDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divisionDates.next(), currentTime)) {
 
             final int age = DateUtils.differenceInYears(divDate.advanceTime(consideredTimePeriod), currentTime).getCount();
@@ -742,18 +741,7 @@ public class OBDModel {
 
     private ValipopDate getDateOfLastLegitimatePartnershipEventBeforeDate(final IPerson person, final ValipopDate date) {
 
-        ValipopDate latestDate;
-
-        final ValipopDate birthDate = person.getBirthDate();
-
-        // Handle the leap year baby... TODO clean up date code in general - this really should be in the Date implementation
-        final ValipopDate temp = birthDate.getMonthDate().advanceTime(EARLIEST_AGE_OF_MARRIAGE, TimeUnit.YEAR);
-
-        if (temp.getMonth() == DateUtils.FEB && !DateUtils.isLeapYear(temp.getYear()) && birthDate.getDay() == DateUtils.DAYS_IN_LEAP_FEB) {
-            latestDate = new ExactDate(birthDate.getDay() - 1, temp.getMonth(), temp.getYear());
-        } else {
-            latestDate = new ExactDate(birthDate.getDay(), temp.getMonth(), temp.getYear());
-        }
+        ValipopDate latestDate = getEarliestMarriageDate(person);
 
         for (final IPartnership partnership : person.getPartnerships()) {
             if (DateUtils.dateBefore(partnership.getPartnershipDate(), date)) {
@@ -781,6 +769,20 @@ public class OBDModel {
         }
 
         return latestDate;
+    }
+
+    private ValipopDate getEarliestMarriageDate(IPerson person) {
+
+        final ValipopDate birthDate = person.getBirthDate();
+
+        // Handle the leap year baby...
+        final ValipopDate temp = birthDate.getMonthDate().advanceTime(EARLIEST_AGE_OF_MARRIAGE, TimeUnit.YEAR);
+
+        if (temp.getMonth() == DateUtils.FEB && !DateUtils.isLeapYear(temp.getYear()) && birthDate.getDay() == DateUtils.DAYS_IN_LEAP_FEB) {
+            return new ExactDate(birthDate.getDay() - 1, temp.getMonth(), temp.getYear());
+        } else {
+            return new ExactDate(birthDate.getDay(), temp.getMonth(), temp.getYear());
+        }
     }
 
     private static SexOption getSex(final PopulationCounts counts, final PopulationStatistics statistics, final ValipopDate currentDate) {
