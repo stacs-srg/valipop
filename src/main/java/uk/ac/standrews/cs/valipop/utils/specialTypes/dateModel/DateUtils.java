@@ -16,13 +16,10 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-
-import java.time.DateTimeException;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -36,16 +33,6 @@ public class DateUtils {
 
     private static final int DAYS_IN_YEAR = 365;
     private static final int DAYS_IN_LEAP_YEAR = 366;
-
-    public static int getDaysInMonthNonLeapYear(int month) {
-        // Jan 1 > Dec 12
-
-        if (month < 1 || month > 12) {
-            throw new DateTimeException("Month number invalid");
-        } else {
-            return DAYS_IN_MONTH[month - 1];
-        }
-    }
 
     public static CompoundTimeUnit differenceInYears(ValipopDate a, ValipopDate b) {
 
@@ -71,9 +58,7 @@ public class DateUtils {
             int daysInMonthA = getDaysInMonth(a.getMonth(), a.getYear());
             int daysInMonthB = getDaysInMonth(b.getMonth(), b.getYear());
 
-            if (daysInMonthB > daysInMonthA && b.getDay() > daysInMonthA && a.getDay() == daysInMonthA) {
-
-            } else {
+            if (!(daysInMonthB > daysInMonthA && b.getDay() > daysInMonthA && a.getDay() == daysInMonthA)) {
                 months--;
             }
         }
@@ -82,6 +67,7 @@ public class DateUtils {
     }
 
     public static boolean datesEqual(ValipopDate a, ValipopDate b) {
+
         return a.getDay() == b.getDay() && a.getMonth() == b.getMonth() && a.getYear() == b.getYear();
     }
 
@@ -109,6 +95,13 @@ public class DateUtils {
         }
     }
 
+    public static boolean dateBeforeOrEqual2(ValipopDate a, ValipopDate b) {
+
+        return (a.getYear() < b.getYear()) ||
+                (a.getYear() == b.getYear() && a.getMonth() < b.getMonth()) ||
+                (a.getYear() == b.getYear() && a.getMonth() == b.getMonth() && a.getDay() <= b.getDay());
+    }
+
     public static boolean dateBefore(ValipopDate a, ValipopDate b) {
 
         if (a.getYear() < b.getYear()) {
@@ -126,40 +119,31 @@ public class DateUtils {
         }
     }
 
+    public static boolean dateBefore2(ValipopDate a, ValipopDate b) {
+
+        return (a.getYear() < b.getYear()) ||
+                (a.getYear() == b.getYear() && a.getMonth() < b.getMonth()) ||
+                (a.getYear() == b.getYear() && a.getMonth() == b.getMonth() && a.getDay() < b.getDay());
+    }
+
     public static boolean matchesInterval(ValipopDate currentDate, CompoundTimeUnit interval, ValipopDate startDate) {
 
-        int dM = differenceInMonths(startDate, currentDate).getCount();
-
-        return dM % monthsInTimeUnit(interval) == 0;
+        return differenceInMonths(startDate, currentDate).getCount() % monthsInTimeUnit(interval) == 0;
     }
 
-    public static AdvanceableDate getEarliestDate(AdvanceableDate startDate, AdvanceableDate startDate1) {
-        if (dateBeforeOrEqual(startDate, startDate1)) {
-            return startDate;
-        } else {
-            return startDate1;
-        }
+    public static ValipopDate getEarliestDate(ValipopDate date1, ValipopDate date2) {
+
+        return dateBeforeOrEqual(date1, date2) ? date1 : date2;
     }
 
-    public static ValipopDate getLatestDate(ValipopDate startDate, ValipopDate startDate1) {
-        if (dateBeforeOrEqual(startDate, startDate1)) {
-            return startDate1;
-        } else {
-            return startDate;
-        }
+    public static ValipopDate getLatestDate(ValipopDate date1, ValipopDate date2) {
+
+        return dateBeforeOrEqual(date1, date2) ? date2 : date1;
     }
 
     public static boolean isLeapYear(int year) {
 
-        if (year % 4 == 0) {
-            if (year % 100 == 0) {
-                return year % 400 == 0;
-            } else {
-                return true;
-            }
-        } else {
-            return false;
-        }
+        return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
     }
 
     /**
@@ -216,7 +200,7 @@ public class DateUtils {
 
                     year = startingDate.getYear() + i;
 
-                    // Does the year stradle the potential leap day
+                    // Does the year straddle the potential leap day
                     if (startingDate.getMonth() == FEB && startingDate.getDay() == DAYS_IN_LEAP_FEB
                             || startingDate.getMonth() > FEB) {
                         year++;
@@ -227,7 +211,6 @@ public class DateUtils {
                     } else {
                         days += DAYS_IN_YEAR;
                     }
-
                 }
 
                 break;
