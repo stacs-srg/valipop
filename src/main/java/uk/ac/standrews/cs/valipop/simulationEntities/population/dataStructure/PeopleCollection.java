@@ -30,9 +30,7 @@ import java.util.*;
 
 /**
  * The class PeopleCollection is a concrete instance of the PersonCollection class. It provides the layout to structure
- * and index a population of males and females and provide access to them. The class also implements the IPopulationExtended
- * interface (adapted to us object references rather than integer id references) allowing it to be used with our other
- * population suite tools.
+ * and index a population of males and females and provide access to them.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */

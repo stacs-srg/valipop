@@ -35,16 +35,24 @@ import static org.junit.Assert.*;
  */
 public abstract class GeneralPopulationStructureTest {
 
-    public static final int PEOPLE_ITERATION_SAMPLE_THRESHOLD = 40;
-    public static final int PEOPLE_ITERATION_SAMPLE_START = 30;
-    public static final int PARTNERSHIP_ITERATION_SAMPLE_THRESHOLD = 20;
-    public static final int PARTNERSHIP_ITERATION_SAMPLE_START = 10;
+    private static final int PEOPLE_ITERATION_SAMPLE_THRESHOLD = 40;
+    private static final int PEOPLE_ITERATION_SAMPLE_START = 30;
+    private static final int PARTNERSHIP_ITERATION_SAMPLE_THRESHOLD = 20;
+    private static final int PARTNERSHIP_ITERATION_SAMPLE_START = 10;
 
-    private IPopulation population;
+    private final IPopulation population;
+    private final int initialSize;
 
-    public GeneralPopulationStructureTest(final IPopulation population) {
+    GeneralPopulationStructureTest(final IPopulation population, int initialSize) {
 
         this.population = population;
+        this.initialSize = initialSize;
+    }
+
+    @Test
+    public void populationContainsReasonableNumberOfPeople() {
+
+        assertTrue(population.getNumberOfPeople() > initialSize);
     }
 
     @Test

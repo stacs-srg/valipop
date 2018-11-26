@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
@@ -25,33 +25,31 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
-public class PopulationTestCases {
+import java.util.ArrayList;
+import java.util.List;
 
-    public static IPopulation[] getTestPopulations() throws Exception {
+class PopulationTestCases {
 
-        return new IPopulation[]{
+    static List<Object[]> getTestCases() throws Exception {
 
-                fullPopulation(10000, 56854687),
-                fullPopulation(20000, 56854687),
-                fullPopulation(30000, 56854687),
-                fullPopulation(40000, 56854687),
-                fullPopulation(50000, 56854687),
-                fullPopulation(10000, 56854688),
-                fullPopulation(20000, 56854688),
-                fullPopulation(30000, 56854688),
-                fullPopulation(40000, 56854688),
-                fullPopulation(50000, 56854688),
-                fullPopulation(10000, 23425234),
+        List<Object[]> testCases = new ArrayList<>();
 
-                // Configurations below disabled due to memory constraints on build server.
-//                fullPopulation(70000, 23425234),
-//                fullPopulation(150000, 23425234),
-//                fullPopulation(300000, 23425234),
-//                fullPopulation(500000, 23425234),
-        };
+        testCases.add(new Object[]{fullPopulation(10000, 56854687), 10000});
+        testCases.add(new Object[]{fullPopulation(20000, 56854687), 20000});
+        testCases.add(new Object[]{fullPopulation(30000, 56854687), 30000});
+        testCases.add(new Object[]{fullPopulation(40000, 56854687), 40000});
+        testCases.add(new Object[]{fullPopulation(50000, 56854687), 50000});
+        testCases.add(new Object[]{fullPopulation(10000, 56854688), 10000});
+        testCases.add(new Object[]{fullPopulation(20000, 56854688), 20000});
+        testCases.add(new Object[]{fullPopulation(30000, 56854688), 30000});
+        testCases.add(new Object[]{fullPopulation(40000, 56854688), 40000});
+        testCases.add(new Object[]{fullPopulation(50000, 56854688), 50000});
+        testCases.add(new Object[]{fullPopulation(50000, 23425234), 50000});
+
+        return testCases;
     }
 
-    protected static IPopulation fullPopulation(final int t0PopulationSize, int seed) throws Exception {
+    private static IPopulation fullPopulation(final int t0PopulationSize, int seed) throws Exception {
 
         AdvanceableDate tS = new MonthDate("1/1/1599");
         AdvanceableDate t0 = new MonthDate(" 1/1/1855");
