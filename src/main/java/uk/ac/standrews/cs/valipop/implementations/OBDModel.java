@@ -81,6 +81,7 @@ public class OBDModel {
     private static final CompoundTimeUnit MAX_AGE = new CompoundTimeUnit(110, TimeUnit.YEAR);
 
     private static final Logger log = new Logger(OBDModel.class);
+    public static final int BIRTH_ADJUSTMENT_BOUND = 1000000;
 
     private final Config config;
     private final SummaryRow summary;
@@ -257,6 +258,7 @@ public class OBDModel {
         }
 
         final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
+        deathCount += numberDying;
         logEntry.append(numberDying + "\t");
 
         if (simulationStarted()) {
@@ -429,74 +431,75 @@ public class OBDModel {
 
     private int getBirthAdjustment(SingleDeterminedCount determinedCount) {
 
-        int birthAdjust = 0;
         if (determinedCount.getDeterminedCount() != 0) {
 
-            int adjuster = new Double(Math.ceil(config.getBirthFactor())).intValue();
+            final double birthFactor = config.getBirthFactor();
+            final int adjuster = (int) Math.ceil(birthFactor);
 
-            int bound = 1000000;
-            if (desired.getRandomGenerator().nextInt(bound) < Math.abs(config.getBirthFactor() / adjuster) * bound) {
+            // TODO Don't know what's going on here - if birthFactor is zero, as it in several configurations, next line yields NaN.
 
-                if (config.getBirthFactor() < 0) {
-                    birthAdjust = adjuster;
-                } else {
-                    birthAdjust = -1 * adjuster;
-                }
+            if (desired.getRandomGenerator().nextInt(BIRTH_ADJUSTMENT_BOUND) < Math.abs(birthFactor / adjuster) * BIRTH_ADJUSTMENT_BOUND) {
+                return (birthFactor < 0) ? adjuster : -adjuster;
             }
         }
-        return birthAdjust;
+        return 0;
     }
 
     private int createDeaths(final SexOption sex) {
 
-        final CompoundTimeUnit consideredTimePeriod = config.getSimulationTimeStep();
-
         int killedAtTS = 0;
 
         final PersonCollection ofSexLiving = getLivingPeopleOfSex(sex);
-        final Iterator<AdvanceableDate> divDates = ofSexLiving.getDivisionDates(consideredTimePeriod).iterator();
+        final Set<AdvanceableDate> divisionDates = ofSexLiving.getDivisionDates(config.getSimulationTimeStep());
 
-        AdvanceableDate divDate;
         // For each division in the population data store up to the current date
-        while (divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentTime)) {
+        for (final AdvanceableDate divisionDate : divisionDates) {
 
-            final int age = DateUtils.differenceInYears(divDate, currentTime).getCount();
-            final int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
+            if (!DateUtils.dateBeforeOrEqual(divisionDate, currentTime)) break;
+            killedAtTS += getKilledAtTS(sex, ofSexLiving, divisionDate);
+        }
 
-            // gets death rate for people of age at the current date
-            final StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentTime, sex);
-            final DeterminedCount determinedCount = desired.getDeterminedCount(key, config);
+        return killedAtTS;
+    }
 
-            // Calculate the appropriate number to kill
-            final Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
+    private int getKilledAtTS(SexOption sex, PersonCollection ofSexLiving, AdvanceableDate divDate) {
 
-            int killAdjust = 0;
-            if (numberToKill != 0) {
+        final CompoundTimeUnit consideredTimePeriod = config.getSimulationTimeStep();
 
-                int bound = 10000;
-                if (desired.getRandomGenerator().nextInt(bound) < config.getDeathFactor() * bound) {
-                    killAdjust = -1;
-                }
-            }
+        final int age = DateUtils.differenceInYears(divDate, currentTime).getCount();
+        final int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
 
-            try {
-                final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
+        // gets death rate for people of age at the current date
+        final StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentTime, sex);
+        final DeterminedCount determinedCount = desired.getDeterminedCount(key, config);
 
-                final int killed = killPeople(peopleToKill);
-                killedAtTS += killed + killAdjust;
+        // Calculate the appropriate number to kill
+        final Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
-                // Returns the number killed to the distribution manager
-                determinedCount.setFulfilledCount(killed);
-                desired.returnAchievedCount(determinedCount);
+        int killAdjust = 0;
+        if (numberToKill != 0) {
 
-            } catch (InsufficientNumberOfPeopleException e) {
-                throw new RuntimeException("Insufficient number of people to kill, - this has occurred when selecting a less than 1 proportion of a population");
+            int bound = 10000;
+            if (desired.getRandomGenerator().nextInt(bound) < config.getDeathFactor() * bound) {
+                killAdjust = -1;
             }
         }
 
-        deathCount += killedAtTS;
+        try {
+            final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
 
-        return killedAtTS;
+            final int killed = killPeople(peopleToKill);
+            int killedAtTS = killed + killAdjust;
+
+            // Returns the number killed to the distribution manager
+            determinedCount.setFulfilledCount(killed);
+            desired.returnAchievedCount(determinedCount);
+
+            return killedAtTS;
+
+        } catch (InsufficientNumberOfPeopleException e) {
+            throw new RuntimeException("Insufficient number of people to kill, - this has occurred when selecting a less than 1 proportion of a population");
+        }
     }
 
     private int createPartnerships(final Collection<NewMother> mothersNeedingPartners) {
