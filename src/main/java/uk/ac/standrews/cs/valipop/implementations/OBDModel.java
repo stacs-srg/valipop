@@ -174,10 +174,11 @@ public class OBDModel {
             ContingencyTableFactory.generateContingencyTables(population.getAllPeople(), desired, config, summary, 0, 5);
         }
 
-        final ProgramTimer recordTimer = new ProgramTimer();
         if (config.getOutputRecordFormat() != RecordFormat.NONE) {
             RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), FileUtils.getRecordsDirPath().toString(), population.getAllPeople(), config.getT0());
         }
+
+        final ProgramTimer recordTimer = new ProgramTimer();
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
 
         try (PrintStream resultsOutput = new PrintStream(FileUtils.getDetailedResultsPath().toFile(), "UTF-8")) {
@@ -241,11 +242,14 @@ public class OBDModel {
         }
 
         final int numberBorn = createBirths();
+        birthsCount += numberBorn;
+        numberOfBirthsInThisTimestep += numberBorn;
+
         logEntry.append(numberBorn + "\t");
 
         if (!initialisationFinished() && timeFromInitialisationStartIsWholeTimeUnit()) {
 
-            int shortFallInBirths = initialisePeople();
+            final int shortFallInBirths = initialisePeople();
             logEntry.append(shortFallInBirths + "\t");
 
         } else if (initialisationFinished()) {
@@ -326,98 +330,115 @@ public class OBDModel {
     private void adjustPopulationNumbers(final int shortFallInBirths) {
 
         if (shortFallInBirths >= 0) {
-            // add Orphan Children to the population
-            for (int i = 0; i < shortFallInBirths; i++) {
-
-                final IPerson person = makePersonWithRandomBirthDate(currentTime, null, false);
-                population.getLivingPeople().addPerson(person);
-            }
+            createOrphanChildren(shortFallInBirths);
         } else {
+            removePeople(-shortFallInBirths);
+        }
+    }
 
-            final int excessBirths = Math.abs(shortFallInBirths);
-            final int numberOfFemalesToRemove = excessBirths / 2;
-            final int numberOfMalesToRemove = excessBirths - numberOfFemalesToRemove;
+    private void removePeople(int excessBirths) {
 
-            CompoundTimeUnit timeStep = config.getSimulationTimeStep();
+        final int numberOfFemalesToRemove = excessBirths / 2;
+        final int numberOfMalesToRemove = excessBirths - numberOfFemalesToRemove;
 
-            // TODO why is this a loop? Seems to try to remove n people n times...
-            for (int i = 0; i < numberOfMalesToRemove; i++) {
-                population.getLivingPeople().getMales().removeNPersons(numberOfMalesToRemove, currentTime, timeStep, true);
-            }
+        final CompoundTimeUnit timeStep = config.getSimulationTimeStep();
 
-            for (int i = 0; i < numberOfFemalesToRemove; i++) {
-                population.getLivingPeople().getFemales().removeNPersons(numberOfFemalesToRemove, currentTime, timeStep, true);
-            }
+        // TODO why is this a loop? Seems to try to remove n people n times...
+        for (int i = 0; i < numberOfMalesToRemove; i++) {
+            population.getLivingPeople().getMales().removeNPersons(numberOfMalesToRemove, currentTime, timeStep, true);
+        }
+
+        for (int i = 0; i < numberOfFemalesToRemove; i++) {
+            population.getLivingPeople().getFemales().removeNPersons(numberOfFemalesToRemove, currentTime, timeStep, true);
+        }
+    }
+
+    private void createOrphanChildren(int shortFallInBirths) {
+
+        for (int i = 0; i < shortFallInBirths; i++) {
+
+            final IPerson person = makePersonWithRandomBirthDate(currentTime, null, false);
+            population.getLivingPeople().addPerson(person);
         }
     }
 
     private int createBirths() {
 
-        int bornAtTS = 0;
-        final CompoundTimeUnit consideredTimePeriod = config.getSimulationTimeStep();
-
         final FemaleCollection femalesLiving = population.getLivingPeople().getFemales();
-        final Iterator<AdvanceableDate> divisionDates = femalesLiving.getDivisionDates(consideredTimePeriod).iterator();
+        final Set<AdvanceableDate> divisionDates = femalesLiving.getDivisionDates(config.getSimulationTimeStep());
 
-        AdvanceableDate divDate;
+        int count = 0;
 
         // For each division in the population data store up to the current date
-        while (divisionDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divisionDates.next(), currentTime)) {
+        for (final AdvanceableDate divisionDate : divisionDates) {
 
-            final int age = DateUtils.differenceInYears(divDate.advanceTime(consideredTimePeriod), currentTime).getCount();
-            final int cohortSize = femalesLiving.getAllPersonsBornInTimePeriod(divDate, consideredTimePeriod).size();
+            if (!DateUtils.dateBeforeOrEqual(divisionDate, currentTime)) break;
 
-            final Set<IntegerRange> inputOrders = desired.getOrderedBirthRates(currentTime).getColumnLabels();
-
-            for (IntegerRange order : inputOrders) {
-
-                final Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
-
-                final BirthStatsKey key = new BirthStatsKey(age, order.getValue(), cohortSize, consideredTimePeriod, currentTime);
-                final SingleDeterminedCount determinedCount = (SingleDeterminedCount) desired.getDeterminedCount(key, config);
-
-                int birthAdjust = 0;
-                if (determinedCount.getDeterminedCount() != 0) {
-
-                    int adjuster = new Double(Math.ceil(config.getBirthFactor())).intValue();
-
-                    int bound = 1000000;
-                    if (desired.getRandomGenerator().nextInt(bound) < Math.abs(config.getBirthFactor() / adjuster) * bound) {
-
-                        if (config.getBirthFactor() < 0) {
-                            birthAdjust = adjuster;
-                        } else {
-                            birthAdjust = -1 * adjuster;
-                        }
-                    }
-                }
-
-                final int numberOfChildren = determinedCount.getDeterminedCount() + birthAdjust;
-
-                // Make women into mothers
-
-                final MotherSet mothers = selectMothers(people, numberOfChildren);
-
-                // Partner females of age who don't have partners
-                final int cancelledChildren = createPartnerships(mothers.needPartners);
-
-                int childrenMade = mothers.newlyProducedChildren - cancelledChildren;
-
-                bornAtTS += childrenMade;
-                numberOfBirthsInThisTimestep += childrenMade;
-
-                childrenMade = childrenMade > birthAdjust ? childrenMade - birthAdjust : 0;
-
-                determinedCount.setFulfilledCount(childrenMade);
-
-                birthOrders.println(currentTime.getYear() + "," + age + "," + order + "," + childrenMade + "," + numberOfChildren);
-
-                desired.returnAchievedCount(determinedCount);
-            }
+            count += getBornAtTS(femalesLiving, divisionDate);
         }
 
-        birthsCount += bornAtTS;
-        return bornAtTS;
+        return count;
+    }
+
+    private int getBornAtTS(final FemaleCollection femalesLiving, final AdvanceableDate divisionDate) {
+
+        final CompoundTimeUnit consideredTimePeriod = config.getSimulationTimeStep();
+
+        final int age = DateUtils.differenceInYears(divisionDate.advanceTime(consideredTimePeriod), currentTime).getCount();
+        final int cohortSize = femalesLiving.getAllPersonsBornInTimePeriod(divisionDate, consideredTimePeriod).size();
+
+        final Set<IntegerRange> inputOrders = desired.getOrderedBirthRates(currentTime).getColumnLabels();
+
+        int count = 0;
+
+        for (final IntegerRange order : inputOrders) {
+
+            final Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divisionDate, consideredTimePeriod, order);
+
+            final BirthStatsKey key = new BirthStatsKey(age, order.getValue(), cohortSize, consideredTimePeriod, currentTime);
+            final SingleDeterminedCount determinedCount = (SingleDeterminedCount) desired.getDeterminedCount(key, config);
+
+            final int birthAdjustment = getBirthAdjustment(determinedCount);
+            final int numberOfChildren = determinedCount.getDeterminedCount() + birthAdjustment;
+
+            // Make women into mothers
+
+            final MotherSet mothers = selectMothers(people, numberOfChildren);
+
+            // Partner females of age who don't have partners
+            final int cancelledChildren = createPartnerships(mothers.needPartners);
+            final int childrenMade = mothers.newlyProducedChildren - cancelledChildren;
+            final int fulfilled = childrenMade > birthAdjustment ? childrenMade - birthAdjustment : 0;
+
+            determinedCount.setFulfilledCount(fulfilled);
+
+            birthOrders.println(currentTime.getYear() + "," + age + "," + order + "," + fulfilled + "," + numberOfChildren);
+
+            desired.returnAchievedCount(determinedCount);
+            count += childrenMade;
+        }
+
+        return count;
+    }
+
+    private int getBirthAdjustment(SingleDeterminedCount determinedCount) {
+
+        int birthAdjust = 0;
+        if (determinedCount.getDeterminedCount() != 0) {
+
+            int adjuster = new Double(Math.ceil(config.getBirthFactor())).intValue();
+
+            int bound = 1000000;
+            if (desired.getRandomGenerator().nextInt(bound) < Math.abs(config.getBirthFactor() / adjuster) * bound) {
+
+                if (config.getBirthFactor() < 0) {
+                    birthAdjust = adjuster;
+                } else {
+                    birthAdjust = -1 * adjuster;
+                }
+            }
+        }
+        return birthAdjust;
     }
 
     private int createDeaths(final SexOption sex) {
