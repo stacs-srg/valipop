@@ -387,38 +387,44 @@ public class OBDModel {
         final int age = DateUtils.differenceInYears(divisionDate.advanceTime(consideredTimePeriod), currentTime).getCount();
         final int cohortSize = femalesLiving.getAllPersonsBornInTimePeriod(divisionDate, consideredTimePeriod).size();
 
-        final Set<IntegerRange> inputOrders = desired.getOrderedBirthRates(currentTime).getColumnLabels();
+        final Set<IntegerRange> ranges = desired.getOrderedBirthRates(currentTime).getColumnLabels();
 
         int count = 0;
 
-        for (final IntegerRange order : inputOrders) {
-
-            final Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divisionDate, consideredTimePeriod, order);
-
-            final BirthStatsKey key = new BirthStatsKey(age, order.getValue(), cohortSize, consideredTimePeriod, currentTime);
-            final SingleDeterminedCount determinedCount = (SingleDeterminedCount) desired.getDeterminedCount(key, config);
-
-            final int birthAdjustment = getBirthAdjustment(determinedCount);
-            final int numberOfChildren = determinedCount.getDeterminedCount() + birthAdjustment;
-
-            // Make women into mothers
-
-            final MotherSet mothers = selectMothers(people, numberOfChildren);
-
-            // Partner females of age who don't have partners
-            final int cancelledChildren = createPartnerships(mothers.needPartners);
-            final int childrenMade = mothers.newlyProducedChildren - cancelledChildren;
-            final int fulfilled = childrenMade > birthAdjustment ? childrenMade - birthAdjustment : 0;
-
-            determinedCount.setFulfilledCount(fulfilled);
-
-            birthOrders.println(currentTime.getYear() + "," + age + "," + order + "," + fulfilled + "," + numberOfChildren);
-
-            desired.returnAchievedCount(determinedCount);
-            count += childrenMade;
+        for (final IntegerRange range : ranges) {
+            count += getBornInRange(femalesLiving, divisionDate, age, cohortSize, range);
         }
 
         return count;
+    }
+
+    private int getBornInRange(FemaleCollection femalesLiving, AdvanceableDate divisionDate, int age, int cohortSize, IntegerRange range) {
+
+        final CompoundTimeUnit consideredTimePeriod = config.getSimulationTimeStep();
+
+        final Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divisionDate, consideredTimePeriod, range);
+
+        final BirthStatsKey key = new BirthStatsKey(age, range.getValue(), cohortSize, consideredTimePeriod, currentTime);
+        final SingleDeterminedCount determinedCount = (SingleDeterminedCount) desired.getDeterminedCount(key, config);
+
+        final int birthAdjustment = getBirthAdjustment(determinedCount);
+        final int numberOfChildren = determinedCount.getDeterminedCount() + birthAdjustment;
+
+        // Make women into mothers
+
+        final MotherSet mothers = selectMothers(people, numberOfChildren);
+
+        // Partner females of age who don't have partners
+        final int cancelledChildren = createPartnerships(mothers.needPartners);
+        final int childrenMade = mothers.newlyProducedChildren - cancelledChildren;
+        final int fulfilled = childrenMade > birthAdjustment ? childrenMade - birthAdjustment : 0;
+
+        determinedCount.setFulfilledCount(fulfilled);
+
+        birthOrders.println(currentTime.getYear() + "," + age + "," + range + "," + fulfilled + "," + numberOfChildren);
+
+        desired.returnAchievedCount(determinedCount);
+        return childrenMade;
     }
 
     private int getBirthAdjustment(SingleDeterminedCount determinedCount) {
