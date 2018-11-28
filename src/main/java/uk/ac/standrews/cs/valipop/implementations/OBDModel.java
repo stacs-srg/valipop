@@ -485,206 +485,46 @@ public class OBDModel {
             }
         }
 
-        try {
-            final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
+        final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
 
-            final int killed = killPeople(peopleToKill);
-            int killedAtTS = killed + killAdjust;
+        final int killed = killPeople(peopleToKill);
 
-            // Returns the number killed to the distribution manager
-            determinedCount.setFulfilledCount(killed);
-            desired.returnAchievedCount(determinedCount);
+        // Returns the number killed to the distribution manager
+        determinedCount.setFulfilledCount(killed);
+        desired.returnAchievedCount(determinedCount);
 
-            return killedAtTS;
-
-        } catch (InsufficientNumberOfPeopleException e) {
-            throw new RuntimeException("Insufficient number of people to kill, - this has occurred when selecting a less than 1 proportion of a population");
-        }
+        return killed + killAdjust;
     }
 
     private int createPartnerships(final Collection<NewMother> mothersNeedingPartners) {
 
-        final int forNFemales = mothersNeedingPartners.size();
-
-        if (forNFemales != 0) {
+        if (mothersNeedingPartners.size() != 0) {
 
             final LinkedList<NewMother> women = new LinkedList<>(mothersNeedingPartners);
 
             final int age = ageOnDate(women.getFirst().newMother, currentTime);
 
-            final PartneringStatsKey key = new PartneringStatsKey(age, forNFemales, config.getSimulationTimeStep(), currentTime);
+            final PartneringStatsKey key = new PartneringStatsKey(age, mothersNeedingPartners.size(), config.getSimulationTimeStep(), currentTime);
 
             final MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desired.getDeterminedCount(key, config);
 
-            OperableLabelledValueSet<IntegerRange, Integer> partnerCounts;
-            LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts;
-
-            try {
-                partnerCounts = new IntegerRangeToIntegerSet(determinedCounts.getDeterminedCount());
-                achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
-
-            } catch (NullPointerException e) {
-                throw new Error("Large population size has lead to accumulated errors in processing of Doubles that the " +
-                        "sum of the underlying self correction array no longer approximates to a whole number - " +
-                        "make DELTA bigger? Or use a data type that actually works...");
-            }
-
+            OperableLabelledValueSet<IntegerRange, Integer> partnerCounts = new IntegerRangeToIntegerSet(determinedCounts.getDeterminedCount());
+            final LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
             final LabelledValueSet<IntegerRange, Integer> availableMen = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
 
-            // this section gets all the men in the age ranges we may need to look at
-            final Map<IntegerRange, LinkedList<IPerson>> allMen = new TreeMap<>();
+            final Map<IntegerRange, LinkedList<IPerson>> menMap = getAllMen(partnerCounts, availableMen);
 
-            for (IntegerRange range : partnerCounts.getLabels()) {
-
-                final AdvanceableDate yobOfOlderEndOfIR = getYobOfOlderEndOfIR(range, currentTime);
-                final CompoundTimeUnit rangeLength = getRangeLength(range);
-
-                final LinkedList<IPerson> men = new LinkedList<>(population.getLivingPeople().getMales().getAllPersonsBornInTimePeriod(yobOfOlderEndOfIR, rangeLength));
-
-                CollectionUtils.shuffle(men, desired.getRandomGenerator());
-
-                allMen.put(range, men);
-                availableMen.update(range, men.size());
-            }
-
-            OperableLabelledValueSet<IntegerRange, Double> shortfallCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesSubtractValues(availableMen));
-
-            // this section redistributes the determined partner counts based on the number of available men in each age range
-            while (shortfallCounts.countPositiveValues() != 0) {
-
-                final LabelledValueSet<IntegerRange, Double> zeroedNegShortfalls = shortfallCounts.zeroNegativeValues();
-                final int numberOfRangesWithSpareMen = shortfallCounts.countNegativeValues();
-                final double totalShortfall = zeroedNegShortfalls.getSumOfValues();
-                final double shortfallToShare = totalShortfall / (double) numberOfRangesWithSpareMen;
-
-                partnerCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesAddNWhereCorrespondingLabelNegativeInLVS(shortfallToShare, shortfallCounts)
-                        .valuesSubtractValues(zeroedNegShortfalls)).controlledRoundingMaintainingSum();
-
-                shortfallCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesSubtractValues(availableMen));
-            }
+            final OperableLabelledValueSet<IntegerRange, Integer> redistributedPartnerCounts = redistributePartnerCounts(partnerCounts, availableMen);
 
             // TODO - upto - question: does infids affect NPA?
 
-            final List<ProposedPartnership> proposedPartnerships = new ArrayList<>();
+            final List<ProposedPartnership> proposedPartnerships = getProposedPartnerships(women, menMap, redistributedPartnerCounts, achievedPartnerCounts);
 
-            // for each age range of males
-            for (IntegerRange range : partnerCounts.getLabels()) {
+            findPartners(women, menMap, redistributedPartnerCounts, proposedPartnerships);
 
-                int determinedCount = partnerCounts.get(range);
+            final int cancelledChildren = removeLastPartners(population, women);
 
-                final LinkedList<IPerson> men = allMen.get(range);
-                IPerson head = null; // keeps track of first man seen to prevent infinite loop
-
-                final Collection<NewMother> unmatchedFemales = new ArrayList<>();
-
-                // Keep going until enough females have been matched for this range
-                while (determinedCount > 0) {
-
-                    final IPerson man = men.pollFirst();
-                    NewMother woman;
-
-                    if (!women.isEmpty()) {
-                        woman = women.pollFirst();
-                    } else {
-                        break;
-                    }
-
-                    // if man is head of list - i.e. this is the second time round
-                    if (man == head) {
-                        // thus female has not been able to be matched
-                        unmatchedFemales.add(woman);
-                        head = null;
-
-                        // get next woman to check for partnering
-                        if (!women.isEmpty()) {
-                            woman = women.pollFirst();
-                        } else {
-                            break;
-                        }
-                    }
-
-                    // check if there is any reason why these people cannot lawfully be partnered...
-                    if (eligible(man, woman.newMother, woman.numberOfChildrenInMaternity)) {
-                        // if they can - then note as a proposed partnership
-                        proposedPartnerships.add(new ProposedPartnership(man, woman.newMother, woman.numberOfChildrenInMaternity));
-                        determinedCount--;
-                        head = null;
-
-                    } else {
-                        // else we need to loop through more men - so keep track of the first man we looked at
-                        if (head == null) {
-                            head = man;
-                        }
-                        men.addLast(man);
-                        women.addFirst(woman);
-                    }
-                }
-
-                women.addAll(unmatchedFemales);
-
-                // note how many females have been partnered at this age range
-                achievedPartnerCounts.add(range, partnerCounts.get(range) - determinedCount);
-            }
-
-            if (!women.isEmpty()) {
-                for (int i = 0; i < women.size(); i++) {
-                    final NewMother uf = women.get(i);
-
-                    nmLoop:
-                    for (IntegerRange range : partnerCounts.getLabels()) {
-                        for (final IPerson man : allMen.get(range)) {
-                            if (eligible(man, uf.newMother, uf.numberOfChildrenInMaternity) && !inPartnerships(man, proposedPartnerships)) {
-
-                                proposedPartnerships.add(new ProposedPartnership(man, uf.newMother, uf.numberOfChildrenInMaternity));
-
-                                women.remove(uf);
-                                i--;
-                                break nmLoop;
-                            }
-                        }
-                    }
-                }
-            }
-
-            final int cancelledChildren = getCancelledChildren(population, women);
-
-            final LabelledValueSet<IntegerRange, Integer> returnPartnerCounts = determinedCounts.getZeroedCountsTemplate();
-
-            final Map<Integer, List<IPerson>> partneredFemalesByChildren = new HashMap<>();
-
-            for (final ProposedPartnership partnership : proposedPartnerships) {
-
-                final IPerson mother = partnership.female;
-                final IPerson father = partnership.male;
-
-                final int numChildrenInPartnership = partnership.numberOfChildren;
-
-                // Decide on marriage
-                final MarriageStatsKey marriageKey = new MarriageStatsKey(ageOnDate(mother, currentTime), numChildrenInPartnership, config.getSimulationTimeStep(), currentTime);
-                final SingleDeterminedCount marriageCounts = (SingleDeterminedCount) desired.getDeterminedCount(marriageKey, config);
-
-                final boolean isIllegitimate = !needsNewPartner(father, currentTime);
-                final boolean toBeMarriedBirth = !isIllegitimate && (int) Math.round(marriageCounts.getDeterminedCount() / (double) numChildrenInPartnership) == 1;
-
-                final IPartnership marriage = createPartnership(numChildrenInPartnership, father, mother, isIllegitimate, toBeMarriedBirth);
-
-                // checks if marriage was possible
-                if (marriage.getMarriageDate() != null) {
-                    marriageCounts.setFulfilledCount(numChildrenInPartnership);
-                } else {
-                    marriageCounts.setFulfilledCount(0);
-                }
-
-                desired.returnAchievedCount(marriageCounts);
-
-                final IntegerRange maleAgeRange = resolveAgeToIntegerRange(father, returnPartnerCounts.getLabels(), currentTime);
-                returnPartnerCounts.update(maleAgeRange, returnPartnerCounts.getValue(maleAgeRange) + 1);
-
-                addMotherToMap(partneredFemalesByChildren, mother, numChildrenInPartnership);
-            }
-
-            determinedCounts.setFulfilledCount(returnPartnerCounts);
-            desired.returnAchievedCount(determinedCounts);
+            final Map<Integer, List<IPerson>> partneredFemalesByChildren = getPartneredFemalesByChildren(determinedCounts, proposedPartnerships);
 
             separationEvent(partneredFemalesByChildren);
 
@@ -692,6 +532,165 @@ public class OBDModel {
         }
 
         return 0;
+    }
+
+    private Map<Integer, List<IPerson>> getPartneredFemalesByChildren(MultipleDeterminedCount determinedCounts, List<ProposedPartnership> proposedPartnerships) {
+
+        final Map<Integer, List<IPerson>> partneredFemalesByChildren = new HashMap<>();
+
+        final LabelledValueSet<IntegerRange, Integer> returnPartnerCounts = determinedCounts.getZeroedCountsTemplate();
+
+        for (final ProposedPartnership partnership : proposedPartnerships) {
+
+            setUpPartnership(partnership, returnPartnerCounts);
+            addMotherToMap(partnership, partneredFemalesByChildren);
+        }
+
+        determinedCounts.setFulfilledCount(returnPartnerCounts);
+        desired.returnAchievedCount(determinedCounts);
+        return partneredFemalesByChildren;
+    }
+
+    private void setUpPartnership(final ProposedPartnership partnership, final LabelledValueSet<IntegerRange, Integer> partnerCounts) {
+
+        final IPerson mother = partnership.female;
+        final IPerson father = partnership.male;
+
+        final int numChildrenInPartnership = partnership.numberOfChildren;
+
+        // Decide on marriage
+        final MarriageStatsKey marriageKey = new MarriageStatsKey(ageOnDate(mother, currentTime), numChildrenInPartnership, config.getSimulationTimeStep(), currentTime);
+        final SingleDeterminedCount marriageCounts = (SingleDeterminedCount) desired.getDeterminedCount(marriageKey, config);
+
+        final boolean isIllegitimate = !needsNewPartner(father, currentTime);
+        final boolean marriedAtBirth = !isIllegitimate && (int) Math.round(marriageCounts.getDeterminedCount() / (double) numChildrenInPartnership) == 1;
+
+        final IPartnership marriage = createPartnership(numChildrenInPartnership, father, mother, isIllegitimate, marriedAtBirth);
+
+        marriageCounts.setFulfilledCount(marriage.getMarriageDate() != null ? numChildrenInPartnership : 0);
+        desired.returnAchievedCount(marriageCounts);
+
+        final IntegerRange maleAgeRange = resolveAgeToIntegerRange(father, partnerCounts.getLabels(), currentTime);
+        partnerCounts.update(maleAgeRange, partnerCounts.getValue(maleAgeRange) + 1);
+    }
+
+    private void findPartners(LinkedList<NewMother> women, Map<IntegerRange, LinkedList<IPerson>> menMap,
+                              OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, List<ProposedPartnership> proposedPartnerships) {
+
+        Iterator<NewMother> iterator = women.iterator();
+        while (iterator.hasNext()) {
+
+            final NewMother newMother = iterator.next();
+
+            partnerSearchLoop:
+            for (final IntegerRange range : partnerCounts.getLabels()) {
+                for (final IPerson man : menMap.get(range)) {
+
+                    if (eligible(man, newMother) && !inPartnerships(man, proposedPartnerships)) {
+
+                        proposedPartnerships.add(new ProposedPartnership(man, newMother.newMother, newMother.numberOfChildrenInMaternity));
+                        iterator.remove();
+
+                        break partnerSearchLoop;
+                    }
+                }
+            }
+        }
+    }
+
+    private List<ProposedPartnership> getProposedPartnerships(final LinkedList<NewMother> women, final Map<IntegerRange, LinkedList<IPerson>> menMap,
+                                                              final OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, final LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts) {
+
+        final List<ProposedPartnership> proposedPartnerships = new ArrayList<>();
+
+        // for each age range of males
+        for (IntegerRange range : partnerCounts.getLabels()) {
+
+            int determinedCount = partnerCounts.get(range);
+
+            final LinkedList<IPerson> men = menMap.get(range);
+            IPerson head = null; // keeps track of first man seen to prevent infinite loop
+
+            final Collection<NewMother> unmatchedFemales = new ArrayList<>();
+
+            // Keep going until enough females have been matched for this range
+            while (determinedCount > 0 && !women.isEmpty()) {
+
+                final IPerson man = men.pollFirst();
+                NewMother woman = women.pollFirst();
+
+                // if man is head of list - i.e. this is the second time round
+                if (man == head) {
+                    // thus female has not been able to be matched
+                    unmatchedFemales.add(woman);
+                    head = null;
+
+                    // get next woman to check for partnering
+                    if (women.isEmpty()) break;
+                    woman = women.pollFirst();
+                }
+
+                // check if there is any reason why these people cannot lawfully be partnered...
+                if (eligible(man, woman)) {
+                    // if they can - then note as a proposed partnership
+                    proposedPartnerships.add(new ProposedPartnership(man, woman.newMother, woman.numberOfChildrenInMaternity));
+                    determinedCount--;
+                    head = null;
+
+                } else {
+                    // else we need to loop through more men - so keep track of the first man we looked at
+                    if (head == null) {
+                        head = man;
+                    }
+                    men.addLast(man);
+                    women.addFirst(woman);
+                }
+            }
+
+            women.addAll(unmatchedFemales);
+
+            // note how many females have been partnered at this age range
+            achievedPartnerCounts.add(range, partnerCounts.get(range) - determinedCount);
+        }
+        return proposedPartnerships;
+    }
+
+    private OperableLabelledValueSet<IntegerRange, Integer> redistributePartnerCounts(OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, LabelledValueSet<IntegerRange, Integer> availableMen) {
+
+        OperableLabelledValueSet<IntegerRange, Double> shortfallCounts;
+
+        // this section redistributes the determined partner counts based on the number of available men in each age range
+        do {
+            shortfallCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesSubtractValues(availableMen));
+
+            final LabelledValueSet<IntegerRange, Double> zeroedNegShortfalls = shortfallCounts.zeroNegativeValues();
+            final int numberOfRangesWithSpareMen = shortfallCounts.countNegativeValues();
+            final double totalShortfall = zeroedNegShortfalls.getSumOfValues();
+            final double shortfallToShare = totalShortfall / (double) numberOfRangesWithSpareMen;
+
+            partnerCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesAddNWhereCorrespondingLabelNegativeInLVS(shortfallToShare, shortfallCounts)
+                    .valuesSubtractValues(zeroedNegShortfalls)).controlledRoundingMaintainingSum();
+
+        } while (shortfallCounts.countPositiveValues() != 0);
+        return partnerCounts;
+    }
+
+    private Map<IntegerRange, LinkedList<IPerson>> getAllMen(OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, LabelledValueSet<IntegerRange, Integer> availableMen) {
+
+        final Map<IntegerRange, LinkedList<IPerson>> allMen = new TreeMap<>();
+        for (IntegerRange range : partnerCounts.getLabels()) {
+
+            final AdvanceableDate yobOfOlderEndOfIR = getYobOfOlderEndOfIR(range, currentTime);
+            final CompoundTimeUnit rangeLength = getRangeLength(range);
+
+            final LinkedList<IPerson> men = new LinkedList<>(population.getLivingPeople().getMales().getAllPersonsBornInTimePeriod(yobOfOlderEndOfIR, rangeLength));
+
+            CollectionUtils.shuffle(men, desired.getRandomGenerator());
+
+            allMen.put(range, men);
+            availableMen.update(range, men.size());
+        }
+        return allMen;
     }
 
     private IPartnership createPartnership(final int numberOfChildren, final IPerson father, final IPerson mother, final boolean illegitimate, final boolean marriedAtBirth) throws PersonNotFoundException {
@@ -981,7 +980,10 @@ public class OBDModel {
         }
     }
 
-    private boolean eligible(final IPerson man, final IPerson woman, final int childrenInPregnancy) {
+    private boolean eligible(final IPerson man, final NewMother newMother) {
+
+        final IPerson woman = newMother.newMother;
+        final int childrenInPregnancy = newMother.numberOfChildrenInMaternity;
 
         population.getPopulationCounts().incEligibilityCheck();
 
@@ -1053,7 +1055,10 @@ public class OBDModel {
         population.getLivingPeople().addPerson(mother);
     }
 
-    private void addMotherToMap(final Map<Integer, List<IPerson>> partneredFemalesByChildren, final IPerson mother, final int numChildrenInPartnership) {
+    private void addMotherToMap(final ProposedPartnership partnership, final Map<Integer, List<IPerson>> partneredFemalesByChildren) {
+
+        final IPerson mother = partnership.female;
+        final int numChildrenInPartnership = partnership.numberOfChildren;
 
         if (partneredFemalesByChildren.containsKey(numChildrenInPartnership)) {
 
@@ -1063,7 +1068,7 @@ public class OBDModel {
         }
     }
 
-    private int getCancelledChildren(final Population population, final List<NewMother> women) {
+    private int removeLastPartners(final Population population, final List<NewMother> women) {
 
         int cancelledChildren = 0;
 
