@@ -338,7 +338,7 @@ public class OBDModel {
         }
     }
 
-    private void removePeople(int excessBirths) {
+    private void removePeople(final int excessBirths) {
 
         final int numberOfFemalesToRemove = excessBirths / 2;
         final int numberOfMalesToRemove = excessBirths - numberOfFemalesToRemove;
@@ -355,7 +355,7 @@ public class OBDModel {
         }
     }
 
-    private void createOrphanChildren(int shortFallInBirths) {
+    private void createOrphanChildren(final int shortFallInBirths) {
 
         for (int i = 0; i < shortFallInBirths; i++) {
 
@@ -375,7 +375,6 @@ public class OBDModel {
         for (final AdvanceableDate divisionDate : divisionDates) {
 
             if (!DateUtils.dateBeforeOrEqual(divisionDate, currentTime)) break;
-
             count += getBornAtTS(femalesLiving, divisionDate);
         }
 
@@ -400,11 +399,11 @@ public class OBDModel {
         return count;
     }
 
-    private int getBornInRange(FemaleCollection femalesLiving, AdvanceableDate divisionDate, int age, int cohortSize, IntegerRange range) {
+    private int getBornInRange(final FemaleCollection femalesLiving, final AdvanceableDate divisionDate, final int age, final int cohortSize, final IntegerRange range) {
 
         final CompoundTimeUnit consideredTimePeriod = config.getSimulationTimeStep();
 
-        final Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divisionDate, consideredTimePeriod, range);
+        final List<IPerson> people = new ArrayList<>(femalesLiving.getByDatePeriodAndBirthOrder(divisionDate, consideredTimePeriod, range));
 
         final BirthStatsKey key = new BirthStatsKey(age, range.getValue(), cohortSize, consideredTimePeriod, currentTime);
         final SingleDeterminedCount determinedCount = (SingleDeterminedCount) desired.getDeterminedCount(key, config);
@@ -414,11 +413,11 @@ public class OBDModel {
 
         // Make women into mothers
 
-        final MotherSet mothers = selectMothers(people, numberOfChildren);
+        final MothersNeedingPartners mothersNeedingPartners = selectMothers(people, numberOfChildren);
 
         // Partner females of age who don't have partners
-        final int cancelledChildren = createPartnerships(mothers.needPartners);
-        final int childrenMade = mothers.newlyProducedChildren - cancelledChildren;
+        final int cancelledChildren = createPartnerships(mothersNeedingPartners.mothers);
+        final int childrenMade = mothersNeedingPartners.newlyProducedChildren - cancelledChildren;
         final int fulfilled = childrenMade > birthAdjustment ? childrenMade - birthAdjustment : 0;
 
         determinedCount.setFulfilledCount(fulfilled);
@@ -429,7 +428,7 @@ public class OBDModel {
         return childrenMade;
     }
 
-    private int getBirthAdjustment(SingleDeterminedCount determinedCount) {
+    private int getBirthAdjustment(final SingleDeterminedCount determinedCount) {
 
         if (determinedCount.getDeterminedCount() != 0) {
 
@@ -462,12 +461,12 @@ public class OBDModel {
         return killedAtTS;
     }
 
-    private int getKilledAtTS(SexOption sex, PersonCollection ofSexLiving, AdvanceableDate divDate) {
+    private int getKilledAtTS(final SexOption sex, final PersonCollection ofSexLiving, final AdvanceableDate divisionDate) {
 
         final CompoundTimeUnit consideredTimePeriod = config.getSimulationTimeStep();
 
-        final int age = DateUtils.differenceInYears(divDate, currentTime).getCount();
-        final int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
+        final int age = DateUtils.differenceInYears(divisionDate, currentTime).getCount();
+        final int peopleOfAge = ofSexLiving.getNumberOfPersons(divisionDate, consideredTimePeriod);
 
         // gets death rate for people of age at the current date
         final StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentTime, sex);
@@ -485,7 +484,7 @@ public class OBDModel {
             }
         }
 
-        final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
+        final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divisionDate, consideredTimePeriod, true);
 
         final int killed = killPeople(peopleToKill);
 
@@ -498,47 +497,40 @@ public class OBDModel {
 
     private int createPartnerships(final Collection<NewMother> mothersNeedingPartners) {
 
-        if (mothersNeedingPartners.size() != 0) {
+        if (mothersNeedingPartners.size() == 0) return 0;
 
-            final LinkedList<NewMother> women = new LinkedList<>(mothersNeedingPartners);
+        final LinkedList<NewMother> women = new LinkedList<>(mothersNeedingPartners);
 
-            final int age = ageOnDate(women.getFirst().newMother, currentTime);
+        final int age = ageOnDate(women.getFirst().newMother, currentTime);
 
-            final PartneringStatsKey key = new PartneringStatsKey(age, mothersNeedingPartners.size(), config.getSimulationTimeStep(), currentTime);
+        final PartneringStatsKey key = new PartneringStatsKey(age, mothersNeedingPartners.size(), config.getSimulationTimeStep(), currentTime);
 
-            final MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desired.getDeterminedCount(key, config);
+        final MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desired.getDeterminedCount(key, config);
 
-            OperableLabelledValueSet<IntegerRange, Integer> partnerCounts = new IntegerRangeToIntegerSet(determinedCounts.getDeterminedCount());
-            final LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
-            final LabelledValueSet<IntegerRange, Integer> availableMen = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
+        OperableLabelledValueSet<IntegerRange, Integer> partnerCounts = new IntegerRangeToIntegerSet(determinedCounts.getDeterminedCount());
+        final LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
+        final LabelledValueSet<IntegerRange, Integer> availableMen = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
 
-            final Map<IntegerRange, LinkedList<IPerson>> menMap = getAllMen(partnerCounts, availableMen);
+        final Map<IntegerRange, LinkedList<IPerson>> menMap = getAllMen(partnerCounts, availableMen);
+        final OperableLabelledValueSet<IntegerRange, Integer> redistributedPartnerCounts = redistributePartnerCounts(partnerCounts, availableMen);
 
-            final OperableLabelledValueSet<IntegerRange, Integer> redistributedPartnerCounts = redistributePartnerCounts(partnerCounts, availableMen);
+        // TODO - upto - question: does infids affect NPA?
 
-            // TODO - upto - question: does infids affect NPA?
+        final List<ProposedPartnership> proposedPartnerships = getProposedPartnerships(women, menMap, redistributedPartnerCounts, achievedPartnerCounts);
 
-            final List<ProposedPartnership> proposedPartnerships = getProposedPartnerships(women, menMap, redistributedPartnerCounts, achievedPartnerCounts);
+        findPartners(women, menMap, redistributedPartnerCounts, proposedPartnerships);
 
-            findPartners(women, menMap, redistributedPartnerCounts, proposedPartnerships);
+        final int cancelledChildren = removeLastPartners(population, women);
 
-            final int cancelledChildren = removeLastPartners(population, women);
+        separationEvent(getPartneredFemalesByChildren(determinedCounts, proposedPartnerships));
 
-            final Map<Integer, List<IPerson>> partneredFemalesByChildren = getPartneredFemalesByChildren(determinedCounts, proposedPartnerships);
-
-            separationEvent(partneredFemalesByChildren);
-
-            return cancelledChildren;
-        }
-
-        return 0;
+        return cancelledChildren;
     }
 
-    private Map<Integer, List<IPerson>> getPartneredFemalesByChildren(MultipleDeterminedCount determinedCounts, List<ProposedPartnership> proposedPartnerships) {
-
-        final Map<Integer, List<IPerson>> partneredFemalesByChildren = new HashMap<>();
+    private Map<Integer, List<IPerson>> getPartneredFemalesByChildren(final MultipleDeterminedCount determinedCounts, final List<ProposedPartnership> proposedPartnerships) {
 
         final LabelledValueSet<IntegerRange, Integer> returnPartnerCounts = determinedCounts.getZeroedCountsTemplate();
+        final Map<Integer, List<IPerson>> partneredFemalesByChildren = new HashMap<>();
 
         for (final ProposedPartnership partnership : proposedPartnerships) {
 
@@ -574,10 +566,11 @@ public class OBDModel {
         partnerCounts.update(maleAgeRange, partnerCounts.getValue(maleAgeRange) + 1);
     }
 
-    private void findPartners(LinkedList<NewMother> women, Map<IntegerRange, LinkedList<IPerson>> menMap,
-                              OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, List<ProposedPartnership> proposedPartnerships) {
+    private void findPartners(final List<NewMother> women, final Map<IntegerRange, LinkedList<IPerson>> menMap,
+                              final OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, final List<ProposedPartnership> proposedPartnerships) {
 
         Iterator<NewMother> iterator = women.iterator();
+
         while (iterator.hasNext()) {
 
             final NewMother newMother = iterator.next();
@@ -655,7 +648,7 @@ public class OBDModel {
         return proposedPartnerships;
     }
 
-    private OperableLabelledValueSet<IntegerRange, Integer> redistributePartnerCounts(OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, LabelledValueSet<IntegerRange, Integer> availableMen) {
+    private OperableLabelledValueSet<IntegerRange, Integer> redistributePartnerCounts(OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, final LabelledValueSet<IntegerRange, Integer> availableMen) {
 
         OperableLabelledValueSet<IntegerRange, Double> shortfallCounts;
 
@@ -668,14 +661,17 @@ public class OBDModel {
             final double totalShortfall = zeroedNegShortfalls.getSumOfValues();
             final double shortfallToShare = totalShortfall / (double) numberOfRangesWithSpareMen;
 
-            partnerCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesAddNWhereCorrespondingLabelNegativeInLVS(shortfallToShare, shortfallCounts)
-                    .valuesSubtractValues(zeroedNegShortfalls)).controlledRoundingMaintainingSum();
+            OperableLabelledValueSet<IntegerRange, Double> set1 = partnerCounts.valuesAddNWhereCorrespondingLabelNegativeInLVS(shortfallToShare, shortfallCounts);
+            LabelledValueSet<IntegerRange, Double> set2 = set1.valuesSubtractValues(zeroedNegShortfalls);
+
+            partnerCounts = new IntegerRangeToDoubleSet(set2).controlledRoundingMaintainingSum();
 
         } while (shortfallCounts.countPositiveValues() != 0);
+
         return partnerCounts;
     }
 
-    private Map<IntegerRange, LinkedList<IPerson>> getAllMen(OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, LabelledValueSet<IntegerRange, Integer> availableMen) {
+    private Map<IntegerRange, LinkedList<IPerson>> getAllMen(final OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, final LabelledValueSet<IntegerRange, Integer> availableMen) {
 
         final Map<IntegerRange, LinkedList<IPerson>> allMen = new TreeMap<>();
         for (IntegerRange range : partnerCounts.getLabels()) {
@@ -695,15 +691,53 @@ public class OBDModel {
 
     private IPartnership createPartnership(final int numberOfChildren, final IPerson father, final IPerson mother, final boolean illegitimate, final boolean marriedAtBirth) throws PersonNotFoundException {
 
-        try {
-            population.getLivingPeople().removePerson(mother);
-            population.getLivingPeople().removePerson(father);
-
-        } catch (PersonNotFoundException e) {
-            throw new PersonNotFoundException("Could not remove parents for population position update when creating new partnership");
-        }
+        population.getLivingPeople().removePerson(mother);
+        population.getLivingPeople().removePerson(father);
 
         final IPartnership partnership = new Partnership(father, mother);
+        makeChildren(partnership, numberOfChildren, illegitimate, marriedAtBirth);
+
+        population.getLivingPeople().addPartnershipToIndex(partnership);
+
+        mother.recordPartnership(partnership);
+        father.recordPartnership(partnership);
+
+        // re-insert parents into population, this allows their position in the data structure to be updated
+        population.getLivingPeople().addPerson(mother);
+        population.getLivingPeople().addPerson(father);
+
+        return partnership;
+    }
+
+    private void setMarriageDate(final IPartnership partnership, final boolean marriedAtBirth, final ValipopDate lastBirthDate) {
+
+        if (marriedAtBirth) {
+
+            // nth child - then previous child birth date - NOT possible here, this is a method for new partnerships
+            // first child - then death or divorce of previous spouses or coming of age
+
+            // for mother
+            final ValipopDate motherLastPrevPartneringEvent = getDateOfLastLegitimatePartnershipEventBeforeDate(partnership.getFemalePartner(), lastBirthDate);
+
+            // for father
+            final ValipopDate fatherLastPrevPartneringEvent = getDateOfLastLegitimatePartnershipEventBeforeDate(partnership.getMalePartner(), lastBirthDate);
+
+            final ValipopDate earliestPossibleMarriageDate = DateUtils.getLatestDate(motherLastPrevPartneringEvent, fatherLastPrevPartneringEvent);
+
+            if (DateUtils.dateBefore(earliestPossibleMarriageDate, lastBirthDate)) {
+
+                // if there is a tenable marriage date then select it
+                partnership.setMarriageDate(marriageDateSelector.selectRandomDate(earliestPossibleMarriageDate, lastBirthDate));
+            } else {
+                partnership.setMarriageDate(null);
+            }
+
+        } else {
+            partnership.setMarriageDate(null);
+        }
+    }
+
+    private void makeChildren(IPartnership partnership, int numberOfChildren, boolean illegitimate, boolean marriedAtBirth) {
 
         final List<IPerson> children = new ArrayList<>(numberOfChildren);
 
@@ -729,44 +763,9 @@ public class OBDModel {
             children.add(child);
         }
 
-        if (marriedAtBirth) {
-
-            // nth child - then previous child birth date - NOT possible here, this is a method for new partnerships
-            // first child - then death or divorce of previous spouses or coming of age
-
-            // for mother
-            final ValipopDate motherLastPrevPartneringEvent = getDateOfLastLegitimatePartnershipEventBeforeDate(mother, childrenBirthDate);
-
-            // for father
-            final ValipopDate fatherLastPrevPartneringEvent = getDateOfLastLegitimatePartnershipEventBeforeDate(father, childrenBirthDate);
-
-            final ValipopDate earliestPossibleMarriageDate = DateUtils.getLatestDate(motherLastPrevPartneringEvent, fatherLastPrevPartneringEvent);
-
-            if (DateUtils.dateBefore(earliestPossibleMarriageDate, childrenBirthDate)) {
-
-                // if there is a tenable marriage date then select it
-                partnership.setMarriageDate(marriageDateSelector.selectRandomDate(earliestPossibleMarriageDate, childrenBirthDate));
-            } else {
-                partnership.setMarriageDate(null);
-            }
-
-        } else {
-            partnership.setMarriageDate(null);
-        }
-
-        partnership.setPartnershipDate(childrenBirthDate);
         partnership.addChildren(children);
-
-        population.getLivingPeople().addPartnershipToIndex(partnership);
-
-        mother.recordPartnership(partnership);
-        father.recordPartnership(partnership);
-
-        // re-insert parents into population, this allows their position in the data structure to be updated
-        population.getLivingPeople().addPerson(mother);
-        population.getLivingPeople().addPerson(father);
-
-        return partnership;
+        setMarriageDate(partnership, marriedAtBirth, childrenBirthDate);
+        partnership.setPartnershipDate(childrenBirthDate);
     }
 
     private ValipopDate getDateOfLastLegitimatePartnershipEventBeforeDate(final IPerson person, final ValipopDate date) {
@@ -874,16 +873,14 @@ public class OBDModel {
         return DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS());
     }
 
-    private MotherSet selectMothers(final Collection<IPerson> females, final int numberOfChildren) {
+    // TODO adjust this to also permit age variations
+    private MothersNeedingPartners selectMothers(final List<IPerson> females, final int numberOfChildren) {
 
         if (females.size() > 0) {
 
-            final Collection<NewMother> needPartners = new ArrayList<>();
+            final List<NewMother> newMothers = new ArrayList<>();
 
-            // TODO adjust this to also permit age variations
-            final List<IPerson> femalesAL = new ArrayList<>(females);
-
-            final int ageOfMothers = ageOnDate(femalesAL.get(0), currentTime);
+            final int ageOfMothers = ageOnDate(females.get(0), currentTime);
 
             final MultipleDeterminedCount requiredBirths = calcNumberOfPregnanciesOfMultipleBirth(ageOfMothers, numberOfChildren);
 
@@ -894,12 +891,12 @@ public class OBDModel {
             try {
                 IntegerRange highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
 
-                CollectionUtils.shuffle(femalesAL, desired.getRandomGenerator());
+                CollectionUtils.shuffle(females, desired.getRandomGenerator());
 
                 int childrenMade = 0;
                 final Map<Integer, List<IPerson>> continuingPartneredFemalesByChildren = new HashMap<>();
 
-                for (final IPerson female : femalesAL) {
+                for (final IPerson female : females) {
 
                     if (childrenMade >= numberOfChildren) {
                         break;
@@ -910,7 +907,7 @@ public class OBDModel {
                         childrenMade += highestBirthOption.getValue();
 
                         if (needsNewPartner(female, currentTime)) {
-                            needPartners.add(new NewMother(female, highestBirthOption.getValue()));
+                            newMothers.add(new NewMother(female, highestBirthOption.getValue()));
 
                         } else {
 
@@ -949,12 +946,12 @@ public class OBDModel {
                 requiredBirths.setFulfilledCount(motherCountsByMaternities);
                 desired.returnAchievedCount(requiredBirths);
 
-                return new MotherSet(needPartners, childrenMade);
+                return new MothersNeedingPartners(newMothers, childrenMade);
 
             } catch (NoSuchElementException e) {
-                return new MotherSet(needPartners);
+                return new MothersNeedingPartners(newMothers);
             }
-        } else return new MotherSet();
+        } else return new MothersNeedingPartners();
     }
 
     private MultipleDeterminedCount calcNumberOfPregnanciesOfMultipleBirth(final int ageOfMothers, final int numberOfChildren) {
@@ -1325,23 +1322,23 @@ public class OBDModel {
         }
     }
 
-    private class MotherSet {
+    private class MothersNeedingPartners {
 
-        private Collection<NewMother> needPartners;
+        private final List<NewMother> mothers;
 
         // This includes those added to existing partnerships and those marked for creation in the imminent partnering step
-        private int newlyProducedChildren;
+        private final int newlyProducedChildren;
 
-        MotherSet() {
-            this(new ArrayList<>());
+        MothersNeedingPartners() {
+            this(new ArrayList<>(), 0);
         }
 
-        MotherSet(final Collection<NewMother> needPartners) {
-            this.needPartners = needPartners;
+        MothersNeedingPartners(final List<NewMother> mothers) {
+            this(mothers, 0);
         }
 
-        MotherSet(final Collection<NewMother> needPartners, final int newlyProducedChildren) {
-            this(needPartners);
+        MothersNeedingPartners(final List<NewMother> mothers, final int newlyProducedChildren) {
+            this.mothers = mothers;
             this.newlyProducedChildren = newlyProducedChildren;
         }
     }
