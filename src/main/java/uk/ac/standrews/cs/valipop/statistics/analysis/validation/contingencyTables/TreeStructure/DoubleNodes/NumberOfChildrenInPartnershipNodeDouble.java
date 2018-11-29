@@ -33,7 +33,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
  */
 public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerRange, SeparationOption> implements ControlChildrenNode {
 
-    public NumberOfChildrenInPartnershipNodeDouble(IntegerRange option, NumberOfChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
+    NumberOfChildrenInPartnershipNodeDouble(IntegerRange option, NumberOfChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
 
         if (!init) {
@@ -41,7 +41,7 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerR
         }
     }
 
-    public NumberOfChildrenInPartnershipNodeDouble() {
+    NumberOfChildrenInPartnershipNodeDouble() {
         super();
     }
 

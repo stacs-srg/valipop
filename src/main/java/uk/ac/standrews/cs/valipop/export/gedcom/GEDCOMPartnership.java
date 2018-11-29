@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.valipop.export.gedcom;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.gedcom4j.model.Family;
 import org.gedcom4j.model.FamilyEvent;
+import org.gedcom4j.model.FamilyEventType;
 import org.gedcom4j.model.Individual;
 import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
@@ -50,24 +51,12 @@ public class GEDCOMPartnership implements IPartnership {
         return id;
     }
 
-    public int getMalePartnerId() {
-        return male_partner_id;
-    }
-
-    public int getFemalePartnerId() {
-        return female_partner_id;
-    }
-
     public int getPartnerOf(final int id) {
         return id == male_partner_id ? female_partner_id : id == female_partner_id ? male_partner_id : -1;
     }
 
     public String getMarriagePlace() {
         return marriage_place;
-    }
-
-    public List<Integer> getChildIds() {
-        return child_ids;
     }
 
     @SuppressWarnings("CompareToUsesNonFinalVariable")
@@ -110,15 +99,9 @@ public class GEDCOMPartnership implements IPartnership {
 
         for (final FamilyEvent event : family.events) {
 
-            switch (event.type) {
-
-                case MARRIAGE:
-                    marriage_date = DateManipulation.parseDate(event.date.toString());
-                    marriage_place = event.place.placeName;
-                    break;
-
-                default:
-                    break;
+            if (event.type == FamilyEventType.MARRIAGE) {
+                marriage_date = DateManipulation.parseDate(event.date.toString());
+                marriage_place = event.place.placeName;
             }
         }
     }
@@ -181,10 +164,5 @@ public class GEDCOMPartnership implements IPartnership {
     @Override
     public void setPartnershipDate(ValipopDate startDate) {
 
-    }
-
-    @Override
-    public IPerson getLastChild() {
-        return null;
     }
 }

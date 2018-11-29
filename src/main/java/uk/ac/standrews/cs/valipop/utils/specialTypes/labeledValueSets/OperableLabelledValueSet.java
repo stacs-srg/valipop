@@ -15,11 +15,11 @@ public interface OperableLabelledValueSet<L,V> extends LabelledValueSet<L,V> {
 
     OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues();
 
-    L getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(L n);
+    L getLargestLabelOfNonZeroValueAndLabelLessOrEqualTo(L n);
 
-    L getLargestLabelOfNoneZeroValueAndLabelPreferablyLessOrEqualTo(L n);
+    L getLargestLabelOfNonZeroValueAndLabelPreferablyLessOrEqualTo(L n);
 
-    L getLargestLabelOfNoneZeroValue();
+    L getLargestLabelOfNonZeroValue();
 
     L smallestLabel();
 

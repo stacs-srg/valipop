@@ -25,7 +25,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.bornInYear;
@@ -44,7 +43,7 @@ public class PersonCharacteristicsIdentifier {
         RANDOM_GENERATOR.setSeed(DETERMINISTIC_SEED);
     }
 
-    public static IPartnership getActivePartnership(IPerson person, ValipopDate currentDate) {
+    public static IPartnership getActivePartnership(final IPerson person, final ValipopDate currentDate) {
 
         List<IPartnership> partnershipsInYear = new ArrayList<>(getPartnershipsActiveInYear(person, currentDate.getYearDate()));
 
@@ -57,17 +56,11 @@ public class PersonCharacteristicsIdentifier {
         }
     }
 
-    public static Integer getChildrenBirthedInYear(IPartnership activePartnership, YearDate year) {
-
-        if (activePartnership == null) {
-            return 0;
-        }
-
-        Collection<IPerson> children = activePartnership.getChildren();
+    public static int getChildrenBirthedInYear(final IPartnership activePartnership, final YearDate year) {
 
         int count = 0;
 
-        for (IPerson child : children) {
+        for (IPerson child : activePartnership.getChildren()) {
             if (bornInYear(child, year)) {
                 count++;
             }
@@ -76,17 +69,11 @@ public class PersonCharacteristicsIdentifier {
         return count;
     }
 
-    public static Integer getChildrenBirthedBeforeDate(IPartnership activePartnership, ValipopDate year) {
-
-        if (activePartnership == null) {
-            return 0;
-        }
-
-        Collection<IPerson> children = activePartnership.getChildren();
+    public static int getChildrenBirthedBeforeDate(final IPartnership activePartnership, final ValipopDate year) {
 
         int count = 0;
 
-        for (IPerson child : children) {
+        for (IPerson child : activePartnership.getChildren()) {
             if (DateUtils.dateBefore(child.getBirthDate(), year)) {
                 count++;
             }
@@ -95,13 +82,14 @@ public class PersonCharacteristicsIdentifier {
         return count;
     }
 
-    public static SeparationOption toSeparate(IPartnership activePartnership, YearDate year) {
+    public static SeparationOption toSeparate(final IPartnership activePartnership, final YearDate year) {
 
         if (activePartnership == null) {
             return SeparationOption.NA;
         }
 
-        IPerson lastChild = activePartnership.getLastChild();
+        final List<IPerson> children = activePartnership.getChildren();
+        final IPerson lastChild = children.get(children.size());
 
         if (!bornInYear(lastChild, year)) {
             return SeparationOption.NO;
@@ -112,7 +100,7 @@ public class PersonCharacteristicsIdentifier {
         }
     }
 
-    public static boolean startedInYear(IPartnership activePartnership, YearDate year) {
+    public static boolean startedInYear(final IPartnership activePartnership, final YearDate year) {
 
         return activePartnership.getPartnershipDate().getYear() == year.getYear();
     }

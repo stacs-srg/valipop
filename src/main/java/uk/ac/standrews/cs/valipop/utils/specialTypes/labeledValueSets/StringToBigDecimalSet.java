@@ -17,11 +17,6 @@ public class StringToBigDecimalSet extends AbstractLabelToAbstractValueSet<Strin
     }
 
     @Override
-    public Class getLabelClass() {
-        return String.class;
-    }
-
-    @Override
     public Class getValueClass() {
         return BigDecimal.class;
     }
@@ -32,12 +27,12 @@ public class StringToBigDecimalSet extends AbstractLabelToAbstractValueSet<Strin
     }
 
     @Override
-    public LabelledValueSet<String, Integer> constructIntegerEquiverlent(List<String> labels, List<Integer> values) {
+    public LabelledValueSet<String, Integer> constructIntegerEquivalent(List<String> labels, List<Integer> values) {
         return new StringToIntegerSet(labels, values);
     }
 
     @Override
-    public LabelledValueSet<String, Double> constructDoubleEquiverlent(List<String> labels, List<Double> values) {
+    public LabelledValueSet<String, Double> constructDoubleEquivalent(List<String> labels, List<Double> values) {
         return new StringToDoubleSet(labels, values);
     }
 

@@ -38,13 +38,13 @@ import java.util.List;
  */
 public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
 
-    public DiedNodeInt(DiedOption option, AgeNodeInt parentNode, Integer initCount) {
+    public DiedNodeInt(final DiedOption option, final AgeNodeInt parentNode, final int initCount) {
         super(option, parentNode, initCount);
     }
 
     @SuppressWarnings("Duplicates")
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(final IPerson person, final ValipopDate currentDate) {
 
         incCountByOne();
 
@@ -70,11 +70,12 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
     }
 
     @Override
-    public Node<IntegerRange, ?, Integer, ?> makeChildInstance(IntegerRange childOption, Integer initCount) {
+    public Node<IntegerRange, ?, Integer, ?> makeChildInstance(final IntegerRange childOption, final Integer initCount) {
+
         return new PreviousNumberOfChildrenInPartnershipNodeInt(childOption, this, initCount);
     }
 
-    private IntegerRange resolveToChildRange(Integer pncip) {
+    private IntegerRange resolveToChildRange(final int pncip) {
 
         for (Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
             if (aN.getOption().contains(pncip)) {
@@ -83,7 +84,7 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
         }
 
         YearDate yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
-        Integer age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
+        int age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
 
         ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
@@ -99,10 +100,11 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
             return new IntegerRange(0);
         }
 
-        throw new Error("Did not resolve any permissable ranges");
+        throw new Error("Did not resolve any permissible ranges");
     }
 
     public List<String> toStringAL() {
+
         List<String> s = getParent().toStringAL();
         s.add(getOption().toString());
         s.add(getCount().toString());
@@ -110,6 +112,7 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
     }
 
     public CTRow<Integer> toCTRow() {
+
         CTRow r = getParent().toCTRow();
         r.setVariable(getVariableName(), getOption().toString());
         r.setCount(getCount());

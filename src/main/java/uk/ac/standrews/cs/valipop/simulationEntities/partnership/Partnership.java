@@ -21,7 +21,6 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
@@ -47,14 +46,14 @@ public class Partnership implements IPartnership {
     private ValipopDate separationDate = null;
     private ValipopDate earliestPossibleSeparationDate = null;
 
-    public Partnership(IPerson male, IPerson female, ValipopDate partnershipDate) {
+    public Partnership(final IPerson male, final IPerson female, final ValipopDate partnershipDate) {
 
         this(male, female);
 
         this.partnershipDate = partnershipDate;
     }
 
-    public Partnership(IPerson male, IPerson female) {
+    public Partnership(final IPerson male, final IPerson female) {
 
         this.id = getNewId();
 
@@ -63,45 +62,48 @@ public class Partnership implements IPartnership {
     }
 
     public String toString() {
-        String s = "";
 
-        s += "--Partnership: " + id + "--\n";
+        StringBuilder s = new StringBuilder();
 
-        s += male.getId() + " | ";
-        s += male.getFirstName() + " ";
-        s += male.getSurname() + " | ";
-        s += male.getSex() + " | ";
-        s += male.getBirthDate().getDate() + " | ";
-        s += male.getDeathDate() != null ? male.getDeathDate() + "\n" : "no DOD\n";
+        s.append("--Partnership: ");
+        s.append(id).append("--\n");
 
-        s += female.getId() + " | ";
-        s += female.getFirstName() + " ";
-        s += female.getSurname() + " | ";
-        s += female.getSex() + " | ";
-        s += female.getBirthDate().getDate() + " | ";
-        s += female.getDeathDate() != null ? female.getDeathDate() + "\n" : "no DOD\n";
+        s.append(male.getId()).append(" | ");
+        s.append(male.getFirstName()).append(" ");
+        s.append(male.getSurname()).append(" | ");
+        s.append(male.getSex()).append(" | ");
+        s.append(male.getBirthDate().getDate()).append(" | ");
+        s.append(male.getDeathDate() != null ? male.getDeathDate() + "\n" : "no DOD\n");
 
-        s += "----Children----\n";
+        s.append(female.getId()).append(" | ");
+        s.append(female.getFirstName()).append(" ");
+        s.append(female.getSurname()).append(" | ");
+        s.append(female.getSex()).append(" | ");
+        s.append(female.getBirthDate().getDate()).append(" | ");
+        s.append(female.getDeathDate() != null ? female.getDeathDate() + "\n" : "no DOD\n");
+
+        s.append("----Children----\n");
 
         for (IPerson c : children) {
-            s += c.getId() + " | ";
-            s += c.getFirstName() + " ";
-            s += c.getSurname() + " | ";
-            s += c.getSex() + " | ";
-            s += c.getBirthDate().getDate() + " | ";
-            s += c.getDeathDate() != null ? c.getDeathDate() + "\n" : "no DOD\n";
+            s.append(c.getId()).append(" | ");
+            s.append(c.getFirstName()).append(" ");
+            s.append(c.getSurname()).append(" | ");
+            s.append(c.getSex()).append(" | ");
+            s.append(c.getBirthDate().getDate()).append(" | ");
+            s.append(c.getDeathDate() != null ? c.getDeathDate() + "\n" : "no DOD\n");
         }
 
-        s += "--End Partnership: " + id + "--\n";
+        s.append("--End Partnership: ");
+        s.append(id).append("--\n");
 
-        return s;
+        return s.toString();
     }
 
-    public void setPartnershipDate(ValipopDate startDate) {
+    public void setPartnershipDate(final ValipopDate startDate) {
         partnershipDate = startDate;
     }
 
-    private static int getNewId() {
+    private static synchronized int getNewId() {
         return nextId++;
     }
 
@@ -110,11 +112,11 @@ public class Partnership implements IPartnership {
         return id;
     }
 
-    public static void resetIds() {
+    public static synchronized void resetIds() {
         nextId = 0;
     }
 
-    public void setMarriageDate(ValipopDate marriageDate) {
+    public void setMarriageDate(final ValipopDate marriageDate) {
         this.marriageDate = marriageDate;
     }
 
@@ -139,13 +141,9 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public IPerson getPartnerOf(IPerson person) {
+    public IPerson getPartnerOf(final IPerson person) {
 
-        if (person.getSex() == SexOption.MALE) {
-            return female;
-        } else {
-            return male;
-        }
+        return person.getSex() == SexOption.MALE ? female : male;
     }
 
     @Override
@@ -159,50 +157,41 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public ValipopDate getSeparationDate(RandomGenerator random) {
+    public synchronized ValipopDate getSeparationDate(final RandomGenerator random) {
 
-        if (earliestPossibleSeparationDate == null) {
-            return null;
-        } else {
+        if (earliestPossibleSeparationDate == null) return null;
+        if (separationDate == null) setSeparationDate(random);
 
-            if (separationDate == null) {
+        return separationDate;
+    }
 
-                ValipopDate maleMovedOnDate = getDateOfNextPostSeparationEvent(male, earliestPossibleSeparationDate);
-                ValipopDate femaleMovedOnDate = getDateOfNextPostSeparationEvent(female, earliestPossibleSeparationDate);
+    private void setSeparationDate(final RandomGenerator random) {
 
-                ValipopDate earliestMovedOnDate;
+        final ValipopDate maleMovedOnDate = getDateOfNextPostSeparationEvent(male, earliestPossibleSeparationDate);
+        final ValipopDate femaleMovedOnDate = getDateOfNextPostSeparationEvent(female, earliestPossibleSeparationDate);
 
-                if (maleMovedOnDate != null) {
-                    if (femaleMovedOnDate != null) {
-                        // if female not null and male not null
-                        // pick earliest
-                        if (DateUtils.dateBefore(maleMovedOnDate, femaleMovedOnDate)) {
-                            earliestMovedOnDate = maleMovedOnDate;
-                        } else {
-                            earliestMovedOnDate = femaleMovedOnDate;
-                        }
+        final ValipopDate earliestMovedOnDate;
 
-                    } else {
-                        // if male not null and female null - take male date
-                        earliestMovedOnDate = maleMovedOnDate;
-                    }
+        if (maleMovedOnDate != null) {
 
-                } else {
-                    if (femaleMovedOnDate != null) {
-                        // if male null and female not null - take female
-                        earliestMovedOnDate = femaleMovedOnDate;
-                    } else {
-                        // if male null and female null
-                        // pick a date in the next 30 years
-                        earliestMovedOnDate = earliestPossibleSeparationDate.getYearDate().advanceTime(30, TimeUnit.YEAR);
-                    }
-                }
-
-                separationDate = new DateSelector(random).selectRandomDate(earliestPossibleSeparationDate, earliestMovedOnDate);
+            if (femaleMovedOnDate != null) {
+                earliestMovedOnDate = (DateUtils.dateBefore(maleMovedOnDate, femaleMovedOnDate)) ? maleMovedOnDate : femaleMovedOnDate;
+            } else {
+                earliestMovedOnDate = maleMovedOnDate;
             }
 
-            return separationDate;
+        } else {
+            if (femaleMovedOnDate != null) {
+                earliestMovedOnDate = femaleMovedOnDate;
+
+            } else {
+
+                // pick a date in the next 30 years
+                earliestMovedOnDate = earliestPossibleSeparationDate.getYearDate().advanceTime(30, TimeUnit.YEAR);
+            }
         }
+
+        separationDate = new DateSelector(random).selectRandomDate(earliestPossibleSeparationDate, earliestMovedOnDate);
     }
 
     @Override
@@ -217,27 +206,11 @@ public class Partnership implements IPartnership {
 
     @Override
     public int compareTo(IPartnership o) {
-        return this.id == o.getId() ? 0 : -1;
+        return Integer.compare(id, o.getId());
     }
 
     @Override
     public void addChildren(Collection<IPerson> children) {
         this.children.addAll(children);
-    }
-
-    @Override
-    public IPerson getLastChild() {
-
-        ValipopDate latestBirthDate = new YearDate(Integer.MIN_VALUE);
-        IPerson latestChild = null;
-
-        for (IPerson child : getChildren()) {
-            if (DateUtils.dateBefore(latestBirthDate, child.getBirthDate())) {
-                latestBirthDate = child.getBirthDate();
-                latestChild = child;
-            }
-        }
-
-        return latestChild;
     }
 }
