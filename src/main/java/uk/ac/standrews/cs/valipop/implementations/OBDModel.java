@@ -602,49 +602,40 @@ public class OBDModel {
             final LinkedList<IPerson> men = menMap.get(range);
             final Collection<NewMother> unmatchedFemales = new ArrayList<>();
 
-            int determinedCount = partnerCounts.get(range);
-            IPerson head = null; // keeps track of first man seen to prevent infinite loop
-
-            // Keep going until enough females have been matched for this range
-            while (determinedCount > 0 && !women.isEmpty()) {
-
-                final IPerson man = men.pollFirst();
-                NewMother woman = women.pollFirst();
-
-                // if man is head of list - i.e. this is the second time round
-                if (man == head) {
-                    // thus female has not been able to be matched
-                    unmatchedFemales.add(woman);
-                    head = null;
-
-                    // get next woman to check for partnering
-                    if (women.isEmpty()) break;
-                    woman = women.pollFirst();
-                }
-
-                // check if there is any reason why these people cannot lawfully be partnered...
-                if (eligible(man, woman)) {
-                    // if they can - then note as a proposed partnership
-                    proposedPartnerships.add(new ProposedPartnership(man, woman.newMother, woman.numberOfChildrenInMaternity));
-                    determinedCount--;
-                    head = null;
-
-                } else {
-                    // else we need to loop through more men - so keep track of the first man we looked at
-                    if (head == null) {
-                        head = man;
-                    }
-                    men.addLast(man);
-                    women.addFirst(woman);
-                }
-            }
+            final int determinedCount = addPartnerships(women, men, proposedPartnerships, unmatchedFemales, partnerCounts.get(range));
 
             women.addAll(unmatchedFemales);
 
             // note how many females have been partnered at this age range
             achievedPartnerCounts.add(range, partnerCounts.get(range) - determinedCount);
         }
+
         return proposedPartnerships;
+    }
+
+    private int addPartnerships(final LinkedList<NewMother> women, final LinkedList<IPerson> men, final List<ProposedPartnership> proposedPartnerships, final Collection<NewMother> unmatchedFemales, final int initialCount) {
+
+        int determinedCount = initialCount;
+
+        // Keep going until enough females have been matched for this range
+        while (determinedCount > 0 && !women.isEmpty()) {
+
+            final IPerson man = men.pollFirst();
+            final NewMother woman = women.pollFirst();
+
+            // check whether these people can be lawfully partnered...
+            if (eligible(man, woman)) {
+
+                proposedPartnerships.add(new ProposedPartnership(man, woman.newMother, woman.numberOfChildrenInMaternity));
+                determinedCount--;
+
+            } else {
+
+                men.addLast(man);
+                unmatchedFemales.add(woman);
+            }
+        }
+        return determinedCount;
     }
 
     private OperableLabelledValueSet<IntegerRange, Integer> redistributePartnerCounts(OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, final LabelledValueSet<IntegerRange, Integer> availableMen) {
