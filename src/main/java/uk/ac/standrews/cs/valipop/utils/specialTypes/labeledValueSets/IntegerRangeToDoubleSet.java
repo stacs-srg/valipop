@@ -131,56 +131,6 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
         return roundingSet;
     }
 
-    @Override
-    public OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumWithProductOfLabelAndValue() {
-
-        double sum = getSumOfValues();
-        double sumRounded = Math.round(sum);
-
-        if (!DoubleComparer.equal(sum, sumRounded, DELTA)) {
-            throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as " +
-                    "values do not sum to a whole number", this);
-        }
-
-        int sumInt = (int) sumRounded;
-
-        OperableLabelledValueSet<IntegerRange, Integer> roundingSet = new IntegerRangeToIntegerSet();
-
-        for (IntegerRange iR : getLabels()) {
-            if (getValue(iR) < 0) {
-                roundingSet.add(iR, 0);
-            } else {
-                roundingSet.add(iR, (int) Math.floor(getValue(iR)));
-            }
-        }
-
-        Set<IntegerRange> usedLabels = new TreeSet<>();
-
-        int roundingSetSum;
-        while ((roundingSetSum = roundingSet.productOfLabelsAndValues().getSumOfValues()) != sumInt) {
-
-            if (roundingSetSum < sumInt) {
-                // need more in the rounding set therefore
-                IntegerRange labelOfGreatestRemainder = this.getLabelOfValueWithGreatestRemainder(usedLabels);
-                roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder) + 1);
-            }
-
-            if (roundingSetSum > sumInt) {
-                IntegerRange largestReducatbleLabel;
-                try {
-                    largestReducatbleLabel =
-                            roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
-                } catch (NoSuchElementException e) {
-                    largestReducatbleLabel = this.smallestLabel();
-                }
-                roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel) - 1);
-            }
-
-        }
-
-        return roundingSet;
-    }
-
     @SuppressWarnings("Duplicates")
     @Override
     public OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues() {
@@ -304,8 +254,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
                 return smallestLabelLargerThanN;
             }
 
-            throw new NoSuchElementException("No values in set or no values in set less that n - set size: "
-                    + getLabels().size());
+            throw new NoSuchElementException("No values in set or no values in set less that n - set size: " + getLabels().size());
         }
 
         return largestLabel;

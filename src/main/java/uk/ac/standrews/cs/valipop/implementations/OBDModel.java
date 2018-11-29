@@ -567,7 +567,7 @@ public class OBDModel {
     }
 
     private void findPartners(final List<NewMother> women, final Map<IntegerRange, LinkedList<IPerson>> menMap,
-                              final OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, final List<ProposedPartnership> proposedPartnerships) {
+                              final LabelledValueSet<IntegerRange, Integer> partnerCounts, final List<ProposedPartnership> proposedPartnerships) {
 
         Iterator<NewMother> iterator = women.iterator();
 
@@ -592,19 +592,18 @@ public class OBDModel {
     }
 
     private List<ProposedPartnership> getProposedPartnerships(final LinkedList<NewMother> women, final Map<IntegerRange, LinkedList<IPerson>> menMap,
-                                                              final OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, final LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts) {
+                                                              final LabelledValueSet<IntegerRange, Integer> partnerCounts, final LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts) {
 
         final List<ProposedPartnership> proposedPartnerships = new ArrayList<>();
 
         // for each age range of males
         for (IntegerRange range : partnerCounts.getLabels()) {
 
-            int determinedCount = partnerCounts.get(range);
-
             final LinkedList<IPerson> men = menMap.get(range);
-            IPerson head = null; // keeps track of first man seen to prevent infinite loop
-
             final Collection<NewMother> unmatchedFemales = new ArrayList<>();
+
+            int determinedCount = partnerCounts.get(range);
+            IPerson head = null; // keeps track of first man seen to prevent infinite loop
 
             // Keep going until enough females have been matched for this range
             while (determinedCount > 0 && !women.isEmpty()) {
@@ -671,7 +670,7 @@ public class OBDModel {
         return partnerCounts;
     }
 
-    private Map<IntegerRange, LinkedList<IPerson>> getAllMen(final OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, final LabelledValueSet<IntegerRange, Integer> availableMen) {
+    private Map<IntegerRange, LinkedList<IPerson>> getAllMen(final LabelledValueSet<IntegerRange, Integer> partnerCounts, final LabelledValueSet<IntegerRange, Integer> availableMen) {
 
         final Map<IntegerRange, LinkedList<IPerson>> allMen = new TreeMap<>();
         for (IntegerRange range : partnerCounts.getLabels()) {

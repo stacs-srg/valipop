@@ -13,8 +13,6 @@ public interface OperableLabelledValueSet<L,V> extends LabelledValueSet<L,V> {
 
     OperableLabelledValueSet<L,Integer> controlledRoundingMaintainingSum();
 
-    OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumWithProductOfLabelAndValue();
-
     OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues();
 
     L getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(L n);
