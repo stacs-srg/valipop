@@ -27,6 +27,8 @@ import java.util.Date;
  */
 public interface ValipopDate extends Comparable<ValipopDate> {
 
+    // TODO why so many date implementations? Why any needed? Why AdvanceableDate separate?
+
     int getYear();
 
     /**

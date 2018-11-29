@@ -30,11 +30,6 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
     }
 
     @Override
-    public Class getLabelClass() {
-        return IntegerRange.class;
-    }
-
-    @Override
     public Class getValueClass() {
         return Double.class;
     }
@@ -45,12 +40,12 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
     }
 
     @Override
-    public LabelledValueSet<IntegerRange, Integer> constructIntegerEquiverlent(List<IntegerRange> labels, List<Integer> values) {
+    public LabelledValueSet<IntegerRange, Integer> constructIntegerEquivalent(List<IntegerRange> labels, List<Integer> values) {
         return new IntegerRangeToIntegerSet(labels, values);
     }
 
     @Override
-    public LabelledValueSet<IntegerRange, Double> constructDoubleEquiverlent(List<IntegerRange> labels, List<Double> values) {
+    public LabelledValueSet<IntegerRange, Double> constructDoubleEquivalent(List<IntegerRange> labels, List<Double> values) {
         return constructSelf(labels, values);
     }
 
@@ -120,7 +115,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
                 IntegerRange largestReducatbleLabel;
                 try {
                     largestReducatbleLabel =
-                            roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                            roundingSet.getLargestLabelOfNonZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
                 } catch (NoSuchElementException e) {
                     largestReducatbleLabel = this.smallestLabel();
                 }
@@ -177,7 +172,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
                 IntegerRange largestReducatbleLabel;
                 try {
                     largestReducatbleLabel =
-                            roundingSet.getLargestLabelOfNoneZeroValueAndLabelPreferablyLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                            roundingSet.getLargestLabelOfNonZeroValueAndLabelPreferablyLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
                 } catch (NoSuchElementException e) {
                     largestReducatbleLabel = this.smallestLabel();
                 }
@@ -202,50 +197,47 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
     }
 
     @Override
-    public IntegerRange getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(IntegerRange n) {
+    public IntegerRange getLargestLabelOfNonZeroValueAndLabelLessOrEqualTo(IntegerRange n) {
 
         IntegerRange largestLabel = null;
 
-        for (IntegerRange iR : map.keySet()) {
+        for (IntegerRange range : map.keySet()) {
 
-            int currentIRLable = iR.getValue();
+            final int currentIRLabel = range.getValue();
 
-            if (currentIRLable <= n.getValue()) {
-                if (largestLabel == null || currentIRLable > largestLabel.getValue()) {
-                    largestLabel = iR;
+            if (currentIRLabel <= n.getValue()) {
+                if (largestLabel == null || currentIRLabel > largestLabel.getValue()) {
+                    largestLabel = range;
                 }
             }
-
         }
 
         if (largestLabel == null) {
-            throw new NoSuchElementException("No values in set or no values in set less that n - set size: "
-                    + getLabels().size());
+            throw new NoSuchElementException("No values in set or no values in set less that n - set size: " + getLabels().size());
         }
 
         return largestLabel;
     }
 
     @Override
-    public IntegerRange getLargestLabelOfNoneZeroValueAndLabelPreferablyLessOrEqualTo(IntegerRange n) {
+    public IntegerRange getLargestLabelOfNonZeroValueAndLabelPreferablyLessOrEqualTo(IntegerRange n) {
 
         IntegerRange largestLabel = null;
         IntegerRange smallestLabelLargerThanN = null;
 
-        for (IntegerRange iR : map.keySet()) {
+        for (IntegerRange range : map.keySet()) {
 
-            int currentIRLable = iR.getValue();
+            final int currentIRLabel = range.getValue();
 
-            if (currentIRLable <= n.getValue()) {
-                if (largestLabel == null || currentIRLable > largestLabel.getValue()) {
-                    largestLabel = iR;
+            if (currentIRLabel <= n.getValue()) {
+                if (largestLabel == null || currentIRLabel > largestLabel.getValue()) {
+                    largestLabel = range;
                 }
             } else {
-                if (largestLabel == null || currentIRLable < smallestLabelLargerThanN.getValue()) {
-                    smallestLabelLargerThanN = iR;
+                if (largestLabel == null || currentIRLabel < smallestLabelLargerThanN.getValue()) {
+                    smallestLabelLargerThanN = range;
                 }
             }
-
         }
 
         if (largestLabel == null) {
@@ -261,16 +253,16 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
     }
 
     @Override
-    public IntegerRange getLargestLabelOfNoneZeroValue() {
+    public IntegerRange getLargestLabelOfNonZeroValue() {
         IntegerRange largestLabel = null;
 
-        for (IntegerRange iR : map.keySet()) {
+        for (IntegerRange range : map.keySet()) {
 
-            int currentIRLable = iR.getValue();
+            int currentIRLabel = range.getValue();
 
-            if (largestLabel == null || currentIRLable > largestLabel.getValue()) {
-                if (!DoubleComparer.equal(0, get(iR), DELTA)) {
-                    largestLabel = iR;
+            if (largestLabel == null || currentIRLabel > largestLabel.getValue()) {
+                if (!DoubleComparer.equal(0, get(range), DELTA)) {
+                    largestLabel = range;
                 }
             }
         }
@@ -301,9 +293,9 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
 
     @Override
     public OperableLabelledValueSet<IntegerRange, Double> valuesAddNWhereCorrespondingLabelNegativeInLVS(double n, OperableLabelledValueSet<IntegerRange, ? extends Number> lvs) {
-        ArrayList<IntegerRange> labels = new ArrayList<>(getLabels());
-        ArrayList<Double> newValues = new ArrayList<>();
 
+        List<IntegerRange> labels = new ArrayList<>(getLabels());
+        List<Double> newValues = new ArrayList<>();
 
         for (IntegerRange label : labels) {
             if ((Double) lvs.get(label) < 0) {

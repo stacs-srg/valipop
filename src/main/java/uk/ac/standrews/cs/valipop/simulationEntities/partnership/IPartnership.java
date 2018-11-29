@@ -51,6 +51,8 @@ public interface IPartnership extends Comparable<IPartnership> {
      */
     IPerson getPartnerOf(IPerson person);
 
+    void addChildren(Collection<IPerson> children);
+
     /**
      * Gets the identifiers of the partnership's child_ids, or null if none are recorded.
      *
@@ -80,11 +82,7 @@ public interface IPartnership extends Comparable<IPartnership> {
      */
     String getMarriagePlace();
 
-    void addChildren(Collection<IPerson> children);
-
     void setPartnershipDate(ValipopDate startDate);
-
-    IPerson getLastChild();
 
     /**
      * Gets the partnership's unique identifier.

@@ -30,31 +30,24 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
  */
 public class ChildrenInYearNodeInt extends IntNode<ChildrenInYearOption, Integer> {
 
-    public ChildrenInYearNodeInt(ChildrenInYearOption option, NumberOfPreviousChildrenInAnyPartnershipNodeInt parentNode, Integer initCount) {
+    public ChildrenInYearNodeInt(final ChildrenInYearOption option, final NumberOfPreviousChildrenInAnyPartnershipNodeInt parentNode, final int initCount) {
         super(option, parentNode, initCount);
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(final IPerson person, final ValipopDate currentDate) {
 
         incCountByOne();
 
-        IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
+        final IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
 
-        Integer option;
-
-        if(activePartnership == null){
-            option = 0;
-        } else {
-            option = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, currentDate.getYearDate());
-        }
+        final int option = activePartnership == null ? 0 : PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, currentDate.getYearDate());
 
         try {
             getChild(option).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
             addChild(option).processPerson(person, currentDate);
         }
-
     }
 
     @Override
@@ -63,7 +56,7 @@ public class ChildrenInYearNodeInt extends IntNode<ChildrenInYearOption, Integer
     }
 
     @Override
-    public Node<Integer, ?, Integer, ?> makeChildInstance(Integer childOption, Integer initCount) {
+    public Node<Integer, ?, Integer, ?> makeChildInstance(final Integer childOption, final Integer initCount) {
         return new NumberOfChildrenInYearNodeInt(childOption, this, initCount);
     }
 }

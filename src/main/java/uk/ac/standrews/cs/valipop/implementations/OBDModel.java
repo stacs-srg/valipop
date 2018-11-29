@@ -638,8 +638,9 @@ public class OBDModel {
         return determinedCount;
     }
 
-    private OperableLabelledValueSet<IntegerRange, Integer> redistributePartnerCounts(OperableLabelledValueSet<IntegerRange, Integer> partnerCounts, final LabelledValueSet<IntegerRange, Integer> availableMen) {
+    private OperableLabelledValueSet<IntegerRange, Integer> redistributePartnerCounts(final OperableLabelledValueSet<IntegerRange, Integer> initialPartnerCounts, final LabelledValueSet<IntegerRange, Integer> availableMen) {
 
+        OperableLabelledValueSet<IntegerRange, Integer> partnerCounts = initialPartnerCounts;
         OperableLabelledValueSet<IntegerRange, Double> shortfallCounts;
 
         // this section redistributes the determined partner counts based on the number of available men in each age range
@@ -701,30 +702,19 @@ public class OBDModel {
 
     private void setMarriageDate(final IPartnership partnership, final boolean marriedAtBirth, final ValipopDate lastBirthDate) {
 
+        ExactDate marriageDate = null;
         if (marriedAtBirth) {
 
-            // nth child - then previous child birth date - NOT possible here, this is a method for new partnerships
-            // first child - then death or divorce of previous spouses or coming of age
-
-            // for mother
             final ValipopDate motherLastPrevPartneringEvent = getDateOfLastLegitimatePartnershipEventBeforeDate(partnership.getFemalePartner(), lastBirthDate);
-
-            // for father
             final ValipopDate fatherLastPrevPartneringEvent = getDateOfLastLegitimatePartnershipEventBeforeDate(partnership.getMalePartner(), lastBirthDate);
 
             final ValipopDate earliestPossibleMarriageDate = DateUtils.getLatestDate(motherLastPrevPartneringEvent, fatherLastPrevPartneringEvent);
 
             if (DateUtils.dateBefore(earliestPossibleMarriageDate, lastBirthDate)) {
-
-                // if there is a tenable marriage date then select it
-                partnership.setMarriageDate(marriageDateSelector.selectRandomDate(earliestPossibleMarriageDate, lastBirthDate));
-            } else {
-                partnership.setMarriageDate(null);
+                marriageDate = marriageDateSelector.selectRandomDate(earliestPossibleMarriageDate, lastBirthDate);
             }
-
-        } else {
-            partnership.setMarriageDate(null);
         }
+        partnership.setMarriageDate(marriageDate);
     }
 
     private void makeChildren(IPartnership partnership, int numberOfChildren, boolean illegitimate, boolean marriedAtBirth) {
@@ -737,20 +727,14 @@ public class OBDModel {
         // the loop here allows for the multiple children in pregnancies
         for (int i = 0; i < numberOfChildren; i++) {
 
-            final IPerson child;
-            if (childrenBirthDate == null) {
-                // Make first child
-                child = makePersonWithRandomBirthDate(currentTime, partnership, illegitimate);
-                population.getLivingPeople().addPerson(child);
+            final IPerson child = childrenBirthDate == null ?
+                    makePersonWithRandomBirthDate(currentTime, partnership, illegitimate) :
+                    makePerson(childrenBirthDate, partnership, illegitimate);
 
-            } else {
-                // Make subsequent children
-                child = makePerson(childrenBirthDate, partnership, illegitimate);
-                population.getLivingPeople().addPerson(child);
-            }
+            population.getLivingPeople().addPerson(child);
+            children.add(child);
 
             childrenBirthDate = child.getBirthDate();
-            children.add(child);
         }
 
         partnership.addChildren(children);
@@ -764,25 +748,22 @@ public class OBDModel {
 
         for (final IPartnership partnership : person.getPartnerships()) {
             if (DateUtils.dateBefore(partnership.getPartnershipDate(), date)) {
+
                 final List<IPerson> children = partnership.getChildren();
-                if (!children.isEmpty()) {
-                    if (!children.get(0).isIllegitimate()) {
-                        // this partnership has legitimate children
 
-                        // thus check separation date
-                        final ValipopDate separationDate = partnership.getEarliestPossibleSeparationDate();
-                        if (separationDate != null && DateUtils.dateBefore(latestDate, separationDate)) {
-                            latestDate = separationDate;
-                        }
+                if (children.isEmpty()) throw new UnsupportedOperationException("Childless marriages not supported");
 
-                        // partner death date
-                        final ValipopDate partnerDeath = partnership.getPartnerOf(person).getDeathDate();
-                        if (partnerDeath != null && DateUtils.dateBefore(latestDate, partnerDeath)) {
-                            latestDate = partnerDeath;
-                        }
+                if (!children.get(0).isIllegitimate()) {
+
+                    final ValipopDate separationDate = partnership.getEarliestPossibleSeparationDate();
+                    if (separationDate != null && DateUtils.dateBefore(latestDate, separationDate)) {
+                        latestDate = separationDate;
                     }
-                } else {
-                    System.err.println("Do we now have childless marriages? - If so write this code!");
+
+                    final ValipopDate partnerDeathDate = partnership.getPartnerOf(person).getDeathDate();
+                    if (partnerDeathDate != null && DateUtils.dateBefore(latestDate, partnerDeathDate)) {
+                        latestDate = partnerDeathDate;
+                    }
                 }
             }
         }
@@ -790,7 +771,7 @@ public class OBDModel {
         return latestDate;
     }
 
-    private ValipopDate getEarliestMarriageDate(IPerson person) {
+    private ValipopDate getEarliestMarriageDate(final IPerson person) {
 
         final ValipopDate birthDate = person.getBirthDate();
 
@@ -844,11 +825,7 @@ public class OBDModel {
 
     private boolean inInitPeriod(ValipopDate currentTime) {
 
-        boolean beforeOrEqual = DateUtils.dateBeforeOrEqual(currentTime, endOfInitPeriod);
-        boolean beforeOrEqual2 = DateUtils.dateBeforeOrEqual2(currentTime, endOfInitPeriod);
-
-        if (beforeOrEqual != beforeOrEqual2) System.out.println("different >>>>>>>>>");
-        return beforeOrEqual;
+        return DateUtils.dateBeforeOrEqual(currentTime, endOfInitPeriod);
     }
 
     private boolean simulationStarted() {
@@ -866,82 +843,86 @@ public class OBDModel {
     // TODO adjust this to also permit age variations
     private MothersNeedingPartners selectMothers(final List<IPerson> females, final int numberOfChildren) {
 
-        if (females.size() > 0) {
+        if (females.size() == 0) return new MothersNeedingPartners();
 
-            final List<NewMother> newMothers = new ArrayList<>();
+        final int ageOfMothers = ageOnDate(females.get(0), currentTime);
 
-            final int ageOfMothers = ageOnDate(females.get(0), currentTime);
+        final MultipleDeterminedCount requiredBirths = calcNumberOfPregnanciesOfMultipleBirth(ageOfMothers, numberOfChildren);
+        final LabelledValueSet<IntegerRange, Integer> motherCountsByMaternities = new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0);
+        final OperableLabelledValueSet<IntegerRange, Integer> remainingMothersToFind = new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().clone());
 
-            final MultipleDeterminedCount requiredBirths = calcNumberOfPregnanciesOfMultipleBirth(ageOfMothers, numberOfChildren);
+        try {
+            return getMothersNeedingPartners(females, numberOfChildren, requiredBirths, motherCountsByMaternities, remainingMothersToFind);
 
-            final LabelledValueSet<IntegerRange, Integer> motherCountsByMaternities = new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0);
+        } catch (NoSuchElementException e) {
+            return new MothersNeedingPartners();
+        }
+    }
 
-            final OperableLabelledValueSet<IntegerRange, Integer> remainingMothersToFind = new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().clone());
+    private MothersNeedingPartners getMothersNeedingPartners(final List<IPerson> females, final int numberOfChildren, final MultipleDeterminedCount requiredBirths,
+                                                             final LabelledValueSet<IntegerRange, Integer> motherCountsByMaternities, final OperableLabelledValueSet<IntegerRange, Integer> remainingMothersToFind) {
 
-            try {
-                IntegerRange highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
+        CollectionUtils.shuffle(females, desired.getRandomGenerator());
 
-                CollectionUtils.shuffle(females, desired.getRandomGenerator());
+        IntegerRange highestBirthOption = remainingMothersToFind.getLargestLabelOfNonZeroValue();
 
-                int childrenMade = 0;
-                final Map<Integer, List<IPerson>> continuingPartneredFemalesByChildren = new HashMap<>();
+        int childrenMade = 0;
+        final List<NewMother> newMothers = new ArrayList<>();
 
-                for (final IPerson female : females) {
+        final Map<Integer, List<IPerson>> continuingPartneredFemalesByChildren = new HashMap<>();
 
-                    if (childrenMade >= numberOfChildren) {
+        for (final IPerson female : females) {
+
+            if (eligible(female)) {
+
+                childrenMade += highestBirthOption.getValue();
+
+                addMother(female, highestBirthOption, newMothers, continuingPartneredFemalesByChildren);
+
+                // updates count of remaining mothers to find
+                final int furtherMothersNeededForMaternitySize = remainingMothersToFind.get(highestBirthOption) - 1;
+                remainingMothersToFind.update(highestBirthOption, furtherMothersNeededForMaternitySize);
+
+                // updates count of mother found
+                motherCountsByMaternities.update(highestBirthOption, motherCountsByMaternities.getValue(highestBirthOption) + 1);
+
+                if (furtherMothersNeededForMaternitySize <= 0) {
+                    try {
+                        highestBirthOption = remainingMothersToFind.getLargestLabelOfNonZeroValue();
+
+                    } catch (NoSuchElementException e) {
+                        // In this case we have created all the new mothers and children required
                         break;
-                    }
-
-                    if (eligible(female)) {
-
-                        childrenMade += highestBirthOption.getValue();
-
-                        if (needsNewPartner(female, currentTime)) {
-                            newMothers.add(new NewMother(female, highestBirthOption.getValue()));
-
-                        } else {
-
-                            addChildrenToCurrentPartnership(female, highestBirthOption.getValue());
-                            int numberOfChildrenInLatestPartnership = numberOfChildrenInLatestPartnership(female);
-
-                            try {
-                                continuingPartneredFemalesByChildren.get(numberOfChildrenInLatestPartnership).add(female);
-
-                            } catch (NullPointerException e) {
-                                continuingPartneredFemalesByChildren.put(numberOfChildrenInLatestPartnership, new ArrayList<>(Collections.singleton(female)));
-                            }
-                        }
-
-                        // updates count of remaining mothers to find
-                        final int furtherMothersNeededForMaternitySize = remainingMothersToFind.get(highestBirthOption) - 1;
-                        remainingMothersToFind.update(highestBirthOption, furtherMothersNeededForMaternitySize);
-
-                        // updates count of mother found
-                        motherCountsByMaternities.update(highestBirthOption, motherCountsByMaternities.getValue(highestBirthOption) + 1);
-
-                        if (furtherMothersNeededForMaternitySize <= 0) {
-                            try {
-                                highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
-
-                            } catch (NoSuchElementException e) {
-                                // In this case we have created all the new mothers and children required
-                                break;
-                            }
-                        }
                     }
                 }
 
-                separationEvent(continuingPartneredFemalesByChildren);
-
-                requiredBirths.setFulfilledCount(motherCountsByMaternities);
-                desired.returnAchievedCount(requiredBirths);
-
-                return new MothersNeedingPartners(newMothers, childrenMade);
-
-            } catch (NoSuchElementException e) {
-                return new MothersNeedingPartners(newMothers);
+                if (childrenMade >= numberOfChildren) break;
             }
-        } else return new MothersNeedingPartners();
+        }
+
+        separationEvent(continuingPartneredFemalesByChildren);
+
+        requiredBirths.setFulfilledCount(motherCountsByMaternities);
+        desired.returnAchievedCount(requiredBirths);
+
+        return new MothersNeedingPartners(newMothers, childrenMade);
+    }
+
+    private void addMother(final IPerson female, final IntegerRange highestBirthOption, final List<NewMother> newMothers, final Map<Integer, List<IPerson>> continuingPartneredFemalesByChildren) {
+
+        if (needsNewPartner(female, currentTime)) {
+            newMothers.add(new NewMother(female, highestBirthOption.getValue()));
+
+        } else {
+
+            addChildrenToCurrentPartnership(female, highestBirthOption.getValue());
+            final int numberOfChildrenInLatestPartnership = numberOfChildrenInLatestPartnership(female);
+
+            if (!continuingPartneredFemalesByChildren.containsKey(numberOfChildrenInLatestPartnership)) {
+                continuingPartneredFemalesByChildren.put(numberOfChildrenInLatestPartnership, new ArrayList<>());
+            }
+            continuingPartneredFemalesByChildren.get(numberOfChildrenInLatestPartnership).add(female);
+        }
     }
 
     private MultipleDeterminedCount calcNumberOfPregnanciesOfMultipleBirth(final int ageOfMothers, final int numberOfChildren) {
@@ -960,21 +941,17 @@ public class OBDModel {
 
             // Returns true if last child was born far enough in the past for another child to be born at currentTime
             return DateUtils.dateBefore(earliestDateOfNextChild, currentTime);
-
-        } else {
-            // i.e. there is no previous child and thus no limitation to birth
-            return true;
         }
+
+        // i.e. there is no previous child and thus no limitation to birth
+        return true;
     }
 
     private boolean eligible(final IPerson man, final NewMother newMother) {
 
-        final IPerson woman = newMother.newMother;
-        final int childrenInPregnancy = newMother.numberOfChildrenInMaternity;
-
         population.getPopulationCounts().incEligibilityCheck();
 
-        final boolean eligible = maleAvailable(man, childrenInPregnancy) && legallyEligibleToMarry(man, woman);
+        final boolean eligible = maleAvailable(man, newMother.numberOfChildrenInMaternity) && legallyEligibleToMarry(man, newMother.newMother);
 
         if (!eligible) {
             population.getPopulationCounts().incFailedEligibilityCheck();
@@ -990,9 +967,52 @@ public class OBDModel {
         final IPerson lastChild = PopulationNavigation.getLastChild(mother);
         final IPartnership last = lastChild.getParents();
 
-        ValipopDate birthDate = null;
+        final ValipopDate birthDate = getBirthDate(numberOfChildren, last);
 
-        final IPerson man = last.getMalePartner();
+        desired.returnAchievedCount(getIllegitimateCounts(numberOfChildren, last, birthDate));
+        desired.returnAchievedCount(getMarriageCounts(mother, numberOfChildren, lastChild, last, birthDate));
+
+        population.getLivingPeople().addPerson(mother);
+    }
+
+    private SingleDeterminedCount getIllegitimateCounts(final int numberOfChildren, final IPartnership partnership, final ValipopDate birthDate) {
+
+        final IPerson man = partnership.getMalePartner();
+
+        final IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(ageOnDate(man, birthDate), numberOfChildren, config.getSimulationTimeStep(), birthDate);
+        final SingleDeterminedCount illegitimateCounts = (SingleDeterminedCount) desired.getDeterminedCount(illegitimateKey, config);
+        illegitimateCounts.setFulfilledCount(0);
+
+        return illegitimateCounts;
+    }
+
+    private SingleDeterminedCount getMarriageCounts(final IPerson mother, final int numberOfChildren, final IPerson lastChild, final IPartnership last, final ValipopDate birthDate) {
+
+        final MarriageStatsKey marriageKey = new MarriageStatsKey(ageOnDate(mother, birthDate), numberOfChildren, config.getSimulationTimeStep(), birthDate);
+        final SingleDeterminedCount marriageCounts = (SingleDeterminedCount) desired.getDeterminedCount(marriageKey, config);
+
+        if (last.getMarriageDate() != null) {
+            // is already married - so return as married
+            marriageCounts.setFulfilledCount(numberOfChildren);
+
+        } else {
+            final boolean marriedAtBirth = (int) Math.round(marriageCounts.getDeterminedCount() / (double) numberOfChildren) == 1;
+
+            if (marriedAtBirth) {
+                marriageCounts.setFulfilledCount(numberOfChildren);
+                last.setMarriageDate(marriageDateSelector.selectRandomDate(lastChild.getBirthDate(), birthDate));
+
+            } else {
+                marriageCounts.setFulfilledCount(0);
+            }
+        }
+
+        return marriageCounts;
+    }
+
+    private ValipopDate getBirthDate(final int numberOfChildren, final IPartnership last) {
+
+        ValipopDate birthDate = null;
 
         for (int i = 0; i < numberOfChildren; i++) {
 
@@ -1012,34 +1032,7 @@ public class OBDModel {
             population.getLivingPeople().addPerson(child);
         }
 
-        // record that child is legitimate
-        final IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(ageOnDate(man, birthDate), numberOfChildren, config.getSimulationTimeStep(), birthDate);
-        final SingleDeterminedCount illegitimateCounts = (SingleDeterminedCount) desired.getDeterminedCount(illegitimateKey, config);
-        illegitimateCounts.setFulfilledCount(0);
-        desired.returnAchievedCount(illegitimateCounts);
-
-        // decide if to cause marriage
-        // Decide on marriage
-        final MarriageStatsKey marriageKey = new MarriageStatsKey(ageOnDate(mother, birthDate), numberOfChildren, config.getSimulationTimeStep(), birthDate);
-        final SingleDeterminedCount marriageCounts = (SingleDeterminedCount) desired.getDeterminedCount(marriageKey, config);
-
-        if (last.getMarriageDate() != null) {
-            // is already married - so return as married
-            marriageCounts.setFulfilledCount(numberOfChildren);
-
-        } else {
-            final boolean toBeMarriedBirth = (int) Math.round(marriageCounts.getDeterminedCount() / (double) numberOfChildren) == 1;
-
-            if (toBeMarriedBirth) {
-                marriageCounts.setFulfilledCount(numberOfChildren);
-                last.setMarriageDate(marriageDateSelector.selectRandomDate(lastChild.getBirthDate(), birthDate));
-            } else {
-                marriageCounts.setFulfilledCount(0);
-            }
-        }
-        desired.returnAchievedCount(marriageCounts);
-
-        population.getLivingPeople().addPerson(mother);
+        return birthDate;
     }
 
     private void addMotherToMap(final ProposedPartnership partnership, final Map<Integer, List<IPerson>> partneredFemalesByChildren) {
@@ -1047,12 +1040,10 @@ public class OBDModel {
         final IPerson mother = partnership.female;
         final int numChildrenInPartnership = partnership.numberOfChildren;
 
-        if (partneredFemalesByChildren.containsKey(numChildrenInPartnership)) {
-
-            partneredFemalesByChildren.get(numChildrenInPartnership).add(mother);
-        } else {
-            partneredFemalesByChildren.put(numChildrenInPartnership, new ArrayList<>(Collections.singleton(mother)));
+        if (!partneredFemalesByChildren.containsKey(numChildrenInPartnership)) {
+            partneredFemalesByChildren.put(numChildrenInPartnership, new ArrayList<>());
         }
+        partneredFemalesByChildren.get(numChildrenInPartnership).add(mother);
     }
 
     private int removeLastPartners(final Population population, final List<NewMother> women) {
@@ -1060,16 +1051,16 @@ public class OBDModel {
         int cancelledChildren = 0;
 
         if (!women.isEmpty()) {
-            for (final NewMother m : women) {
+            for (final NewMother newMother : women) {
 
                 // update position in data structures
-                population.getLivingPeople().removePerson(m.newMother);
+                population.getLivingPeople().removePerson(newMother.newMother);
 
-                cancelledChildren += m.numberOfChildrenInMaternity;
+                cancelledChildren += newMother.numberOfChildrenInMaternity;
                 // cancel birth(s) as no father can be found
-                m.newMother.getPartnerships().remove(getLastPartnership(m.newMother));
+                newMother.newMother.getPartnerships().remove(getLastPartnership(newMother.newMother));
 
-                population.getLivingPeople().addPerson(m.newMother);
+                population.getLivingPeople().addPerson(newMother.newMother);
             }
         }
         return cancelledChildren;
