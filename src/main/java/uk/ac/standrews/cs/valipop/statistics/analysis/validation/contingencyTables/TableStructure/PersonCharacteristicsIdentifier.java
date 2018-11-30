@@ -89,7 +89,7 @@ public class PersonCharacteristicsIdentifier {
         }
 
         final List<IPerson> children = activePartnership.getChildren();
-        final IPerson lastChild = children.get(children.size());
+        final IPerson lastChild = children.get(children.size() - 1);
 
         if (!bornInYear(lastChild, year)) {
             return SeparationOption.NO;

@@ -61,7 +61,7 @@ public class CL_OBDModel {
 
         int value = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
 
-        double v = RCaller.getGeeglmV(run_path_string, run_path_string, value, model.getSummaryRow().getStartTime());
+        double v = RCaller.getGeeglmV("geeglm", run_path_string, run_path_string, value, model.getSummaryRow().getStartTime());
 
         model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
         model.getSummaryRow().setV(v);
