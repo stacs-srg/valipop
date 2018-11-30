@@ -194,7 +194,7 @@ public class MinimaSearch {
                 return RCaller.getObV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
             case GEEGLM:
                 String title = runPurpose + " - " + controlBy.toString() + ": " + String.valueOf(getControllingFactor(controlBy));
-                return RCaller.getGeeglmV(title, FileUtils.getRunPath().toString(), maxBirthingAge, startTime);
+                return RCaller.getGeeglmV(title, FileUtils.getRunPath().toString(), FileUtils.getRunPath().toString(), maxBirthingAge, startTime);
         }
 
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
@@ -210,7 +210,7 @@ public class MinimaSearch {
                 return RCaller.getObV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
             case GEEGLM:
                 String title = runPurpose + " - " + controlBy.toString() + ": " + String.valueOf(getControllingFactor(controlBy));
-                return RCaller.getGeeglmV(title, runPath, maxBirthingAge, startTime);
+                return RCaller.getGeeglmV(title, runPath, runPath, maxBirthingAge, startTime);
         }
 
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
