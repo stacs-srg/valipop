@@ -90,7 +90,7 @@ public class MinimaSearch {
         }
     }
 
-    private static void runSearch(int populationSize, String dataFiles, double startFactor, double step, String runPurpose, int repeatRuns, Minimise minimiseFor, Control controlBy) throws IOException, InvalidInputFileException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning, InconsistentWeightException {
+    private static void runSearch(int populationSize, String dataFiles, double startFactor, double step, String runPurpose, int repeatRuns, Minimise minimiseFor, Control controlBy) throws IOException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning {
 
         MinimaSearch.startFactor = startFactor;
         MinimaSearch.step = step;
@@ -172,16 +172,12 @@ public class MinimaSearch {
                 } else {
                     logFactortoV(getControllingFactor(controlBy), nanAsemtote);
                 }
-
             }
         } catch (IOException e) {
             String message = "Model failed due to Input/Output exception, check that this program has " +
                     "permission to read or write on disk. Also, check supporting input files are present at location " +
                     "specified in config setup code : " + e.getMessage();
             throw new IOException(message, e);
-        } catch (InvalidInputFileException e) {
-            String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
-            throw new InvalidInputFileException(message, e);
         } catch (StatsException e) {
             String message = "Stats failure - could not execute RScript command - do you have R installed?";
             throw new StatsException(message);
@@ -198,8 +194,7 @@ public class MinimaSearch {
                 return RCaller.getObV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
             case GEEGLM:
                 String title = runPurpose + " - " + controlBy.toString() + ": " + String.valueOf(getControllingFactor(controlBy));
-                return RCaller.getGeeglmV(title, FileUtils.getRunPath().toString(),
-                        FileUtils.getContingencyTablesPath().toString(), maxBirthingAge, startTime);
+                return RCaller.getGeeglmV(title, FileUtils.getRunPath().toString(), maxBirthingAge, startTime);
         }
 
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
@@ -215,8 +210,7 @@ public class MinimaSearch {
                 return RCaller.getObV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
             case GEEGLM:
                 String title = runPurpose + " - " + controlBy.toString() + ": " + String.valueOf(getControllingFactor(controlBy));
-                return RCaller.getGeeglmV(title, runPath,
-                        ctPath, maxBirthingAge, startTime);
+                return RCaller.getGeeglmV(title, runPath, maxBirthingAge, startTime);
         }
 
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");

@@ -63,12 +63,7 @@ public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData
         try {
             getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
         } catch (InvalidRangeException e) {
-            if (achievedCount.getDeterminedCount() == 0) {
-                // all okay, a blank DeterminedCount had been issued due as no recorded data on the request
-            } else {
-                // Something is not right here
-                throw e;
-            }
+            if (achievedCount.getDeterminedCount() != 0) throw e;
         }
     }
 

@@ -16,14 +16,18 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
+
+import java.util.Date;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface ValipopDate extends Comparable<ValipopDate> {
+
+    // TODO why so many date implementations? Why any needed? Why AdvanceableDate separate?
 
     int getYear();
 
@@ -39,9 +43,7 @@ public interface ValipopDate extends Comparable<ValipopDate> {
      */
     int getDay();
 
-    String toString();
-
-    java.util.Date getDate();
+    Date getDate();
 
     ExactDate getExactDate();
 

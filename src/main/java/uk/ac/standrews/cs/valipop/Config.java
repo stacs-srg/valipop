@@ -31,7 +31,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.time.DateTimeException;
-import java.util.Collection;
 
 /**
  * This class provides the configuration for the Simulation model.
@@ -111,13 +110,12 @@ public class Config {
     private final String startTime;
 
     private boolean binomialSampling = true;
-    private int seed = 0;
     private boolean deterministic = false;
 
     // Filter method to exclude dot files from data file directory streams
     private DirectoryStream.Filter<Path> filter = file -> {
         Path path = file.getFileName();
-        if(path != null) {
+        if (path != null) {
             return !path.toString().matches("^\\..+");
         }
         throw new IOException("Failed to get Filename");
@@ -162,171 +160,124 @@ public class Config {
      * @throws DateTimeException
      * @throws NumberFormatException
      */
-    public Config(Path pathToConfigFile, String runPurpose, String startTime) throws InvalidTimeUnit, DateTimeException, NumberFormatException, IOException {
+    public Config(Path pathToConfigFile, String runPurpose, String startTime) {
 
-        this.runPurpose = runPurpose;
-        this.startTime = startTime;
+        try {
+            this.runPurpose = runPurpose;
+            this.startTime = startTime;
 
-        Collection<String> configInput = InputFileReader.getAllLines(pathToConfigFile);
+            for (String line : InputFileReader.getAllLines(pathToConfigFile)) {
 
-        // Iterate over config file
-        for (String l : configInput) {
+                String[] split = line.split("=");
 
-            String[] split = l.split("=");
+                for (int i = 0; i < split.length; i++) {
+                    split[i] = split[i].trim();
+                }
 
-            for (int i = 0; i < split.length; i++)
-                split[i] = split[i].trim();
+                switch (split[0]) {
 
-            String path = split[1];
+                    case "var_data_files":
+                        initialiseVarPaths(split[1]);
+                        break;
 
-            switch (split[0]) {
-                case "var_data_files":
-                    initialiseVarPaths(path);
-                    break;
-                case "results_save_location":
-                    resultsSavePath = Paths.get(split[1]);
-                    break;
-                case "simulation_time_step":
-                    try {
+                    case "results_save_location":
+                        resultsSavePath = Paths.get(split[1]);
+                        break;
+
+                    case "simulation_time_step":
+
                         simulationTimeStep = new CompoundTimeUnit(split[1]);
-                    } catch (InvalidTimeUnit e) {
-                        log.fatal("simulation_time_step " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "input_width":
-                    try {
+                        break;
+
+                    case "input_width":
                         inputWidth = new CompoundTimeUnit(split[1]);
-                    } catch (InvalidTimeUnit e) {
-                        log.fatal("input_width " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "tS":
-                    try {
+                        break;
+
+                    case "tS":
                         tS = new MonthDate(split[1]);
-                    } catch (DateTimeException e) {
-                        log.fatal("tS " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "t0":
-                    try {
+                        break;
+
+                    case "t0":
                         t0 = new MonthDate(split[1]);
-                    } catch (DateTimeException e) {
-                        log.fatal("t0 " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "tE":
-                    try {
+                        break;
+
+                    case "tE":
                         tE = new MonthDate(split[1]);
-                    } catch (DateTimeException e) {
-                        log.fatal("tE " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "t0_pop_size":
-                    try {
+                        break;
+
+                    case "t0_pop_size":
                         t0PopulationSize = Integer.parseInt(split[1]);
-                    } catch (NumberFormatException e) {
-                        log.fatal("t0_pop_size " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "set_up_br":
-                    try {
+                        break;
+
+                    case "set_up_br":
                         setUpBR = Double.parseDouble(split[1]);
-                    } catch (NumberFormatException e) {
-                        log.fatal("set_up_br " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "set_up_dr":
-                    try {
+                        break;
+
+                    case "set_up_dr":
                         setUpDR = Double.parseDouble(split[1]);
-                    } catch (NumberFormatException e) {
-                        log.fatal("set_up_dr " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "min_birth_spacing":
-                    try {
+                        break;
+
+                    case "min_birth_spacing":
                         minBirthSpacing = Integer.parseInt(split[1]);
-                    } catch (NumberFormatException e) {
-                        log.fatal("min_birth_spacing " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "min_gestation_period":
-                    try {
+                        break;
+
+                    case "min_gestation_period":
                         minGestationPeriodDays = Integer.parseInt(split[1]);
-                    } catch (NumberFormatException e) {
-                        log.fatal("min_gestation_period " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "binominal_sampling":
-                    binomialSampling = split[1].toLowerCase().equals("true");
-                    break;
-                case "birth_factor":
-                    try {
+                        break;
+
+                    case "binominal_sampling":
+                        binomialSampling = split[1].toLowerCase().equals("true");
+                        break;
+
+                    case "birth_factor":
                         birthFactor = Double.parseDouble(split[1]);
-                    } catch (NumberFormatException e) {
-                        log.fatal("birth_factor " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "death_factor":
-                    try {
+                        break;
+
+                    case "death_factor":
                         deathFactor = Double.parseDouble(split[1]);
-                    } catch (NumberFormatException e) {
-                        log.fatal("death_factor " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "recovery_factor":
-                    try {
+                        break;
+
+                    case "recovery_factor":
                         recoveryFactor = Double.parseDouble(split[1]);
-                    } catch (NumberFormatException e) {
-                        log.fatal("recovery_factor " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "proportional_recovery_factor":
-                    try {
+                        break;
+
+                    case "proportional_recovery_factor":
                         proportionalRecoveryFactor = Double.parseDouble(split[1]);
-                    } catch (NumberFormatException e) {
-                        log.fatal("proportional_recovery_factor " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "output_record_format":
-                    switch(split[1]) {
-                        case "DS":
-                            outputRecordFormat = RecordFormat.DS;
-                            break;
-                        case "VIS_PROCESSING":
-                            outputRecordFormat = RecordFormat.VIS_PROCESSING;
-                            break;
-                        case "EG_SKYE":
-                            outputRecordFormat = RecordFormat.EG_SKYE;
-                            break;
-                        case "NONE":
-                            outputRecordFormat = RecordFormat.NONE;
-                            break;
-                        default:
-                            String m = "output_record_format - given option not recognised";
-                            log.fatal(m);
-                            throw new InvalidParameterException(m);
-                    }
-                case "output_tables":
-                    outputTables = split[1].toLowerCase().equals("true");
-                    break;
-                case "deterministic":
-                    deterministic = split[1].toLowerCase().equals("true");
-                    break;
+                        break;
+
+                    case "output_record_format":
+                        switch (split[1]) {
+                            case "DS":
+                                outputRecordFormat = RecordFormat.DS;
+                                break;
+                            case "VIS_PROCESSING":
+                                outputRecordFormat = RecordFormat.VIS_PROCESSING;
+                                break;
+                            case "EG_SKYE":
+                                outputRecordFormat = RecordFormat.EG_SKYE;
+                                break;
+                            case "NONE":
+                                outputRecordFormat = RecordFormat.NONE;
+                                break;
+                            default:
+                                String m = "output_record_format - given option not recognised";
+                                log.fatal(m);
+                                throw new InvalidParameterException(m);
+                        }
+                        break;
+
+                    case "output_tables":
+                        outputTables = split[1].toLowerCase().equals("true");
+                        break;
+
+                    case "deterministic":
+                        deterministic = split[1].toLowerCase().equals("true");
+                        break;
+                }
             }
+        } catch (IOException e) {
+            log.fatal("error reading config: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -359,144 +310,69 @@ public class Config {
         return varPath;
     }
 
-    public DirectoryStream<Path> getVarOrderedBirthPaths() throws IOException {
+    private DirectoryStream<Path> getDirectories(Path path) {
+
         try {
-            return Files.newDirectoryStream(varOrderedBirthPaths, filter);
+            return Files.newDirectoryStream(path, filter);
         } catch (IOException e) {
-            String message = "Error reading in birth files";
-            log.fatal(message);
-            throw new IOException(message, e);
+            throw new RuntimeException(e);
         }
     }
 
-    public DirectoryStream<Path> getVarMaleLifetablePaths() throws IOException {
-        try {
-            return Files.newDirectoryStream(varMaleLifetablePaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in male death files: " + varMaleLifetablePaths;
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarOrderedBirthPaths() {
+        return getDirectories(varOrderedBirthPaths);
     }
 
-    public DirectoryStream<Path> getVarMaleDeathCausesPaths() throws IOException {
-        try {
-            return Files.newDirectoryStream(varMaleDeathCausesPaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in male death files: " + varMaleDeathCausesPaths;
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarMaleLifetablePaths() {
+        return getDirectories(varMaleLifetablePaths);
     }
 
-    public DirectoryStream<Path> getVarFemaleLifetablePaths() throws IOException {
-        try {
-            return Files.newDirectoryStream(varFemaleLifetablePaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in female death files: " + varFemaleLifetablePaths;
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarMaleDeathCausesPaths() {
+        return getDirectories(varMaleDeathCausesPaths);
     }
 
-    public DirectoryStream<Path> getVarFemaleDeathCausesPaths() throws IOException {
-        try {
-            return Files.newDirectoryStream(varFemaleDeathCausesPaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in male death files: " + varFemaleDeathCausesPaths;
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarFemaleLifetablePaths() {
+        return getDirectories(varFemaleLifetablePaths);
     }
 
-    public DirectoryStream<Path> getVarMultipleBirthPaths() throws IOException {
-        try {
-            return Files.newDirectoryStream(varMultipleBirthPaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in multiple birth files";
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarFemaleDeathCausesPaths() {
+        return getDirectories(varFemaleDeathCausesPaths);
     }
 
-    public DirectoryStream<Path> getVarIllegitimateBirthPaths() throws IOException {
-        try {
-            return Files.newDirectoryStream(varIllegitimateBirthPaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in illegitimate birth files";
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarMultipleBirthPaths() {
+        return getDirectories(varMultipleBirthPaths);
     }
 
-    public DirectoryStream<Path> getVarMarriagePaths() throws IOException {
-        try {
-            return Files.newDirectoryStream(varMarriagePaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in marriage files";
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarIllegitimateBirthPaths() {
+        return getDirectories(varIllegitimateBirthPaths);
     }
 
-    public DirectoryStream<Path> getVarPartneringPaths() throws IOException {
-        try {
-            return Files.newDirectoryStream(varPartneringPaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in partnering files";
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarMarriagePaths() {
+        return getDirectories(varMarriagePaths);
     }
 
-    public DirectoryStream<Path> getVarSeparationPaths() throws IOException {
-        try {
-            return Files.newDirectoryStream(varSeparationPaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in separation files";
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarPartneringPaths() {
+        return getDirectories(varPartneringPaths);
     }
 
-    public DirectoryStream<Path> getVarBirthRatioPath() throws IOException {
-        try {
-            return Files.newDirectoryStream(varBirthRatioPaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in birth ratio file";
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarSeparationPaths() {
+        return getDirectories(varSeparationPaths);
     }
 
-    public DirectoryStream<Path> getVarMaleForenamePath() throws IOException {
-        try {
-            return Files.newDirectoryStream(varMaleForenamePaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in male forename file";
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarBirthRatioPath() {
+        return getDirectories(varBirthRatioPaths);
     }
 
-    public DirectoryStream<Path> getVarFemaleForenamePath() throws IOException {
-        try {
-            return Files.newDirectoryStream(varFemaleForenamePaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in female forename file";
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarMaleForenamePath() {
+        return getDirectories(varMaleForenamePaths);
     }
 
-    public DirectoryStream<Path> getVarSurnamePath() throws IOException {
-        try {
-            return Files.newDirectoryStream(varSurnamePaths, filter);
-        } catch (IOException e) {
-            String message = "Error reading in surname file";
-            log.fatal(message);
-            throw new IOException(message, e);
-        }
+    public DirectoryStream<Path> getVarFemaleForenamePath() {
+        return getDirectories(varFemaleForenamePaths);
+    }
+
+    public DirectoryStream<Path> getVarSurnamePath() {
+        return getDirectories(varSurnamePaths);
     }
 
     public MonthDate getTS() {
@@ -580,6 +456,7 @@ public class Config {
     }
 
     public int getSeed() {
+        int seed = 0;
         return seed;
     }
 

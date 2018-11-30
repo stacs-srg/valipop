@@ -21,9 +21,6 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 /**
  * Interface for all population models.
- *
- * @author Victor Andrei (va9@st-andrews.ac.uk)
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public interface IPopulation {
 
@@ -61,33 +58,18 @@ public interface IPopulation {
     /**
      * Returns the number of people in the population.
      * @return the number of people in the population
-     * @throws Exception if there is an error determining the number of people
      */
-    int getNumberOfPeople() throws Exception;
+    int getNumberOfPeople();
 
     /**
      * Returns the number of partnerships in the population.
      * @return the number of partnerships in the population
-     * @throws Exception if there is an error determining the number of partnerships
      */
-    int getNumberOfPartnerships() throws Exception;
+    int getNumberOfPartnerships();
 
     /**
      * Sets a description for the population, which may be useful for testing and debugging.
      * @param description the description
      */
     void setDescription(String description);
-
-    /**
-     * Sets a flag controlling whether person attributes are consistent across iterations.
-     *
-     * If set to true, person objects will be cached, which may be problematic for scalability in implementations
-     * where the population is initially generated using a compact person representation that is expanded on
-     * the fly during iteration.
-     *
-     * If set to false, attributes such as name and occupation may differ when a person with a given id
-     * is retrieved multiple times.
-     * @param consistent_across_iterations true if person attributes should remain consistent across iterations
-     */
-    void setConsistentAcrossIterations(boolean consistent_across_iterations);
 }

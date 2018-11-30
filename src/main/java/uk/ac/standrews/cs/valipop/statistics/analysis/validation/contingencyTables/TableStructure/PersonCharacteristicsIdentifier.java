@@ -18,100 +18,90 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
+
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.bornInYear;
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.getPartnershipsActiveInYear;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class PersonCharacteristicsIdentifier {
 
-    public static IPartnership getActivePartnership(IPerson person, ValipopDate currentDate) {
+    private static final JDKRandomGenerator RANDOM_GENERATOR;
+    private static final int DETERMINISTIC_SEED = 458457824;
 
-        ArrayList<IPartnership> partnershipsInYear = new ArrayList<>(person.getPartnershipsActiveInYear(currentDate.getYearDate()));
+    static {
+        RANDOM_GENERATOR = new JDKRandomGenerator();
+        RANDOM_GENERATOR.setSeed(DETERMINISTIC_SEED);
+    }
 
-        if(partnershipsInYear.size() > 1) {
-            throw new UnsupportedOperationException("Lots of partners in year - likely for a female to get this error");
+    public static IPartnership getActivePartnership(final IPerson person, final ValipopDate currentDate) {
+
+        List<IPartnership> partnershipsInYear = new ArrayList<>(getPartnershipsActiveInYear(person, currentDate.getYearDate()));
+
+        if (partnershipsInYear.size() > 1) {
+            throw new RuntimeException("Lots of partners in year - likely for a female to get this error");
         } else if (partnershipsInYear.size() == 0) {
             return null;
         } else {
             return partnershipsInYear.get(0);
         }
-
     }
 
-    public static Integer getChildrenBirthedInYear(IPartnership activePartnership, YearDate year) {
+    public static int getChildrenBirthedInYear(final IPartnership activePartnership, final YearDate year) {
 
-        if(activePartnership == null) {
-            return 0;
-        }
+        int count = 0;
 
-        Collection<IPerson> children = activePartnership.getChildren();
-
-        int c = 0;
-
-        for(IPerson child : children) {
-            if(child.bornInYear(year)) {
-                c++;
+        for (IPerson child : activePartnership.getChildren()) {
+            if (bornInYear(child, year)) {
+                count++;
             }
         }
 
-        return c;
-
+        return count;
     }
 
+    public static int getChildrenBirthedBeforeDate(final IPartnership activePartnership, final ValipopDate year) {
 
-    public static Integer getChildrenBirthedBeforeDate(IPartnership activePartnership, ValipopDate year) {
+        int count = 0;
 
-        if(activePartnership == null) {
-            return 0;
-        }
-
-        Collection<IPerson> children = activePartnership.getChildren();
-
-        int c = 0;
-
-        for(IPerson child : children) {
-            if(child.bornBefore(year)) {
-                c++;
+        for (IPerson child : activePartnership.getChildren()) {
+            if (DateUtils.dateBefore(child.getBirthDate(), year)) {
+                count++;
             }
         }
 
-        return c;
-
+        return count;
     }
 
+    public static SeparationOption toSeparate(final IPartnership activePartnership, final YearDate year) {
 
-    public static SeparationOption toSeparate(IPartnership activePartnership, YearDate y) {
-
-        if(activePartnership == null) {
+        if (activePartnership == null) {
             return SeparationOption.NA;
         }
 
-        IPerson lastChild = activePartnership.getLastChild();
+        final List<IPerson> children = activePartnership.getChildren();
+        final IPerson lastChild = children.get(children.size());
 
-        if (!lastChild.bornInYear(y)) {
+        if (!bornInYear(lastChild, year)) {
             return SeparationOption.NO;
-        } else if (activePartnership.getSeparationDate(new JDKRandomGenerator()) != null) { // TODO Would this be better to use earliest possible sep date?
+        } else if (activePartnership.getSeparationDate(RANDOM_GENERATOR) != null) { // TODO Would this be better to use earliest possible sep date?
             return SeparationOption.YES;
         } else {
             return SeparationOption.NO;
         }
-
     }
 
-    public static boolean startedInYear(IPartnership activePartnership, YearDate y) {
+    public static boolean startedInYear(final IPartnership activePartnership, final YearDate year) {
 
-        ValipopDate startDate = activePartnership.getPartnershipDate();
-
-        return startDate.getYear() == y.getYear();
-
-//        return !DateUtils.dateBefore(startDate, y) && DateUtils.dateBefore(startDate, y.advanceTime(1, TimeUnit.YEAR));
+        return activePartnership.getPartnershipDate().getYear() == year.getYear();
     }
-
 }

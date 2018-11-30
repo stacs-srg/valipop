@@ -29,7 +29,7 @@ public class PopulationCounts {
     private int eligibilityChecks = 0;
     private int failedEligibilityChecks = 0;
 
-    public void newMale(int numberOf) {
+    public void newMale(final int numberOf) {
         createdMales += numberOf;
     }
 
@@ -37,7 +37,7 @@ public class PopulationCounts {
         newMale(1);
     }
 
-    public void newFemale(int numberOf) {
+    public void newFemale(final int numberOf) {
         createdFemales += numberOf;
     }
 
@@ -45,7 +45,7 @@ public class PopulationCounts {
         newFemale(1);
     }
 
-    public void updateMaxPopulation(int populationSize) {
+    public void updateMaxPopulation(final int populationSize) {
         if (populationSize > maxPopulation) {
             maxPopulation = populationSize;
         }

@@ -16,16 +16,10 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.person;
 
-import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.events.death.NotDeadException;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,16 +30,6 @@ import java.util.List;
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public interface IPerson extends Comparable<IPerson> {
-
-    /**
-     * Representation of female sex.
-     */
-    char FEMALE = 'F';
-
-    /**
-     * Representation of male sex.
-     */
-    char MALE = 'M';
 
     /**
      * Gets the person's unique identifier. It can be assumed that identifiers are allocated in temporal
@@ -67,23 +51,17 @@ public interface IPerson extends Comparable<IPerson> {
     String getSurname();
 
     /**
-     * Gets the person's sex, either {@link #FEMALE} or {@link #MALE}.
+     * Gets the person's sex.
      * @return the person's sex
      */
-    char getSex();
-
-    /**
-     * Gets the person's date of birth.
-     * @return the person's date of birth
-     */
-    java.util.Date getBirthDate();
+    SexOption getSex();
 
     /**
      * Gets the person's date of birth.
      *
      * @return the person's date of birth
      */
-    ValipopDate getBirthDate_ex();
+    ValipopDate getBirthDate();
 
     /**
      * Gets the person's place of birth, or null if not recorded.
@@ -93,16 +71,10 @@ public interface IPerson extends Comparable<IPerson> {
 
     /**
      * Gets the person's date of death, or null if they are living.
-     * @return the person's date of death
-     */
-    java.util.Date getDeathDate();
-
-    /**
-     * Gets the person's date of death, or null if they are living.
      *
      * @return the person's date of death
      */
-    ValipopDate getDeathDate_ex();
+    ValipopDate getDeathDate();
 
     /**
      * Gets the person's place of death, or null if not recorded.
@@ -123,94 +95,24 @@ public interface IPerson extends Comparable<IPerson> {
     String getDeathCause();
 
     /**
-     * Gets the identifiers of the person's partnerships, or null if none are recorded.
-     * @return the identifiers of the person's partnerships
-     */
-    List<Integer> getPartnerships();
-
-    /**
-     * Gets the identifiers of the person's partnerships, or null if none are recorded.
+     * Gets the person's partnerships.
      *
      * @return the identifiers of the person's partnerships
      */
-    List<IPartnership> getPartnerships_ex();
+    List<IPartnership> getPartnerships();
 
     /**
-     * Gets the identifier of the person's parents' partnership, or -1 if none are recorded.
-     * @return the identifier of the person's parents' partnership
-     */
-    int getParentsPartnership();
-
-    /**
-     * Gets the identifier of the person's parents' partnership, or -1 if none are recorded.
+     * Gets the person's parents' partnership, or null if none are recorded.
      *
-     * @return the identifier of the person's parents' partnership
+     * @return the person's parents' partnership
      */
-    IPartnership getParentsPartnership_ex();
+    IPartnership getParents();
 
     boolean isIllegitimate();
 
-    List<IPartnership> getPartnershipsBeforeDate(ValipopDate date);
-
-    ValipopDate getDateOfLastLegitimatePartnershipEventBeforeDate(ValipopDate date);
-
-    boolean isWidow(ValipopDate onDate);
-
-    IPerson getPartner(ValipopDate onDate);
-
-    boolean noRecentChildren(MonthDate currentDate, CompoundTimeUnit timePeriod);
-
     void recordPartnership(IPartnership partnership);
 
-    boolean recordDeath(ValipopDate date, Population population, PopulationStatistics desiredPopulationStatistics);
-
-    int ageAtDeath() throws NotDeadException;
-
-    boolean aliveOnDate(ValipopDate date);
-
-    IPerson getLastChild();
-
-    void addChildrenToCurrentPartnership(int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config);
-
-    boolean toSeparate();
-
-    void willSeparate(boolean b);
-
-    int ageOnDate(ValipopDate date);
-
-    boolean needsNewPartner(AdvanceableDate currentDate);
-
-    int numberOfChildrenInLatestPartnership();
+    void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics);
 
     Collection<IPerson> getAllChildren();
-
-    Collection<IPerson> getAllGrandChildren();
-
-    Collection<IPerson> getAllGreatGrandChildren();
-
-    boolean diedInYear(YearDate year);
-
-    Collection<IPartnership> getPartnershipsActiveInYear(YearDate year);
-
-    boolean bornInYear(YearDate year);
-
-    boolean aliveInYear(YearDate y);
-
-    IPartnership getLastPartnership();
-
-    Integer numberOfChildrenBirthedBeforeDate(YearDate y);
-
-    boolean bornBefore(ValipopDate year);
-
-    boolean bornOnDate(ValipopDate y);
-
-    ValipopDate getDateOfNextPostSeparationEvent(ValipopDate separationDate);
-
-    ValipopDate getDateOfPreviousPreMarriageEvent(ValipopDate latestPossibleMarriageDate);
-
-    boolean diedAfter(ValipopDate date);
-
-    void setMarriageBaby(boolean b);
-
-    boolean getMarriageBaby();
 }

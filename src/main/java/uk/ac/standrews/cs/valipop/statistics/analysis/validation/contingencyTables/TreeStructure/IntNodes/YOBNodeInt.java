@@ -32,7 +32,6 @@ public class YOBNodeInt extends IntNode<YearDate, SexOption> {
 
     public YOBNodeInt() {
         super();
-
     }
 
     public YOBNodeInt(YearDate option, SourceNodeInt parentNode, Integer initCount) {
@@ -49,18 +48,10 @@ public class YOBNodeInt extends IntNode<YearDate, SexOption> {
 
         incCountByOne();
 
-        SexOption sex;
-
-        if(Character.toUpperCase(person.getSex()) == 'M') {
-            sex = SexOption.MALE;
-        } else {
-            sex = SexOption.FEMALE;
-        }
-
         try {
-            getChild(sex).processPerson(person, currentDate);
+            getChild(person.getSex()).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-            addChild(sex).processPerson(person, currentDate);
+            addChild(person.getSex()).processPerson(person, currentDate);
         }
     }
 
@@ -74,6 +65,4 @@ public class YOBNodeInt extends IntNode<YearDate, SexOption> {
         r.setVariable(getVariableName(), Integer.toString(getOption().getYear()));
         return r;
     }
-
-
 }

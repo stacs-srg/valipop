@@ -24,7 +24,7 @@ public class MinimaSearchTest {
     OBDModel model;
 
     @Before
-    public void setup() throws InconsistentWeightException, IOException, InvalidInputFileException {
+    public void setup() throws IOException {
         Config config = new Config(new MonthDate(1,1), new MonthDate(1,100),
                 new MonthDate(1,200), 0, 0, 0, new CompoundTimeUnit(1, TimeUnit.YEAR),
                 "src/test/resources/valipop/test-pop", "", "",

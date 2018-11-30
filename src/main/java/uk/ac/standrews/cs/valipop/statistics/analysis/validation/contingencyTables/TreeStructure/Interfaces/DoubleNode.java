@@ -23,11 +23,11 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
  */
 public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> {
 
-    public DoubleNode(Op option, Node parentNode, double initCount) {
+    public DoubleNode(final Op option, final Node parentNode, final double initCount) {
         super(option, parentNode, initCount);
     }
 
-    public DoubleNode(Op option, Node parentNode) {
+    public DoubleNode(final Op option, final Node parentNode) {
         this(option, parentNode, 0);
     }
 
@@ -36,8 +36,9 @@ public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> 
     }
 
     @Override
-    public void incCount(Double byCount) {
-        if(getCount() == null) {
+    public void incCount(final Double byCount) {
+
+        if (getCount() == null) {
             setCount(byCount);
         } else {
             setCount(getCount() + byCount);
@@ -50,7 +51,7 @@ public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> 
         setCount(getCount() + 1);
     }
 
-    public void setCount(Double count) {
+    public void setCount(final double count) {
         super.setCount(count);
     }
 
@@ -58,32 +59,27 @@ public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> 
         return (Node<?, Op, Double, Double>) super.getParent();
     }
 
-//    public DoubleNode<?, Op> getParent() {
-//        return (DoubleNode<?, Op>) super.getParent();
-//    }
-
     @SuppressWarnings("Duplicates")
     @Override
-    public Node<cOp, ?, Double, ?> addChild(cOp childOption, Double initCount) {
+    public Node<cOp, ?, Double, ?> addChild(final cOp childOption, final Double initCount) {
 
         Node<cOp, ?, Double, ?> child;
 
         try {
             child = getChild(childOption);
             child.incCount(initCount);
-        } catch (ChildNotFoundException e)  {
+        } catch (ChildNotFoundException e) {
             child = makeChildInstance(childOption, initCount);
             super.addChild(child);
         }
 
         return child;
-
     }
 
     @Override
-    public Node<cOp, ?, Double, ?> addChild(cOp childOption) {
+    public Node<cOp, ?, Double, ?> addChild(final cOp childOption) {
         return addChild(childOption, 0.0);
     }
 
-    public abstract Node<cOp, ?, Double, ?> makeChildInstance(cOp childOption, Double initCount);
+    public abstract Node<cOp, ?, Double, ?> makeChildInstance(final cOp childOption, final Double initCount);
 }

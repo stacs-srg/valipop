@@ -16,13 +16,15 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.ageOnDate;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)=
@@ -33,10 +35,6 @@ public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
         super(option, parentNode, initCount);
     }
 
-    public SexNodeInt() {
-        super();
-    }
-
     @Override
     public Node<IntegerRange, ?, Integer, ?> makeChildInstance(IntegerRange childOption, Integer initCount) {
         return new AgeNodeInt(childOption, this, initCount);
@@ -45,9 +43,10 @@ public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
 
     @Override
     public void processPerson(IPerson person, ValipopDate currentDate) {
+
         incCountByOne();
 
-        int age = person.ageOnDate(currentDate);
+        int age = ageOnDate(person, currentDate);
 
         try {
             resolveChildNodeForAge(age).processPerson(person, currentDate);

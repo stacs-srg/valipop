@@ -37,6 +37,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -205,7 +206,6 @@ public class InputFileReader {
         List<String> columnLabels = new ArrayList<>();
         Map<String, Double> data = new HashMap<>();
 
-
         for (int i = 0; i < lines.size(); i++) {
 
             String s = lines.get(i);
@@ -345,12 +345,14 @@ public class InputFileReader {
     }
 
     public static SelfCorrectingOneDimensionDataDistribution readInSC1DDataFile(Path path, Config config, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException {
+
         OneDimensionDataDistribution d = readIn1DDataFile(path);
         return new SelfCorrectingOneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(),
                 d.getSourceOrganisation(), d.cloneData(), config.getBinomialSampling(), randomGenerator);
     }
 
     public static SelfCorrectingProportionalDistribution readInAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {
+
         List<String> lines = new ArrayList<>(getAllLines(path));
 
         YearDate year = null;
@@ -400,7 +402,7 @@ public class InputFileReader {
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
-        ArrayList<IntegerRange> columnLabels = new ArrayList<>();
+        List<IntegerRange> columnLabels = new ArrayList<>();
         Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> data = new TreeMap<>();
 
         for (int i = 0; i < lines.size(); i++) {
@@ -431,14 +433,13 @@ public class InputFileReader {
                 default:
                     break;
             }
-
         }
         return new MotherChildAdapter(year, sourcePopulation, sourceOrganisation, data);
     }
 
-    private static ArrayList<IntegerRange> readInLabels(String[] split, Path path) throws InvalidInputFileException {
+    private static List<IntegerRange> readInLabels(String[] split, Path path) throws InvalidInputFileException {
 
-        ArrayList<IntegerRange> columnLabels = new ArrayList<>();
+        List<IntegerRange> columnLabels = new ArrayList<>();
         String s = split[1];
         split = s.split(TAB);
 
@@ -455,15 +456,13 @@ public class InputFileReader {
         return columnLabels;
     }
 
-    private static ArrayList<String> readInStringLabels(String[] split) {
+    private static List<String> readInStringLabels(String[] split) {
 
-        ArrayList<String> columnLabels = new ArrayList<>();
+        List<String> columnLabels = new ArrayList<>();
         String s = split[1];
         split = s.split(TAB);
 
-        for (String l : split) {
-            columnLabels.add(l);
-        }
+        Collections.addAll(columnLabels, split);
 
         return columnLabels;
     }
@@ -473,63 +472,47 @@ public class InputFileReader {
             Class<? extends AbstractLabelToAbstractValueSet<L, V>> setType)
             throws InvalidInputFileException {
 
-        Map<IntegerRange, LabelledValueSet<L, V>> data = new TreeMap<>();
+        try {
+            Map<IntegerRange, LabelledValueSet<L, V>> data = new TreeMap<>();
 
-        i++; // go to next line for data rows
-        for (; i < lines.size(); i++) {
-            String s = lines.get(i);
-            String[] split = s.split(TAB);
+            i++; // go to next line for data rows
+            for (; i < lines.size(); i++) {
+                String s = lines.get(i);
+                String[] split = s.split(TAB);
 
-            if (split.length != columnLabels.size() + 1) {
-                throw new InvalidInputFileException("One or more data rows do not have the correct number of values in the file: " + path.toString());
-            }
-
-            IntegerRange rowLabel;
-            try {
-                rowLabel = new IntegerRange(split[0]);
-            } catch (NumberFormatException e) {
-                throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
-            } catch (InvalidRangeException e) {
-                throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + " in the file: " + path.toString(), e);
-            }
-
-            Map<L, V> rowMap = new TreeMap<>();
-
-            Class<V> clazz = null;
-            try {
-                clazz = setType.newInstance().getValueClass();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-
-            for (int j = 1; j < split.length; j++) {
-                try {
-                    try {
-                        rowMap.put(columnLabels.get(j - 1), clazz.getConstructor(String.class).newInstance(split[j]));
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    }
-                } catch (NumberFormatException e) {
-                    throw new InvalidInputFileException("The value in column " + j + " should be a Double on line " + (i + 1) + "in the file: " + path.toString(), e);
+                if (split.length != columnLabels.size() + 1) {
+                    throw new InvalidInputFileException("One or more data rows do not have the correct number of values in the file: " + path.toString());
                 }
-            }
 
-            try {
+                IntegerRange rowLabel;
+                try {
+                    rowLabel = new IntegerRange(split[0]);
+                } catch (NumberFormatException e) {
+                    throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
+                } catch (InvalidRangeException e) {
+                    throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + " in the file: " + path.toString(), e);
+                }
+
+                Map<L, V> rowMap = new TreeMap<>();
+
+                Class<V> clazz = setType.newInstance().getValueClass();
+                Constructor<V> constructor = clazz.getConstructor(String.class);
+
+                for (int j = 1; j < split.length; j++) {
+                    try {
+                        rowMap.put(columnLabels.get(j - 1), constructor.newInstance(split[j]));
+
+                    } catch (NumberFormatException e) {
+                        throw new InvalidInputFileException("The value in column " + j + " should be a Double on line " + (i + 1) + "in the file: " + path.toString(), e);
+                    }
+                }
+
                 data.put(rowLabel, setType.newInstance().init(rowMap));
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-                System.out.println("Something has gone wrong with the fancy generics/reflection bit");
-                throw new Error();
             }
+            return data;
         }
-        return data;
+        catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

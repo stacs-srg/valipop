@@ -32,6 +32,8 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.Set;
 
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.ageOnDate;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -53,13 +55,13 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
 
         Integer newPartnerAge = null;
 
-        if(activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, currentDate.getYearDate())) {
+        if (activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, currentDate.getYearDate())) {
             IPerson partner = activePartnership.getPartnerOf(person);
-            newPartnerAge = partner.ageOnDate(activePartnership.getPartnershipDate());
+            newPartnerAge = ageOnDate(partner, activePartnership.getPartnershipDate());
         }
 
         // check if the partner falls into one of the child ranges
-        for(Node<IntegerRange, ?, Integer, ?> node : getChildren()) {
+        for (Node<IntegerRange, ?, Integer, ?> node : getChildren()) {
 
             Boolean in;
             try {
@@ -69,22 +71,21 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
             }
 
             // if partners age is in the considered range then process this person using this NPA range and return
-            if (in != null && in){
+            if (in != null && in) {
                 node.processPerson(person, currentDate);
                 return;
             }
 
             // if in is null due to range being 'na' and there is no new partner (thus NPA == null) then process this person using the current NPA range (na)
-            if(newPartnerAge == null && in == null) {
+            if (newPartnerAge == null && in == null) {
                 node.processPerson(person, currentDate);
                 return;
             }
-
         }
 
         // if we get here then the age range we want hasn't been created yet
 
-        if(newPartnerAge == null) {
+        if (newPartnerAge == null) {
             // if no NPA then a 'na' range hasn't been created yet - so we create it
             addChild(new IntegerRange("na")).processPerson(person, currentDate);
         } else {
@@ -92,21 +93,18 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
             // this accessing of the statistical code isn't to calculate new values - we just use it to get the age
             // ranges from the stats tables
             Integer age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
-            if(age >= 50) {
+            if (age >= 50) { // TODO define as constant
 
                 System.out.println("Overage woman producing kids...");
-                System.out.println("BD: " + person.getBirthDate_ex().toString());
+                System.out.println("BD: " + person.getBirthDate().toString());
                 System.out.println("PD: " + activePartnership.getPartnershipDate().toString());
-                if(activePartnership.getMarriageDate_ex() == null) {
+                if (activePartnership.getMarriageDate() == null) {
                     System.out.println("MD: null");
                 } else {
-                    System.out.println("MD: " + activePartnership.getMarriageDate_ex().toString());
+                    System.out.println("MD: " + activePartnership.getMarriageDate().toString());
                 }
                 System.out.println("CD: " + currentDate.toString());
                 System.out.println("END --- Overage woman producing kids...");
-
-
-
             }
 
             double numberOfFemales = getCount();
@@ -126,9 +124,6 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
                 }
             }
         }
-
-
-
     }
 
     @Override

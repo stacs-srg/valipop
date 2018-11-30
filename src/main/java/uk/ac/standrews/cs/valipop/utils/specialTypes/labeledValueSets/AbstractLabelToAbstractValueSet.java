@@ -25,48 +25,51 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
 
     protected Map<AL, AV> map = new TreeMap<>();
 
-    public AbstractLabelToAbstractValueSet(List<AL> labels, List<AV> values) {
+    public AbstractLabelToAbstractValueSet(final List<AL> labels, final List<AV> values) {
 
-        if(labels.size() != values.size()) {
+        if (labels.size() != values.size()) {
             throw new LabeledValueSetInitException("Labels and values lists of differing sizes", labels, values);
         }
 
         int c = 0;
-        for(AL iR : labels) {
+        for (AL iR : labels) {
             map.put(iR, values.get(c));
             c++;
         }
     }
 
-    public AbstractLabelToAbstractValueSet(Set<AL> labels, AV initValue) {
+    public AbstractLabelToAbstractValueSet(final Set<AL> labels, final AV initValue) {
 
-        for(AL iR : labels) {
+        for (AL iR : labels) {
             map.put(iR, initValue);
         }
     }
 
-    public AbstractLabelToAbstractValueSet(Map<AL, AV> map) {
+    public AbstractLabelToAbstractValueSet(final Map<AL, AV> map) {
         init(map);
     }
 
-    public AbstractLabelToAbstractValueSet() {}
+    public AbstractLabelToAbstractValueSet() {
+    }
 
-    public abstract Class getLabelClass();
     public abstract Class getValueClass();
 
-    public AbstractLabelToAbstractValueSet init(Map<AL, AV> map) {
+    public AbstractLabelToAbstractValueSet init(final Map<AL, AV> map) {
         this.map = map;
         return this;
     }
 
-    public abstract LabelledValueSet<AL, AV> constructSelf(List<AL> labels, List<AV> values);
+    public abstract LabelledValueSet<AL, AV> constructSelf(final List<AL> labels, final List<AV> values);
 
-    public abstract LabelledValueSet<AL, Integer> constructIntegerEquiverlent(List<AL> labels, List<Integer> values);
-    public abstract LabelledValueSet<AL, Double> constructDoubleEquiverlent(List<AL> labels, List<Double> values);
+    public abstract LabelledValueSet<AL, Integer> constructIntegerEquivalent(final List<AL> labels, final List<Integer> values);
+
+    public abstract LabelledValueSet<AL, Double> constructDoubleEquivalent(final List<AL> labels, final List<Double> values);
 
     public abstract AV zero();
-    public abstract AV sum(AV a, AV b);
-    public abstract AV multiply(AV a, int n);
+
+    public abstract AV sum(final AV a, final AV b);
+
+    public abstract AV multiply(final AV a, final int n);
 
     @Override
     public Map<AL, AV> getMap() {
@@ -78,7 +81,7 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
 
         AV sum = zero();
 
-        for(Map.Entry<AL, AV> iR : map.entrySet()) {
+        for (Map.Entry<AL, AV> iR : map.entrySet()) {
             sum = sum(sum, iR.getValue());
         }
 
@@ -86,7 +89,7 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
     }
 
     @Override
-    public AV getValue(AL label) {
+    public AV getValue(final AL label) {
         return map.get(label);
     }
 
@@ -96,96 +99,85 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
     }
 
 
-
     @Override
-    public void add(AL label, AV value) {
+    public void add(final AL label, final AV value) {
         map.put(label, value);
     }
 
     @Override
-    public AV get(AL label) {
+    public AV get(final AL label) {
         return map.get(label);
     }
 
     @Override
-    public void update(AL label, AV value) {
-        if(map.replace(label, value) == null) {
+    public void update(final AL label, final AV value) {
+
+        if (map.replace(label, value) == null) {
             add(label, value);
         }
     }
 
     @Override
-    public AV remove(AL label) {
+    public AV remove(final AL label) {
         return map.remove(label);
     }
 
     @Override
-    public LabelledValueSet<AL, AV> productOfValuesAndN(Integer n) {
-        List<AL> labels = new ArrayList<>();
-        List<AV> products = new ArrayList<>();
+    public LabelledValueSet<AL, Double> productOfValuesAndN(final double n) {
 
-        for(AL iR : map.keySet()) {
-            labels.add(iR);
-            products.add(multiply(getValue(iR), n));
-        }
-
-        return constructSelf(labels, products);
-    }
-
-    @Override
-    public LabelledValueSet<AL, Double> productOfValuesAndN(Double n) {
         List<AL> labels = new ArrayList<>();
         List<Double> products = new ArrayList<>();
 
-        for(AL iR : map.keySet()) {
+        for (AL iR : map.keySet()) {
             labels.add(iR);
             products.add(getValue(iR).doubleValue() * n);
         }
 
-        return constructDoubleEquiverlent(labels, products);
+        return constructDoubleEquivalent(labels, products);
     }
 
     @SuppressWarnings("Duplicates")
     @Override
-    public LabelledValueSet<AL, Double> valuesSubtractValues(LabelledValueSet<AL, ? extends Number> n) {
+    public LabelledValueSet<AL, Double> valuesSubtractValues(final LabelledValueSet<AL, ? extends Number> n) {
+
         List<AL> labels = new ArrayList<>();
         List<Double> results = new ArrayList<>();
 
-
-        for(AL iR : map.keySet()) {
+        for (AL iR : map.keySet()) {
             labels.add(iR);
 
             Number sub = n.getValue(iR);
-            if(sub == null) {
-                throw new IncompatibleLabelValueSets("Sets do not contain same labels - " +
-                        "mathematical operations not possible", this, n);
+            if (sub == null) {
+                throw new IncompatibleLabelValueSets("Sets do not contain same labels - mathematical operations not possible", this, n);
             }
 
             results.add(getValue(iR).doubleValue() - sub.doubleValue());
         }
 
-        return constructDoubleEquiverlent(labels, results);
+        return constructDoubleEquivalent(labels, results);
     }
 
     @Override
     public LabelledValueSet<AL, Integer> floorValues() {
+
         List<AL> labels = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
 
-        for(AL iR : map.keySet()) {
+        for (AL iR : map.keySet()) {
             labels.add(iR);
             values.add((int) Math.floor(getValue(iR).doubleValue()));
         }
 
-        return constructIntegerEquiverlent(labels, values);
+        return constructIntegerEquivalent(labels, values);
     }
 
     @Override
     public LabelledValueSet<AL, AV> clone() {
+
         List<AL> labels = new ArrayList<>();
         List<AV> values = new ArrayList<>();
 
-        for(AL iR : map.keySet()) {
+        for (AL iR : map.keySet()) {
             labels.add(iR);
             values.add(getValue(iR));
         }
@@ -194,23 +186,23 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
     }
 
     @Override
-    public AL getLabelOfValueWithGreatestRemainder(Set<AL> usedLabels) {
+    public AL getLabelOfValueWithGreatestRemainder(final Set<AL> usedLabels) {
 
         double largestRemainder = 0;
         AL labelOfLargestRemainder = null;
 
-        for(AL iR : map.keySet()) {
+        for (AL iR : map.keySet()) {
 
-            if(!usedLabels.contains(iR)) {
+            if (!usedLabels.contains(iR)) {
                 double remainder = getValue(iR).doubleValue() % 1;
-                if(remainder > largestRemainder) {
+                if (remainder > largestRemainder) {
                     largestRemainder = remainder;
                     labelOfLargestRemainder = iR;
                 }
             }
         }
 
-        if(labelOfLargestRemainder == null) {
+        if (labelOfLargestRemainder == null) {
             throw new NoSuchElementException("No values identifies matching criteria. Labels minus used labels = "
                     + (getLabels().size() - usedLabels.size()));
         }
@@ -220,16 +212,17 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
 
     @SuppressWarnings("Duplicates")
     @Override
-    public LabelledValueSet<AL, Double> valuesPlusValues(LabelledValueSet<AL, ? extends Number> n) {
+    public LabelledValueSet<AL, Double> valuesPlusValues(final LabelledValueSet<AL, ? extends Number> n) {
+
         List<AL> labels = new ArrayList<>();
         List<Double> results = new ArrayList<>();
 
 
-        for(AL iR : map.keySet()) {
+        for (AL iR : map.keySet()) {
             labels.add(iR);
 
             Number sub = n.getValue(iR);
-            if(sub == null) {
+            if (sub == null) {
                 throw new IncompatibleLabelValueSets("Sets do not contain same labels - " +
                         "mathematical operations not possible", this, n);
             }
@@ -237,7 +230,7 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
             results.add(getValue(iR).doubleValue() + sub.doubleValue());
         }
 
-        return constructDoubleEquiverlent(labels, results);
+        return constructDoubleEquivalent(labels, results);
     }
 
     @Override
@@ -247,24 +240,25 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
     }
 
     @Override
-    public LabelledValueSet<AL, Double> divisionOfValuesByN(AV n) {
+    public LabelledValueSet<AL, Double> divisionOfValuesByN(final AV n) {
+
         List<AL> labels = new ArrayList<>();
         List<Double> products = new ArrayList<>();
 
-        for(AL iR : map.keySet()) {
+        for (AL iR : map.keySet()) {
             labels.add(iR);
             products.add(getValue(iR).doubleValue() / n.doubleValue());
         }
 
-        return constructDoubleEquiverlent(labels, products);
+        return constructDoubleEquivalent(labels, products);
     }
 
     @Override
     public int countNegativeValues() {
         int count = 0;
 
-        for(AL label : getLabels()) {
-            if(getValue(label).doubleValue() < 0) {
+        for (AL label : getLabels()) {
+            if (getValue(label).doubleValue() < 0) {
                 count++;
             }
         }
@@ -274,12 +268,12 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
 
     @Override
     public LabelledValueSet<AL, AV> zeroNegativeValues() {
-        ArrayList<AL> labels = new ArrayList<>(getLabels());
-        ArrayList<AV> newValues = new ArrayList<>();
 
+        List<AL> labels = new ArrayList<>(getLabels());
+        List<AV> newValues = new ArrayList<>();
 
-        for(AL label : labels) {
-            if(getValue(label).doubleValue() < 0) {
+        for (AL label : labels) {
+            if (getValue(label).doubleValue() < 0) {
                 newValues.add(zero());
             } else {
                 newValues.add(getValue(label));
@@ -291,16 +285,15 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
 
     @Override
     public int countPositiveValues() {
+
         int count = 0;
 
-        for(AL label : getLabels()) {
-            if(getValue(label).doubleValue() > 0) {
+        for (AL label : getLabels()) {
+            if (getValue(label).doubleValue() > 0) {
                 count++;
             }
         }
 
         return count;
     }
-
-
 }

@@ -31,30 +31,24 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
  */
 public class NumberOfPreviousChildrenInAnyPartnershipNodeInt extends IntNode<IntegerRange, ChildrenInYearOption> {
 
-    public NumberOfPreviousChildrenInAnyPartnershipNodeInt(IntegerRange option, PreviousNumberOfChildrenInPartnershipNodeInt parentNode, Integer initCount) {
+    public NumberOfPreviousChildrenInAnyPartnershipNodeInt(final IntegerRange option, final PreviousNumberOfChildrenInPartnershipNodeInt parentNode, final int initCount) {
         super(option, parentNode, initCount);
     }
 
-
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(final IPerson person, final ValipopDate currentDate) {
 
         incCountByOne();
 
-        IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
+        final IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
 
         ChildrenInYearOption option;
 
-
-        if(activePartnership == null){
+        if (activePartnership == null) {
             option = ChildrenInYearOption.NO;
         } else {
-            int n = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, currentDate.getYearDate());
-            if(n == 0) {
-                option = ChildrenInYearOption.NO;
-            } else {
-                option = ChildrenInYearOption.YES;
-            }
+            option = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, currentDate.getYearDate()) == 0 ?
+                    ChildrenInYearOption.NO : ChildrenInYearOption.YES;
         }
 
         try {
@@ -62,7 +56,6 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeInt extends IntNode<Int
         } catch (ChildNotFoundException e) {
             addChild(option).processPerson(person, currentDate);
         }
-
     }
 
     @Override
@@ -71,7 +64,7 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeInt extends IntNode<Int
     }
 
     @Override
-    public Node<ChildrenInYearOption, ?, Integer, ?> makeChildInstance(ChildrenInYearOption childOption, Integer initCount) {
+    public Node<ChildrenInYearOption, ?, Integer, ?> makeChildInstance(final ChildrenInYearOption childOption, final Integer initCount) {
         return new ChildrenInYearNodeInt(childOption, this, initCount);
     }
 }

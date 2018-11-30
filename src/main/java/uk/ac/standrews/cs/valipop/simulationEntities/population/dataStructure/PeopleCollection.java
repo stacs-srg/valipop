@@ -19,10 +19,9 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
@@ -31,9 +30,7 @@ import java.util.*;
 
 /**
  * The class PeopleCollection is a concrete instance of the PersonCollection class. It provides the layout to structure
- * and index a population of males and females and provide access to them. The class also implements the IPopulationExtended
- * interface (adapted to us object references rather than integer id references) allowing it to be used with our other
- * population suite tools.
+ * and index a population of males and females and provide access to them.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -48,7 +45,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     private final Map<Integer, IPartnership> partnershipIndex = new HashMap<>();
 
     // TODO decide on which part approach using either line above or below
-    private ArrayList<IPartnership> partTemp = new ArrayList<>();
+    private List<IPartnership> partTemp = new ArrayList<>();
 
     public PeopleCollection clone() {
 
@@ -123,7 +120,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
     @Override
     public Collection<IPerson> getAll() {
-        return AggregatePersonCollectionFactory.makeCollectionOfPersons(females, males);
+
+        Collection<IPerson> people = ((PersonCollection) females).getAll();
+        people.addAll(((PersonCollection) males).getAll());
+
+        return people;
     }
 
     @Override
@@ -145,7 +146,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     @Override
     public void addPerson(IPerson person) {
 
-        if (person.getSex() == 'm') {
+        if (person.getSex() == SexOption.MALE) {
             males.addPerson(person);
 
         } else {
@@ -156,9 +157,9 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     }
 
     @Override
-    public void removePerson(IPerson person) throws PersonNotFoundException {
+    public void removePerson(IPerson person) {
 
-        if (person.getSex() == 'm') {
+        if (person.getSex() == SexOption.MALE) {
             males.removePerson(person);
 
         } else {
@@ -177,7 +178,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     }
 
     @Override
-    public TreeSet<AdvanceableDate> getDivisionDates() {
+    public Set<AdvanceableDate> getDivisionDates() {
         return females.getDivisionDates();
     }
 
@@ -217,11 +218,6 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         this.description = description;
     }
 
-    @Override
-    public void setConsistentAcrossIterations(boolean consistent_across_iterations) {
-
-    }
-
     private Collection<IPerson> getPeopleBetweenDates(PersonCollection collection,
                                                       AdvanceableDate firstDateOfInterest,
                                                       AdvanceableDate lastDateOfInterest) {
@@ -241,7 +237,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
                 for (IPerson p : temp) {
 
-                    if (!DateUtils.dateBefore(p.getBirthDate_ex(), firstDateOfInterest)) {
+                    if (!DateUtils.dateBefore(p.getBirthDate(), firstDateOfInterest)) {
                         people.add(p);
                     }
                 }
@@ -250,7 +246,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
                 for (IPerson p : temp) {
 
-                    if (DateUtils.dateBefore(p.getBirthDate_ex(), lastDateOfInterest)) {
+                    if (DateUtils.dateBefore(p.getBirthDate(), lastDateOfInterest)) {
                         people.add(p);
                     }
                 }

@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.d
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.junit.Assert;
 import org.junit.Test;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.DeathStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
@@ -49,8 +50,7 @@ public class SelfCorrectionTest {
         data.put(new IntegerRange(5), 0.01);
 
         SelfCorrectingOneDimensionDataDistribution sc1DDD =
-                new SelfCorrectingOneDimensionDataDistribution(new YearDate(0),"test",
-                                                                "test", data, false, new JDKRandomGenerator());
+                new SelfCorrectingOneDimensionDataDistribution(new YearDate(0), "test", "test", data, false, new JDKRandomGenerator());
 
         return sc1DDD;
     }
@@ -63,18 +63,18 @@ public class SelfCorrectionTest {
 
         CompoundTimeUnit y = new CompoundTimeUnit(1, TimeUnit.YEAR);
 
-        for(IntegerRange iR : sc1DDD.getRate().keySet()) {
+        for (IntegerRange iR : sc1DDD.getRate().keySet()) {
 
             double check = sc1DDDCopy.getRate(iR.getValue());
 
             // Basic first retrieval tests
-            StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, y, null, 'm');
+            StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, y, null, SexOption.MALE);
             DeterminedCount r1 = sc1DDD.determineCount(k1, null);
-            Assert.assertEquals((int)Math.round(check * 100), (int) r1.getDeterminedCount(), DELTA);
+            Assert.assertEquals((int) Math.round(check * 100), (int) r1.getDeterminedCount(), DELTA);
 
-            StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, y, null, 'm');
+            StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, y, null, SexOption.MALE);
             DeterminedCount r2 = sc1DDD.determineCount(k2, null);
-            Assert.assertEquals((int)Math.round(check * 1000), (int) r2.getDeterminedCount(), DELTA);
+            Assert.assertEquals((int) Math.round(check * 1000), (int) r2.getDeterminedCount(), DELTA);
         }
     }
 
@@ -89,12 +89,12 @@ public class SelfCorrectionTest {
 
         CompoundTimeUnit[] tps = {y};
 
-        for(CompoundTimeUnit tp : tps) {
+        for (CompoundTimeUnit tp : tps) {
 
             for (IntegerRange iR : sc1DDD.getRate().keySet()) {
 
-                StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, tp, null, 'm');
-                StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, tp, null, 'm');
+                StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, tp, null, SexOption.MALE);
+                StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, tp, null, SexOption.MALE);
 
                 // --- B
 
@@ -114,16 +114,15 @@ public class SelfCorrectionTest {
 
         int count = calcUnfetteredExpectedCount(applied, corrective, targetRate);
 
-        if(count > corrective.getForNPeople()) {
+        if (count > corrective.getForNPeople()) {
             count = (int) corrective.getForNPeople();
         }
 
-        if(count < 0) {
+        if (count < 0) {
             count = 0;
         }
 
         return count;
-
     }
 
     private int calcUnfetteredExpectedCount(DeterminedCount applied, StatsKey corrective, double targetRate) {
@@ -143,13 +142,13 @@ public class SelfCorrectionTest {
         double expectedCorrectiveRate =
                 (targetRate * (returnedKey.getForNPeople() + checkKey.getForNPeople())
                         - (returnedRate * returnedKey.getForNPeople()))
-                / checkKey.getForNPeople();
+                        / checkKey.getForNPeople();
 
-        if(expectedCorrectiveRate > 1) {
+        if (expectedCorrectiveRate > 1) {
             return 1;
         }
 
-        if(expectedCorrectiveRate < 0) {
+        if (expectedCorrectiveRate < 0) {
             return 0;
         }
 
@@ -163,7 +162,6 @@ public class SelfCorrectionTest {
                         + checkKey.getForNPeople())
                         - (returnedRate * returnedKey.getForNPeople()))
                         / checkKey.getForNPeople();
-
 
         return expectedCorrectiveRate;
     }
@@ -179,16 +177,15 @@ public class SelfCorrectionTest {
         CompoundTimeUnit y = new CompoundTimeUnit(1, TimeUnit.YEAR);
         CompoundTimeUnit m2 = new CompoundTimeUnit(2, TimeUnit.MONTH);
 
-        StatsKey yearK = new DeathStatsKey(age, popSize, y, null, 'm');
+        StatsKey yearK = new DeathStatsKey(age, popSize, y, null, SexOption.MALE);
         int expPopSize = popSize - data.determineCount(yearK, null).getDeterminedCount();
 
-        for(int m = 1; m <= 12; m+=2) {
-            StatsKey k = new DeathStatsKey(age, popSize, m2, null, 'm');
+        for (int m = 1; m <= 12; m += 2) {
+            StatsKey k = new DeathStatsKey(age, popSize, m2, null, SexOption.MALE);
 
             int count = data.determineCount(k, null).getDeterminedCount();
 
             popSize -= count;
-
         }
 
         Assert.assertEquals(expPopSize, popSize);

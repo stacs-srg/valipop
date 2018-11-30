@@ -56,25 +56,19 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNo
 
         ChildrenInYearOption option;
 
-
-        if(activePartnership == null){
+        if (activePartnership == null) {
             option = ChildrenInYearOption.NO;
         } else {
-            int n = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, currentDate.getYearDate());
-            if(n == 0) {
-                option = ChildrenInYearOption.NO;
-            } else {
-                option = ChildrenInYearOption.YES;
-            }
+            option = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, currentDate.getYearDate()) == 0 ?
+                    ChildrenInYearOption.NO : ChildrenInYearOption.YES;
         }
 
         try {
             getChild(option).processPerson(person, currentDate);
+
         } catch (ChildNotFoundException e) {
             addChild(new ChildrenInYearNodeDouble(option, this, 0.0, true)).processPerson(person, currentDate);
-//            addChild(option).processPerson(person, currentDate);
         }
-
     }
 
     @Override
@@ -92,6 +86,5 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNo
 
         addChild(ChildrenInYearOption.YES);
         addChild(ChildrenInYearOption.NO);
-
     }
 }

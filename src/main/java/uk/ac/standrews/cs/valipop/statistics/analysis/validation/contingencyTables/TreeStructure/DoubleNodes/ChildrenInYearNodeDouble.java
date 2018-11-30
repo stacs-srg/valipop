@@ -41,10 +41,10 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
  */
 public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, Integer> implements ControlSelfNode, ControlChildrenNode {
 
-    public ChildrenInYearNodeDouble(ChildrenInYearOption option, NumberOfPreviousChildrenInAnyPartnershipNodeDouble parentNode, Double initCount, boolean init) {
+    public ChildrenInYearNodeDouble(final ChildrenInYearOption option, final NumberOfPreviousChildrenInAnyPartnershipNodeDouble parentNode, final double initCount, final boolean init) {
         super(option, parentNode, initCount);
 
-        if(!init) {
+        if (!init) {
             calcCount();
         }
     }
@@ -54,7 +54,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
     }
 
     @Override
-    public Node<Integer, ?, Double, ?> makeChildInstance(Integer childOption, Double initCount) {
+    public Node<Integer, ?, Double, ?> makeChildInstance(final Integer childOption, final Double initCount) {
         return new NumberOfChildrenInYearNodeDouble(childOption, this, initCount, false);
     }
 
@@ -67,7 +67,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
 
         Integer option;
 
-        if(activePartnership == null){
+        if (activePartnership == null) {
             option = 0;
         } else {
             option = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, currentDate.getYearDate());
@@ -79,7 +79,6 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
             NumberOfChildrenInYearNodeDouble n = (NumberOfChildrenInYearNodeDouble) addChild(new NumberOfChildrenInYearNodeDouble(option, this, 0.0, true));
             n.processPerson(person, currentDate);
         }
-
     }
 
     @Override
@@ -100,7 +99,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         Integer age = aN.getOption().getValue();
 
         Integer order = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                                    getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
+                getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
         ValipopDate currentDate = yob.advanceTime(age - 1, TimeUnit.YEAR);
 
         double forNPeople = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getCount();
@@ -110,7 +109,6 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
                 new BirthStatsKey(age, order, forNPeople, timePeriod, currentDate), null);
 
-//        double numberOfMothers = sDC.getRawUncorrectedCount();
         double numberOfChildren = sDC.getRawUncorrectedCount();
 
         MultipleDeterminedCount mDc = (MultipleDeterminedCount) getInputStats().getDeterminedCount(
@@ -124,49 +122,38 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
 
         double adjustment = parent.getCount() / numOfType;
 
-        if(getOption() == ChildrenInYearOption.YES) {
+        if (getOption() == ChildrenInYearOption.YES) {
             double v = numberOfMothers * adjustment;
-            if(v > getParent().getCount() || Double.isNaN(v)) {
+            if (v > getParent().getCount() || Double.isNaN(v)) {
                 v = getParent().getCount();
             }
             setCount(v);
         } else {
             double v = parent.getCount() - (numberOfMothers * adjustment);
-            if(v < 0 || Double.isNaN(v)) {
+            if (v < 0 || Double.isNaN(v)) {
                 v = 0;
             }
             setCount(v);
         }
 
-        if(getOption() == ChildrenInYearOption.NO || getCount().equals(0.0)) {
+        if (getOption() == ChildrenInYearOption.NO || getCount().equals(0.0)) {
             addChild(0, getCount());
         } else {
-
-//            LabelledValueSet<IntegerRange, Double> stat = mDc.getRawUncorrectedCount();
-//
-//            for (IntegerRange o : stat.getLabels()) {
-//                if(!stat.get(o).equals(0.0)) {
-//                    addChild(o.getValue(), stat.get(o) * (1 - adjustment));
-//                }
-//            }
 
             LabelledValueSet<IntegerRange, Double> stat = mDc.getRawUncorrectedCount().reproportion();
 
             for (IntegerRange o : stat.getLabels()) {
-                if(!stat.get(o).equals(0.0)) {
+                if (!stat.get(o).equals(0.0)) {
                     addChild(o.getValue(), stat.get(o) * getCount());
                 }
             }
         }
-
-//        advanceCount();
-
     }
 
     @Override
     public void makeChildren() {
 
-        if(getOption() == ChildrenInYearOption.NO || getCount().equals(0.0)) {
+        if (getOption() == ChildrenInYearOption.NO || getCount().equals(0.0)) {
             addChild(0);
         } else {
 
@@ -182,11 +169,10 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
             LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 
             for (IntegerRange o : stat.getLabels()) {
-                if(!stat.get(o).equals(0.0)) {
+                if (!stat.get(o).equals(0.0)) {
                     addChild(o.getValue());
                 }
             }
         }
-
     }
 }

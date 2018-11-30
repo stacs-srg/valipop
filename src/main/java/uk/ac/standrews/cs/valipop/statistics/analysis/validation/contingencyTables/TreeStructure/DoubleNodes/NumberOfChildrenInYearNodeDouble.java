@@ -43,8 +43,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     public NumberOfChildrenInYearNodeDouble(Integer option, ChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
 
-        if(!init) {
-//            calcCount();
+        if (!init) {
             advanceCount();
             makeChildren();
         }
@@ -67,10 +66,10 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
         incCountByOne();
 
         int prevChildren = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                                    getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
+                getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
 
         int childrenThisYear = ((NumberOfChildrenInYearNodeDouble)
-                                                    getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
+                getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
         int ncip = prevChildren + childrenThisYear;
         IntegerRange range = resolveToChildRange(ncip);
 
@@ -80,8 +79,6 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
 
             addChild(new NumberOfChildrenInPartnershipNodeDouble(range, this, 0.0, true))
                     .processPerson(person, currentDate);
-
-//            addChild(prevChildren + childrenThisYear).processPerson(person, currentDate);
         }
     }
 
@@ -94,12 +91,11 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     public void advanceCount() {
 
         // Should we be restricting this so much?
-        if(getCount() > CTtree.NODE_MIN_COUNT && getOption() != 0) {
+        if (getCount() > CTtree.NODE_MIN_COUNT && getOption() != 0) {
             YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
             ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
-            //Date currentDate = yob.advanceTime(age + 1, TimeUnit.YEAR);
 
             SourceNodeDouble sN = (SourceNodeDouble) getAncestor(new SourceNodeDouble());
 
@@ -132,17 +128,14 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
                     sexN.addChild(aN);
                     addDelayedTask(aN);
                 }
-
             }
         }
-
-
     }
 
     @Override
     public void calcCount() {
 
-        if(getOption() == 0) {
+        if (getOption() == 0) {
             setCount(getParent().getCount());
         } else {
 
@@ -155,27 +148,24 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
                     .getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(),
                             new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate), null);
 
-
             LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 
-            for(IntegerRange iR : stat.getLabels()) {
-                if(iR.contains(getOption())) {
+            for (IntegerRange iR : stat.getLabels()) {
+                if (iR.contains(getOption())) {
                     setCount(stat.get(iR));
                 }
             }
-
         }
 
         advanceCount();
         makeChildren();
-
     }
 
     @Override
     public void makeChildren() {
 
         int numberOfPrevChildInPartnership = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                                            getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
+                getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
         int childrenInYear = getOption();
 
         int numberOfChildInPartnership = numberOfPrevChildInPartnership + childrenInYear;
@@ -192,8 +182,8 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     @SuppressWarnings("Duplicates")
     private IntegerRange resolveToChildRange(Integer ncip) {
 
-        for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
-            if(aN.getOption().contains(ncip)) {
+        for (Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
+            if (aN.getOption().contains(ncip)) {
                 return aN.getOption();
             }
         }
@@ -205,17 +195,16 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 
-        for(IntegerRange o : sepRanges) {
-            if(o.contains(ncip)) {
+        for (IntegerRange o : sepRanges) {
+            if (o.contains(ncip)) {
                 return o;
             }
         }
 
-        if(ncip == 0) {
+        if (ncip == 0) {
             return new IntegerRange(0);
         }
 
         throw new Error("Did not resolve any permissable ranges");
     }
-
 }

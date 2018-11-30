@@ -11,42 +11,33 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
  */
 public class MarriageDateSelector extends DateSelector {
 
-    PoissonDistribution dist = null;
-    double poissonM = 15;
-    double averageYearsFromMarriageToChild = 3.0;
-    int daysInYear = 365;
+    private final PoissonDistribution distribution;
 
-    public ExactDate selectDate(ValipopDate earliestDate, ValipopDate latestDate, RandomGenerator random) {
+    private static final double poissonM = 15;
+    private static final double averageYearsFromMarriageToChild = 3.0;
+    private static final int daysInYear = 365;
 
-        if(dist == null) {
-            dist = new PoissonDistribution(random, poissonM - 0.5,PoissonDistribution.DEFAULT_EPSILON, PoissonDistribution.DEFAULT_MAX_ITERATIONS);
-        }
+    public MarriageDateSelector(RandomGenerator random) {
+
+        super(random);
+        distribution = new PoissonDistribution(random, poissonM - 0.5, PoissonDistribution.DEFAULT_EPSILON, PoissonDistribution.DEFAULT_MAX_ITERATIONS);
+    }
+
+    public ExactDate selectRandomDate(ValipopDate earliestDate, ValipopDate latestDate) {
 
         int daysInWindow = DateUtils.differenceInDays(earliestDate, latestDate);
 
-        double chosenYear = dist.sample() * averageYearsFromMarriageToChild / poissonM;
-        double dayAdjust = random.nextInt((int) (Math.floor(daysInYear *  (averageYearsFromMarriageToChild / poissonM))));
+        double chosenYear = distribution.sample() * averageYearsFromMarriageToChild / poissonM;
+        double dayAdjust = random.nextInt((int) (Math.floor(daysInYear * (averageYearsFromMarriageToChild / poissonM))));
 
         int chosenDay = Math.toIntExact(Math.round(chosenYear * daysInYear + dayAdjust));
 
-        if(chosenDay > daysInWindow) {
-            try {
-                // revert to unifrom dist
-                chosenDay = random.nextInt(daysInWindow);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unpermitted bound in Date Selector - window size = " + daysInWindow);
-                chosenDay = 0;
-            }
+        if (chosenDay > daysInWindow) {
+
+            // revert to uniform distribution
+            chosenDay = random.nextInt(daysInWindow);
         }
 
-        ExactDate d = DateUtils.calculateExactDate(latestDate, -1 * chosenDay);
-
-        if(DateUtils.dateBefore(latestDate, d)) {
-            System.out.print("WHAT?!?");
-        }
-
-        return d;
-
+        return DateUtils.calculateExactDate(latestDate, -1 * chosenDay);
     }
-
 }

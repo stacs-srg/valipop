@@ -17,13 +17,13 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
@@ -56,7 +56,7 @@ public class Population {
 
     public PeopleCollection getAllPeople() {
 
-        return AggregatePersonCollectionFactory.makePeopleCollection(livingPeople, deadPeople);
+        return makePeopleCollection(livingPeople, deadPeople);
     }
 
     public PeopleCollection getLivingPeople() {
@@ -90,5 +90,27 @@ public class Population {
         }
 
         return pC;
+    }
+
+    private PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) {
+
+        AdvanceableDate start = (AdvanceableDate) DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
+        ValipopDate end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());
+
+        PeopleCollection cloneCol1 = col1.clone();
+        PeopleCollection cloneCol2 = col2.clone();
+
+        cloneCol1.setStartDate(start);
+        cloneCol1.setEndDate(end);
+
+        for (IPerson p : cloneCol2.getPeople()) {
+            cloneCol1.addPerson(p);
+        }
+
+        for (IPartnership p : cloneCol2.getPartnerships()) {
+            cloneCol1.addPartnershipToIndex(p);
+        }
+
+        return cloneCol1;
     }
 }

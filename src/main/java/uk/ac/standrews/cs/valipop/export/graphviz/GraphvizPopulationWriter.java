@@ -28,7 +28,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Writes a representation of the population to file in Graphviz format.
@@ -52,10 +51,10 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
      * Initialises the writer.
      *
      * @param population the population to be written
-     * @param path the path for the output file
+     * @param path       the path for the output file
      * @throws IOException if the file does not exist and cannot be created
      */
-     public GraphvizPopulationWriter(final IPopulation population, final Path path) throws IOException {
+    public GraphvizPopulationWriter(final IPopulation population, final Path path) throws IOException {
 
         super(path);
         this.population = population;
@@ -94,8 +93,8 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
     private void outputCouple(final IPartnership partnership) {
 
         final int partnership_id = partnership.getId();
-        final int female_partner_id = partnership.getFemalePartnerId();
-        final int male_partner_id = partnership.getMalePartnerId();
+        final int female_partner_id = partnership.getFemalePartner().getId();
+        final int male_partner_id = partnership.getMalePartner().getId();
 
         writer.println(individualLabel(female_partner_id) + ARC + familyLabel(partnership_id) + FAMILY_ARC_ATTRIBUTES);
         writer.println(familyLabel(partnership_id) + ARC + individualLabel(male_partner_id) + FAMILY_ARC_ATTRIBUTES);
@@ -106,25 +105,21 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
 
     private void outputChildren(final IPartnership partnership) {
 
-        final List<Integer> child_ids = partnership.getChildIds();
-        if (child_ids != null) {
+        final int partnership_id = partnership.getId();
 
-            final int partnership_id = partnership.getId();
-
-            for (final int child_id : child_ids) {
-                writer.println(familyLabel(partnership_id) + ARC + individualLabel(child_id));
-            }
+        for (final IPerson child : partnership.getChildren()) {
+            writer.println(familyLabel(partnership_id) + ARC + individualLabel(child.getId()));
         }
     }
 
     private String getIndividualNodeAttributes(final IPerson person) {
 
-        final Date date_of_death = person.getDeathDate();
+        final Date date_of_death = person.getDeathDate().getDate();
 
         final StringBuilder builder = new StringBuilder();
 
         builder.append(" [label=\"b: ");
-        builder.append(formatter.format(person.getBirthDate()));
+        builder.append(formatter.format(person.getBirthDate().getDate()));
         if (date_of_death != null) {
             builder.append("\\nd: ");
             builder.append(formatter.format(date_of_death));
@@ -178,17 +173,6 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
 
     private boolean personHasParents(final IPerson person) {
 
-        final int person_id = person.getId();
-        for (final IPartnership partnership : population.getPartnerships()) {
-            final List<Integer> child_ids = partnership.getChildIds();
-            if (child_ids != null) {
-                for (final int child_id : child_ids) {
-                    if (child_id == person_id) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return person.getParents() != null;
     }
 }
