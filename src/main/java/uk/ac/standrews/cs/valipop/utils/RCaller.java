@@ -17,13 +17,14 @@ public class RCaller {
     public static Process generateAnalysisHTML(String pathOfRunDir, int maxBirthingAge, String subTitle) throws StatsException {
 
         String pathToScript = "src/main/resources/valipop/analysis-r/geeglm/runPopulationAnalysis.R";
-        String[] params = {pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
+        String[] params = {System. getProperty("user.dir") + "/" + pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
 
         try {
             return runRScript(pathToScript, params);
         } catch (IOException e) {
             throw new StatsException(e.getMessage());
         }
+
     }
 
     public static double getV(String pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
@@ -101,7 +102,7 @@ public class RCaller {
         String s = null;
 
         while((s = stdInput.readLine())!=null) {
-              result += s + "\n";
+            result += s + "\n";
         }
 
         while ((s = stdError.readLine()) != null) {
@@ -129,6 +130,7 @@ public class RCaller {
         ProcessBuilder pb = new ProcessBuilder(commands);
 
         return pb.start();
+
     }
 
     private static String[] joinArrays(String[] first, String[] second) {
@@ -137,4 +139,6 @@ public class RCaller {
         Collections.addAll(both, second);
         return both.toArray(new String[both.size()]);
     }
+
+
 }
