@@ -35,5 +35,4 @@ public class MultipleBirthStatsKey extends StatsKey {
     public Double getForNumberOfChildren() {
         return getForNPeople();
     }
-
 }

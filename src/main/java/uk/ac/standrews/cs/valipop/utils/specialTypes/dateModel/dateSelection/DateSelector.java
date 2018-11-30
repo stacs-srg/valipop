@@ -27,29 +27,29 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.Compoun
  */
 public class DateSelector {
 
-    public ExactDate selectDate(ValipopDate earliestDate, ValipopDate latestDate, RandomGenerator random) {
+    final RandomGenerator random;
+
+    public DateSelector(RandomGenerator random) {
+
+        this.random = random;
+    }
+
+    public ExactDate selectRandomDate(ValipopDate earliestDate, ValipopDate latestDate) {
 
         int daysInWindow = DateUtils.differenceInDays(earliestDate, latestDate);
 
-        int chosenDay;
-
-        try {
-            chosenDay = random.nextInt(Math.abs(daysInWindow));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Unpermitted bound in Date Selector - window size = " + daysInWindow);
-            chosenDay = 0;
-        }
-        return DateUtils.calculateExactDate(earliestDate, chosenDay);
-
+        return selectRandomDate(earliestDate, daysInWindow);
     }
 
-    public ExactDate selectDate(ValipopDate earliestDate, CompoundTimeUnit timePeriod, RandomGenerator random) {
+    public ExactDate selectRandomDate(ValipopDate earliestDate, CompoundTimeUnit timePeriod) {
 
         int daysInWindow = DateUtils.getDaysInTimePeriod(earliestDate, timePeriod);
 
-        int chosenDay = random.nextInt(Math.abs(daysInWindow));
-        return DateUtils.calculateExactDate(earliestDate, chosenDay);
-
+        return selectRandomDate(earliestDate, daysInWindow);
     }
 
+    private ExactDate selectRandomDate(ValipopDate earliestDate, int daysInWindow) {
+
+        return DateUtils.calculateExactDate(earliestDate, random.nextInt(Math.abs(daysInWindow)));
+    }
 }

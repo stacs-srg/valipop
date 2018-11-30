@@ -21,8 +21,12 @@ import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -137,10 +141,10 @@ public class MarriageSourceRecord extends SourceRecord {
 
         setUid(String.valueOf(partnership.getId()));
 
-        IPerson bride = population.findPerson(partnership.getFemalePartnerId());
-        IPerson groom = population.findPerson(partnership.getMalePartnerId());
+        IPerson bride = partnership.getFemalePartner();
+        IPerson groom = partnership.getMalePartner();
 
-        final java.util.Date start_date = partnership.getMarriageDate();
+        final java.util.Date start_date = partnership.getMarriageDate().getDate();
 
         setMarriageDay(String.valueOf(DateManipulation.dateToDay(start_date)));
         setMarriageMonth(String.valueOf(DateManipulation.dateToMonth(start_date)));
@@ -149,20 +153,18 @@ public class MarriageSourceRecord extends SourceRecord {
         setGroomForename(groom.getFirstName());
         setGroomSurname(groom.getSurname());
         setGroomOccupation(groom.getOccupation());
-        setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate(), start_date)));
+        setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate().getDate(), start_date)));
 
         setBrideForename(bride.getFirstName());
         setBrideSurname(bride.getSurname());
         setBrideOccupation(bride.getOccupation());
-        setBrideAgeOrDateOfBirth(String.valueOf(fullYearsBetween(bride.getBirthDate(), start_date)));
+        setBrideAgeOrDateOfBirth(String.valueOf(fullYearsBetween(bride.getBirthDate().getDate(), start_date)));
 
-        final int groom_parents_partnership_id = groom.getParentsPartnership();
-        if (groom_parents_partnership_id != -1) {
+        final IPartnership groom_parents_partnership = groom.getParents();
+        if (groom_parents_partnership != null) {
 
-            IPartnership groom_parents_partnership = population.findPartnership(groom_parents_partnership_id);
-
-            IPerson groom_mother = population.findPerson(groom_parents_partnership.getFemalePartnerId());
-            IPerson groom_father = population.findPerson(groom_parents_partnership.getMalePartnerId());
+            IPerson groom_mother = groom_parents_partnership.getFemalePartner();
+            IPerson groom_father = groom_parents_partnership.getMalePartner();
 
             setGroomFathersForename(groom_father.getFirstName());
             setGroomFathersSurname(getRecordedParentsSurname(groom_father.getSurname(), groom.getSurname()));
@@ -172,13 +174,11 @@ public class MarriageSourceRecord extends SourceRecord {
             setGroomMothersMaidenSurname(getMaidenSurname(population, groom_mother));
         }
 
-        final int bride_parents_partnership_id = bride.getParentsPartnership();
-        if (bride_parents_partnership_id != -1) {
+        final IPartnership bride_parents_partnership = bride.getParents();
+        if (bride_parents_partnership != null) {
 
-            IPartnership bride_parents_partnership = population.findPartnership(bride_parents_partnership_id);
-
-            IPerson bride_mother = population.findPerson(bride_parents_partnership.getFemalePartnerId());
-            IPerson bride_father = population.findPerson(bride_parents_partnership.getMalePartnerId());
+            IPerson bride_mother = bride_parents_partnership.getFemalePartner();
+            IPerson bride_father = bride_parents_partnership.getMalePartner();
 
             setBrideFathersForename(bride_father.getFirstName());
             setBrideFathersSurname(getRecordedParentsSurname(bride_father.getSurname(), bride.getSurname()));
@@ -189,12 +189,25 @@ public class MarriageSourceRecord extends SourceRecord {
         }
     }
 
+    private List<IPartnership> getPartnershipsBeforeDate(IPerson person, ValipopDate date) {
+
+        List<IPartnership> partnershipsBeforeDate = new ArrayList<>();
+
+        for (IPartnership partnership : person.getPartnerships()) {
+            if (DateUtils.dateBefore(partnership.getPartnershipDate(), date)) {
+                partnershipsBeforeDate.add(partnership);
+            }
+        }
+
+        return partnershipsBeforeDate;
+    }
+
     public String identifyMaritalStatus(IPerson spouse, ValipopDate marriageDate) {
 
-        List<IPartnership> partnerships = spouse.getPartnershipsBeforeDate(marriageDate);
+        List<IPartnership> partnerships = getPartnershipsBeforeDate(spouse, marriageDate);
 
         if (partnerships.size() == 0) {
-            if (Character.toLowerCase(spouse.getSex()) == 'm') {
+            if (spouse.getSex() == SexOption.MALE) {
                 return "B"; // bachelor
             } else {
                 return "S"; // single/spinster
@@ -205,7 +218,7 @@ public class MarriageSourceRecord extends SourceRecord {
 
             if (lastPartnership.getSeparationDate(new JDKRandomGenerator()) == null) {
                 // not separated from last partner
-                if (lastPartnership.getPartnerOf(spouse).aliveOnDate(marriageDate)) {
+                if (PopulationNavigation.aliveOnDate(lastPartnership.getPartnerOf(spouse),marriageDate)) {
                     // last spouse alive on death date of deceased
                     return "M-ERROR?";
                 } else {

@@ -117,7 +117,7 @@ public class RelationshipsTable {
 
             int c = 0;
             for(String a : s) {
-                copy[c++] = a.toString();
+                copy[c++] = a;
             }
 
             ret.add(copy);

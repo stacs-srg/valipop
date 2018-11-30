@@ -1,14 +1,18 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
 import java.util.List;
 import java.util.Random;
+
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.getLastPartnership;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -23,21 +27,25 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
     protected String marriageIDs;
 
     public EGSkyeDeathSourceRecord(IPerson person, IPopulation population) {
+
         super(person, population);
 
-        deathDate = new ExactDate(person.getDeathDate_ex());
+        deathDate = new ExactDate(person.getDeathDate());
 
-        if(person.getParentsPartnership() != -1) {
-            mothersOccupation = person.getParentsPartnership_ex().getFemalePartner().getOccupation();
+        if (person.getParents() != null) {
 
-            if(!person.getParentsPartnership_ex().getMalePartner().aliveOnDate(person.getDeathDate_ex())) {
+            IPerson mother = person.getParents().getFemalePartner();
+            mothersOccupation = mother.getOccupation();
+
+            IPerson father = person.getParents().getMalePartner();
+            if (!PopulationNavigation.aliveOnDate(father, person.getDeathDate())) {
                 // father is dead
                 setFatherDeceased("D"); // deceased
             }
 
-            fathers_surname = person.getParentsPartnership_ex().getMalePartner().getSurname();
+            fathers_surname = father.getSurname();
 
-            if(!person.getParentsPartnership_ex().getFemalePartner().aliveOnDate(person.getDeathDate_ex())) {
+            if (!PopulationNavigation.aliveOnDate(mother, person.getDeathDate())) {
                 // mother is dead
                 setMotherDeceased("D"); // deceased
             }
@@ -46,38 +54,33 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
         int registrationDay = rng.nextInt(9);
         registrationDate = deathDate.advanceTime(registrationDay);
 
-        setMaritalStatus(identifyMarritalStatus(person));
+        setMaritalStatus(identifyMaritalStatus(person));
         String[] spousesInfo = identifyNameAndOccupationOfSpouses(person);
         setSpousesNames(spousesInfo[0]);
         setSpousesOccupations(spousesInfo[1]);
         marriageIDs = spousesInfo[2];
-
-
-
-
-
     }
 
-    public String identifyMarritalStatus(IPerson deceased) {
+    public String identifyMaritalStatus(IPerson deceased) {
 
-        List<IPartnership> partnerships = deceased.getPartnerships_ex();
+        List<IPartnership> partnerships = deceased.getPartnerships();
 
-        if(partnerships.size() == 0) {
-            if(Character.toLowerCase(deceased.getSex()) == 'm') {
+        if (partnerships.size() == 0) {
+            if (deceased.getSex() == SexOption.MALE) {
                 return "B"; // bachelor
             } else {
                 return "S"; // single/spinster
             }
         } else {
-            if(deceased.getLastPartnership().getSeparationDate(new JDKRandomGenerator()) == null) {
+            if (getLastPartnership(deceased).getSeparationDate(new JDKRandomGenerator()) == null) {
                 // not separated from last partner
-                if(deceased.getLastPartnership().getPartnerOf(deceased).aliveOnDate(deceased.getDeathDate_ex())) {
+
+                IPerson lastPartner = getLastPartnership(deceased).getPartnerOf(deceased);
+                if (PopulationNavigation.aliveOnDate(lastPartner, deceased.getDeathDate())) {
+
                     // last spouse alive on death date of deceased
-                    if(partnerships.size() > 1) {
-                        return "R"; // remarried
-                    } else {
-                        return "M"; // married
-                    }
+                    return partnerships.size() > 1 ? "R" : "M"; // married
+
                 } else {
                     // last spouse dead on death date of deceased
                     return "W"; // widow/er
@@ -90,20 +93,21 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
     }
 
     public String[] identifyNameAndOccupationOfSpouses(IPerson deceased) {
+
         String[] ret = new String[3];
 
         StringBuilder names = new StringBuilder();
         StringBuilder occupations = new StringBuilder();
         StringBuilder marIDs = new StringBuilder();
 
-        for(IPartnership partnership : deceased.getPartnerships_ex()) {
+        for (IPartnership partnership : deceased.getPartnerships()) {
 
             IPerson spouse = partnership.getPartnerOf(deceased);
 
             String spousesName = spouse.getFirstName() + " " + spouse.getSurname();
             String spousesOccupation = spouse.getOccupation();
 
-            if(names.length() == 0) {
+            if (names.length() == 0) {
                 names.append(spousesName);
                 occupations.append(spousesOccupation);
                 marIDs.append(partnership.getId());
@@ -112,7 +116,6 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
                 occupations.append("+" + spousesOccupation);
                 marIDs.append("+" + partnership.getId());
             }
-
         }
 
         ret[0] = names.toString();
@@ -121,7 +124,6 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
 
         return ret;
     }
-
 
     @Override
     public String toString() {

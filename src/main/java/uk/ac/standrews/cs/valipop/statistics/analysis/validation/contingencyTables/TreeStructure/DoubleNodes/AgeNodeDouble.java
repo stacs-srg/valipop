@@ -16,33 +16,30 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ControlChildrenNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ControlChildrenNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.diedInYear;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implements ControlChildrenNode, RunnableNode {
 
-    boolean initNode = false;
+    private boolean initNode = false;
 
-    Collection<IPerson> people = new ArrayList<>();
-
-    public AgeNodeDouble(IntegerRange age, SexNodeDouble parentNode, double initCount, boolean init) {
+    AgeNodeDouble(IntegerRange age, SexNodeDouble parentNode, double initCount, boolean init) {
         super(age, parentNode, initCount);
 
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
@@ -50,11 +47,11 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
         ValipopDate currentDate = yob.advanceTime(ageI, TimeUnit.YEAR);
 
-        if(DateUtils.dateBefore(currentDate, getStartDate())) {
+        if (DateUtils.dateBefore(currentDate, getStartDate())) {
             initNode = true;
         }
 
-        if(!init) {
+        if (!init) {
             makeChildren();
         }
     }
@@ -64,7 +61,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
         setCount(getCount() + byCount);
     }
 
-    public AgeNodeDouble() {
+    AgeNodeDouble() {
         super();
     }
 
@@ -76,10 +73,9 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
     @Override
     public void makeChildren() {
 
-        for(DiedOption o : DiedOption.values()) {
+        for (DiedOption o : DiedOption.values()) {
             addChild(o);
         }
-
     }
 
     @Override
@@ -87,26 +83,14 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
         initNode = true;
 
-        people.add(person);
-
         incCountByOne();
 
-//        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-//        Integer age = getOption().getValue();
-//
-//        Date calcCurrentDate = yob.advanceTime(age, TimeUnit.YEAR);
-
-        DiedOption option;
-
-        if(person.diedInYear(currentDate.getYearDate())) {
-            option = DiedOption.YES;
-        } else {
-            option = DiedOption.NO;
-        }
+        DiedOption option = diedInYear(person, currentDate.getYearDate()) ? DiedOption.YES : DiedOption.NO;
 
         try {
             getChild(option).processPerson(person, currentDate);
-        } catch(ChildNotFoundException e) {
+
+        } catch (ChildNotFoundException e) {
             DiedNodeDouble n = (DiedNodeDouble) addChild(new DiedNodeDouble(option, this, true));
             n.processPerson(person, currentDate);
             addDelayedTask(n);
@@ -123,24 +107,23 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
         makeChildren();
     }
 
-    public double sumOfNPCIAPDescendants(IntegerRange option) {
+    double sumOfNPCIAPDescendants(IntegerRange option) {
 
         double count = 0;
 
-        for(Node c : getChildren()) {
+        for (Node c : getChildren()) {
             // c is of type died
             DiedNodeDouble cD = (DiedNodeDouble) c;
-            for(Node gc : cD.getChildren()) {
+            for (Node gc : cD.getChildren()) {
                 // gc is of type pncip
                 PreviousNumberOfChildrenInPartnershipNodeDouble gcP = (PreviousNumberOfChildrenInPartnershipNodeDouble) gc;
-                for(Node ggc : gcP.getChildren()) {
+                for (Node ggc : gcP.getChildren()) {
                     // ggc is of type NPCIAP
                     NumberOfPreviousChildrenInAnyPartnershipNodeDouble ggcN = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) ggc;
 
-                    if(ggcN.getOption().hash() == option.hash()) {
+                    if (ggcN.getOption().hash() == option.hash()) {
                         count += ggcN.getCount();
                     }
-
                 }
             }
         }
@@ -149,7 +132,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
     public CTRow<Double> toCTRow() {
 
-        if(initNode) {
+        if (initNode) {
             return null;
         } else {
 
@@ -158,9 +141,6 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
                 r.setVariable(getVariableName(), getOption().toString());
             }
             return r;
-
         }
-
-
     }
 }

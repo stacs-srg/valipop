@@ -16,22 +16,23 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure;
 
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes.*;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.SourceNodeInt;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ContingencyTable;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SourceType;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.Logger;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.SourceNodeInt;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ContingencyTable;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,32 +62,13 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     private SourceNodeInt simNode;
     private SourceNodeDouble statNode = null;
 
-
     public CTtree(PeopleCollection population, PopulationStatistics expected, ValipopDate startDate, ValipopDate zeroDate, ValipopDate endDate, int startStepBack) {
         this.expected = expected;
         this.startDate = startDate;
         this.endDate = new YearDate(endDate.getYear() - 2);
 
-//        log.info("CTree --- Populating expected side of tree with seed");
-//        YearDate prevY = startDate.getYearDate();
-//        for (IPersonExtended person : population.getPeople_ex()) {
-//
-//            if (person.bornInYear(prevY) && person.diedInYear(prevY)
-//                    ||
-//                    person.aliveInYear(prevY) && !person.bornInYear(prevY)
-//                    ||
-//                    person.bornOnDate(prevY)) {
-//
-//
-//                processPerson(person, prevY, SourceType.STAT);
-//            }
-//
-//        }
-//
-//        executeDelayedTasks();
-
         YearDate prevY = zeroDate.getYearDate().advanceTime(new CompoundTimeUnit(startStepBack, TimeUnit.YEAR).negative()).getYearDate();
-//        YearDate prevY = startDate.getYearDate();
+
         log.info("CTree --- Populating tree with observed population");
 
         for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
@@ -97,72 +79,25 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
             // for every person in population
             for (IPerson person : population.getPeople()) {
 
-                if(prevY.getYear() == y.getYear() && person.aliveOnDate(prevDay)) {
-                    //if(prevY.getYear() == y.getYear() && person.aliveInYear(y) && !person.bornInYear(y)) {
+                if (prevY.getYear() == y.getYear() && PopulationNavigation.aliveOnDate(person, prevDay)) {
 
                     processPerson(person, y, SourceType.STAT);
                     processPerson(person, y, SourceType.SIM);
                 }
 
-                if ( prevY.getYear() < y.getYear() && person.aliveOnDate(prevDay) ) {
-                        /*person.bornInYear(y) && person.diedInYear(y)
-                        ||
-                        person.aliveInYear(y) && !person.bornInYear(y)
-                        /*||
-                        person.bornOnDate(y)) {
-
-//                    if(person.bornOnDate(y) == true && (person.bornInYear(y) && person.diedInYear(y)) == false && (person.aliveInYear(y) && !person.bornInYear(y)) == false) {
-//                        System.out.println("NEEDED");
-//                    }*/
+                if (prevY.getYear() < y.getYear() && PopulationNavigation.aliveOnDate(person, prevDay)) {
 
                     processPerson(person, y, SourceType.SIM);
-
                 }
-
             }
         }
 
         executeDelayedTasks();
 
-//        for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
-//                                            y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
-//
-//
-//
-//            // for every person in population
-//            for (IPersonExtended person : population.getPeople_ex()) {
-//
-//
-//                // who was alive or died in the year of consideration
-//                if ( prevY.getYear() < y.getYear() && person.aliveOnDate(prevDay) ) {
-//                        /*person.bornInYear(y) && person.diedInYear(y)
-//                        ||
-//                        person.aliveInYear(y) && !person.bornInYear(y)
-//                        /*||
-//                        person.bornOnDate(y)) {
-//
-////                    if(person.bornOnDate(y) == true && (person.bornInYear(y) && person.diedInYear(y)) == false && (person.aliveInYear(y) && !person.bornInYear(y)) == false) {
-////                        System.out.println("NEEDED");
-////                    }*/
-//
-//                    processPerson(person, y, SourceType.SIM);
-//
-//                }
-//
-//
-//
-//            }
-//        }
-
-
-
-
         log.info("CTree --- Tree completed");
-
     }
 
     public CTtree() {
-
     }
 
     public Collection<Node> getLeafNodes() {
@@ -181,7 +116,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         return null;
     }
 
-
     public ValipopDate getEndDate() {
         return endDate;
     }
@@ -190,25 +124,25 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         return startDate;
     }
 
-
     public PopulationStatistics getInputStats() {
         return expected;
     }
 
     public Node addChildA(SourceType childOption) {
-        if(childOption == SourceType.SIM) {
+
+        if (childOption == SourceType.SIM) {
             simNode = new SourceNodeInt(childOption, this);
             return simNode;
         } else {
             statNode = new SourceNodeDouble(childOption, this);
             return statNode;
         }
-
     }
 
     public Node getChild(SourceType option) throws ChildNotFoundException {
-        if(option == SourceType.SIM) {
-            if(simNode != null) {
+
+        if (option == SourceType.SIM) {
+            if (simNode != null) {
                 return simNode;
             } else {
                 throw new ChildNotFoundException();
@@ -223,22 +157,20 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         }
     }
 
-
     @Override
     public void addDelayedTask(RunnableNode node) {
 
-        if(node instanceof DiedNodeDouble) {
+        if (node instanceof DiedNodeDouble) {
             deathTasks.add(node);
-        } else if(node instanceof AgeNodeDouble) {
+        } else if (node instanceof AgeNodeDouble) {
             ageTasks.add(node);
-        } else if(node instanceof NumberOfChildrenInYearNodeDouble) {
+        } else if (node instanceof NumberOfChildrenInYearNodeDouble) {
             nciyTasks.add(node);
-        } else if(node instanceof NumberOfPreviousChildrenInAnyPartnershipNodeDouble) {
+        } else if (node instanceof NumberOfPreviousChildrenInAnyPartnershipNodeDouble) {
             nciapTasks.add(node);
-        } else if(node instanceof SeparationNodeDouble) {
+        } else if (node instanceof SeparationNodeDouble) {
             sepTasks.add(node);
         }
-
     }
 
     @Override
@@ -246,13 +178,13 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         log.info("CTree --- Initialising tree - death nodes from seed");
 
-        while(!deathTasks.isEmpty()) {
+        while (!deathTasks.isEmpty()) {
             RunnableNode n = deathTasks.removeFirst();
 
             n.runTask();
         }
 
-        while(nciyTasks.size() + sepTasks.size() + nciapTasks.size() + ageTasks.size() != 0) {
+        while (nciyTasks.size() + sepTasks.size() + nciapTasks.size() + ageTasks.size() != 0) {
 
             while (nciyTasks.size() + sepTasks.size() + nciapTasks.size() != 0) {
 
@@ -265,12 +197,10 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
                     RunnableNode n = nciapTasks.removeFirst();
                     n.runTask();
                 }
-
             }
 
-
-            for(int i = 0; i < 2; i ++) {
-                if(ageTasks.isEmpty()) {
+            for (int i = 0; i < 2; i++) {
+                if (ageTasks.isEmpty()) {
                     break;
                 }
 
@@ -280,9 +210,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
                 log.info("CTree --- Creating nodes for year: " + y.getOption().toString());
                 n.runTask();
             }
-
         }
-
     }
 
     public void processPerson(IPerson person, ValipopDate currentDate, SourceType source) {
@@ -292,11 +220,12 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         } catch (ChildNotFoundException e) {
             addChildA(source).processPerson(person, currentDate);
         }
-
     }
 
     @Override
-    public Node<SourceType, ?, Number, ?> addChild(SourceType childOption) { return null; }
+    public Node<SourceType, ?, Number, ?> addChild(SourceType childOption) {
+        return null;
+    }
 
     @Override
     public Node<SourceType, ?, Number, ?> addChild(SourceType childOption, Number initCount) {

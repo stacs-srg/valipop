@@ -28,33 +28,34 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public abstract class Node<Op, cOp, count extends Number, childCount extends Number> {
+public abstract class Node<Op, cOp, Count extends Number, ChildCount extends Number> {
 
-    private count count;
+    private Count count;
     private Op option;
-    private Map<cOp, Node<cOp, ?, childCount, ?>> children = new TreeMap<>();
-    private Node<?, Op, ?, count> parent;
+    private Map<cOp, Node<cOp, ?, ChildCount, ?>> children = new TreeMap<>();
+    private Node<?, Op, ?, Count> parent;
 
     public Node() {
     }
 
-    public Node(Op option, Node<?, Op, ?, count> parent, count initCount) {
+    public Node(final Op option, final Node<?, Op, ?, Count> parent, final Count initCount) {
         this.option = option;
         this.parent = parent;
         this.count = initCount;
     }
 
-    public abstract Node<cOp, ?, childCount, ?> addChild(cOp childOption, childCount initCount);
+    public abstract Node<cOp, ?, ChildCount, ?> addChild(final cOp childOption, final ChildCount initCount);
 
-    public abstract Node<cOp, ?, childCount, ?> addChild(cOp childOption);
+    public abstract Node<cOp, ?, ChildCount, ?> addChild(final cOp childOption);
 
-    public abstract void incCount(count byCount);
+    public abstract void incCount(final Count byCount);
 
     public abstract void incCountByOne();
 
-    public abstract void processPerson(IPerson person, ValipopDate currentDate);
+    public abstract void processPerson(final IPerson person, final ValipopDate currentDate);
 
-    public Node<cOp, ?, childCount, ?> addChild(Node<cOp, ?, childCount, ?> child) {
+    public Node<cOp, ?, ChildCount, ?> addChild(Node<cOp, ?, ChildCount, ?> child) {
+
         children.put(child.getOption(), child);
         return child;
     }
@@ -75,19 +76,13 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         return childNodes;
     }
 
-    public List<String> getVariableNamesAL() {
-        List<String> s = getParent().getVariableNamesAL();
-        s.add(getClass().getName());
-        return s;
-    }
-
     public List<String> toStringAL() {
         List<String> s = getParent().toStringAL();
         s.add(getOption().toString());
         return s;
     }
 
-    public CTRow<count> toCTRow() {
+    public CTRow<Count> toCTRow() {
         CTRow r = getParent().toCTRow();
         if (r != null) {
             r.setVariable(getVariableName(), getOption().toString());
@@ -97,7 +92,7 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     public abstract String getVariableName();
 
-    public void setCount(count count) {
+    public void setCount(final Count count) {
         this.count = count;
     }
 
@@ -105,16 +100,17 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         return option;
     }
 
-    public count getCount() {
+    public Count getCount() {
         return count;
     }
 
-    public Collection<Node<cOp, ?, childCount, ?>> getChildren() {
+    public Collection<Node<cOp, ?, ChildCount, ?>> getChildren() {
         return children.values();
     }
 
-    public Node<cOp, ?, childCount, ?> getChild(cOp childOption) throws ChildNotFoundException {
-        Node<cOp, ?, childCount, ?> n = children.get(childOption);
+    public Node<cOp, ?, ChildCount, ?> getChild(final cOp childOption) throws ChildNotFoundException {
+
+        Node<cOp, ?, ChildCount, ?> n = children.get(childOption);
 
         if (n == null) {
             throw new ChildNotFoundException();
@@ -123,15 +119,15 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         return n;
     }
 
-    public Node<?, Op, ?, count> getParent() {
+    public Node<?, Op, ?, Count> getParent() {
         return parent;
     }
 
-    public void addDelayedTask(RunnableNode node) {
+    public void addDelayedTask(final RunnableNode node) {
         getParent().addDelayedTask(node);
     }
 
-    public Node getAncestor(Node nodeType) {
+    public Node getAncestor(final Node nodeType) {
 
         if (nodeType.getClass().isInstance(this)) {
             return this;

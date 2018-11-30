@@ -15,5 +15,4 @@ public class IllegitimateBirthStatsKey extends StatsKey {
     public Integer getAge() {
         return getYLabel();
     }
-
 }

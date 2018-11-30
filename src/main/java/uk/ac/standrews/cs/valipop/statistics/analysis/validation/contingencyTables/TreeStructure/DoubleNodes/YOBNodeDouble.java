@@ -31,7 +31,6 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
  */
 public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> implements ControlChildrenNode {
 
-
     public YOBNodeDouble(YearDate childOption, SourceNodeDouble parentNode, Double initCount) {
         super(childOption, parentNode, initCount);
         makeChildren();
@@ -44,22 +43,11 @@ public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> implements Co
     @Override
     public void processPerson(IPerson person, ValipopDate currentDate) {
 
-//        incCountByOne();
-
-        SexOption sex;
-
-        if(Character.toUpperCase(person.getSex()) == 'M') {
-            sex = SexOption.MALE;
-        } else {
-            sex = SexOption.FEMALE;
-        }
-
         try {
-            getChild(sex).processPerson(person, currentDate);
+            getChild(person.getSex()).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-            addChild(sex).processPerson(person, currentDate);
+            addChild(person.getSex()).processPerson(person, currentDate);
         }
-
     }
 
     @Override
@@ -83,6 +71,5 @@ public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> implements Co
 
         addChild(SexOption.MALE);
         addChild(SexOption.FEMALE);
-
     }
 }

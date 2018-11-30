@@ -19,15 +19,12 @@ package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Interface for partnership objects.
- *
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public interface IPartnership extends Comparable<IPartnership> {
 
@@ -54,6 +51,8 @@ public interface IPartnership extends Comparable<IPartnership> {
      */
     IPerson getPartnerOf(IPerson person);
 
+    void addChildren(Collection<IPerson> children);
+
     /**
      * Gets the identifiers of the partnership's child_ids, or null if none are recorded.
      *
@@ -67,49 +66,15 @@ public interface IPartnership extends Comparable<IPartnership> {
 
     ValipopDate getEarliestPossibleSeparationDate();
 
+    void setEarliestPossibleSeparationDate(ValipopDate date);
+
     void setMarriageDate(ValipopDate marriageDate);
-
-    ValipopDate getMarriageDate_ex();
-
-    void addChildren(Collection<IPerson> children);
-
-    void setPartnershipDate(ValipopDate startDate);
-
-    void separate(ValipopDate currentDate, CompoundTimeUnit consideredTimePeriod);
-
-    IPerson getLastChild();
-
-    /**
-     * Gets the partnership's unique identifier.
-     * @return the partnership's unique identifier
-     */
-    int getId();
-
-    /**
-     * Gets the identifier of the female in the partnership.
-     * @return the identifier of the female
-     */
-    int getFemalePartnerId();
-
-    /**
-     * Gets the identifier of the male in the partnership.
-     * @return the identifier of the male
-     */
-    int getMalePartnerId();
-
-    /**
-     * Gets the identifier of the partner of the person with the given identifier, or -1 if neither member
-     * of this partnership has the given identifier.
-     * @param id the identifier
-     * @return the identifier of the partner of the person with the given identifier
-     */
-    int getPartnerOf(int id);
 
     /**
      * Gets the date of the marriage between the partners in this partnership, or null if they are not married.
      * @return the date of the marriage of this partnership
      */
-    java.util.Date getMarriageDate();
+    ValipopDate getMarriageDate();
 
     /**
      * Gets the place of marriage, or null if not recorded.
@@ -117,9 +82,11 @@ public interface IPartnership extends Comparable<IPartnership> {
      */
     String getMarriagePlace();
 
+    void setPartnershipDate(ValipopDate startDate);
+
     /**
-     * Gets the identifiers of the partnership's child_ids, or null if none are recorded.
-     * @return the identifiers of the partnership's child_ids
+     * Gets the partnership's unique identifier.
+     * @return the partnership's unique identifier
      */
-    List<Integer> getChildIds();
+    int getId();
 }

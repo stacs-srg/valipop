@@ -1,12 +1,10 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
-import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
 import java.io.IOException;
@@ -17,70 +15,55 @@ import java.nio.file.Paths;
  */
 public class CL_OBDModel {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, StatsException {
         // Expects 3 args: path to config file, results path, run purpose
 
         String[] pArgs = ProcessArgs.process(args, "STANDARD");
-        if(!ProcessArgs.check(pArgs, "STANDARD")) {
-            System.err.println("Incorrect arguments given");
-            throw new Error("Incorrect arguments given");
-        }
 
-        String pathToConfigFile = pArgs[0];
-        String resultsPath = pArgs[1];
-        String runPurpose = pArgs[2];
+        if (ProcessArgs.check(pArgs, "STANDARD")) {
 
-        try {
+            String pathToConfigFile = pArgs[0];
+            String resultsPath = pArgs[1];
+            String runPurpose = pArgs[2];
+
             runOBDModel(pathToConfigFile, resultsPath, runPurpose);
-        } catch (InvalidInputFileException | IOException | Error | PreEmptiveOutOfMemoryWarning | StatsException e) {
-            System.err.println(e.getMessage());
+
+        } else {
+            System.err.println("Incorrect arguments given");
         }
     }
 
-    public static OBDModel runOBDModel(String pathToConfigFile, String resultsPath, String runPurpose) throws Error, InvalidInputFileException, IOException, PreEmptiveOutOfMemoryWarning, StatsException {
+    public static OBDModel runOBDModel(String pathToConfigFile, String resultsPath, String runPurpose) throws IOException, PreEmptiveOutOfMemoryWarning, StatsException {
+
         String startTime = FileUtils.getDateTime();
 
-        Config config;
-        try {
-            OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, resultsPath);
-            config = new Config(Paths.get(pathToConfigFile), runPurpose, startTime);
-        } catch (IOException e) {
-            String message = "Error in pre-initialisation phase - see logs";
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            throw new Error(message);
+        OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, resultsPath);
+        Config config = new Config(Paths.get(pathToConfigFile), runPurpose, startTime);
+
+        OBDModel model = new OBDModel(startTime, config);
+        model.runSimulation();
+        model.analyseAndOutputPopulation(false);
+
+        if (config.getOutputTables()) {
+            performAnalysis(model);
         }
 
-        OBDModel model;
-        try {
-            model = new OBDModel(startTime, config);
-            model.runSimulation();
-            model.analyseAndOutputPopulation(false);
+        model.getSummaryRow().outputSummaryRowToFile();
 
-            if(config.getOutputTables()) {
-                ProgramTimer statsTimer = new ProgramTimer();
+        return model;
+    }
 
-                double v = RCaller.getGeeglmV(
-                        FileUtils.getRunPath().toString(),
-                        FileUtils.getRunPath().toString(),
-                        FileUtils.getContingencyTablesPath().toString(),
-                        model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue(), model.getSummaryRow().getStartTime());
+    private static void performAnalysis(OBDModel model) throws IOException, StatsException {
 
-                model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
-                model.getSummaryRow().setV(v);
-            }
+        ProgramTimer statsTimer = new ProgramTimer();
 
-            model.getSummaryRow().outputSummaryRowToFile();
+        String run_path_string = FileUtils.getRunPath().toString();
 
-            return model;
-        } catch (IOException e) {
-            String message = "Model failed due to Input/Output exception, check that this program has " +
-                    "permission to read or write on disk. Also, check supporting input files are present at location " +
-                    "specified in config file : " + e.getMessage();
-            throw new IOException(message, e);
-        } catch (InvalidInputFileException | InconsistentWeightException e) {
-            String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
-            throw new InvalidInputFileException(message, e);
-        }
+        int value = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
+
+        double v = RCaller.getGeeglmV(run_path_string, run_path_string, value, model.getSummaryRow().getStartTime());
+
+        model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
+        model.getSummaryRow().setV(v);
     }
 }

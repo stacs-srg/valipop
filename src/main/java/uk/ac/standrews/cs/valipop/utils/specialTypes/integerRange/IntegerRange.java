@@ -76,17 +76,12 @@ public class IntegerRange implements Comparable<IntegerRange> {
 
         if (plus) {
             // if min value +
-            if (integer >= min) {
-                return true;
-            }
+            return integer >= min;
         } else {
             // if single value
-            if (integer >= min && integer <= max) {
-                return true;
-            }
+            return integer >= min && integer <= max;
         }
 
-        return false;
     }
 
     public Integer getValue() {

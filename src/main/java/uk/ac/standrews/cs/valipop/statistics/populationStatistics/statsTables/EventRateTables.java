@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables;
 
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
@@ -45,12 +46,12 @@ public interface EventRateTables {
      *          ... |  ...
      *
      * @param year   the year
-     * @param gender the gender
+     * @param sex the gender
      * @return the death rates
      */
-    OneDimensionDataDistribution getDeathRates(ValipopDate year, char gender);
+    OneDimensionDataDistribution getDeathRates(ValipopDate year, SexOption sex);
 
-    EnumeratedDistribution getDeathCauseRates(ValipopDate year, char gender, int age);
+    EnumeratedDistribution getDeathCauseRates(ValipopDate year, SexOption sex, int age);
 
     /**
      * Gets marriage rates for those married in the given year. The return table is two dimensional as it shows the rate
@@ -92,8 +93,6 @@ public interface EventRateTables {
 
     SelfCorrectingOneDimensionDataDistribution getMarriageRates(ValipopDate year);
 
-
-
     /**
      * Gets multiple births in a maternity rate for women giving birth in a given year by age of the mother.
      * <p>
@@ -127,10 +126,9 @@ public interface EventRateTables {
      */
     SelfCorrectingTwoDimensionDataDistribution getSeparationByChildCountRates(ValipopDate year);
 
-    EnumeratedDistribution getForenameDistribution(ValipopDate year, char gender);
+    EnumeratedDistribution getForenameDistribution(ValipopDate year, SexOption sex);
 
     EnumeratedDistribution getSurnameDistribution(ValipopDate year);
 
     double getMaleProportionOfBirths(ValipopDate year);
-
 }

@@ -71,11 +71,11 @@ public class DeathAnalytics {
 
         for (final IPerson person : population.getPeople()) {
 
-            final ValipopDate death_date = person.getDeathDate_ex();
+            final ValipopDate death_date = person.getDeathDate();
 
             if (death_date != null) {
 
-                final ValipopDate birth_date = person.getBirthDate_ex();
+                final ValipopDate birth_date = person.getBirthDate();
                 final int age_at_death_in_years = DateUtils.differenceInYears(birth_date, death_date).getCount();
                 if (age_at_death_in_years >= 0 && age_at_death_in_years < age_at_death.length) {
                     age_at_death[age_at_death_in_years]++;

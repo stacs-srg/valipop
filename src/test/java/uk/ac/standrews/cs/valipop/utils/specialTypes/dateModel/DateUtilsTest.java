@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 public class DateUtilsTest {
 
     @Test
-    public void calculateExactDate() throws Exception {
+    public void calculateExactDate() {
 
         ValipopDate janDate = new MonthDate(1, 2015);
         ValipopDate marDate = new MonthDate(3, 2015);
@@ -162,7 +162,7 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void getDaysInTimePeriod() throws Exception {
+    public void getDaysInTimePeriod() {
 
         ValipopDate janDate = new MonthDate(1, 2015);
         ValipopDate janDateLeapYear = new MonthDate(1, 2016);

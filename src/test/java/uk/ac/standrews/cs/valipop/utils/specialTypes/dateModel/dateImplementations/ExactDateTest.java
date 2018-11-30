@@ -17,8 +17,8 @@
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
+import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 
 import static org.junit.Assert.assertEquals;
@@ -28,134 +28,94 @@ import static org.junit.Assert.assertEquals;
  */
 public class ExactDateTest {
 
-    // Test initialisation with values
     @Test(expected = DateTimeException.class)
-    public void initZeroMonthTime() {
-        ExactDate t = new ExactDate(1, 0, 1);
+    public void negativeMonth() {
+        assertIllegal(1,-10,0);
     }
 
     @Test(expected = DateTimeException.class)
-    public void initNegativeMonthTime() {
-        ExactDate t = new ExactDate(1, -4, 1);
-    }
-
-
-    @Test(expected = DateTimeException.class)
-    public void initZeroDayTime() {
-        ExactDate t = new ExactDate(0, 6, 1);
+    public void zeroDay() {
+        assertIllegal(0, 6, 1);
     }
 
     @Test(expected = DateTimeException.class)
-    public void initNegativeDayTime() {
-        ExactDate t = new ExactDate(-12, 6, 1);
+    public void negativeDay() {
+        assertIllegal(-12, 6, 1);
+    }
+
+    @Test(expected = DateTimeException.class)
+    public void Nov31st() {
+        assertIllegal(31, 11, 1904);
+    }
+
+    @Test(expected = DateTimeException.class)
+    public void monthTooLarge() {
+        assertIllegal(1, 13, 1);
+    }
+
+    @Test(expected = DateTimeException.class)
+    public void Feb29thNonLeapYear() {
+        assertIllegal(29, 2, 1905);
+    }
+
+    @Test(expected = DateTimeException.class)
+    public void zeroMonth() {
+        assertIllegal(1, 0, 1);
     }
 
     @Test
-    public void initCorrectTime() {
-        ExactDate t = new ExactDate(1, 6, 1);
-        assertEquals(6, t.getMonth());
-        assertEquals(1, t.getYear());
-    }
+    public void June1st() {
 
-    // check leap years
-    @Test(expected = DateTimeException.class)
-    public void init29FebNormalYearTime() {
-        ExactDate t = new ExactDate(30, 2, 1905);
+        assertValid(1, 6, 2017);
     }
 
     @Test
-    public void init29FebLeapYearTime() {
-        ExactDate t = new ExactDate(29, 2, 1904);
-        assertEquals(29, t.getDay());
-        assertEquals(2, t.getMonth());
-        assertEquals(1904, t.getYear());
-    }
+    public void Feb29thInLeapYear() {
 
-    @Test(expected = DateTimeException.class)
-    public void init31NovTime() {
-        ExactDate t = new ExactDate(31, 11, 1904);
+        assertValid(29, 2, 1904);
     }
 
     @Test
-    public void init30NovTime() {
-        ExactDate t = new ExactDate(30, 11, 1904);
-        assertEquals(30, t.getDay());
-        assertEquals(11, t.getMonth());
-        assertEquals(1904, t.getYear());
-    }
+    public void November30th() {
 
-
-    @Test(expected = DateTimeException.class)
-    public void init13MonthTime() {
-        ExactDate t = new ExactDate(1, 13, 1);
-    }
-
-    // Test initialisation with String
-    @Test(expected = DateTimeException.class)
-    public void initStringZeroMonthTime() {
-        ExactDate t = new ExactDate("1/0/0");
-    }
-
-    @Test(expected = DateTimeException.class)
-    public void initStringNegativeMonthTime() {
-        ExactDate t = new ExactDate("1/-10/0");
+        assertValid(30, 11, 1904);
     }
 
     @Test
-    public void initStringCorrectMonthTime() {
-        ExactDate t = new ExactDate("1/6/0");
-        assertEquals(1, t.getDay());
-        assertEquals(6, t.getMonth());
-        assertEquals(0, t.getYear());
+    public void zeroYear() {
+
+        assertValid(1,6,0);
     }
 
-    @Test(expected = DateTimeException.class)
-    public void initString13MonthTime() {
-        ExactDate t = new ExactDate("1/13/0");
+    private void checkDay(int day, ExactDate d) {
+
+        assertEquals(day, d.getDay());
     }
 
-    @Test(expected = DateTimeException.class)
-    public void initStringZeroDayTime() {
-        ExactDate t = new ExactDate("0/6/1");
+    private void checkMonth(int month, ExactDate d) {
+
+        assertEquals(month, d.getMonth());
     }
 
-    @Test(expected = DateTimeException.class)
-    public void initStringNegativeDayTime() {
-        ExactDate t = new ExactDate("-12/6/1");
+    private void checkYear(int year, ExactDate d) {
+
+        assertEquals(year, d.getYear());
     }
 
-    @Test
-    public void initStringCorrectTime() {
-        ExactDate t = new ExactDate("1/6/1");
-        assertEquals(6, t.getMonth());
-        assertEquals(1, t.getYear());
+    private void assertValid(int day, int month, int year) {
+
+        ExactDate t = new ExactDate(day, month, year);
+        checkDay(day, t);
+        checkMonth(month, t);
+        checkYear(year, t);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/YYYY");
+
+        assertEquals(ExactDate.makeDateString(day, month, year), formatter.format(t.getDate()));
     }
 
-    // check leap years
-    @Test(expected = DateTimeException.class)
-    public void initString29FebNormalYearTime() {
-        ExactDate t = new ExactDate("29/2/1905");
-    }
+    private void assertIllegal(int day, int month, int year) {
 
-    @Test
-    public void initString29FebLeapYearTime() {
-        ExactDate t = new ExactDate("29/2/1904");
-        assertEquals(29, t.getDay());
-        assertEquals(2, t.getMonth());
-        assertEquals(1904, t.getYear());
+        new ExactDate(day, month, year);
     }
-
-    @Test(expected = DateTimeException.class)
-    public void initString31NovTime() {
-        ExactDate t = new ExactDate("31/11/1904");
-    }
-
-    @Test
-    public void initString30NovTime() {
-        ExactDate t = new ExactDate("30/11/1904");
-        assertEquals(30, t.getDay());
-        assertEquals(11, t.getMonth());
-        assertEquals(1904, t.getYear());
-    }
-
 }

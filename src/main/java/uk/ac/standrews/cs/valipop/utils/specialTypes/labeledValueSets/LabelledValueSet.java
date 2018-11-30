@@ -40,9 +40,7 @@ public interface LabelledValueSet<L,V> {
 
     V remove(L label);
 
-    LabelledValueSet<L,V> productOfValuesAndN(Integer n);
-
-    LabelledValueSet<L,Double> productOfValuesAndN(Double n);
+    LabelledValueSet<L,Double> productOfValuesAndN(double n);
 
     LabelledValueSet<L, Double> valuesSubtractValues(LabelledValueSet<L, ? extends Number> n);
 
@@ -63,6 +61,4 @@ public interface LabelledValueSet<L,V> {
     int countPositiveValues();
 
     LabelledValueSet<L,Double> divisionOfValuesByN(V n);
-
-
 }

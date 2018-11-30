@@ -20,6 +20,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.io.PrintStream;
@@ -50,12 +51,12 @@ public class PopulationAnalytics {
 
     private void printBirthDate(final IPerson person) {
 
-        out.print(person.getBirthDate_ex().toString());
+        out.print(person.getBirthDate().toString());
     }
 
     private void printDeathDate(final IPerson person) {
 
-        final ValipopDate death_date = person.getDeathDate_ex();
+        final ValipopDate death_date = person.getDeathDate();
         if (death_date != null) {
             out.print(death_date.toString());
         }
@@ -86,7 +87,7 @@ public class PopulationAnalytics {
 
         int count = 0;
         for (final IPerson person : population.getPeople()) {
-            if (Character.toUpperCase(person.getSex()) == IPerson.MALE) {
+            if (person.getSex() == SexOption.MALE) {
                 count++;
             }
         }
@@ -97,7 +98,7 @@ public class PopulationAnalytics {
 
         int count = 0;
         for (final IPerson person : population.getPeople()) {
-            if (Character.toUpperCase(person.getSex()) == IPerson.FEMALE) {
+            if (person.getSex() == SexOption.FEMALE) {
                 count++;
             }
         }
@@ -136,7 +137,7 @@ public class PopulationAnalytics {
         if (partnership.getChildren() != null) {
             for (final IPerson child : partnership.getChildren()) {
 
-                out.println("\t\tChild born: " + child.getBirthDate_ex().toString());
+                out.println("\t\tChild born: " + child.getBirthDate().toString());
             }
         }
     }
@@ -149,13 +150,13 @@ public class PopulationAnalytics {
     @SuppressWarnings("FeatureEnvy")
     public void printPartnerships(final IPerson person) {
 
-        final List<IPartnership> partnership_ids = person.getPartnerships_ex();
+        final List<IPartnership> partnership_ids = person.getPartnerships();
         if (partnership_ids != null) {
             for (final IPartnership partnership : partnership_ids) {
 
 
                 final IPerson partner = partnership.getPartnerOf(person);
-                out.println("\tPartner born: " + partner.getBirthDate_ex().toString());
+                out.println("\tPartner born: " + partner.getBirthDate().toString());
 
                 final ValipopDate marriage_date = partnership.getPartnershipDate();
                 if (marriage_date != null) {

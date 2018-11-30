@@ -18,17 +18,11 @@ package uk.ac.standrews.cs.valipop.export.gedcom;
 
 import org.gedcom4j.model.*;
 import uk.ac.standrews.cs.utilities.DateManipulation;
-import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.events.death.NotDeadException;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -42,18 +36,18 @@ import java.util.List;
 public class GEDCOMPerson implements IPerson {
 
     protected int id;
-    protected String first_name;
+    private String first_name;
     protected String surname;
-    protected char sex;
-    protected java.util.Date birth_date;
-    protected String birth_place;
-    protected java.util.Date death_date;
-    protected String death_place;
+    protected SexOption sex;
+    private java.util.Date birth_date;
+    private String birth_place;
+    private java.util.Date death_date;
+    private String death_place;
     protected String death_cause;
     protected String occupation;
-    protected String string_rep;
+    private String string_rep;
     protected List<Integer> partnerships;
-    protected int parents_partnership_id;
+    private int parents_partnership_id;
 
     @Override
     public int getId() {
@@ -71,23 +65,13 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public char getSex() {
+    public SexOption getSex() {
         return sex;
-    }
-
-    @Override
-    public java.util.Date getBirthDate() {
-        return (java.util.Date) birth_date.clone();
     }
 
     @Override
     public String getBirthPlace() {
         return birth_place;
-    }
-
-    @Override
-    public java.util.Date getDeathDate() {
-        return death_date == null ? null : (java.util.Date) death_date.clone();
     }
 
     @Override
@@ -103,16 +87,6 @@ public class GEDCOMPerson implements IPerson {
     @Override
     public String getOccupation() {
         return occupation;
-    }
-
-    @Override
-    public List<Integer> getPartnerships() {
-        return partnerships;
-    }
-
-    @Override
-    public int getParentsPartnership() {
-        return parents_partnership_id;
     }
 
     @SuppressWarnings("NonFinalFieldReferenceInEquals")
@@ -132,7 +106,7 @@ public class GEDCOMPerson implements IPerson {
         return string_rep;
     }
 
-    private static final String MALE_STRING = String.valueOf(IPerson.MALE);
+    private static final String MALE_STRING = SexOption.MALE.toString();
 
     /**
      * Initialises the partnership.
@@ -140,7 +114,7 @@ public class GEDCOMPerson implements IPerson {
      * @param individual the GEDCOM person representation
      * @throws ParseException if the birth or death date is incorrectly formatted
      */
-    public GEDCOMPerson(final Individual individual) throws ParseException {
+    GEDCOMPerson(final Individual individual) throws ParseException {
 
         setId(individual);
         setSex(individual);
@@ -157,7 +131,7 @@ public class GEDCOMPerson implements IPerson {
 
     private void setSex(final Individual individual) {
 
-        sex = individual.sex.toString().equals(MALE_STRING) ? IPerson.MALE : IPerson.FEMALE;
+        sex = individual.sex.toString().equals(MALE_STRING) ? SexOption.MALE : SexOption.FEMALE;
     }
 
     private void setNames(final Individual individual) {
@@ -236,7 +210,7 @@ public class GEDCOMPerson implements IPerson {
                 final int start = name.indexOf('/');
                 final int end = name.lastIndexOf('/');
                 if (end > start) {
-                    name = name.substring(0, start) + name.substring(end + 1, name.length());
+                    name = name.substring(0, start) + name.substring(end + 1);
                 }
             }
             builder.append(name);
@@ -245,22 +219,22 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public ValipopDate getBirthDate_ex() {
+    public ValipopDate getBirthDate() {
         return null;
     }
 
     @Override
-    public ValipopDate getDeathDate_ex() {
+    public ValipopDate getDeathDate() {
         return null;
     }
 
     @Override
-    public List<IPartnership> getPartnerships_ex() {
+    public List<IPartnership> getPartnerships() {
         return null;
     }
 
     @Override
-    public IPartnership getParentsPartnership_ex() {
+    public IPartnership getParents() {
         return null;
     }
 
@@ -270,163 +244,17 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public List<IPartnership> getPartnershipsBeforeDate(ValipopDate date) {
-        return null;
-    }
-
-    @Override
-    public ValipopDate getDateOfLastLegitimatePartnershipEventBeforeDate(ValipopDate date) {
-        return null;
-    }
-
-    @Override
-    public boolean isWidow(ValipopDate onDate) {
-        return false;
-    }
-
-    @Override
-    public IPerson getPartner(ValipopDate onDate) {
-        return null;
-    }
-
-    @Override
-    public boolean noRecentChildren(MonthDate currentDate, CompoundTimeUnit timePeriod) {
-        return false;
-    }
-
-    @Override
     public void recordPartnership(IPartnership partnership) {
 
     }
 
     @Override
-    public boolean recordDeath(ValipopDate date, Population population, PopulationStatistics desiredPopulationStatistics) {
-        return false;
-    }
-
-    @Override
-    public int ageAtDeath() throws NotDeadException {
-        return 0;
-    }
-
-    @Override
-    public boolean aliveOnDate(ValipopDate date) {
-        return false;
-    }
-
-    @Override
-    public IPerson getLastChild() {
-        return null;
-    }
-
-    @Override
-    public void addChildrenToCurrentPartnership(int numberOfChildren, AdvanceableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config) {
-
-    }
-
-    @Override
-    public boolean toSeparate() {
-        return false;
-    }
-
-    @Override
-    public void willSeparate(boolean b) {
-
-    }
-
-    @Override
-    public int ageOnDate(ValipopDate date) {
-        return 0;
-    }
-
-    @Override
-    public boolean needsNewPartner(AdvanceableDate currentDate) {
-        return false;
-    }
-
-    @Override
-    public int numberOfChildrenInLatestPartnership() {
-        return 0;
+    public void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics) {
     }
 
     @Override
     public Collection<IPerson> getAllChildren() {
         return null;
-    }
-
-    @Override
-    public Collection<IPerson> getAllGrandChildren() {
-        return null;
-    }
-
-    @Override
-    public Collection<IPerson> getAllGreatGrandChildren() {
-        return null;
-    }
-
-    @Override
-    public boolean diedInYear(YearDate year) {
-        return false;
-    }
-
-    @Override
-    public Collection<IPartnership> getPartnershipsActiveInYear(YearDate year) {
-        return null;
-    }
-
-    @Override
-    public boolean bornInYear(YearDate year) {
-        return false;
-    }
-
-    @Override
-    public boolean aliveInYear(YearDate y) {
-        return false;
-    }
-
-    @Override
-    public IPartnership getLastPartnership() {
-        return null;
-    }
-
-    @Override
-    public Integer numberOfChildrenBirthedBeforeDate(YearDate y) {
-        return null;
-    }
-
-    @Override
-    public boolean bornBefore(ValipopDate year) {
-        return false;
-    }
-
-    @Override
-    public boolean bornOnDate(ValipopDate y) {
-        return false;
-    }
-
-    @Override
-    public ValipopDate getDateOfNextPostSeparationEvent(ValipopDate separationDate) {
-        return null;
-    }
-
-    @Override
-    public ValipopDate getDateOfPreviousPreMarriageEvent(ValipopDate latestPossibleMarriageDate) {
-        return null;
-    }
-
-    @Override
-    public boolean diedAfter(ValipopDate date) {
-        return false;
-    }
-
-    @Override
-    public void setMarriageBaby(boolean b) {
-
-    }
-
-    @Override
-    public boolean getMarriageBaby() {
-        return false;
     }
 
     @Override

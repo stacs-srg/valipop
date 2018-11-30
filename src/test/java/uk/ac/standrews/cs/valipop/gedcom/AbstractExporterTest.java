@@ -58,7 +58,7 @@ public abstract class AbstractExporterTest {
         }
     }
 
-    public AbstractExporterTest(final IPopulation population, final String file_name_root) throws Exception {
+    public AbstractExporterTest(final IPopulation population, final String file_name_root) {
 
         this.population = population;
         this.file_name_root = file_name_root;

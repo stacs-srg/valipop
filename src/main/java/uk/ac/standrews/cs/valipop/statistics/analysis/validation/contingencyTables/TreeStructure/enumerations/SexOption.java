@@ -21,7 +21,16 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
  */
 public enum SexOption {
 
-    MALE,
-    FEMALE
+    MALE("M"),
+    FEMALE("F");
 
+    private final String representation;
+
+    SexOption(String representation) {
+        this.representation = representation;
+    }
+
+    public String toString() {
+        return representation;
+    }
 }

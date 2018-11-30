@@ -31,23 +31,11 @@ public class GeneralPopulationCombinationTest extends GeneralPopulationStructure
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> generateData() throws Exception {
 
-        return collate(PopulationTestCases.getTestPopulations());
+        return PopulationTestCases.getTestCases();
     }
 
-    public GeneralPopulationCombinationTest(IPopulation population) {
+    public GeneralPopulationCombinationTest(IPopulation population, int initialSize) {
 
-        super(population);
-    }
-
-    private static List<Object[]> collate(IPopulation... populations) {
-
-        List<Object[]> result = new ArrayList<>();
-
-        for (IPopulation population : populations) {
-
-            Object[] config1 = new Object[]{population};
-            result.add(config1);
-        }
-        return result;
+        super(population, initialSize);
     }
 }

@@ -16,14 +16,13 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
-
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.*;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.MisalignedTimeDivisionError;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.*;
 
@@ -63,76 +62,42 @@ public class MaleCollection extends PersonCollection {
 
         Collection<IPerson> people = new ArrayList<>();
 
-        for (Map.Entry<MonthDate, Collection<IPerson>> persons : byYear.entrySet()) {
-            people.addAll(persons.getValue());
+        for (Collection<IPerson> persons : byYear.values()) {
+            people.addAll(persons);
         }
 
         return people;
     }
 
     @Override
-    public Collection<IPerson> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
+    void addPeople(Collection<IPerson> people, MonthDate divisionDate) {
 
-        Collection<IPerson> people = new ArrayList<>();
-
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
-
-        if(divisionsInPeriod <= 0) {
-            throw new MisalignedTimeDivisionError("");
+        Collection<IPerson> collection = byYear.get(divisionDate);
+        if (collection != null) {
+            people.addAll(collection);
         }
-
-        MonthDate divisionDate = firstDate.getMonthDate();
-
-        // for all the division dates
-        for(int i = 0; i < divisionsInPeriod; i++) {
-
-            try {
-                people.addAll(byYear.get(divisionDate));
-            } catch (NullPointerException e) {
-                // No need to do anything - we allow the method to return an empty list as no one was born in the year
-            }
-
-            divisionDate = divisionDate.advanceTime(getDivisionSize());
-        }
-
-        return people;
-    }
-
-    @Override
-    public Collection<IPerson> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
-
-        CompoundTimeUnit tP = DateUtils.combineCompoundTimeUnits(timePeriod, maxAge);
-
-        Collection<IPerson> peopleBorn = getAllPersonsBornInTimePeriod(firstDate.advanceTime(maxAge.negative()), tP);
-
-        Collection<IPerson> peopleAlive = new ArrayList<>();
-
-        for(IPerson p : peopleBorn) {
-            if(p.diedAfter(firstDate)) {
-                peopleAlive.add(p);
-            }
-        }
-
-        return peopleAlive;
     }
 
     @Override
     public void addPerson(IPerson person) {
-        MonthDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate_ex());
 
-        try {
+        MonthDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
+
+        if (byYear.containsKey(divisionDate)) {
             byYear.get(divisionDate).add(person);
-        } catch (NullPointerException e) {
-            // If the year didn't exist in the map
-            byYear.put(divisionDate, new ArrayList<>());
-            byYear.get(divisionDate).add(person);
+
+        } else {
+
+            final List<IPerson> newList = new ArrayList<>();
+            newList.add(person);
+            byYear.put(divisionDate, newList);
         }
     }
 
     @Override
-    public void removePerson(IPerson person) throws PersonNotFoundException {
+    public void removePerson(IPerson person) {
 
-        Collection<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate_ex()));
+        Collection<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate()));
 
         // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {
@@ -148,29 +113,7 @@ public class MaleCollection extends PersonCollection {
     @Override
     public int getNumberOfPersons(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
 
-        int count = 0;
-
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
-
-        if(divisionsInPeriod <= 0) {
-            throw new MisalignedTimeDivisionError("");
-        }
-
-        MonthDate divisionDate = firstDate.getMonthDate();
-
-        // for all the division dates
-        for(int i = 0; i < divisionsInPeriod; i++) {
-
-            try {
-                count += byYear.get(firstDate.getMonthDate()).size();
-            } catch (NullPointerException e) {
-                // No need to do anything - we allow the method to return an empty list as no one was born in the year
-            }
-
-            divisionDate = divisionDate.advanceTime(getDivisionSize());
-        }
-
-        return count;
+        return getAllPersonsBornInTimePeriod(firstDate, timePeriod).size();
     }
 
     @Override
