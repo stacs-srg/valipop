@@ -18,11 +18,9 @@ package uk.ac.standrews.cs.valipop.implementations;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @RunWith(Parameterized.class)
 public class GeneralPopulationCombinationTest extends GeneralPopulationStructureTest {

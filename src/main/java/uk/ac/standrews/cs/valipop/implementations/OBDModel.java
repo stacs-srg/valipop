@@ -18,18 +18,8 @@ package uk.ac.standrews.cs.valipop.implementations;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.FemaleCollection;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PersonCollection;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
+import uk.ac.standrews.cs.valipop.simulationEntities.*;
+import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.AnalyticsRunner;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.ContingencyTableFactory;
@@ -46,16 +36,11 @@ import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordGenerationFactory;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DeathDateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.MarriageDateSelector;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.OperableLabelledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -66,7 +51,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static java.time.temporal.ChronoUnit.DAYS;
-import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.*;
+import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

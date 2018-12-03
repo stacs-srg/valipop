@@ -3,13 +3,13 @@
 var_data_files = src/main/resources/scotland_test_population
 produce_graphs = false
 produce_dat_files = true
-death_time_step = 2m
-birth_time_step = 4m
-simulation_time_step = 2m
-input_width = 5y
-tS = 1/1/1599
-t0 = 1/1/1855
-tE = 1/1/2016
+death_time_step = P2M
+birth_time_step = P4M
+simulation_time_step = P2M
+input_width = P5Y
+tS = 1599-01-01
+t0 = 1855-01-01
+tE = 2016-01-01
 t0_pop_size = 1000
 # this is defined by the birth rate and death rates for the years data to be used in the set up period
 set_up_br = 0.0133

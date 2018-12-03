@@ -1,6 +1,6 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
+import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat.EGSkyeSourceRecordGenerator;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecordGenerator;

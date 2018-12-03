@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.PopulationConverter;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;

@@ -26,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -112,6 +111,7 @@ public class Config {
 
     // Filter method to exclude dot files from data file directory streams
     private DirectoryStream.Filter<Path> filter = file -> {
+
         Path path = file.getFileName();
         if (path != null) {
             return !path.toString().matches("^\\..+");
@@ -150,36 +150,6 @@ public class Config {
         this.deterministic = deterministic;
     }
 
-    private Period parsePeriod(String compoundTimeUnit) {
-
-        // TODO change format in config files to Period standard format
-
-        int count = Integer.valueOf(compoundTimeUnit.substring(0, compoundTimeUnit.length() - 1));
-        char unit = compoundTimeUnit.toCharArray()[compoundTimeUnit.length() - 1];
-
-        switch (unit) {
-            case ('m'):
-                return Period.ofMonths(count);
-            case ('y'):
-                return Period.ofYears(count);
-            default:
-                throw new RuntimeException("Invalid time unit specified");
-        }
-    }
-
-    public LocalDate parseDate(String ddmmyyyy) {
-
-        // TODO change format in config files to LocalDate standard format
-
-        String[] split = ddmmyyyy.split("/");
-        int month = Integer.parseInt(split[1]);
-        if (month <= 0 || month > 12) {
-            throw new DateTimeException("Months should be indexed between 1 and 12 inclusive.");
-        }
-        int year = Integer.parseInt(split[2]);
-        return LocalDate.of(year, month, 1);
-    }
-
     public Config(Path pathToConfigFile, String runPurpose, String startTime) {
 
         try {
@@ -206,23 +176,27 @@ public class Config {
 
                     case "simulation_time_step":
 
-                        simulationTimeStep = parsePeriod(split[1]);
+                        simulationTimeStep = Period.parse(split[1]);
                         break;
 
                     case "input_width":
-                        inputWidth = parsePeriod(split[1]);
+
+                        inputWidth = Period.parse(split[1]);
                         break;
 
                     case "tS":
-                        tS = parseDate(split[1]);
+
+                        tS = LocalDate.parse(split[1]);
                         break;
 
                     case "t0":
-                        t0 = parseDate(split[1]);
+
+                        t0 = LocalDate.parse(split[1]);
                         break;
 
                     case "tE":
-                        tE = parseDate(split[1]);
+
+                        tE = LocalDate.parse(split[1]);
                         break;
 
                     case "t0_pop_size":

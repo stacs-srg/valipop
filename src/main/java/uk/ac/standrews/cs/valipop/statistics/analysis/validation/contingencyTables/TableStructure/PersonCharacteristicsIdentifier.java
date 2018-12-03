@@ -17,8 +17,8 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure;
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
 
 import java.time.LocalDate;
@@ -26,8 +26,8 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.bornInYear;
-import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.getPartnershipsActiveInYear;
+import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.bornInYear;
+import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.getPartnershipsActiveInYear;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

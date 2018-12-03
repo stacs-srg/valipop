@@ -1,11 +1,11 @@
 #Properties File - for model v3 - Tom, Graham, Al
 #4.3.16
 var_data_files = src/main/resources/proxy-scotland-population-JA
-simulation_time_step = 1y
-input_width = 20y
-tS = 1/1/1599
-t0 = 1/1/1855
-tE = 1/1/2016
+simulation_time_step = P1Y
+input_width = P20Y
+tS = 1599-01-01
+t0 = 1855-01-01
+tE = 2016-01-01
 t0_pop_size = 1000000
 # this is defined by the birth rate and death rates for the years data to be used in the set up period
 set_up_br = 0.0133
