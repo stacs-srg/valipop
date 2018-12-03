@@ -1,10 +1,10 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
 
@@ -13,7 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
 
-import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.getLastPartnership;
+import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.getLastPartnership;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 
 import java.time.LocalDate;
 import java.time.Period;

@@ -17,8 +17,8 @@
 package uk.ac.standrews.cs.valipop.export.gedcom;
 
 import uk.ac.standrews.cs.valipop.export.AbstractFilePopulationWriter;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 
 import java.io.IOException;
 import java.io.PrintWriter;

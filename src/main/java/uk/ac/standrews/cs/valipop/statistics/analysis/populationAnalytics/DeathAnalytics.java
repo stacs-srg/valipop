@@ -17,8 +17,8 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 
 import java.io.PrintStream;
 import java.time.LocalDate;

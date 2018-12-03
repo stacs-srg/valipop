@@ -21,8 +21,8 @@ import org.gedcom4j.model.Family;
 import org.gedcom4j.model.FamilyEvent;
 import org.gedcom4j.model.FamilyEventType;
 import org.gedcom4j.model.Individual;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 
 import javax.annotation.Nonnull;
 import java.text.ParseException;

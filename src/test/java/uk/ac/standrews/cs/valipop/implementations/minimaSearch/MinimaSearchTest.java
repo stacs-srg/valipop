@@ -22,6 +22,7 @@ public class MinimaSearchTest {
 
     @Before
     public void setup() throws IOException {
+
         Config config = new Config(LocalDate.of(1,1,1), LocalDate.of(100,1,1),
                 LocalDate.of(200,1,1), 0, 0, 0, Period.ofYears(1),
                 "src/test/resources/valipop/test-pop", "", "",

@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ControlChildrenNode;
@@ -28,7 +28,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRan
 import java.time.LocalDate;
 import java.time.Year;
 
-import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.diedInYear;
+import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.diedInYear;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

@@ -2,7 +2,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.implementations.MemoryUsageAnalysis;
 import uk.ac.standrews.cs.valipop.implementations.PreEmptiveOutOfMemoryWarning;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
+import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableInstances.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;

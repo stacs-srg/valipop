@@ -17,9 +17,9 @@
 package uk.ac.standrews.cs.valipop.export;
 
 import uk.ac.standrews.cs.utilities.ProgressIndicator;
-import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 
 /**
  * Converts a population from one representation to another.

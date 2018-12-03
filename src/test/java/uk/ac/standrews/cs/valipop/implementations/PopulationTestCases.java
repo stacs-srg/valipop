@@ -17,8 +17,8 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
