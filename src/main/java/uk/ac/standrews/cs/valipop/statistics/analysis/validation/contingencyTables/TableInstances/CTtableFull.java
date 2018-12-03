@@ -26,10 +26,10 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.VariableNotFoundExcepction;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.*;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
 import java.io.PrintStream;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -47,12 +47,11 @@ public class CTtableFull extends CTtable {
 
         boolean first = true;
 
-
-        while(leafs.hasNext()) {
+        while (leafs.hasNext()) {
             Node node = leafs.next();
             CTRow leaf = node.toCTRow();
 
-            if(leaf != null) {
+            if (leaf != null) {
 
                 if (first) {
                     ps.print(getVarNames(",", leaf));
@@ -65,11 +64,11 @@ public class CTtableFull extends CTtable {
 
                     try {
 
-                        if(Objects.equals(leaf.getVariable("Source").getValue(), "STAT")) {
+                        if (Objects.equals(leaf.getVariable("Source").getValue(), "STAT")) {
 
-                            YearDate year = new YearDate(Integer.parseInt(leaf.getVariable("YOB").getValue()));
+                            Year year = Year.parse(leaf.getVariable("YOB").getValue());
                             SexOption sex;
-                            switch(leaf.getVariable("Sex").getValue()) {
+                            switch (leaf.getVariable("Sex").getValue()) {
                                 case "MALE":
                                     sex = SexOption.MALE;
                                     break;
@@ -82,13 +81,13 @@ public class CTtableFull extends CTtable {
 
                             IntegerRange age = new IntegerRange(leaf.getVariable("Age").getValue());
 
-                            DiedOption died;
-                            switch(leaf.getVariable("Died").getValue()) {
+                            boolean died;
+                            switch (leaf.getVariable("Died").getValue()) {
                                 case "YES":
-                                    died = DiedOption.YES;
+                                    died = true;
                                     break;
                                 case "NO":
-                                    died = DiedOption.NO;
+                                    died = false;
                                     break;
                                 default:
                                     throw new Error();
@@ -97,13 +96,13 @@ public class CTtableFull extends CTtable {
                             IntegerRange pncip = new IntegerRange(leaf.getVariable("PNCIP").getValue());
                             IntegerRange npciap = new IntegerRange(leaf.getVariable("NPCIAP").getValue());
 
-                            ChildrenInYearOption ciy;
-                            switch(leaf.getVariable("CIY").getValue()) {
+                            boolean ciy;
+                            switch (leaf.getVariable("CIY").getValue()) {
                                 case "YES":
-                                    ciy = ChildrenInYearOption.YES;
+                                    ciy = true;
                                     break;
                                 case "NO":
-                                    ciy = ChildrenInYearOption.NO;
+                                    ciy = false;
                                     break;
                                 default:
                                     throw new Error();
@@ -113,7 +112,7 @@ public class CTtableFull extends CTtable {
                             IntegerRange ncip = new IntegerRange(leaf.getVariable("NCIP").getValue());
 
                             SeparationOption sep;
-                            switch(leaf.getVariable("Separated").getValue()) {
+                            switch (leaf.getVariable("Separated").getValue()) {
                                 case "YES":
                                     sep = SeparationOption.YES;
                                     break;
@@ -130,7 +129,6 @@ public class CTtableFull extends CTtable {
                             IntegerRange npa = new IntegerRange(leaf.getVariable("NPA").getValue());
 
                             try {
-
                                 SourceNodeInt sN = (SourceNodeInt) tree.getChild(SourceType.SIM);
                                 YOBNodeInt yobN = (YOBNodeInt) sN.getChild(year);
                                 SexNodeInt sexN = (SexNodeInt) yobN.getChild(sex);
@@ -150,13 +148,13 @@ public class CTtableFull extends CTtable {
 
                                 CTCell[] cells = {
                                         new CTCell("Source", "SIM"),
-                                        new CTCell("YOB", String.valueOf(year.getYear())),
+                                        new CTCell("YOB", String.valueOf(year.getValue())),
                                         new CTCell("Sex", sex.toString()),
                                         new CTCell("Age", age.toString()),
-                                        new CTCell("Died", died.toString()),
+                                        new CTCell("Died", String.valueOf(died)),
                                         new CTCell("PNCIP", pncip.toString()),
                                         new CTCell("NPCIAP", npciap.toString()),
-                                        new CTCell("CIY", ciy.toString()),
+                                        new CTCell("CIY", String.valueOf(ciy)),
                                         new CTCell("NCIY", String.valueOf(nciy)),
                                         new CTCell("NCIP", ncip.toString()),
                                         new CTCell("Separated", sep.toString()),
@@ -168,35 +166,28 @@ public class CTtableFull extends CTtable {
 
                                 ps.print(r.toString(","));
                             }
-
                         }
                     } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
                         variableNotFoundExcepction.printStackTrace();
                     }
-
                 }
-
             }
-
         }
 
         ps.close();
     }
 
-    protected String getVarNames(String sep, CTRow row) {
+    private String getVarNames(String sep, CTRow row) {
 
         StringBuilder s = new StringBuilder();
 
-        for(Object cell : row.getCells()) {
+        for (Object cell : row.getCells()) {
 
             s.append(((CTCell) cell).getVariable() + sep);
-
         }
 
         s.append("freq\n");
 
-
         return s.toString();
     }
-
 }

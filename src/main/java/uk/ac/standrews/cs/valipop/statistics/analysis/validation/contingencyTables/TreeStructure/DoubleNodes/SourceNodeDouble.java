@@ -16,23 +16,23 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRowDouble;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SourceType;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRowDouble;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SourceNodeDouble extends DoubleNode<SourceType, YearDate> {
+public class SourceNodeDouble extends DoubleNode<SourceType, Year> {
 
     private Node parent;
 
@@ -46,7 +46,7 @@ public class SourceNodeDouble extends DoubleNode<SourceType, YearDate> {
     }
 
     @Override
-    public Node<YearDate, ?, Double, ?> makeChildInstance(YearDate childOption, Double initCount) {
+    public Node<Year, ?, Double, ?> makeChildInstance(Year childOption, Double initCount) {
         return new YOBNodeDouble(childOption, this, initCount);
     }
 
@@ -65,13 +65,13 @@ public class SourceNodeDouble extends DoubleNode<SourceType, YearDate> {
         parent.addDelayedTask(node);
     }
 
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
         // increase own count
         incCountByOne();
 
         // pass person to appropriate child node
-        YearDate yob = person.getBirthDate().getYearDate();
+        Year yob = Year.of(person.getBirthDate().getYear());
 
         try {
             getChild(yob).processPerson(person, currentDate);

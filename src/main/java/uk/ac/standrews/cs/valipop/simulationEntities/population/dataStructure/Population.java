@@ -22,12 +22,10 @@ import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Collection;
 
 /**
@@ -71,14 +69,14 @@ public class Population {
         return populationCounts;
     }
 
-    public PeopleCollection getAllPeople(AdvanceableDate first, ValipopDate last, CompoundTimeUnit maxAge) {
+    public PeopleCollection getAllPeople(LocalDate first, LocalDate last, Period maxAge) {
 
-        CompoundTimeUnit tp = DateUtils.differenceInMonths(first, last);
+        Period tp = Period.ofMonths(Math.abs((int)Period.between(first, last).toTotalMonths()));
 
         Collection<IPerson> l = livingPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
         Collection<IPerson> d = deadPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
 
-        PeopleCollection pC = new PeopleCollection(first, last, new CompoundTimeUnit(1, TimeUnit.YEAR));
+        PeopleCollection pC = new PeopleCollection(first, last, Period.ofYears(1));
         pC.setDescription("combined");
 
         for(IPerson p : l) {
@@ -94,8 +92,8 @@ public class Population {
 
     private PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) {
 
-        AdvanceableDate start = (AdvanceableDate) DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
-        ValipopDate end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());
+        LocalDate start = DateUtils.getEarlier(col1.getStartDate(), col2.getStartDate());
+        LocalDate end = DateUtils.getLater(col1.getStartDate(), col2.getStartDate());
 
         PeopleCollection cloneCol1 = col1.clone();
         PeopleCollection cloneCol2 = col2.clone();

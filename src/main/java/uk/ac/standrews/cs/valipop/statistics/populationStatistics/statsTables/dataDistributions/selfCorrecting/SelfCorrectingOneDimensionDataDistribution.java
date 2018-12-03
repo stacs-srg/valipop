@@ -16,20 +16,19 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
+import org.apache.commons.math3.distribution.BinomialDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.MapUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
-import uk.ac.standrews.cs.valipop.Config;
-import org.apache.commons.math3.distribution.BinomialDistribution;
-import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
-
+import java.time.Period;
+import java.time.Year;
 import java.util.Map;
 
 /**
@@ -43,9 +42,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     private Map<IntegerRange, Double> appliedRates;
     private Map<IntegerRange, Double> appliedCounts;
 
-    public SelfCorrectingOneDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation,
-                                                      Map<IntegerRange, Double> tableData, boolean binomialSampling,
-                                                      RandomGenerator randomGenerator) {
+    public SelfCorrectingOneDimensionDataDistribution(Year year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Double> tableData, boolean binomialSampling, RandomGenerator randomGenerator) {
 
         super(year, sourcePopulation, sourceOrganisation, tableData);
 
@@ -188,13 +185,13 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         return new SingleDeterminedCount(key, determinedCount, rawCorrectedCount, rawUncorrectedCount);
     }
 
-    private double calcAppliedYearRateFromSubRate(double subRate, CompoundTimeUnit timePeriod) {
-        double stepsInYear = DateUtils.stepsInYear(timePeriod);
+    private double calcAppliedYearRateFromSubRate(double subRate, Period timePeriod) {
 
-        return 1 - Math.pow(1 - subRate, stepsInYear);
+        return 1 - Math.pow(1 - subRate, DateUtils.stepsInYear(timePeriod));
     }
 
-    private double calcSubRateFromYearRate(double yearRate, CompoundTimeUnit timePeriod) {
+    private double calcSubRateFromYearRate(double yearRate, Period timePeriod) {
+
         double stepsInYear = DateUtils.stepsInYear(timePeriod);
 
         return 1 - Math.pow(1 - yearRate, 1 / stepsInYear);

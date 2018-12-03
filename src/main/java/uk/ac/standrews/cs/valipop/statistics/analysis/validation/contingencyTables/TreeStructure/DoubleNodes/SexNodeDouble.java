@@ -16,13 +16,14 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+
+import java.time.LocalDate;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.ageOnDate;
 
@@ -49,7 +50,7 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
         int age = ageOnDate(person, currentDate);
 
@@ -65,7 +66,7 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
         return "Sex";
     }
 
-    public Node<IntegerRange, ?, Double, ?> resolveChildNodeForAge(Integer age) throws ChildNotFoundException {
+    Node<IntegerRange, ?, Double, ?> resolveChildNodeForAge(Integer age) throws ChildNotFoundException {
 
         if(age != null) {
             for (Node<IntegerRange, ?, Double, ?> aN : getChildren()) {

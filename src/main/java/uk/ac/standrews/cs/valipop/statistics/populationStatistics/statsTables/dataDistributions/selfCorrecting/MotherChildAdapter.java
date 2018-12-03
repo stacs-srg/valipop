@@ -21,12 +21,12 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCoun
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 
+import java.time.Year;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,30 +38,25 @@ public class MotherChildAdapter implements ProportionalDistribution {
 
     private SelfCorrectingProportionalDistribution distribution;
 
-    public MotherChildAdapter(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> targetProportions) {
+    public MotherChildAdapter(Year year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> targetProportions) {
 
         Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> transformedProportions = new TreeMap<>();
 
-        for(Map.Entry<IntegerRange, LabelledValueSet<IntegerRange, Double>> iR : targetProportions.entrySet()) {
+        for (Map.Entry<IntegerRange, LabelledValueSet<IntegerRange, Double>> iR : targetProportions.entrySet()) {
             LabelledValueSet<IntegerRange, Double> tp = iR.getValue();
 
-            if(tp.getSumOfValues() != 0) {
-                transformedProportions.put(iR.getKey(),
-                        new IntegerRangeToDoubleSet(tp)
-                            .productOfLabelsAndValues()
-                            .reproportion()
-                );
+            if (tp.getSumOfValues() != 0) {
+                transformedProportions.put(iR.getKey(), new IntegerRangeToDoubleSet(tp).productOfLabelsAndValues().reproportion());
             } else {
                 transformedProportions.put(iR.getKey(), tp);
             }
         }
 
         distribution = new SelfCorrectingProportionalDistribution(year, sourcePopulation, sourceOrganisation, transformedProportions);
-
     }
 
     @Override
-    public YearDate getYear() {
+    public Year getYear() {
         return distribution.getYear();
     }
 
@@ -95,34 +90,24 @@ public class MotherChildAdapter implements ProportionalDistribution {
 
         MultipleDeterminedCount childNumbers = distribution.determineCount(key, config);
 
-        LabelledValueSet<IntegerRange, Double> rawCorrectedMotherNumbers =
-                new IntegerRangeToDoubleSet(childNumbers.getRawCorrectedCount())
-                    .divisionOfValuesByLabels();
-
-        LabelledValueSet<IntegerRange, Double> rawUncorrectedMotherNumbers =
-                new IntegerRangeToDoubleSet(childNumbers.getRawUncorrectedCount())
-                    .divisionOfValuesByLabels();
-
-        LabelledValueSet<IntegerRange, Integer> motherNumbers;
+        LabelledValueSet<IntegerRange, Double> rawCorrectedMotherNumbers = new IntegerRangeToDoubleSet(childNumbers.getRawCorrectedCount()).divisionOfValuesByLabels();
+        LabelledValueSet<IntegerRange, Double> rawUncorrectedMotherNumbers = new IntegerRangeToDoubleSet(childNumbers.getRawUncorrectedCount()).divisionOfValuesByLabels();
 
         try {
-            motherNumbers = new IntegerRangeToIntegerSet(childNumbers.getDeterminedCount())
-                    .divisionOfValuesByLabels().controlledRoundingMaintainingSumProductOfLabelValues();
+            LabelledValueSet<IntegerRange, Integer> motherNumbers = new IntegerRangeToIntegerSet(childNumbers.getDeterminedCount()).divisionOfValuesByLabels().controlledRoundingMaintainingSumProductOfLabelValues();
+
+            return new MultipleDeterminedCount(key, motherNumbers, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);
 
         } catch (NullPointerException e) {
             return new MultipleDeterminedCount(key, null, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);
         }
-
-        return new MultipleDeterminedCount(key, motherNumbers, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);
     }
 
     @Override
     public void returnAchievedCount(DeterminedCount<LabelledValueSet<IntegerRange, Integer>, LabelledValueSet<IntegerRange, Double>> achievedCount) {
 
         // Transforms counts to be of children born rather than mothers giving birth
-        achievedCount.setFulfilledCount(new IntegerRangeToIntegerSet(achievedCount.getFulfilledCount())
-                                                                                        .productOfLabelsAndValues());
+        achievedCount.setFulfilledCount(new IntegerRangeToIntegerSet(achievedCount.getFulfilledCount()).productOfLabelsAndValues());
         distribution.returnAchievedCount(achievedCount);
-
     }
 }

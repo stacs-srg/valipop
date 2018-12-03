@@ -16,11 +16,11 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
-import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Defines various methods to do with population structure and constraints.
@@ -46,13 +46,13 @@ public class PopulationLogic {
     @SuppressWarnings("FeatureEnvy")
     public static boolean parentsHaveSensibleAgesAtChildBirth(final IPerson father, final IPerson mother, final IPerson child) {
 
-        final ValipopDate mother_birth_date = mother.getBirthDate();
-        final ValipopDate mother_death_date = mother.getDeathDate();
+        final LocalDate mother_birth_date = mother.getBirthDate();
+        final LocalDate mother_death_date = mother.getDeathDate();
 
-        final ValipopDate father_birth_date = father.getBirthDate();
-        final ValipopDate father_death_date = father.getDeathDate();
+        final LocalDate father_birth_date = father.getBirthDate();
+        final LocalDate father_death_date = father.getDeathDate();
 
-        final ValipopDate child_birth_date = child.getBirthDate();
+        final LocalDate child_birth_date = child.getBirthDate();
 
         boolean sensible = parentsHaveSensibleAgesAtChildBirth(father_birth_date, father_death_date, mother_birth_date, mother_death_date, child_birth_date);
 
@@ -68,7 +68,7 @@ public class PopulationLogic {
         return sensible;
     }
 
-    private static boolean parentsHaveSensibleAgesAtChildBirth(final ValipopDate father_birth_date, final ValipopDate father_death_date, final ValipopDate mother_birth_date, final ValipopDate mother_death_date, final ValipopDate child_birth_date) {
+    private static boolean parentsHaveSensibleAgesAtChildBirth(final LocalDate father_birth_date, final LocalDate father_death_date, final LocalDate mother_birth_date, final LocalDate mother_death_date, final LocalDate child_birth_date) {
 
         boolean motherAlive = motherAliveAtBirth(mother_death_date, child_birth_date);
         boolean motherNotTooYoung = motherNotTooYoungAtBirth(mother_birth_date, child_birth_date);
@@ -85,40 +85,40 @@ public class PopulationLogic {
         return motherAlive && motherNotTooYoung && motherNotTooOld && fatherAliveAtConception && fatherNotTooYoung;
     }
 
-    private static boolean motherAliveAtBirth(final ValipopDate mother_death_date, final ValipopDate child_birth_date) {
+    private static boolean motherAliveAtBirth(final LocalDate mother_death_date, final LocalDate child_birth_date) {
 
-        return mother_death_date == null || dateNotAfter(child_birth_date.getDate(), mother_death_date.getDate());
+        return mother_death_date == null || !child_birth_date.isAfter( mother_death_date);
     }
 
-    private static boolean motherNotTooYoungAtBirth(final ValipopDate mother_birth_date, final ValipopDate child_birth_date) {
+    private static boolean motherNotTooYoungAtBirth(final LocalDate mother_birth_date, final LocalDate child_birth_date) {
 
         final int mothers_age_at_birth = parentsAgeAtChildBirth(mother_birth_date, child_birth_date);
 
         return notLessThan(mothers_age_at_birth, MINIMUM_MOTHER_AGE_AT_CHILDBIRTH);
     }
 
-    private static boolean motherNotTooOldAtBirth(final ValipopDate mother_birth_date, final ValipopDate child_birth_date) {
+    private static boolean motherNotTooOldAtBirth(final LocalDate mother_birth_date, final LocalDate child_birth_date) {
 
         final int mothers_age_at_birth = parentsAgeAtChildBirth(mother_birth_date, child_birth_date);
 
         return notGreaterThan(mothers_age_at_birth, MAXIMUM_MOTHER_AGE_AT_CHILDBIRTH);
     }
 
-    private static boolean fatherAliveAtConception(final ValipopDate father_death_date, final ValipopDate child_birth_date) {
+    private static boolean fatherAliveAtConception(final LocalDate father_death_date, final LocalDate child_birth_date) {
 
-        return father_death_date == null || dateNotAfter(child_birth_date.getDate(), DateManipulation.addDays(father_death_date.getDate(), MAX_GESTATION_IN_DAYS));
+        return father_death_date == null ||!child_birth_date.isAfter( father_death_date.plus( MAX_GESTATION_IN_DAYS, ChronoUnit.DAYS));
     }
 
-    private static boolean fatherNotTooYoungAtBirth(final ValipopDate father_birth_date, final ValipopDate child_birth_date) {
+    private static boolean fatherNotTooYoungAtBirth(final LocalDate father_birth_date, final LocalDate child_birth_date) {
 
         final int fathers_age_at_birth = parentsAgeAtChildBirth(father_birth_date, child_birth_date);
 
         return notLessThan(fathers_age_at_birth, MINIMUM_FATHER_AGE_AT_CHILDBIRTH);
     }
 
-    private static int parentsAgeAtChildBirth(final ValipopDate parent_birth_date, final ValipopDate child_birth_date) {
+    private static int parentsAgeAtChildBirth(final LocalDate parent_birth_date, final LocalDate child_birth_date) {
 
-        return DateManipulation.differenceInYears(parent_birth_date.getDate(), child_birth_date.getDate());
+        return Period.between(parent_birth_date, child_birth_date).getYears();
     }
 
     private static boolean notLessThan(final int i1, final int i2) {
@@ -129,10 +129,5 @@ public class PopulationLogic {
     private static boolean notGreaterThan(final int i1, final int i2) {
 
         return i1 <= i2;
-    }
-
-    private static boolean dateNotAfter(final Date date1, final Date date2) {
-
-        return DateManipulation.differenceInDays(date1, date2) >= 0;
     }
 }

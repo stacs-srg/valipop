@@ -16,13 +16,12 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
-import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * A representation of a BirthFamilyGT Record in the form used by the Digitising Scotland Project.
@@ -77,10 +76,10 @@ import java.util.Date;
  */
 public class BirthSourceRecord extends IndividualSourceRecord {
 
-    protected DateRecord birth_date;
+    protected LocalDate birth_date;
     protected String birth_address;
 
-    protected DateRecord parents_marriage_date;
+    protected LocalDate parents_marriage_date;
     protected String parents_place_of_marriage;
 
     protected String illegitimate_indicator;
@@ -92,8 +91,7 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 
     public BirthSourceRecord(final IPerson person, IPopulation population) {
 
-        birth_date = new DateRecord();
-        parents_marriage_date = new DateRecord();
+
 
         // Attributes associated with individual
         setUid(String.valueOf(person.getId()));
@@ -101,15 +99,7 @@ public class BirthSourceRecord extends IndividualSourceRecord {
         setForename(person.getFirstName());
         setSurname(person.getSurname());
 
-        final Date birth_date = person.getBirthDate().getDate();
-
-        long birth_day = DateManipulation.dateToDay(birth_date);
-        long birth_month = DateManipulation.dateToMonth(birth_date);
-        long birth_year = DateManipulation.dateToYear(birth_date);
-
-        setBirthDay(String.valueOf(birth_day));
-        setBirthMonth(String.valueOf(birth_month));
-        setBirthYear(String.valueOf(birth_year));
+        birth_date = person.getBirthDate();
 
         final IPartnership parents_partnership = person.getParents();
 
@@ -118,21 +108,13 @@ public class BirthSourceRecord extends IndividualSourceRecord {
             parents_partnership_id = parents_partnership.getId();
 
             // Attributes associated with individual's parents' marriage.
-            final Date marriage_date = parents_partnership.getMarriageDate().getDate();
+            parents_marriage_date = parents_partnership.getMarriageDate();
 
             // added into to allow for the record generator to work with the
             // organic population model which uses the partnership class with
             // no marriage date to represent a cohabitation and thus no
             // record should be generated.
-            if (marriage_date != null) {
-
-                long marriage_day = DateManipulation.dateToDay(marriage_date);
-                long marriage_month = DateManipulation.dateToMonth(marriage_date);
-                long marriage_year = DateManipulation.dateToYear(marriage_date);
-
-                setParentsMarriageDay(String.valueOf(marriage_day));
-                setParentsMarriageMonth(String.valueOf(marriage_month));
-                setParentsMarriageYear(String.valueOf(marriage_year));
+            if (parents_marriage_date != null) {
 
                 setParentsPlaceOfMarriage(parents_partnership.getMarriagePlace());
 
@@ -144,100 +126,12 @@ public class BirthSourceRecord extends IndividualSourceRecord {
         }
     }
 
-    public String getBirthDay() {
-        return birth_date.getDay();
-    }
-
-    public void setBirthDay(final String birth_day) {
-        birth_date.setDay(birth_day);
-    }
-
-    public String getBirthMonth() {
-        return birth_date.getMonth();
-    }
-
-    public void setBirthMonth(final String birth_month) {
-        birth_date.setMonth(birth_month);
-    }
-
-    public String getBirthYear() {
-        return birth_date.getYear();
-    }
-
-    public void setBirthYear(final String birth_year) {
-        birth_date.setYear(birth_year);
-    }
-
-    public String getBirthAddress() {
-        return birth_address;
-    }
-
     public void setBirthAddress(final String birth_address) {
         this.birth_address = birth_address;
     }
 
-    public String getParentsMarriageDay() {
-        return parents_marriage_date.getDay();
-    }
-
-    public void setParentsMarriageDay(final String parents_marriage_day) {
-        parents_marriage_date.setDay(parents_marriage_day);
-    }
-
-    public String getParentsMarriageMonth() {
-        return parents_marriage_date.getMonth();
-    }
-
-    public void setParentsMarriageMonth(final String parents_marriage_month) {
-        parents_marriage_date.setMonth(parents_marriage_month);
-    }
-
-    public String getParentsMarriageYear() {
-        return parents_marriage_date.getYear();
-    }
-
-    public void setParentsMarriageYear(final String parents_marriage_year) {
-        parents_marriage_date.setYear(parents_marriage_year);
-    }
-
-    public String getParentsPlaceOfMarriage() {
-        return parents_place_of_marriage;
-    }
-
     public void setParentsPlaceOfMarriage(final String parents_place_of_marriage) {
         this.parents_place_of_marriage = parents_place_of_marriage;
-    }
-
-    public String getIllegitimateIndicator() {
-        return illegitimate_indicator;
-    }
-
-    public void setIllegitimateIndicator(final String illegitimate_indicator) {
-        this.illegitimate_indicator = illegitimate_indicator;
-    }
-
-    public String getInformant() {
-        return informant;
-    }
-
-    public void setInformant(final String informant) {
-        this.informant = informant;
-    }
-
-    public String getInformantDidNotSign() {
-        return informant_did_not_sign;
-    }
-
-    public void setInformantDidNotSign(final String informant_did_not_sign) {
-        this.informant_did_not_sign = informant_did_not_sign;
-    }
-
-    public String getAdoption() {
-        return adoption;
-    }
-
-    public void setAdoption(final String adoption) {
-        this.adoption = adoption;
     }
 
     @Override
@@ -247,9 +141,9 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 
         append(builder, uid, surname, forename, sex, registration_year, registration_district_number,
                 registration_district_suffix, entry, birth_date.getYear(), mothers_maiden_surname, surname_changed,
-                forename_changed, birth_date.getDay(), birth_date.getMonth(), birth_address, fathers_forename,
+                forename_changed, birth_date.getDayOfMonth(), birth_date.getMonth(), birth_address, fathers_forename,
                 fathers_surname, fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname_changed,
-                parents_marriage_date.getDay(), parents_marriage_date.getMonth(), parents_marriage_date.getYear(),
+                parents_marriage_date.getDayOfMonth(), parents_marriage_date.getMonth(), parents_marriage_date.getYear(),
                 parents_place_of_marriage, illegitimate_indicator, informant, informant_did_not_sign, entry_corrected,
                 adoption, image_quality);
 

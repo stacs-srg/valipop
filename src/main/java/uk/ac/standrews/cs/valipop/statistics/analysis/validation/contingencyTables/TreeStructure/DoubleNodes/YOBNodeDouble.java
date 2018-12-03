@@ -20,18 +20,19 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ControlChildrenNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
+
+import java.time.LocalDate;
+import java.time.Year;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> implements ControlChildrenNode {
+public class YOBNodeDouble extends DoubleNode<Year, SexOption> implements ControlChildrenNode {
 
-    public YOBNodeDouble(YearDate childOption, SourceNodeDouble parentNode, Double initCount) {
+    public YOBNodeDouble(Year childOption, SourceNodeDouble parentNode, Double initCount) {
         super(childOption, parentNode, initCount);
         makeChildren();
     }
@@ -41,7 +42,7 @@ public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> implements Co
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
         try {
             getChild(person.getSex()).processPerson(person, currentDate);
@@ -57,7 +58,7 @@ public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> implements Co
 
     public CTRow<Double> toCTRow() {
         CTRow r = getParent().toCTRow();
-        r.setVariable(getVariableName(), Integer.toString(getOption().getYear()));
+        r.setVariable(getVariableName(), Integer.toString(getOption().getValue()));
         return r;
     }
 

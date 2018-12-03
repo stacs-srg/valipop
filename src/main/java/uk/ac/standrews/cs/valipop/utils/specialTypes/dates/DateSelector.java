@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection;
+package uk.ac.standrews.cs.valipop.utils.specialTypes.dates;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+
+import java.time.LocalDate;
+import java.time.Period;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -34,22 +35,22 @@ public class DateSelector {
         this.random = random;
     }
 
-    public ExactDate selectRandomDate(ValipopDate earliestDate, ValipopDate latestDate) {
+    public LocalDate selectRandomDate(LocalDate earliestDate, LocalDate latestDate) {
 
-        int daysInWindow = DateUtils.differenceInDays(earliestDate, latestDate);
+        int daysInWindow = (int)DAYS.between(earliestDate, latestDate);
 
         return selectRandomDate(earliestDate, daysInWindow);
     }
 
-    public ExactDate selectRandomDate(ValipopDate earliestDate, CompoundTimeUnit timePeriod) {
+    public LocalDate selectRandomDate(LocalDate earliestDate, Period timePeriod) {
 
         int daysInWindow = DateUtils.getDaysInTimePeriod(earliestDate, timePeriod);
 
         return selectRandomDate(earliestDate, daysInWindow);
     }
 
-    private ExactDate selectRandomDate(ValipopDate earliestDate, int daysInWindow) {
+    private LocalDate selectRandomDate(LocalDate earliestDate, int daysInWindow) {
 
-        return DateUtils.calculateExactDate(earliestDate, random.nextInt(Math.abs(daysInWindow)));
+        return earliestDate.plus(daysInWindow, DAYS);
     }
 }

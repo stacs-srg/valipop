@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.utils;
 
 
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
 import java.util.*;
 

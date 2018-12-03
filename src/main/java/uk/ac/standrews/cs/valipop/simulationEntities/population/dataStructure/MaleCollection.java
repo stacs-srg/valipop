@@ -18,12 +18,9 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 
 /**
@@ -34,7 +31,7 @@ import java.util.*;
 public class MaleCollection extends PersonCollection {
 
     // this is by year of birth
-    private final Map<MonthDate, Collection<IPerson>> byYear = new TreeMap<>();
+    private final Map<LocalDate, Collection<IPerson>> byYear = new TreeMap<>();
 
     /**
      * Instantiates a new MaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -45,11 +42,12 @@ public class MaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    public MaleCollection(AdvanceableDate start, ValipopDate end, CompoundTimeUnit divisionSize) {
+    public MaleCollection(LocalDate start, LocalDate end, Period divisionSize) {
+
         super(start, end, divisionSize);
 
-        for (AdvanceableDate d = start; DateUtils.dateBeforeOrEqual(d, end); d = d.advanceTime(divisionSize)) {
-            byYear.put(d.getMonthDate(), new ArrayList<>());
+        for (LocalDate d = start; !d.isAfter( end); d = d.plus(divisionSize)) {
+            byYear.put(d, new ArrayList<>());
         }
     }
 
@@ -70,7 +68,7 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    void addPeople(Collection<IPerson> people, MonthDate divisionDate) {
+    void addPeople(Collection<IPerson> people, LocalDate divisionDate) {
 
         Collection<IPerson> collection = byYear.get(divisionDate);
         if (collection != null) {
@@ -81,7 +79,7 @@ public class MaleCollection extends PersonCollection {
     @Override
     public void addPerson(IPerson person) {
 
-        MonthDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
+        LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
 
         if (byYear.containsKey(divisionDate)) {
             byYear.get(divisionDate).add(person);
@@ -111,13 +109,13 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public int getNumberOfPersons(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
+    public int getNumberOfPersons(LocalDate firstDate, Period timePeriod) {
 
         return getAllPersonsBornInTimePeriod(firstDate, timePeriod).size();
     }
 
     @Override
-    public Set<AdvanceableDate> getDivisionDates() {
+    public Set<LocalDate> getDivisionDates() {
         return new TreeSet<>(byYear.keySet());
     }
 }

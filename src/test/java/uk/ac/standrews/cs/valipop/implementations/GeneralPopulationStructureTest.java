@@ -17,13 +17,16 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -169,7 +172,7 @@ public abstract class GeneralPopulationStructureTest {
 
     private static void assertBirthInfoConsistent(final IPerson person) {
 
-        assertFalse(person.getBirthDate().getDate() == null && person.getBirthPlace() != null);
+        assertFalse(person.getBirthDate() == null && person.getBirthPlace() != null);
     }
 
     @Test
@@ -365,10 +368,10 @@ public abstract class GeneralPopulationStructureTest {
 
         if (person.getDeathDate() != null) {
 
-            final Date death_date = person.getDeathDate().getDate();
-            final Date birth_date = person.getBirthDate().getDate();
+            final LocalDate death_date = person.getDeathDate();
+            final LocalDate birth_date = person.getBirthDate();
 
-            assertTrue(DateManipulation.differenceInYears(birth_date, death_date) >= 0);
+            assertFalse(birth_date.isAfter( death_date));
         }
     }
 
@@ -376,13 +379,13 @@ public abstract class GeneralPopulationStructureTest {
 
         if (person.getBirthDate() != null) {
 
-            final Date birth_date = person.getBirthDate().getDate();
+            final LocalDate birth_date = person.getBirthDate();
 
             for (final IPartnership partnership : person.getPartnerships()) {
                 if (partnership.getMarriageDate() != null) {
 
-                    final Date marriage_date = partnership.getMarriageDate().getDate();
-                    assertTrue(DateManipulation.differenceInYears(birth_date, marriage_date) >= 0);
+                    final LocalDate marriage_date = partnership.getMarriageDate();
+                    assertFalse(birth_date.isAfter( marriage_date));
                 }
             }
         }
@@ -392,13 +395,13 @@ public abstract class GeneralPopulationStructureTest {
 
         if (person.getDeathDate() != null) {
 
-            final Date death_date = person.getDeathDate().getDate();
+            final LocalDate death_date = person.getDeathDate();
 
             for (final IPartnership partnership : person.getPartnerships()) {
                 if (partnership.getMarriageDate() != null) {
 
-                    final Date marriage_date = partnership.getMarriageDate().getDate();
-                    assertTrue(DateManipulation.differenceInDays(marriage_date, death_date) >= 0);
+                    final LocalDate marriage_date = partnership.getMarriageDate();
+                    assertFalse(marriage_date.isAfter( death_date));
                 }
             }
         }

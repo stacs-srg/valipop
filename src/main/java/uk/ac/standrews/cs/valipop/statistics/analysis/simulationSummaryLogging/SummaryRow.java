@@ -19,11 +19,11 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging;
 
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.Period;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -34,11 +34,11 @@ public class SummaryRow {
     private String reason;
     private String codeVersion;
 
-    private CompoundTimeUnit inputWidth;
-    private CompoundTimeUnit timestep;
+    private Period inputWidth;
+    private Period timestep;
 
-    private ValipopDate startDate;
-    private ValipopDate endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     private int simLength;
 
@@ -82,10 +82,10 @@ public class SummaryRow {
                       String startTime,
                       String reason,
                       String codeVersion,
-                      CompoundTimeUnit timestep,
-                      CompoundTimeUnit inputWidth,
-                      ValipopDate startDate,
-                      ValipopDate endDate,
+                      Period timestep,
+                      Period inputWidth,
+                      LocalDate startDate,
+                      LocalDate endDate,
                       int simLength,
                       double birthFactor,
                       double deathFactor,

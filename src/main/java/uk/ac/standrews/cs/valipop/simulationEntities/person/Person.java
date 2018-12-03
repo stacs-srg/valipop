@@ -19,10 +19,10 @@ package uk.ac.standrews.cs.valipop.simulationEntities.person;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,8 +36,8 @@ public class Person implements IPerson {
 
     private int id;
     private SexOption sex;
-    private ExactDate birthDate;
-    private ExactDate deathDate = null;
+    private LocalDate birthDate;
+    private LocalDate deathDate = null;
     private List<IPartnership> partnerships = new ArrayList<>();
     private IPartnership parents;
 
@@ -48,12 +48,12 @@ public class Person implements IPerson {
 
     private String deathCause = "";
 
-    public Person(SexOption sex, ValipopDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean illegitimate) {
+    public Person(SexOption sex, LocalDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean illegitimate) {
 
         id = getNewId();
 
         this.sex = sex;
-        this.birthDate = birthDate.getExactDate();
+        this.birthDate = birthDate;
         this.parents = parents;
         this.illegitimate = illegitimate;
 
@@ -78,12 +78,12 @@ public class Person implements IPerson {
     }
 
     @Override
-    public ValipopDate getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
     @Override
-    public ValipopDate getDeathDate() {
+    public LocalDate getDeathDate() {
         return deathDate;
     }
 
@@ -159,12 +159,12 @@ public class Person implements IPerson {
     }
 
     @Override
-    public void recordDeath(ValipopDate date, PopulationStatistics statistics) {
+    public void recordDeath(LocalDate date, PopulationStatistics statistics) {
 
-        deathDate = date.getExactDate();
+        deathDate = date;
 
-        int ageAtDeath = DateUtils.differenceInYears(birthDate, deathDate).getCount();
-        deathCause = statistics.getDeathCauseRates(deathDate, getSex(), ageAtDeath).getSample();
+        int ageAtDeath = Period.between(birthDate, deathDate).getYears();
+        deathCause = statistics.getDeathCauseRates(Year.of(deathDate.getYear()), getSex(), ageAtDeath).getSample();
     }
 
     @Override
@@ -189,7 +189,7 @@ public class Person implements IPerson {
 
     private String getForename(PopulationStatistics statistics) {
 
-        return statistics.getForenameDistribution(getBirthDate(), getSex()).getSample();
+        return statistics.getForenameDistribution(Year.of(birthDate.getYear()), getSex()).getSample();
     }
 
     private String getSurname(PopulationStatistics statistics) {
@@ -198,7 +198,7 @@ public class Person implements IPerson {
             return parents.getMalePartner().getSurname();
         }
         else {
-            return statistics.getSurnameDistribution(getBirthDate()).getSample();
+            return statistics.getSurnameDistribution(Year.of(birthDate.getYear())).getSample();
         }
     }
 }

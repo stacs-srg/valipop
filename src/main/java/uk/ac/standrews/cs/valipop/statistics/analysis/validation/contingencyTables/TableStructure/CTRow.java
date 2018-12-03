@@ -16,10 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure;
 
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.VariableNotFoundExcepction;
 
 import java.util.ArrayList;
@@ -79,7 +75,6 @@ public abstract class CTRow<count extends Number> {
         } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
             addVariable(variable, value);
         }
-
     }
 
     private void addVariable(String variable, String value) {
@@ -109,80 +104,9 @@ public abstract class CTRow<count extends Number> {
         try {
             cells.remove(getVariable(variable));
         } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-            // this is okay - it's effectivly deleted as it ain't there in the first place
+            // this is okay - it's effectively deleted as it isn't there in the first place
         }
     }
-
-    public void discritiseVariable(String variable, String forInput, PopulationStatistics inputStatistics) {
-
-        if(Objects.equals(variable, "Age")) {
-
-            ValipopDate date;
-            int age;
-
-            try {
-                Integer yob = Integer.parseInt(getVariable("YOB").getValue());
-                age = Integer.parseInt(getVariable("Age").getValue());
-                date = new YearDate(yob + age);
-            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-                try {
-                    age = Integer.parseInt(getVariable("Age").getValue());
-                    date = new YearDate(Integer.parseInt(getVariable("Date").getValue()));
-                } catch (VariableNotFoundExcepction variableNotFoundExcepction1) {
-                    throw new Error();
-                }
-
-            }
-
-            Collection<IntegerRange> ranges = new ArrayList<>();
-
-            if(Objects.equals(forInput, "OB")) {
-                ranges = inputStatistics.getOrderedBirthRates(date).getRowLabels();
-            } else if(Objects.equals(forInput, "MB")) {
-                ranges = inputStatistics.getMultipleBirthRates(date).getLabels();
-            } else if(Objects.equals(forInput, "PART")) {
-                ranges = inputStatistics.getPartneringRates(date).getLabels();
-            }
-
-            for(IntegerRange iR : ranges) {
-                if(iR.contains(age)) {
-                    setVariable("Age", iR.toString());
-                    break;
-                }
-            }
-
-
-        } else {
-            throw new UnsupportedOperationException();
-        }
-
-
-    }
-
-//    public boolean tryAbsorbRow(CTRow<count> row) {
-//
-//        boolean identicalRows = true;
-//
-//        for(CTCell cell : cells) {
-//            String givenRowValue = null;
-//            try {
-//                givenRowValue = row.getVariable(cell.getVariable()).getValue();
-//            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-//                return false;
-//            }
-//            String thisRowValue = cell.getValue();
-//
-//            if(!Objects.equals(givenRowValue, thisRowValue)) {
-//                identicalRows = false;
-//            }
-//        }
-//
-//        if(identicalRows) {
-//            setCount(combineCount(getCount(), row.count));
-//        }
-//
-//        return identicalRows;
-//    }
 
     public abstract count combineCount(count a, count b);
 
@@ -197,7 +121,6 @@ public abstract class CTRow<count extends Number> {
         s.append(getCount() + "\n");
 
         return s.toString();
-
     }
 
     public String hash() {

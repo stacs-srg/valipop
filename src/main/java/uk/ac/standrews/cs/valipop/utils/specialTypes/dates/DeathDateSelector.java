@@ -14,18 +14,17 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection;
+package uk.ac.standrews.cs.valipop.utils.specialTypes.dates;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -37,18 +36,18 @@ public class DeathDateSelector extends DateSelector {
         super(random);
     }
 
-    public ExactDate selectDate(IPerson person, PopulationStatistics statistics, AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+    public LocalDate selectDate(IPerson person, PopulationStatistics statistics, LocalDate currentDate, Period consideredTimePeriod) {
 
         IPerson child = PopulationNavigation.getLastChild(person);
 
         if (child != null) {
 
-            ValipopDate birthDateOfLastChild = child.getBirthDate().getExactDate();
+            LocalDate birthDateOfLastChild = child.getBirthDate();
 
             if (person.getSex() == SexOption.MALE) {
 
                 // If a male with a child then the man cannot die more than the minimum gestation period before the birth date
-                ValipopDate earliestPossibleDate = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * statistics.getMinGestationPeriod());
+                LocalDate earliestPossibleDate = birthDateOfLastChild.minus( statistics.getMinGestationPeriod(), ChronoUnit.DAYS);
                 return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, earliestPossibleDate);
 
             } else {
@@ -61,13 +60,13 @@ public class DeathDateSelector extends DateSelector {
         }
     }
 
-    private ExactDate selectDateRestrictedByEarliestPossibleDate(AdvanceableDate currentDate, CompoundTimeUnit consideredTimePeriod, ValipopDate earliestPossibleDate) {
+    private LocalDate selectDateRestrictedByEarliestPossibleDate(LocalDate currentDate, Period consideredTimePeriod, LocalDate earliestPossibleDate) {
 
         // if specified earliestPossibleDate is in consideredTimePeriod
-        if (DateUtils.dateBeforeOrEqual(currentDate, earliestPossibleDate)) {
+        if (!currentDate.isAfter( earliestPossibleDate)) {
 
             // The select date between earliestPossibleDate and currentDate + consideredTimePeriod
-            return selectRandomDate(earliestPossibleDate, currentDate.advanceTime(consideredTimePeriod));
+            return selectRandomDate(earliestPossibleDate, currentDate.plus(consideredTimePeriod));
 
         } else {
             // else all days in consideredTimePeriod are an option

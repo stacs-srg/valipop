@@ -16,17 +16,16 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.Collection;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.numberOfChildrenBirthedBeforeDate;
@@ -45,10 +44,10 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
         incCountByOne();
 
-        Integer numberOfPrevChildrenInAnyPartnership = numberOfChildrenBirthedBeforeDate(person, currentDate.getYearDate());
+        Integer numberOfPrevChildrenInAnyPartnership = numberOfChildrenBirthedBeforeDate(person, currentDate);
         IntegerRange range = resolveToChildRange(numberOfPrevChildrenInAnyPartnership);
 
         try {
@@ -92,10 +91,10 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
             }
         }
 
-        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+        Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        Year currentDate = getYearAtAge(yob, age);
 
         Collection<IntegerRange> birthOrders;
         try {

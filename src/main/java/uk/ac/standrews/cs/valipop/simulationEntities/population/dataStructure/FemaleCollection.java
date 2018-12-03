@@ -20,14 +20,12 @@ import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.utils.MapUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.MisalignedTimeDivisionError;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.MisalignedTimeDivisionException;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 
 
@@ -40,7 +38,7 @@ import java.util.*;
  */
 public class FemaleCollection extends PersonCollection {
 
-    private final Map<MonthDate, Map<Integer, Collection<IPerson>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
+    private final Map<LocalDate, Map<Integer, Collection<IPerson>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
 
     /**
      * Instantiates a new FemaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -51,11 +49,11 @@ public class FemaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    FemaleCollection(AdvanceableDate start, ValipopDate end, CompoundTimeUnit divisionSize) {
+    FemaleCollection(LocalDate start, LocalDate end, Period divisionSize) {
         super(start, end, divisionSize);
 
-        for (AdvanceableDate d = start; DateUtils.dateBeforeOrEqual(d, end); d = d.advanceTime(divisionSize)) {
-            byBirthYearAndNumberOfChildren.put(d.getMonthDate(), new TreeMap<>());
+        for (LocalDate d = start; !d.isAfter( end); d = d.plus(divisionSize)) {
+            byBirthYearAndNumberOfChildren.put(d, new TreeMap<>());
         }
     }
 
@@ -69,15 +67,15 @@ public class FemaleCollection extends PersonCollection {
      * @param dateOfBirth the year of birth of the mothers in question
      * @return the highest birth order value
      */
-    private int getHighestBirthOrder(AdvanceableDate dateOfBirth, CompoundTimeUnit period) {
+    private int getHighestBirthOrder(LocalDate dateOfBirth, Period period) {
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
 
         if (divisionsInPeriod == -1) {
-            throw new MisalignedTimeDivisionError();
+            throw new MisalignedTimeDivisionException();
         }
 
-        MonthDate divisionDate = dateOfBirth.getMonthDate();
+        LocalDate divisionDate = dateOfBirth;
 
         int highestBirthOrder = 0;
 
@@ -90,7 +88,7 @@ public class FemaleCollection extends PersonCollection {
             }
 
             // move on to the new division date until we've covered the required divisions
-            divisionDate = divisionDate.advanceTime(getDivisionSize());
+            divisionDate = divisionDate.plus(getDivisionSize());
         }
 
         return highestBirthOrder;
@@ -105,16 +103,16 @@ public class FemaleCollection extends PersonCollection {
      * @param birthOrder the number of children
      * @return the by number of children
      */
-    Collection<IPerson> getByDatePeriodAndBirthOrder(AdvanceableDate date, CompoundTimeUnit period, Integer birthOrder) {
+    Collection<IPerson> getByDatePeriodAndBirthOrder(LocalDate date, Period period, Integer birthOrder) {
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
 
         if (divisionsInPeriod == -1) {
-            throw new MisalignedTimeDivisionError();
+            throw new MisalignedTimeDivisionException();
         }
 
         ArrayList<IPerson> people = new ArrayList<>();
-        MonthDate divisionDate = date.getMonthDate();
+        LocalDate divisionDate = date;
 
         for (int i = 0; i < divisionsInPeriod; i++) {
 
@@ -125,13 +123,13 @@ public class FemaleCollection extends PersonCollection {
             }
 
             // move on to the new division date until we've covered the required divisions
-            divisionDate = divisionDate.advanceTime(getDivisionSize());
+            divisionDate = divisionDate.plus(getDivisionSize());
         }
 
         return people;
     }
 
-    public Collection<IPerson> getByDatePeriodAndBirthOrder(AdvanceableDate date, CompoundTimeUnit period, IntegerRange birthOrder) {
+    public Collection<IPerson> getByDatePeriodAndBirthOrder(LocalDate date, Period period, IntegerRange birthOrder) {
 
         int highestBirthOrder = getHighestBirthOrder(date, period);
 
@@ -149,9 +147,9 @@ public class FemaleCollection extends PersonCollection {
     }
 
 
-    private Map<Integer, Collection<IPerson>> getAllPeopleFromDivision(AdvanceableDate divisionDate) {
+    private Map<Integer, Collection<IPerson>> getAllPeopleFromDivision(LocalDate divisionDate) {
 
-        MonthDate date = divisionDate.getMonthDate();
+        LocalDate date = divisionDate;
 
         if (byBirthYearAndNumberOfChildren.containsKey(date)) {
             return byBirthYearAndNumberOfChildren.get(date);
@@ -161,7 +159,7 @@ public class FemaleCollection extends PersonCollection {
                 // Division date is reasonable but no people exist in it yet
                 return new HashMap<>();
             } else {
-                throw new MisalignedTimeDivisionError("Date provided to underlying population structure does not align");
+                throw new MisalignedTimeDivisionException("Date provided to underlying population structure does not align");
             }
         }
     }
@@ -181,7 +179,7 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    void addPeople(Collection<IPerson> people, MonthDate divisionDate) {
+    void addPeople(Collection<IPerson> people, LocalDate divisionDate) {
 
         for (Collection<IPerson> collection : getAllPeopleFromDivision(divisionDate).values()) {
             people.addAll(collection);
@@ -191,7 +189,7 @@ public class FemaleCollection extends PersonCollection {
     @Override
     public void addPerson(IPerson person) {
 
-        final MonthDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
+        final LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
         final int numberOfChildren = countChildren(person);
 
         final List<IPerson> newList = new ArrayList<>();
@@ -232,13 +230,13 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public int getNumberOfPersons(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
+    public int getNumberOfPersons(LocalDate firstDate, Period timePeriod) {
 
         return getAllPersonsBornInTimePeriod(firstDate, timePeriod).size();
     }
 
     @Override
-    public Set<AdvanceableDate> getDivisionDates() {
+    public Set<LocalDate> getDivisionDates() {
         return new TreeSet<>(byBirthYearAndNumberOfChildren.keySet());
     }
 

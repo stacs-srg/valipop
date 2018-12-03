@@ -17,38 +17,38 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.ChildrenInYearOption;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+
+import java.time.LocalDate;
+import java.time.Year;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfPreviousChildrenInAnyPartnershipNodeInt extends IntNode<IntegerRange, ChildrenInYearOption> {
+public class NumberOfPreviousChildrenInAnyPartnershipNodeInt extends IntNode<IntegerRange, Boolean> {
 
     public NumberOfPreviousChildrenInAnyPartnershipNodeInt(final IntegerRange option, final PreviousNumberOfChildrenInPartnershipNodeInt parentNode, final int initCount) {
         super(option, parentNode, initCount);
     }
 
     @Override
-    public void processPerson(final IPerson person, final ValipopDate currentDate) {
+    public void processPerson(final IPerson person, final LocalDate currentDate) {
 
         incCountByOne();
 
         final IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
 
-        ChildrenInYearOption option;
+        Boolean option;
 
         if (activePartnership == null) {
-            option = ChildrenInYearOption.NO;
+            option = false;
         } else {
-            option = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, currentDate.getYearDate()) == 0 ?
-                    ChildrenInYearOption.NO : ChildrenInYearOption.YES;
+            option = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, Year.of(currentDate.getYear())) != 0;
         }
 
         try {
@@ -64,7 +64,7 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeInt extends IntNode<Int
     }
 
     @Override
-    public Node<ChildrenInYearOption, ?, Integer, ?> makeChildInstance(final ChildrenInYearOption childOption, final Integer initCount) {
+    public Node<Boolean, ?, Integer, ?> makeChildInstance(final Boolean childOption, final Integer initCount) {
         return new ChildrenInYearNodeInt(childOption, this, initCount);
     }
 }

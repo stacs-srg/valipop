@@ -14,20 +14,16 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.exceptions;
+package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class InvalidTimeUnit extends IllegalArgumentException {
+public class InvalidRangeException extends IllegalArgumentException {
 
     String message;
 
-    public InvalidTimeUnit(String message) {
+    public InvalidRangeException(String message) {
         this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }

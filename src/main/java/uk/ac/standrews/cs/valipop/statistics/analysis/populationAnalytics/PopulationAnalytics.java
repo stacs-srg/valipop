@@ -21,9 +21,9 @@ import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.io.PrintStream;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -56,7 +56,7 @@ public class PopulationAnalytics {
 
     private void printDeathDate(final IPerson person) {
 
-        final ValipopDate death_date = person.getDeathDate();
+        final LocalDate death_date = person.getDeathDate();
         if (death_date != null) {
             out.print(death_date.toString());
         }
@@ -158,7 +158,7 @@ public class PopulationAnalytics {
                 final IPerson partner = partnership.getPartnerOf(person);
                 out.println("\tPartner born: " + partner.getBirthDate().toString());
 
-                final ValipopDate marriage_date = partnership.getPartnershipDate();
+                final LocalDate marriage_date = partnership.getPartnershipDate();
                 if (marriage_date != null) {
                     out.println("\tMarriage on " + marriage_date.toString());
                 }

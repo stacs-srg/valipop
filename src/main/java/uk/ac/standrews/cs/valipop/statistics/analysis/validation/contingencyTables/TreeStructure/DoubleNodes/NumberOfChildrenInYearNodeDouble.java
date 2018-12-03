@@ -23,13 +23,12 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -38,7 +37,7 @@ import java.util.Collection;
  */
 public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, IntegerRange> implements ControlSelfNode, ControlChildrenNode, RunnableNode {
 
-    Collection<IPerson> people = new ArrayList<>();
+    private Collection<IPerson> people = new ArrayList<>();
 
     public NumberOfChildrenInYearNodeDouble(Integer option, ChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
@@ -59,17 +58,15 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
         people.add(person);
 
         incCountByOne();
 
-        int prevChildren = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
+        int prevChildren = ((PreviousNumberOfChildrenInPartnershipNodeDouble) getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
 
-        int childrenThisYear = ((NumberOfChildrenInYearNodeDouble)
-                getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
+        int childrenThisYear = ((NumberOfChildrenInYearNodeDouble) getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
         int ncip = prevChildren + childrenThisYear;
         IntegerRange range = resolveToChildRange(ncip);
 
@@ -77,8 +74,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
             getChild(range).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
 
-            addChild(new NumberOfChildrenInPartnershipNodeDouble(range, this, 0.0, true))
-                    .processPerson(person, currentDate);
+            addChild(new NumberOfChildrenInPartnershipNodeDouble(range, this, 0.0, true)).processPerson(person, currentDate);
         }
     }
 
@@ -92,18 +88,19 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
 
         // Should we be restricting this so much?
         if (getCount() > CTtree.NODE_MIN_COUNT && getOption() != 0) {
-            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-            ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+            Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+            int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+
+            Year currentDate = getYearAtAge(yob, age);
 
             SourceNodeDouble sN = (SourceNodeDouble) getAncestor(new SourceNodeDouble());
 
             YOBNodeDouble yobN;
             try {
-                yobN = (YOBNodeDouble) sN.getChild(currentDate.getYearDate());
+                yobN = (YOBNodeDouble) sN.getChild(currentDate);
             } catch (ChildNotFoundException e) {
-                yobN = (YOBNodeDouble) sN.addChild(currentDate.getYearDate());
+                yobN = (YOBNodeDouble) sN.addChild(currentDate);
             }
 
             double sexRatio = getInputStats().getMaleProportionOfBirths(currentDate);
@@ -139,14 +136,12 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
             setCount(getParent().getCount());
         } else {
 
-            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+            Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+            int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-            ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+            LocalDate currentDate = getDateAtAge(yob, age);
 
-            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                    .getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(),
-                            new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate), null);
+            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(), Period.ofYears(1), currentDate), null);
 
             LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 
@@ -164,8 +159,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     @Override
     public void makeChildren() {
 
-        int numberOfPrevChildInPartnership = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
+        int numberOfPrevChildInPartnership = ((PreviousNumberOfChildrenInPartnershipNodeDouble) getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
         int childrenInYear = getOption();
 
         int numberOfChildInPartnership = numberOfPrevChildInPartnership + childrenInYear;
@@ -188,10 +182,10 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
             }
         }
 
-        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+        Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        Year currentDate = getYearAtAge(yob, age);
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 

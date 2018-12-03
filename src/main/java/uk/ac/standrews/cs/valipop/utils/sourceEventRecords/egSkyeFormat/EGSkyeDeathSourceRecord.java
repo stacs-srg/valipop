@@ -7,8 +7,9 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
 
@@ -21,8 +22,8 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
 
     private static Random rng = new Random();
 
-    protected ExactDate deathDate;
-    protected ExactDate registrationDate;
+    protected LocalDate deathDate;
+    protected LocalDate registrationDate;
     protected String mothersOccupation;
     protected String marriageIDs;
 
@@ -30,7 +31,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
 
         super(person, population);
 
-        deathDate = new ExactDate(person.getDeathDate());
+        deathDate = person.getDeathDate();
 
         if (person.getParents() != null) {
 
@@ -52,7 +53,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
         }
 
         int registrationDay = rng.nextInt(9);
-        registrationDate = deathDate.advanceTime(registrationDay);
+        registrationDate = deathDate.plus(registrationDay, ChronoUnit.DAYS);
 
         setMaritalStatus(identifyMaritalStatus(person));
         String[] spousesInfo = identifyNameAndOccupationOfSpouses(person);
@@ -92,7 +93,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
         }
     }
 
-    public String[] identifyNameAndOccupationOfSpouses(IPerson deceased) {
+    private String[] identifyNameAndOccupationOfSpouses(IPerson deceased) {
 
         String[] ret = new String[3];
 
@@ -112,9 +113,9 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
                 occupations.append(spousesOccupation);
                 marIDs.append(partnership.getId());
             } else {
-                names.append("+" + spousesName);
-                occupations.append("+" + spousesOccupation);
-                marIDs.append("+" + partnership.getId());
+                names.append("+").append(spousesName);
+                occupations.append("+").append(spousesOccupation);
+                marIDs.append("+").append(partnership.getId());
             }
         }
 
@@ -135,13 +136,13 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
                 "", "", "", "", "", "", "", "",
                 "", "", "", forename, surname, getOccupation(),
                 getMaritalStatus(), sex, getSpousesNames(), getSpousesOccupations(), deathDate.toString(),
-                deathDate.getDay(), deathDate.getMonth(), deathDate.getYear(),
+                deathDate.getDayOfMonth(), deathDate.getMonth(), deathDate.getYear(),
                 "", "", getDeathAge(), getDeathAge(), fathers_forename,
                 fathers_surname, fathers_occupation, getFatherDeceased(), mothers_forename,
                 mothers_maiden_surname, mothersOccupation, getMotherDeceased(), getDeathCauseA(),
                 "", "", "", "",
                 "", "", "", "",
-                registrationDate.getDay(), registrationDate.getMonth(), registrationDate.getYear(), "SYNTHETIC DATA PRODUCED USING VALIPOP", "", "", "", "", uid,
+                registrationDate.getDayOfMonth(), registrationDate.getMonth(), registrationDate.getYear(), "SYNTHETIC DATA PRODUCED USING VALIPOP", "", "", "", "", uid,
                 "", "", marriageIDs);
 
         return builder.toString();

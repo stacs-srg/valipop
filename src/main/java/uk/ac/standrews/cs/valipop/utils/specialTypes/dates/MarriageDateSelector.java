@@ -1,10 +1,11 @@
-package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection;
+package uk.ac.standrews.cs.valipop.utils.specialTypes.dates;
 
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
+
+import java.time.LocalDate;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -23,9 +24,9 @@ public class MarriageDateSelector extends DateSelector {
         distribution = new PoissonDistribution(random, poissonM - 0.5, PoissonDistribution.DEFAULT_EPSILON, PoissonDistribution.DEFAULT_MAX_ITERATIONS);
     }
 
-    public ExactDate selectRandomDate(ValipopDate earliestDate, ValipopDate latestDate) {
+    public LocalDate selectRandomDate(LocalDate earliestDate, LocalDate latestDate) {
 
-        int daysInWindow = DateUtils.differenceInDays(earliestDate, latestDate);
+        int daysInWindow = (int) DAYS.between(earliestDate, latestDate);
 
         double chosenYear = distribution.sample() * averageYearsFromMarriageToChild / poissonM;
         double dayAdjust = random.nextInt((int) (Math.floor(daysInYear * (averageYearsFromMarriageToChild / poissonM))));
@@ -38,6 +39,6 @@ public class MarriageDateSelector extends DateSelector {
             chosenDay = random.nextInt(daysInWindow);
         }
 
-        return DateUtils.calculateExactDate(latestDate, -1 * chosenDay);
+        return latestDate.minus(chosenDay, DAYS);
     }
 }

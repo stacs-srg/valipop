@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.export.gedcom;
 
-import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.export.AbstractFilePopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
@@ -24,7 +23,8 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -66,6 +66,8 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
     private static final String OCCUPATION_TAG = "OCCU";
     private static final String FAMILY_AS_SPOUSE_TAG = "FAMS";
     private static final String FAMILY_AS_CHILD_TAG = "FAMC";
+
+    private static final DateTimeFormatter FORMAT =  DateTimeFormatter.ofPattern("dd MM yyyy");
 
     private int level = 0;
 
@@ -176,7 +178,7 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
 
     private void writeBirth(final IPerson person) {
 
-        final Date birth_date = person.getBirthDate().getDate();
+        final LocalDate birth_date = person.getBirthDate();
         if (birth_date != null) {
 
             write(BIRTH_TAG);
@@ -192,7 +194,7 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
     @SuppressWarnings("FeatureEnvy")
     private void writeDeath(final IPerson person) {
 
-        final Date death_date = person.getDeathDate().getDate();
+        final LocalDate death_date = person.getDeathDate();
         if (death_date != null) {
 
             write(DEATH_TAG);
@@ -210,7 +212,7 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
 
         if (partnership.getMarriageDate() != null) {
 
-            final Date marriage_date = partnership.getMarriageDate().getDate();
+            final LocalDate marriage_date = partnership.getMarriageDate();
 
             write(MARRIAGE_TAG);
             incrementLevel();
@@ -222,9 +224,9 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
         }
     }
 
-    private void writeDate(final Date date) {
+    private void writeDate(final LocalDate date) {
 
-        write(DATE_TAG, DateManipulation.formatDate(date));
+        write(DATE_TAG, date.format(FORMAT));
     }
 
     private void writePlace(final String place) {

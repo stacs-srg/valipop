@@ -22,17 +22,14 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.*;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.DeathStatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,10 +39,9 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.population.Populatio
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> implements ControlSelfNode, RunnableNode, ControlChildrenNode {
+public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements ControlSelfNode, RunnableNode, ControlChildrenNode {
 
-
-    public DiedNodeDouble(DiedOption option, AgeNodeDouble parentNode, boolean init) {
+    public DiedNodeDouble(Boolean option, AgeNodeDouble parentNode, boolean init) {
         super(option, parentNode);
 
         if (!init) {
@@ -55,7 +51,6 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
             if (age == 0) {
                 makeChildren();
             }
-
         }
     }
 
@@ -66,13 +61,12 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
     @Override
     public void advanceCount() {
 
-        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+        Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        Year currentDate = getYearAtAge(yob, age);
 
-        if (getOption() == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && getCount() > CTtree.NODE_MIN_COUNT) {
-
+        if (!getOption() && currentDate.isBefore(Year.of(getEndDate().getYear())) && getCount() > CTtree.NODE_MIN_COUNT) {
 
             SexNodeDouble sN = (SexNodeDouble) getAncestor(new SexNodeDouble());
             IntegerRange ageR = new IntegerRange(age + 1);
@@ -88,20 +82,19 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
     @Override
     public void calcCount() {
 
-        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+        Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        LocalDate currentDate = getDateAtAge(yob, age);
 
         double forNPeople = getParent().getCount();
-        CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+        Period timePeriod = Period.ofYears(1);
 
         SexOption sexOption = (SexOption) getAncestor(new SexNodeDouble()).getOption();
 
-        SingleDeterminedCount rDC = (SingleDeterminedCount) getInputStats()
-                .getDeterminedCount(new DeathStatsKey(age, forNPeople, timePeriod, currentDate, sexOption), null);
+        SingleDeterminedCount rDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(new DeathStatsKey(age, forNPeople, timePeriod, currentDate, sexOption), null);
 
-        if (getOption() == DiedOption.YES) {
+        if (getOption()) {
             setCount(rDC.getRawUncorrectedCount());
         } else {
             setCount(forNPeople - rDC.getRawUncorrectedCount());
@@ -111,12 +104,12 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
         incCountByOne();
 
         if (person.getSex() == SexOption.FEMALE) {
-            List<IPartnership> partnershipsInYear = new ArrayList<>(getPartnershipsActiveInYear(person, currentDate.getYearDate()));
+            List<IPartnership> partnershipsInYear = new ArrayList<>(getPartnershipsActiveInYear(person, Year.of(currentDate.getYear())));
 
             if (partnershipsInYear.size() == 0) {
                 IntegerRange range = resolveToChildRange(0);
@@ -125,11 +118,12 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
                 } catch (ChildNotFoundException e) {
                     addChild(range).processPerson(person, currentDate);
                 }
-            }
-            else if (partnershipsInYear.size() == 1) {
+            } else if (partnershipsInYear.size() == 1) {
+
                 IPartnership partnership = partnershipsInYear.remove(0);
                 int numberOfChildren = partnership.getChildren().size();
                 IntegerRange range = resolveToChildRange(numberOfChildren);
+
                 try {
                     getChild(range).processPerson(person, currentDate);
                 } catch (ChildNotFoundException e) {
@@ -158,7 +152,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
         if (sex == SexOption.FEMALE) {
 
-            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+            Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
 
             Collection<IntegerRange> ranges = getInputStats().getOrderedBirthRates(yob).getColumnLabels();
 
@@ -168,11 +162,9 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
                     addChild(pncip);
 
-                    NumberOfPreviousChildrenInAnyPartnershipNodeDouble npciap =
-                            (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.makeChildInstance(new IntegerRange(0), getCount());
+                    NumberOfPreviousChildrenInAnyPartnershipNodeDouble npciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.makeChildInstance(new IntegerRange(0), getCount());
 
                     pncip.addChild(npciap);
-
                     addDelayedTask(npciap);
 
                     break;
@@ -190,10 +182,10 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
             }
         }
 
-        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+        Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        Year currentDate = getYearAtAge(yob, age);
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 

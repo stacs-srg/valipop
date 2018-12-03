@@ -17,15 +17,13 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
-import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +89,7 @@ import java.util.List;
  */
 public class MarriageSourceRecord extends SourceRecord {
 
-    private DateRecord marriage_date;
+    private LocalDate marriage_date;
 
     private String denomination;
 
@@ -137,28 +135,22 @@ public class MarriageSourceRecord extends SourceRecord {
 
     public MarriageSourceRecord(final IPartnership partnership, final IPopulation population) {
 
-        marriage_date = new DateRecord();
+        marriage_date = partnership.getMarriageDate();
 
         setUid(String.valueOf(partnership.getId()));
 
         IPerson bride = partnership.getFemalePartner();
         IPerson groom = partnership.getMalePartner();
 
-        final java.util.Date start_date = partnership.getMarriageDate().getDate();
-
-        setMarriageDay(String.valueOf(DateManipulation.dateToDay(start_date)));
-        setMarriageMonth(String.valueOf(DateManipulation.dateToMonth(start_date)));
-        setMarriageYear(String.valueOf(DateManipulation.dateToYear(start_date)));
-
         setGroomForename(groom.getFirstName());
         setGroomSurname(groom.getSurname());
         setGroomOccupation(groom.getOccupation());
-        setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate().getDate(), start_date)));
+        setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate(), marriage_date)));
 
         setBrideForename(bride.getFirstName());
         setBrideSurname(bride.getSurname());
         setBrideOccupation(bride.getOccupation());
-        setBrideAgeOrDateOfBirth(String.valueOf(fullYearsBetween(bride.getBirthDate().getDate(), start_date)));
+        setBrideAgeOrDateOfBirth(String.valueOf(fullYearsBetween(bride.getBirthDate(), marriage_date)));
 
         final IPartnership groom_parents_partnership = groom.getParents();
         if (groom_parents_partnership != null) {
@@ -189,12 +181,12 @@ public class MarriageSourceRecord extends SourceRecord {
         }
     }
 
-    private List<IPartnership> getPartnershipsBeforeDate(IPerson person, ValipopDate date) {
+    private List<IPartnership> getPartnershipsBeforeDate(IPerson person, LocalDate date) {
 
         List<IPartnership> partnershipsBeforeDate = new ArrayList<>();
 
         for (IPartnership partnership : person.getPartnerships()) {
-            if (DateUtils.dateBefore(partnership.getPartnershipDate(), date)) {
+            if (partnership.getPartnershipDate().isBefore(date)) {
                 partnershipsBeforeDate.add(partnership);
             }
         }
@@ -202,7 +194,7 @@ public class MarriageSourceRecord extends SourceRecord {
         return partnershipsBeforeDate;
     }
 
-    public String identifyMaritalStatus(IPerson spouse, ValipopDate marriageDate) {
+    public String identifyMaritalStatus(IPerson spouse, LocalDate marriageDate) {
 
         List<IPartnership> partnerships = getPartnershipsBeforeDate(spouse, marriageDate);
 
@@ -218,7 +210,7 @@ public class MarriageSourceRecord extends SourceRecord {
 
             if (lastPartnership.getSeparationDate(new JDKRandomGenerator()) == null) {
                 // not separated from last partner
-                if (PopulationNavigation.aliveOnDate(lastPartnership.getPartnerOf(spouse),marriageDate)) {
+                if (PopulationNavigation.aliveOnDate(lastPartnership.getPartnerOf(spouse), marriageDate)) {
                     // last spouse alive on death date of deceased
                     return "M-ERROR?";
                 } else {
@@ -232,52 +224,12 @@ public class MarriageSourceRecord extends SourceRecord {
         }
     }
 
-    public String getMarriageDay() {
-        return marriage_date.getDay();
-    }
-
-    public void setMarriageDay(final String marriage_day) {
-        marriage_date.setDay(marriage_day);
-    }
-
-    public String getMarriageMonth() {
-        return marriage_date.getMonth();
-    }
-
-    public void setMarriageMonth(final String marriage_month) {
-        marriage_date.setMonth(marriage_month);
-    }
-
-    public String getMarriageYear() {
-        return marriage_date.getYear();
-    }
-
-    public void setMarriageYear(final String marriage_year) {
-        marriage_date.setYear(marriage_year);
-    }
-
-    public String getDenomination() {
-        return denomination;
-    }
-
-    public void setDenomination(final String denomination) {
-        this.denomination = denomination;
-    }
-
     public String getGroomForename() {
         return groom_forename;
     }
 
     public void setGroomForename(final String groom_forename) {
         this.groom_forename = groom_forename;
-    }
-
-    public String getGroomForenameChanged() {
-        return groom_forename_changed;
-    }
-
-    public void setGroomForenameChanged(final String groom_forename_changed) {
-        this.groom_forename_changed = groom_forename_changed;
     }
 
     public String getGroomSurname() {
@@ -288,29 +240,10 @@ public class MarriageSourceRecord extends SourceRecord {
         this.groom_surname = groom_surname;
     }
 
-    public String getGroomSurnameChanged() {
-        return groom_surname_changed;
-    }
-
-    public void setGroomSurnameChanged(final String groom_surname_changed) {
-        this.groom_surname_changed = groom_surname_changed;
-    }
-
-    public String getGroomDidNotSign() {
-        return groom_did_not_sign;
-    }
-
-    public void setGroomDidNotSign(final String groom_did_not_sign) {
-        this.groom_did_not_sign = groom_did_not_sign;
-    }
-
     public String getGroomAddress() {
         return groom_address;
     }
 
-    public void setGroomAddress(final String groom_address) {
-        this.groom_address = groom_address;
-    }
 
     public String getGroomAgeOrDateOfBirth() {
         return groom_age_or_date_of_birth;
@@ -330,10 +263,6 @@ public class MarriageSourceRecord extends SourceRecord {
 
     public String getGroomMaritalStatus() {
         return groom_marital_status;
-    }
-
-    public void setGroomMaritalStatus(final String groom_marital_status) {
-        this.groom_marital_status = groom_marital_status;
     }
 
     public String getGroomFathersForename() {
@@ -356,10 +285,6 @@ public class MarriageSourceRecord extends SourceRecord {
         return groom_father_deceased;
     }
 
-    public void setGroomFatherDeceased(final String groom_father_deceased) {
-        this.groom_father_deceased = groom_father_deceased;
-    }
-
     public String getGroomMothersForename() {
         return groom_mothers_forename;
     }
@@ -380,10 +305,6 @@ public class MarriageSourceRecord extends SourceRecord {
         return groom_mother_deceased;
     }
 
-    public void setGroomMotherDeceased(final String groom_mother_deceased) {
-        this.groom_mother_deceased = groom_mother_deceased;
-    }
-
     public String getGroomFathersOccupation() {
         return groom_fathers_occupation;
     }
@@ -400,14 +321,6 @@ public class MarriageSourceRecord extends SourceRecord {
         this.bride_forename = bride_forename;
     }
 
-    public String getBrideForenameChanged() {
-        return bride_forename_changed;
-    }
-
-    public void setBrideForenameChanged(final String bride_forename_changed) {
-        this.bride_forename_changed = bride_forename_changed;
-    }
-
     public String getBrideSurname() {
         return bride_surname;
     }
@@ -416,28 +329,8 @@ public class MarriageSourceRecord extends SourceRecord {
         this.bride_surname = bride_surname;
     }
 
-    public String getBrideSurnameChanged() {
-        return bride_surname_changed;
-    }
-
-    public void setBrideSurnameChanged(final String bride_surname_changed) {
-        this.bride_surname_changed = bride_surname_changed;
-    }
-
-    public String getBrideDidNotSign() {
-        return bride_did_not_sign;
-    }
-
-    public void setBrideDidNotSign(final String bride_did_not_sign) {
-        this.bride_did_not_sign = bride_did_not_sign;
-    }
-
     public String getBrideAddress() {
         return bride_address;
-    }
-
-    public void setBrideAddress(final String bride_address) {
-        this.bride_address = bride_address;
     }
 
     public String getBrideAgeOrDateOfBirth() {
@@ -460,10 +353,6 @@ public class MarriageSourceRecord extends SourceRecord {
         return bride_marital_status;
     }
 
-    public void setBrideMaritalStatus(final String bride_marital_status) {
-        this.bride_marital_status = bride_marital_status;
-    }
-
     public String getBrideFathersForename() {
         return bride_fathers_forename;
     }
@@ -482,10 +371,6 @@ public class MarriageSourceRecord extends SourceRecord {
 
     public String getBrideFatherDeceased() {
         return bride_father_deceased;
-    }
-
-    public void setBrideFatherDeceased(final String bride_father_deceased) {
-        this.bride_father_deceased = bride_father_deceased;
     }
 
     public String getBrideMothersForename() {
@@ -508,9 +393,6 @@ public class MarriageSourceRecord extends SourceRecord {
         return bride_mother_deceased;
     }
 
-    public void setBrideMotherDeceased(final String bride_mother_deceased) {
-        this.bride_mother_deceased = bride_mother_deceased;
-    }
 
     public String getBrideFatherOccupation() {
         return bride_father_occupation;
@@ -528,7 +410,7 @@ public class MarriageSourceRecord extends SourceRecord {
         append(builder, uid, groom_surname, groom_forename, bride_surname, bride_forename, registration_year,
                 registration_district_number, registration_district_suffix, entry, marriage_date.getYear(),
                 groom_surname_changed, groom_forename_changed, bride_surname_changed, bride_forename_changed,
-                groom_did_not_sign, bride_did_not_sign, marriage_date.getDay(), marriage_date.getMonth(), denomination,
+                groom_did_not_sign, bride_did_not_sign, marriage_date.getDayOfMonth(), marriage_date.getMonth(), denomination,
                 groom_address, groom_age_or_date_of_birth, groom_occupation, groom_marital_status, bride_address,
                 bride_age_or_date_of_birth, bride_occupation, bride_marital_status, groom_fathers_forename,
                 groom_fathers_surname, groom_father_deceased, groom_mothers_forename, groom_mothers_maiden_surname,

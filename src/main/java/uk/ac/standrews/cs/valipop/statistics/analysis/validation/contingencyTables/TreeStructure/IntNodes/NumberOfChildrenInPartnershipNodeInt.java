@@ -17,14 +17,16 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+
+import java.time.LocalDate;
+import java.time.Year;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -36,12 +38,12 @@ public class NumberOfChildrenInPartnershipNodeInt extends IntNode<IntegerRange, 
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
         incCountByOne();
 
         IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
 
-        SeparationOption option = PersonCharacteristicsIdentifier.toSeparate(activePartnership, currentDate.getYearDate());
+        SeparationOption option = PersonCharacteristicsIdentifier.toSeparate(activePartnership, Year.of(currentDate.getYear()));
 
         try {
             getChild(option).processPerson(person, currentDate);

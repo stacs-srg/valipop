@@ -19,10 +19,10 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 
 import java.io.PrintStream;
+import java.time.LocalDate;
+import java.time.Period;
 
 /**
  * An analytic class to analyse the distribution of deaths.
@@ -71,12 +71,12 @@ public class DeathAnalytics {
 
         for (final IPerson person : population.getPeople()) {
 
-            final ValipopDate death_date = person.getDeathDate();
+            final LocalDate death_date = person.getDeathDate();
 
             if (death_date != null) {
 
-                final ValipopDate birth_date = person.getBirthDate();
-                final int age_at_death_in_years = DateUtils.differenceInYears(birth_date, death_date).getCount();
+                final LocalDate birth_date = person.getBirthDate();
+                final int age_at_death_in_years = Period.between(birth_date, death_date).getYears();
                 if (age_at_death_in_years >= 0 && age_at_death_in_years < age_at_death.length) {
                     age_at_death[age_at_death_in_years]++;
                 }

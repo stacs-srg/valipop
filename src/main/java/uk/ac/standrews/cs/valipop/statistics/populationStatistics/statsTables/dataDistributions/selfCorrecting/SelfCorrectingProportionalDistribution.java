@@ -17,18 +17,23 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
 
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.ValuesDoNotSumToWholeNumberException;
 
-
-import java.util.*;
+import java.time.Year;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -39,11 +44,12 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
     private Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> targetProportions;
     private Map<IntegerRange, LabelledValueSet<IntegerRange, Integer>> achievedCounts;
 
-    private YearDate year;
+    private Year year;
     private String sourcePopulation;
     private String sourceOrganisation;
 
-    public SelfCorrectingProportionalDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> targetProportions) {
+    public SelfCorrectingProportionalDistribution(Year year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> targetProportions) {
+
         this.year = year;
         this.sourceOrganisation = sourceOrganisation;
         this.sourcePopulation = sourcePopulation;
@@ -51,7 +57,7 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
 
         this.achievedCounts = new TreeMap<>();
 
-        for(Map.Entry<IntegerRange, LabelledValueSet<IntegerRange, Double>> iR : targetProportions.entrySet()) {
+        for (Map.Entry<IntegerRange, LabelledValueSet<IntegerRange, Double>> iR : targetProportions.entrySet()) {
             achievedCounts.put(iR.getKey(), new IntegerRangeToIntegerSet(iR.getValue().getLabels(), 0));
         }
     }
@@ -63,6 +69,7 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
         LabelledValueSet<IntegerRange, Integer> achievedCountsForAge;
         try {
             achievedCountsForAge = achievedCounts.get(resolveRowValue(age));
+
         } catch (InvalidRangeException e) {
             // If no stats in distribution for the given key then return a zero count object
             return new MultipleDeterminedCount(key,
@@ -70,49 +77,41 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
                     new IntegerRangeToDoubleSet(Collections.singleton(new IntegerRange(1)), 0.0),
                     new IntegerRangeToDoubleSet(Collections.singleton(new IntegerRange(1)), 0.0));
         }
+
         Integer sumOfAC = achievedCountsForAge.getSumOfValues();
         Double totalCount = sumOfAC + key.getForNPeople();
 
         double rf = 1;
-        if(config != null) {
-//            rf = 0.5;
+        if (config != null) {
             rf = config.getProportionalRecoveryFactor();
         }
 
         LabelledValueSet<IntegerRange, Double> rawFullCorrectionValues =
-                    targetProportions.get(resolveRowValue(age))
-                            .productOfValuesAndN(totalCount)
-                            .valuesSubtractValues(achievedCountsForAge);
+                targetProportions.get(resolveRowValue(age)).productOfValuesAndN(totalCount).valuesSubtractValues(achievedCountsForAge);
 
         LabelledValueSet<IntegerRange, Double> rawUncorrectedValues =
-                    targetProportions.get(resolveRowValue(age))
-                        .productOfValuesAndN(key.getForNPeople());
+                targetProportions.get(resolveRowValue(age)).productOfValuesAndN(key.getForNPeople());
 
         LabelledValueSet<IntegerRange, Double> fullCorrectionAdjustment =
-                    rawFullCorrectionValues
-                            .valuesSubtractValues(rawUncorrectedValues);
+                rawFullCorrectionValues.valuesSubtractValues(rawUncorrectedValues);
 
         LabelledValueSet<IntegerRange, Double> correctionAdjustment =
-                    fullCorrectionAdjustment
-                            .productOfValuesAndN(rf);
+                fullCorrectionAdjustment.productOfValuesAndN(rf);
 
         LabelledValueSet<IntegerRange, Double> rawCorrectedValues =
-                    rawUncorrectedValues.valuesPlusValues(correctionAdjustment);
+                rawUncorrectedValues.valuesPlusValues(correctionAdjustment);
 
         LabelledValueSet<IntegerRange, Integer> retValues;
         try {
-            retValues = new IntegerRangeToDoubleSet(rawCorrectedValues)
-                    .controlledRoundingMaintainingSum();
+            retValues = new IntegerRangeToDoubleSet(rawCorrectedValues).controlledRoundingMaintainingSum();
         } catch (ValuesDoNotSumToWholeNumberException e) {
             return new MultipleDeterminedCount(key, null, rawCorrectedValues, rawUncorrectedValues);
         }
 
-
         return new MultipleDeterminedCount(key, retValues, rawCorrectedValues, rawUncorrectedValues);
     }
 
-    public void returnAchievedCount(DeterminedCount<LabelledValueSet<IntegerRange, Integer>,
-            LabelledValueSet<IntegerRange, Double>> achievedCount) {
+    public void returnAchievedCount(DeterminedCount<LabelledValueSet<IntegerRange, Integer>, LabelledValueSet<IntegerRange, Double>> achievedCount) {
 
         int age = achievedCount.getKey().getYLabel();
         LabelledValueSet<IntegerRange, Integer> previousAchievedCountsForAge;
@@ -125,16 +124,13 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
 
         LabelledValueSet<IntegerRange, Integer> newAchievedCountsForAge = achievedCount.getFulfilledCount();
 
-        LabelledValueSet<IntegerRange, Integer> summedAchievedCountsForAge = previousAchievedCountsForAge
-                .valuesPlusValues(newAchievedCountsForAge).floorValues();
+        LabelledValueSet<IntegerRange, Integer> summedAchievedCountsForAge = previousAchievedCountsForAge.valuesPlusValues(newAchievedCountsForAge).floorValues();
 
         achievedCounts.replace(resolveRowValue(age), previousAchievedCountsForAge, summedAchievedCountsForAge);
-
     }
 
-
     @Override
-    public YearDate getYear() {
+    public Year getYear() {
         return year;
     }
 

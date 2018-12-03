@@ -23,12 +23,11 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.PartneringStatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
 import java.util.List;
 
 /**
@@ -39,7 +38,7 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
     public NewPartnerAgeNodeDouble(IntegerRange option, SeparationNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
 
-        if(!init) {
+        if (!init) {
             calcCount();
         }
     }
@@ -50,7 +49,7 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
         incCountByOne();
     }
 
@@ -62,30 +61,32 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
     @Override
     public void calcCount() {
 
-        if(getOption().getValue() == null) {
+        if (getOption().getValue() == null) {
             setCount(getParent().getCount());
         } else {
-            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+            
+            Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+            int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-            ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+            LocalDate currentDate = getDateAtAge(yob, age);
 
             double numberOfFemales = getParent().getCount();
-            CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+            Period timePeriod = Period.ofYears(1);
 
-            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                    .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
+            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
-            if(getOption().getValue() == null) {
+            if (getOption().getValue() == null) {
 
-                if(getParent().getCount() > 20) {
+                // TODO ???
+
+                if (getParent().getCount() > 20) {
                     System.out.print("");
                 }
 
                 setCount(getParent().getCount());
             } else {
 
-                if(mDC.getRawUncorrectedCount().get(getOption()) > 20) {
+                if (mDC.getRawUncorrectedCount().get(getOption()) > 20) {
                     System.out.print("");
                 }
 
@@ -96,7 +97,7 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
 
     public List<String> toStringAL() {
         List<String> s = getParent().toStringAL();
-        if(getOption() == null) {
+        if (getOption() == null) {
             s.add("na");
         } else {
             s.add(getOption().toString());
@@ -108,7 +109,7 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
     public CTRow<Double> toCTRow() {
         CTRow r = getParent().toCTRow();
 
-        if(r != null) {
+        if (r != null) {
             if (getOption() == null) {
                 r.setVariable(getVariableName(), "na");
             } else {

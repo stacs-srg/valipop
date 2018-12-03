@@ -3,10 +3,10 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -177,25 +177,25 @@ public class PopulationNavigation {
         return partners;
     }
 
-    public static boolean aliveOnDate(IPerson person, ValipopDate date) {
+    public static boolean aliveOnDate(IPerson person, LocalDate date) {
 
-        if (DateUtils.dateBeforeOrEqual(person.getBirthDate(), date)) {
+        if (!person.getBirthDate().isAfter(date)) {
 
-            ValipopDate deathDate = person.getDeathDate();
-            return deathDate == null || DateUtils.dateBefore(date, deathDate);
+            LocalDate deathDate = person.getDeathDate();
+            return deathDate == null || date.isBefore(deathDate);
         }
         return false;
     }
 
     public static IPerson getLastChild(IPerson person) {
 
-        ValipopDate latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
+        LocalDate latestChildBirthDate = LocalDate.MIN;
         IPerson child = null;
 
         for (IPartnership p : person.getPartnerships()) {
             for (IPerson c : p.getChildren()) {
 
-                if (DateUtils.dateBeforeOrEqual(latestChildBirthDate, c.getBirthDate())) {
+                if (!latestChildBirthDate.isAfter(c.getBirthDate())) {
                     latestChildBirthDate = c.getBirthDate();
                     child = c;
                 }
@@ -205,7 +205,7 @@ public class PopulationNavigation {
         return child;
     }
 
-    public static boolean lastPartnerDied(IPerson person, ValipopDate currentDate) {
+    public static boolean lastPartnerDied(IPerson person, LocalDate currentDate) {
 
         try {
             IPerson lastPartner = getLastChild(person).getParents().getPartnerOf(person);
@@ -216,52 +216,47 @@ public class PopulationNavigation {
         }
     }
 
-    public static int ageOnDate(IPerson person, ValipopDate currentDate) {
+    public static int ageOnDate(IPerson person, LocalDate currentDate) {
 
-        ValipopDate birthDate = person.getBirthDate();
-
-        if (birthDate.getDay() == 1 && birthDate.getMonth() == 1) {
-            int age = DateUtils.differenceInYears(birthDate, currentDate).getCount() - 1;
-            return age == -1 ? 0 : age;
-        } else {
-            return DateUtils.differenceInYears(birthDate, currentDate).getCount();
-        }
+        return Period.between(person.getBirthDate(), currentDate).getYears();
     }
 
     public static int numberOfChildrenInLatestPartnership(IPerson person) {
+
         return getLastChild(person).getParents().getChildren().size();
     }
 
-    public static boolean bornInYear(IPerson person, YearDate year) {
+    public static boolean bornInYear(IPerson person, Year year) {
 
-        ValipopDate birthDate = person.getBirthDate();
-        return birthDate != null && DateUtils.dateInYear(birthDate, year);
+        LocalDate birthDate = person.getBirthDate();
+        return birthDate != null && birthDate.getYear() == year.getValue();
     }
 
-    public static boolean diedInYear(IPerson person, YearDate year) {
+    public static boolean diedInYear(IPerson person, Year year) {
 
-        ValipopDate deathDate = person.getDeathDate();
-        return deathDate != null && DateUtils.dateInYear(deathDate, year);
+        LocalDate deathDate = person.getDeathDate();
+        return deathDate != null && deathDate.getYear() == year.getValue();
     }
 
-    public static boolean diedAfter(IPerson person, ValipopDate date) {
+    public static boolean diedAfter(IPerson person, LocalDate date) {
 
-        ValipopDate deathDate = person.getDeathDate();
-        return deathDate == null || DateUtils.dateBefore(date, deathDate);
+        LocalDate deathDate = person.getDeathDate();
+        return deathDate == null || deathDate.isAfter(date);
     }
 
-    public static Collection<IPartnership> getPartnershipsActiveInYear(IPerson person, YearDate year) {
+    public static Collection<IPartnership> getPartnershipsActiveInYear(IPerson person, Year year) {
 
         Collection<IPartnership> activePartnerships = new ArrayList<>();
 
         for (IPartnership partnership : person.getPartnerships()) {
-            ValipopDate startDate = partnership.getPartnershipDate();
 
-            if (DateUtils.dateInYear(startDate, year)) {
+            LocalDate startDate = partnership.getPartnershipDate();
+
+            if (startDate.getYear() == year.getValue()) {
                 activePartnerships.add(partnership);
             } else {
                 for (IPerson p : partnership.getChildren()) {
-                    if (DateUtils.dateInYear(p.getBirthDate(), year)) {
+                    if (p.getBirthDate().getYear() == year.getValue()) {
                         activePartnerships.add(partnership);
                         break;
                     }
@@ -274,11 +269,11 @@ public class PopulationNavigation {
 
     public static IPartnership getLastPartnership(IPerson person) {
 
-        ValipopDate latestPartnershipDate = new YearDate(Integer.MIN_VALUE);
+        LocalDate latestPartnershipDate = LocalDate.MIN;
         IPartnership partnership = null;
 
         for (IPartnership p : person.getPartnerships()) {
-            if (DateUtils.dateBefore(latestPartnershipDate, p.getPartnershipDate())) {
+            if (latestPartnershipDate.isBefore(p.getPartnershipDate())) {
                 latestPartnershipDate = p.getPartnershipDate();
                 partnership = p;
             }
@@ -286,13 +281,13 @@ public class PopulationNavigation {
         return partnership;
     }
 
-    public static Integer numberOfChildrenBirthedBeforeDate(IPerson person, YearDate y) {
+    public static Integer numberOfChildrenBirthedBeforeDate(IPerson person, LocalDate y) {
 
         int count = 0;
 
         for (IPartnership p : person.getPartnerships()) {
             for (IPerson c : p.getChildren()) {
-                if (DateUtils.dateBefore(c.getBirthDate(), y)) {
+                if (c.getBirthDate().isBefore(y)) {
                     count++;
                 }
             }
@@ -301,15 +296,15 @@ public class PopulationNavigation {
         return count;
     }
 
-    public static ValipopDate getDateOfNextPostSeparationEvent(IPerson person, ValipopDate separationDate) {
+    public static LocalDate getDateOfNextPostSeparationEvent(IPerson person, LocalDate separationDate) {
 
-        ValipopDate earliestDate = null;
+        LocalDate earliestDate = null;
 
         for (IPartnership partnership : person.getPartnerships()) {
-            ValipopDate date = partnership.getPartnershipDate();
-            if (DateUtils.dateBefore(separationDate, date)) {
+            LocalDate date = partnership.getPartnershipDate();
+            if (separationDate.isBefore(date)) {
 
-                if (earliestDate == null || DateUtils.dateBefore(date, earliestDate)) {
+                if (earliestDate == null || date.isBefore(earliestDate)) {
                     earliestDate = date;
                 }
             }
@@ -317,9 +312,9 @@ public class PopulationNavigation {
             date = partnership.getMarriageDate();
 
             if (date != null) {
-                if (DateUtils.dateBefore(separationDate, date)) {
+                if (separationDate.isBefore(date)) {
 
-                    if (earliestDate == null || DateUtils.dateBefore(date, earliestDate)) {
+                    if (earliestDate == null || date.isBefore(earliestDate)) {
                         earliestDate = date;
                     }
                 }

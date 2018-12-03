@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
@@ -27,12 +27,12 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.Stat
 public class MultipleDeterminedCount implements DeterminedCount<LabelledValueSet<IntegerRange, Integer>, LabelledValueSet<IntegerRange, Double>> {
 
     private StatsKey key;
-    LabelledValueSet<IntegerRange, Integer> determinedCount;
 
-    LabelledValueSet<IntegerRange, Integer> fufilledCount;
+    private LabelledValueSet<IntegerRange, Integer> determinedCount;
+    private LabelledValueSet<IntegerRange, Integer> fulfilledCount;
 
-    LabelledValueSet<IntegerRange, Double> rawCorrectedCount;
-    LabelledValueSet<IntegerRange, Double> rawUncorrectedCount;
+    private LabelledValueSet<IntegerRange, Double> rawCorrectedCount;
+    private LabelledValueSet<IntegerRange, Double> rawUncorrectedCount;
 
     public MultipleDeterminedCount(StatsKey key, LabelledValueSet<IntegerRange, Integer> determinedCount,
                                    LabelledValueSet<IntegerRange, Double> rawCorrectedCount,
@@ -52,7 +52,7 @@ public class MultipleDeterminedCount implements DeterminedCount<LabelledValueSet
     }
 
     public LabelledValueSet<IntegerRange, Integer> getFulfilledCount() {
-        return fufilledCount;
+        return fulfilledCount;
     }
 
     @Override
@@ -66,11 +66,10 @@ public class MultipleDeterminedCount implements DeterminedCount<LabelledValueSet
     }
 
     public void setFulfilledCount(LabelledValueSet<IntegerRange, Integer> fulfilledCount) {
-        this.fufilledCount = fulfilledCount;
+        this.fulfilledCount = fulfilledCount;
     }
 
     public LabelledValueSet<IntegerRange, Integer> getZeroedCountsTemplate() {
         return new IntegerRangeToIntegerSet(determinedCount.getLabels(), 0);
     }
-
 }

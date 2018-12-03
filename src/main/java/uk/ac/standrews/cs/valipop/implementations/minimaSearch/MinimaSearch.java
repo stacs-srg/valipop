@@ -1,23 +1,25 @@
 package uk.ac.standrews.cs.valipop.implementations.minimaSearch;
 
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
-import uk.ac.standrews.cs.valipop.implementations.*;
-import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.implementations.*;
+import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -29,39 +31,39 @@ public class MinimaSearch {
 
     static double initStep;
 
-    static double maxAbsFactor = 4;
+    private static double maxAbsFactor = 4;
 
-    static double topSearchBoundFactor = maxAbsFactor;
-    static double bottomSearchBoundFactor = -1 * maxAbsFactor;
+    private static double topSearchBoundFactor = maxAbsFactor;
+    private static double bottomSearchBoundFactor = -1 * maxAbsFactor;
 
-    static double hardLimitBottomBoundFactor = -1 * Double.MAX_VALUE;
+    private static double hardLimitBottomBoundFactor = -1 * Double.MAX_VALUE;
 
-    static int pointsInMinima = 3;
+    private static int pointsInMinima = 3;
 
-    static double minimumMeaningfulStep = 0.04;
-    static double minimaSize = 5;
-    static double intervalBoundV = 0.02;
+    private static double minimumMeaningfulStep = 0.04;
+    private static double minimaSize = 5;
+    private static double intervalBoundV = 0.02;
 
-    static Random rand = new Random();
+    private static Random rand = new Random();
 
-    static String results_save_location = "src/main/resources/valipop/results/";
+    private static String results_save_location = "src/main/resources/valipop/results/";
 
-    static CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
-    static AdvanceableDate tS = new YearDate(1691);
-    static AdvanceableDate t0 = new YearDate(1855);
-    static AdvanceableDate tE = new YearDate(2015);
-    static double set_up_br = 0.0133;
-    static double set_up_dr = 0.0122;
+    private static Period simulation_time_step = Period.ofYears(1);
+    private static LocalDate tS = LocalDate.of(1691,1,1);
+    private static LocalDate t0 = LocalDate.of(1855,1,1);
+    private static LocalDate tE = LocalDate.of(2015,1,1);
+    private static double set_up_br = 0.0133;
+    private static double set_up_dr = 0.0122;
 
-    static double rf = 0.5;
-    static double prf = 0.5;
-    static CompoundTimeUnit iw = new CompoundTimeUnit(10, TimeUnit.YEAR);
-    static int minBirthSpacing = 147;
+    private static double rf = 0.5;
+    private static double prf = 0.5;
+    private static Period iw = Period.ofYears(10);
+    private static int minBirthSpacing = 147;
 
-    static double bf = 0.0;
-    static double df = 0.0;
+    private static double bf = 0.0;
+    private static double df = 0.0;
 
-    static double nanAsemtote = 1E6;
+    private static double nanAsemtote = 1E6;
 
     public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException, InconsistentWeightException {
 
@@ -111,7 +113,6 @@ public class MinimaSearch {
                 int n = 0;
                 double totalV = 0.0;
 
-
                 for (; n < repeatRuns; n++) {
 
                     String startTime = FileUtils.getDateTime();
@@ -127,7 +128,7 @@ public class MinimaSearch {
                         model.runSimulation();
                         model.analyseAndOutputPopulation(false);
 
-                        Integer maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
+                        Integer maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
                         double v = getV(minimiseFor, maxBirthingAge, runPurpose, controlBy, model.getSummaryRow().getStartTime());
 
                         // Failed population run may get a NaN from the V calc
@@ -145,10 +146,8 @@ public class MinimaSearch {
                             ProgramTimer statsTimer = new ProgramTimer();
 
                             RCaller.generateAnalysisHTML(FileUtils.getRunPath().toString(),
-                                    model.getDesiredPopulationStatistics().getOrderedBirthRates(
-                                            new YearDate(0)).getLargestLabel().getValue(),
-                                    runPurpose + " - " + controlBy.toString() + ": "
-                                            + String.valueOf(getControllingFactor(controlBy)));
+                                    model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue(),
+                                    runPurpose + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy));
 
                             model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
                         }
@@ -158,7 +157,6 @@ public class MinimaSearch {
                     } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
 
                         handleRecoveryFromOutOfMemory(getControllingFactor(controlBy), model);
-
                         break;
                     }
                 }
@@ -184,7 +182,7 @@ public class MinimaSearch {
         }
     }
 
-    public static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy, String startTime) throws IOException, StatsException {
+    private static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy, String startTime) throws IOException, StatsException {
 
         switch (minimiseFor) {
 
@@ -216,7 +214,7 @@ public class MinimaSearch {
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
     }
 
-    public static double getControllingFactor(Control controlBy) {
+    static double getControllingFactor(Control controlBy) {
 
         switch (controlBy) {
 
@@ -230,7 +228,7 @@ public class MinimaSearch {
         throw new InvalidParameterException(controlBy.toString() + " did not resolve to a known parameter");
     }
 
-    public static void setControllingFactor(Control controlBy, double startFactor) {
+    static void setControllingFactor(Control controlBy, double startFactor) {
 
         switch (controlBy) {
 
@@ -243,7 +241,7 @@ public class MinimaSearch {
         }
     }
 
-    public static void handleRecoveryFromOutOfMemory(double factor, OBDModel model) {
+    private static void handleRecoveryFromOutOfMemory(double factor, OBDModel model) {
         hardLimitBottomBoundFactor = factor + 0.1;
         bottomSearchBoundFactor = hardLimitBottomBoundFactor;
 
@@ -352,7 +350,7 @@ public class MinimaSearch {
     }
 
     // returns factor of minima
-    public static FVPoint constitutesMinima(List<FVPoint> potentialMinimaSet) {
+    private static FVPoint constitutesMinima(List<FVPoint> potentialMinimaSet) {
 
         if (potentialMinimaSet.size() != pointsInMinima) {
             return null;
@@ -479,7 +477,7 @@ public class MinimaSearch {
         return selected;
     }
 
-    public static double getNextFactorValue() throws SpaceExploredException {
+    static double getNextFactorValue() throws SpaceExploredException {
 
         if (jumpingPhase) {
             double nextFactor = jumpOut();
@@ -580,9 +578,9 @@ public class MinimaSearch {
         return null;
     }
 
-    static LinkedList<FVPoint> points = new LinkedList<>();
+    private static LinkedList<FVPoint> points = new LinkedList<>();
 
-    public static void logFactortoV(double factor, double v) {
+    static void logFactortoV(double factor, double v) {
 
         points.addLast(new FVPoint(factor, v));
 

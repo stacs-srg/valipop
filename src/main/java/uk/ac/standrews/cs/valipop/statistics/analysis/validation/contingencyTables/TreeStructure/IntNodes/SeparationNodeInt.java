@@ -17,19 +17,19 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.PartneringStatsKey;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
 import java.util.Set;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.ageOnDate;
@@ -45,7 +45,7 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
 
     @SuppressWarnings("Duplicates")
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
         // TODO change this to resolve to the correct integer ranges
 
@@ -55,7 +55,7 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
 
         Integer newPartnerAge = null;
 
-        if (activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, currentDate.getYearDate())) {
+        if (activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, Year.of(currentDate.getYear()))) {
             IPerson partner = activePartnership.getPartnerOf(person);
             newPartnerAge = ageOnDate(partner, activePartnership.getPartnershipDate());
         }
@@ -92,8 +92,10 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
 
             // this accessing of the statistical code isn't to calculate new values - we just use it to get the age
             // ranges from the stats tables
-            Integer age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
-            if (age >= 50) { // TODO define as constant
+            int age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
+
+            // TODO clean up
+            if (age >= 50) {
 
                 System.out.println("Overage woman producing kids...");
                 System.out.println("BD: " + person.getBirthDate().toString());
@@ -108,10 +110,9 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
             }
 
             double numberOfFemales = getCount();
-            CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+            Period timePeriod = Period.ofYears(1);
 
-            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                    .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
+            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
             // getting the age range labels
             Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();

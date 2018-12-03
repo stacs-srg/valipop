@@ -16,36 +16,32 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+import java.time.Period;
+import java.time.Year;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class StatsKey {
 
-    private final Integer yLabel;
-    private final Integer xLabel;
-    private final Integer maxXLabel;
+    private final int yLabel;
+    private final int xLabel;
     private final double forNPeople;
-    private final CompoundTimeUnit consideredTimePeriod;
-    private final ValipopDate date;
+    private final Period consideredTimePeriod;
+    private final Year year;
 
-    public StatsKey(Integer yLabel, Integer xLabel, Integer maxXLabel, double forNPeople, CompoundTimeUnit consideredTimePeriod, ValipopDate date) {
+    public StatsKey(int yLabel, int xLabel, double forNPeople, Period consideredTimePeriod, Year year) {
+
         this.yLabel = yLabel;
         this.xLabel = xLabel;
-        this.maxXLabel = maxXLabel;
         this.forNPeople = forNPeople;
         this.consideredTimePeriod = consideredTimePeriod;
-        this.date = date;
+        this.year = year;
     }
 
-    public StatsKey(Integer yLabel, Integer xLabel, double forNPeople, CompoundTimeUnit consideredTimePeriod, ValipopDate date) {
-        this(yLabel, xLabel, null, forNPeople, consideredTimePeriod, date);
-    }
+    public StatsKey(int yLabel, double forNPeople, Period consideredTimePeriod, Year year) {
 
-    public StatsKey(Integer yLabel, double forNPeople, CompoundTimeUnit consideredTimePeriod, ValipopDate date) {
-        this(yLabel, null, null, forNPeople, consideredTimePeriod, date);
+        this(yLabel, 0, forNPeople, consideredTimePeriod, year);
     }
 
     public double getForNPeople() {
@@ -56,19 +52,15 @@ public class StatsKey {
         return xLabel;
     }
 
-    public Integer getMaxXLabel() {
-        return maxXLabel;
-    }
-
     public Integer getYLabel() {
         return yLabel;
     }
 
-    public CompoundTimeUnit getConsideredTimePeriod() {
+    public Period getConsideredTimePeriod() {
         return consideredTimePeriod;
     }
 
-    public ValipopDate getDate() {
-        return date;
+    public Year getYear() {
+        return year;
     }
 }

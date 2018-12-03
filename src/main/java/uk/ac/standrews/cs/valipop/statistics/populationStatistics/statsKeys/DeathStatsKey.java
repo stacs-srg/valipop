@@ -17,8 +17,10 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys;
 
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -27,8 +29,8 @@ public class DeathStatsKey extends StatsKey {
 
     private final SexOption sex;
 
-    public DeathStatsKey(Integer age, double forNPeople, CompoundTimeUnit consideredTimePeriod, ValipopDate currentDate, SexOption sex) {
-        super(age, forNPeople, consideredTimePeriod, currentDate);
+    public DeathStatsKey(Integer age, double forNPeople, Period consideredTimePeriod, LocalDate currentDate, SexOption sex) {
+        super(age, forNPeople, consideredTimePeriod, currentDate == null ? null : Year.of(currentDate.getYear()));
         this.sex = sex;
     }
 

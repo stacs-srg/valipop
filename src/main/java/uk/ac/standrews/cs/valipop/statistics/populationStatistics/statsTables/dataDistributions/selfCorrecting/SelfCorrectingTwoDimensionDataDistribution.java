@@ -17,16 +17,15 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
 
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.InputMetaData;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.InputMetaData;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
 
-
+import java.time.Year;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -39,12 +38,12 @@ public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData
     // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
     private Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data;
 
-    private YearDate year;
+    private Year year;
     private String sourcePopulation;
 
     private String sourceOrganisation;
 
-    public SelfCorrectingTwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> tableData) {
+    public SelfCorrectingTwoDimensionDataDistribution(Year year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> tableData) {
         this.year = year;
         this.sourceOrganisation = sourceOrganisation;
         this.sourcePopulation = sourcePopulation;
@@ -74,7 +73,7 @@ public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData
     }
 
     @Override
-    public YearDate getYear() {
+    public Year getYear() {
         return year;
     }
 

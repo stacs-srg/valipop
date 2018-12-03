@@ -21,14 +21,12 @@ import org.gedcom4j.model.Family;
 import org.gedcom4j.model.FamilyEvent;
 import org.gedcom4j.model.FamilyEventType;
 import org.gedcom4j.model.Individual;
-import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
 import javax.annotation.Nonnull;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,7 +41,7 @@ public class GEDCOMPartnership implements IPartnership {
     protected int id;
     private int male_partner_id;
     private int female_partner_id;
-    protected java.util.Date marriage_date;
+    protected LocalDate marriage_date;
     private String marriage_place;
     protected List<Integer> child_ids;
 
@@ -100,7 +98,7 @@ public class GEDCOMPartnership implements IPartnership {
         for (final FamilyEvent event : family.events) {
 
             if (event.type == FamilyEventType.MARRIAGE) {
-                marriage_date = DateManipulation.parseDate(event.date.toString());
+                marriage_date = LocalDate.parse(event.date.toString());
                 marriage_place = event.place.placeName;
             }
         }
@@ -130,29 +128,29 @@ public class GEDCOMPartnership implements IPartnership {
         return null;
     }
 
-    public ExactDate getPartnershipDate() {
+    public LocalDate getPartnershipDate() {
         return null;
     }
 
-    public ExactDate getSeparationDate(RandomGenerator randomGenerator) {
+    public LocalDate getSeparationDate(RandomGenerator randomGenerator) {
         return null;
     }
 
-    public ExactDate getEarliestPossibleSeparationDate() {
+    public LocalDate getEarliestPossibleSeparationDate() {
         return null;
     }
 
     @Override
-    public void setEarliestPossibleSeparationDate(ValipopDate date) {
+    public void setEarliestPossibleSeparationDate(LocalDate date) {
 
     }
 
-    public void setMarriageDate(ValipopDate marriageDate) {
+    public void setMarriageDate(LocalDate marriageDate) {
 
     }
 
     @Override
-    public ValipopDate getMarriageDate() {
+    public LocalDate getMarriageDate() {
         return null;
     }
 
@@ -162,7 +160,7 @@ public class GEDCOMPartnership implements IPartnership {
     }
 
     @Override
-    public void setPartnershipDate(ValipopDate startDate) {
+    public void setPartnershipDate(LocalDate startDate) {
 
     }
 }

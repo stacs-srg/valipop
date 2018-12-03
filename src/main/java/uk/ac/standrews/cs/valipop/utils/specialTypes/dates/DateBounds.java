@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel;
+package uk.ac.standrews.cs.valipop.utils.specialTypes.dates;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
+import java.time.LocalDate;
 
 /**
  * The DateBounds interface provides high level common information about the information
@@ -31,24 +31,24 @@ public interface DateBounds {
      *
      * @return the earliest day
      */
-    ValipopDate getStartDate();
+    LocalDate getStartDate();
 
     /**
      * Gets latest day that this Data Store is required to provide information regarding.
      *
      * @return the latest day
      */
-    ValipopDate getEndDate();
+    LocalDate getEndDate();
 
     /**
      * Sets earliest day that this Data Store is required to provide information regarding.
      *
      */
-    void setStartDate(AdvanceableDate start);
+    void setStartDate(LocalDate start);
 
     /**
      * Sets latest day that this Data Store is required to provide information regarding.
      *
      */
-    void setEndDate(ValipopDate end);
+    void setEndDate(LocalDate end);
 }

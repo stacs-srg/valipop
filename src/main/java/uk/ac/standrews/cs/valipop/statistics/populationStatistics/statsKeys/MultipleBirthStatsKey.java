@@ -16,23 +16,20 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class MultipleBirthStatsKey extends StatsKey {
 
-    public MultipleBirthStatsKey(Integer age, double forNumberOfChildren, CompoundTimeUnit consideredTimePeriod, ValipopDate currentDate) {
-        super(age, forNumberOfChildren, consideredTimePeriod, currentDate);
+    public MultipleBirthStatsKey(int age, double forNumberOfChildren, Period consideredTimePeriod, LocalDate currentDate) {
+        super(age, forNumberOfChildren, consideredTimePeriod, Year.of(currentDate.getYear()));
     }
 
-    public Integer getAge() {
+    public int getAge() {
         return getYLabel();
-    }
-
-    public Double getForNumberOfChildren() {
-        return getForNPeople();
     }
 }

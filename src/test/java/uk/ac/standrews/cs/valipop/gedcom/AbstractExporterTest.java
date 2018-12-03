@@ -19,18 +19,17 @@ package uk.ac.standrews.cs.valipop.gedcom;
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -85,12 +84,13 @@ public abstract class AbstractExporterTest {
         String startTime = FileUtils.getDateTime();
         String purpose = "DETERMINISTIC-TESTING";
         OBDModel.setUpFileStructureAndLogs(purpose, startTime, "results");
-        Config config = new Config(new MonthDate(1, 1599), new MonthDate(1, 1855),
-                new MonthDate(1, 2015), population_size, 0.0133,
-                0.0122, new CompoundTimeUnit(1, TimeUnit.YEAR), "src/test/resources/valipop/test-pop",
+        Config config = new Config(LocalDate.of( 1599,1,1), LocalDate.of(1855,1,1),
+                LocalDate.of( 2015,1,1), population_size, 0.0133,
+                0.0122, Period.ofYears(1), "src/test/resources/valipop/test-pop",
                 "results", purpose, 147,
                 147, true, 0.0, 0.0, 1.0, 1.0,
-                new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, startTime, 0, true);
+                Period.ofYears(1), RecordFormat.NONE, startTime, 0, true);
+
         OBDModel sim = new OBDModel(startTime, config);
         sim.runSimulation();
 

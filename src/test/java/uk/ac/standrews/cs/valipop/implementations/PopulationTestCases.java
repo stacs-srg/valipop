@@ -21,10 +21,9 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,12 +50,12 @@ class PopulationTestCases {
 
     private static IPopulation fullPopulation(final int t0PopulationSize, int seed) throws Exception {
 
-        AdvanceableDate tS = new MonthDate("1/1/1599");
-        AdvanceableDate t0 = new MonthDate(" 1/1/1855");
-        AdvanceableDate tE = new MonthDate("1/1/2016");
+        LocalDate tS = LocalDate.of(1599,1,1);
+        LocalDate t0 = LocalDate.of(1855,1,1);
+        LocalDate tE = LocalDate.of(2016,1,1);
         double setUpBR = 0.0133;
         double setUpDR = 0.0122;
-        CompoundTimeUnit simulationTimeStep = new CompoundTimeUnit("1y");
+        Period simulationTimeStep = Period.ofYears(1);
         String varPath = "src/test/resources/valipop/test-pop";
         String resultsSavePath = "results";
         String runPurpose = "general-structure-testing";
@@ -67,7 +66,7 @@ class PopulationTestCases {
         double deathFactor = 0.0;
         double recoveryFactor = 1.0;
         double proportionalRecoveryFactor = 0;
-        CompoundTimeUnit inputWidth = new CompoundTimeUnit("10y");
+        Period inputWidth = Period.ofYears(10);
         RecordFormat outputRecordFormat = RecordFormat.NONE;
         String startTime = FileUtils.getDateTime();
         boolean deterministic = true;

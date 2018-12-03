@@ -4,8 +4,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.statistics.distributions.StringWithCumulativeProbability;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -15,22 +15,20 @@ import java.util.Map;
  */
 public class ValiPopEnumeratedDistribution extends EnumeratedDistribution implements InputMetaData {
 
-    private final YearDate year;
+    private final Year year;
     private final String sourcePopulation;
     private final String sourceOrganisation;
 
-    public ValiPopEnumeratedDistribution(YearDate year, String sourcePopulation, String sourceOrganisation,
-                                         Map<String, Double> item_probabilities, RandomGenerator random)
-                                                throws InconsistentWeightException {
+    public ValiPopEnumeratedDistribution(Year year, String sourcePopulation, String sourceOrganisation, Map<String, Double> item_probabilities, RandomGenerator random) throws InconsistentWeightException {
+
         super(item_probabilities, random);
         this.year = year;
         this.sourceOrganisation = sourceOrganisation;
         this.sourcePopulation = sourcePopulation;
-
     }
 
     @Override
-    public YearDate getYear() {
+    public Year getYear() {
         return year;
     }
 
@@ -65,5 +63,4 @@ public class ValiPopEnumeratedDistribution extends EnumeratedDistribution implem
 
         return col;
     }
-
 }

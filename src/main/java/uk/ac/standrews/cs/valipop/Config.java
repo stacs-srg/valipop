@@ -19,10 +19,6 @@ package uk.ac.standrews.cs.valipop;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InputFileReader;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.exceptions.InvalidTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -31,6 +27,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.Period;
 
 /**
  * This class provides the configuration for the Simulation model.
@@ -67,13 +65,13 @@ public class Config {
 
     public static final Logger log = new Logger(Config.class);
 
-    private MonthDate tS;
-    private MonthDate t0;
-    private MonthDate tE;
+    private LocalDate tS;
+    private LocalDate t0;
+    private LocalDate tE;
     private int t0PopulationSize;
     private double setUpBR;
     private double setUpDR;
-    private CompoundTimeUnit simulationTimeStep;
+    private Period simulationTimeStep;
 
     private String varPath;
     private Path varOrderedBirthPaths;
@@ -102,7 +100,7 @@ public class Config {
     private double deathFactor;
     private double recoveryFactor;
     private double proportionalRecoveryFactor;
-    private CompoundTimeUnit inputWidth;
+    private Period inputWidth;
 
     private RecordFormat outputRecordFormat;
     private boolean outputTables = true;
@@ -121,19 +119,19 @@ public class Config {
         throw new IOException("Failed to get Filename");
     };
 
-    public Config(AdvanceableDate tS, AdvanceableDate t0, AdvanceableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
-                  CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
+    public Config(LocalDate tS, LocalDate t0, LocalDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
+                  Period simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
                   int minBirthSpacing, int minGestationPeriodDays, boolean binomialSampling,
                   double birthFactor, double deathFactor, double recoveryFactor, double proportionalRecoveryFactor,
-                  CompoundTimeUnit inputWidth, RecordFormat outputRecordFormat, String startTime, int seed, boolean deterministic) {
+                  Period inputWidth, RecordFormat outputRecordFormat, String startTime, int seed, boolean deterministic) {
 
         initialiseVarPaths(varPath);
 
         this.resultsSavePath = Paths.get(resultsSavePath);
 
-        this.tS = tS.getMonthDate();
-        this.t0 = t0.getMonthDate();
-        this.tE = tE.getMonthDate();
+        this.tS = tS;
+        this.t0 = t0;
+        this.tE = tE;
         this.t0PopulationSize = t0PopulationSize;
         this.setUpBR = setUpBR;
         this.setUpDR = setUpDR;
@@ -152,14 +150,36 @@ public class Config {
         this.deterministic = deterministic;
     }
 
-    /**
-     * This constructor reads in the file at the given path and stores the given configuration.
-     *
-     * @param pathToConfigFile The path to the location of the configuration file
-     * @throws InvalidTimeUnit
-     * @throws DateTimeException
-     * @throws NumberFormatException
-     */
+    private Period parsePeriod(String compoundTimeUnit) {
+
+        // TODO change format in config files to Period standard format
+
+        int count = Integer.valueOf(compoundTimeUnit.substring(0, compoundTimeUnit.length() - 1));
+        char unit = compoundTimeUnit.toCharArray()[compoundTimeUnit.length() - 1];
+
+        switch (unit) {
+            case ('m'):
+                return Period.ofMonths(count);
+            case ('y'):
+                return Period.ofYears(count);
+            default:
+                throw new RuntimeException("Invalid time unit specified");
+        }
+    }
+
+    public LocalDate parseDate(String ddmmyyyy) {
+
+        // TODO change format in config files to LocalDate standard format
+
+        String[] split = ddmmyyyy.split("/");
+        int month = Integer.parseInt(split[1]);
+        if (month <= 0 || month > 12) {
+            throw new DateTimeException("Months should be indexed between 1 and 12 inclusive.");
+        }
+        int year = Integer.parseInt(split[2]);
+        return LocalDate.of(year, month, 1);
+    }
+
     public Config(Path pathToConfigFile, String runPurpose, String startTime) {
 
         try {
@@ -186,23 +206,23 @@ public class Config {
 
                     case "simulation_time_step":
 
-                        simulationTimeStep = new CompoundTimeUnit(split[1]);
+                        simulationTimeStep = parsePeriod(split[1]);
                         break;
 
                     case "input_width":
-                        inputWidth = new CompoundTimeUnit(split[1]);
+                        inputWidth = parsePeriod(split[1]);
                         break;
 
                     case "tS":
-                        tS = new MonthDate(split[1]);
+                        tS = parseDate(split[1]);
                         break;
 
                     case "t0":
-                        t0 = new MonthDate(split[1]);
+                        t0 = parseDate(split[1]);
                         break;
 
                     case "tE":
-                        tE = new MonthDate(split[1]);
+                        tE = parseDate(split[1]);
                         break;
 
                     case "t0_pop_size":
@@ -375,19 +395,19 @@ public class Config {
         return getDirectories(varSurnamePaths);
     }
 
-    public MonthDate getTS() {
+    public LocalDate getTS() {
         return tS;
     }
 
-    public MonthDate getT0() {
+    public LocalDate getT0() {
         return t0;
     }
 
-    public MonthDate getTE() {
+    public LocalDate getTE() {
         return tE;
     }
 
-    public CompoundTimeUnit getSimulationTimeStep() {
+    public Period getSimulationTimeStep() {
         return simulationTimeStep;
     }
 
@@ -415,7 +435,7 @@ public class Config {
         return runPurpose;
     }
 
-    public CompoundTimeUnit getInputWidth() {
+    public Period getInputWidth() {
         return inputWidth;
     }
 

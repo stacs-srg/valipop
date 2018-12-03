@@ -20,10 +20,10 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +32,7 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.population.Populatio
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
+public class AgeNodeInt extends IntNode<IntegerRange, Boolean> {
 
     private List<IPerson> people = new ArrayList<>();
 
@@ -45,13 +45,13 @@ public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
         people.add(person);
 
         incCountByOne();
 
-        DiedOption option = diedInYear(person, currentDate.getYearDate()) ? DiedOption.YES : DiedOption.NO;
+        boolean option = diedInYear(person, Year.of(currentDate.getYear()));
 
         try {
             getChild(option).processPerson(person, currentDate);
@@ -67,7 +67,7 @@ public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
     }
 
     @Override
-    public Node<DiedOption, ?, Integer, ?> makeChildInstance(DiedOption childOption, Integer initCount) {
+    public Node<Boolean, ?, Integer, ?> makeChildInstance(Boolean childOption, Integer initCount) {
         return new DiedNodeInt(childOption, this, initCount);
     }
 }

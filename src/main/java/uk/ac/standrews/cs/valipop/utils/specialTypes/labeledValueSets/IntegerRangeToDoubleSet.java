@@ -1,7 +1,6 @@
 package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 
 import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.*;
 
