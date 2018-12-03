@@ -23,31 +23,27 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+
+import java.time.LocalDate;
+import java.time.Year;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.diedInYear;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implements ControlChildrenNode, RunnableNode {
+public class AgeNodeDouble extends DoubleNode<IntegerRange, Boolean> implements ControlChildrenNode, RunnableNode {
 
     private boolean initNode = false;
 
     AgeNodeDouble(IntegerRange age, SexNodeDouble parentNode, double initCount, boolean init) {
+
         super(age, parentNode, initCount);
 
-        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer ageI = age.getValue();
+        Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
 
-        ValipopDate currentDate = yob.advanceTime(ageI, TimeUnit.YEAR);
-
-        if (DateUtils.dateBefore(currentDate, getStartDate())) {
+        if (yob.getValue() + age.getValue() < getStartDate().getYear()) {
             initNode = true;
         }
 
@@ -66,26 +62,25 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
     }
 
     @Override
-    public Node<DiedOption, ?, Double, ?> makeChildInstance(DiedOption childOption, Double initCount) {
+    public Node<Boolean, ?, Double, ?> makeChildInstance(Boolean childOption, Double initCount) {
         return new DiedNodeDouble(childOption, this, false);
     }
 
     @Override
     public void makeChildren() {
 
-        for (DiedOption o : DiedOption.values()) {
-            addChild(o);
-        }
+        addChild(true);
+        addChild(false);
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
         initNode = true;
 
         incCountByOne();
 
-        DiedOption option = diedInYear(person, currentDate.getYearDate()) ? DiedOption.YES : DiedOption.NO;
+        Boolean option = diedInYear(person, Year.of(currentDate.getYear()));
 
         try {
             getChild(option).processPerson(person, currentDate);

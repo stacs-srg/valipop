@@ -16,23 +16,20 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class PartneringStatsKey extends StatsKey {
 
-    public PartneringStatsKey(Integer age, double forNumberOfFemales, CompoundTimeUnit consideredTimePeriod, ValipopDate currentDate) {
-        super(age, forNumberOfFemales, consideredTimePeriod, currentDate);
+    public PartneringStatsKey(int age, double forNumberOfFemales, Period consideredTimePeriod, LocalDate currentDate) {
+        super(age, forNumberOfFemales, consideredTimePeriod, Year.of(currentDate.getYear()));
     }
 
-    public Integer getAge() {
+    public int getAge() {
         return getYLabel();
-    }
-
-    public double getForNumberOfFemales() {
-        return getForNPeople();
     }
 }

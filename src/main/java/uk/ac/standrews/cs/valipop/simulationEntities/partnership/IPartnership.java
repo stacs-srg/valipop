@@ -18,8 +18,8 @@ package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -60,21 +60,21 @@ public interface IPartnership extends Comparable<IPartnership> {
      */
     List<IPerson> getChildren();
 
-    ValipopDate getPartnershipDate();
+    LocalDate getPartnershipDate();
 
-    ValipopDate getSeparationDate(RandomGenerator randomGenerator);
+    LocalDate getSeparationDate(RandomGenerator randomGenerator);
 
-    ValipopDate getEarliestPossibleSeparationDate();
+    LocalDate getEarliestPossibleSeparationDate();
 
-    void setEarliestPossibleSeparationDate(ValipopDate date);
+    void setEarliestPossibleSeparationDate(LocalDate date);
 
-    void setMarriageDate(ValipopDate marriageDate);
+    void setMarriageDate(LocalDate marriageDate);
 
     /**
      * Gets the date of the marriage between the partners in this partnership, or null if they are not married.
      * @return the date of the marriage of this partnership
      */
-    ValipopDate getMarriageDate();
+    LocalDate getMarriageDate();
 
     /**
      * Gets the place of marriage, or null if not recorded.
@@ -82,7 +82,7 @@ public interface IPartnership extends Comparable<IPartnership> {
      */
     String getMarriagePlace();
 
-    void setPartnershipDate(ValipopDate startDate);
+    void setPartnershipDate(LocalDate startDate);
 
     /**
      * Gets the partnership's unique identifier.

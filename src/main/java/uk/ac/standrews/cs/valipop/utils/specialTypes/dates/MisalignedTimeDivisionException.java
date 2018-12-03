@@ -1,6 +1,6 @@
 /*
- * Copyright 2014 Digitising Scotland project:
- * <http://digitisingscotland.cs.st-andrews.ac.uk/>
+ * Copyright 2017 Systems Research Group, University of St Andrews:
+ * <https://github.com/stacs-srg>
  *
  * This file is part of the module population_model.
  *
@@ -14,11 +14,16 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
+package uk.ac.standrews.cs.valipop.utils.specialTypes.dates;
 
 /**
- * Temporal distributions classes.
- * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-package uk.ac.standrews.cs.valipop.statistics.distributions.temporal;
+public class MisalignedTimeDivisionException extends RuntimeException {
 
+    public MisalignedTimeDivisionException(String s) {
+        super(s);
+    }
+
+    public MisalignedTimeDivisionException() {}
+}

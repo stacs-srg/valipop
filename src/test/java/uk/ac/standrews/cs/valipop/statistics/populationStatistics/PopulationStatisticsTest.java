@@ -22,13 +22,12 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCoun
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Period;
 
 
 /**
@@ -38,15 +37,16 @@ public class PopulationStatisticsTest {
 
     @Test
     public void testA() {
+
         Path p = Paths.get("src/test/resources/valipop/config-ps.txt");
-        Config config = new Config(p,"TEST", "...");
+        Config config = new Config(p, "TEST", "...");
         PopulationStatistics ps = new PopulationStatistics(config);
 
         int age = 20;
         int order = 0;
         int cohortSize = 1000;
-        CompoundTimeUnit consideredTimePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
-        YearDate currentDate = new YearDate(1900);
+        Period consideredTimePeriod = Period.ofYears(1);
+        LocalDate currentDate = LocalDate.of(1900, 1, 1);
 
         BirthStatsKey key = new BirthStatsKey(age, order, cohortSize, consideredTimePeriod, currentDate);
         SingleDeterminedCount determinedCount = (SingleDeterminedCount) ps.getDeterminedCount(key, null);
@@ -63,27 +63,24 @@ public class PopulationStatisticsTest {
     public void testB() {
 
         Path p = Paths.get("src/test/resources/valipop/config-ps.txt");
-        Config config = new Config(p,"TEST", "...");
+        Config config = new Config(p, "TEST", "...");
         PopulationStatistics ps = new PopulationStatistics(config);
 
         int age = 20;
         int order = 0;
         int cohortSize = 1000;
-        CompoundTimeUnit consideredTimePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
-        YearDate currentDate = new YearDate(1900);
+        Period consideredTimePeriod = Period.ofYears(1);
+        LocalDate currentDate = LocalDate.of(1900, 1, 1);
 
-        SingleDeterminedCount sDC = (SingleDeterminedCount) ps.getDeterminedCount(
-                new BirthStatsKey(age, order, cohortSize, consideredTimePeriod, currentDate), null);
+        SingleDeterminedCount sDC = (SingleDeterminedCount) ps.getDeterminedCount(new BirthStatsKey(age, order, cohortSize, consideredTimePeriod, currentDate), null);
 
         double numberOfChildren = sDC.getRawUncorrectedCount();
 
-        MultipleDeterminedCount mDc = (MultipleDeterminedCount) ps.getDeterminedCount(
-                new MultipleBirthStatsKey(age, numberOfChildren, consideredTimePeriod, currentDate), null);
+        MultipleDeterminedCount mDc = (MultipleDeterminedCount) ps.getDeterminedCount(new MultipleBirthStatsKey(age, numberOfChildren, consideredTimePeriod, currentDate), null);
 
         double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
 
-        MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps
-                .getDeterminedCount(new MultipleBirthStatsKey(age, numberOfMothers, new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate), null);
+        MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps.getDeterminedCount(new MultipleBirthStatsKey(age, numberOfMothers, Period.ofYears(1), currentDate), null);
 
         new IntegerRangeToDoubleSet(mDC.getRawUncorrectedCount()).productOfLabelsAndValues().getSumOfValues();
 

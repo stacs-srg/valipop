@@ -19,11 +19,10 @@ package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DateSelector;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,12 +40,12 @@ public class Partnership implements IPartnership {
     private IPerson female;
     private List<IPerson> children = new ArrayList<>();
 
-    private ValipopDate partnershipDate;
-    private ValipopDate marriageDate = null;
-    private ValipopDate separationDate = null;
-    private ValipopDate earliestPossibleSeparationDate = null;
+    private LocalDate partnershipDate;
+    private LocalDate marriageDate = null;
+    private LocalDate separationDate = null;
+    private LocalDate earliestPossibleSeparationDate = null;
 
-    public Partnership(final IPerson male, final IPerson female, final ValipopDate partnershipDate) {
+    public Partnership(final IPerson male, final IPerson female, final LocalDate partnershipDate) {
 
         this(male, female);
 
@@ -68,29 +67,13 @@ public class Partnership implements IPartnership {
         s.append("--Partnership: ");
         s.append(id).append("--\n");
 
-        s.append(male.getId()).append(" | ");
-        s.append(male.getFirstName()).append(" ");
-        s.append(male.getSurname()).append(" | ");
-        s.append(male.getSex()).append(" | ");
-        s.append(male.getBirthDate().getDate()).append(" | ");
-        s.append(male.getDeathDate() != null ? male.getDeathDate() + "\n" : "no DOD\n");
-
-        s.append(female.getId()).append(" | ");
-        s.append(female.getFirstName()).append(" ");
-        s.append(female.getSurname()).append(" | ");
-        s.append(female.getSex()).append(" | ");
-        s.append(female.getBirthDate().getDate()).append(" | ");
-        s.append(female.getDeathDate() != null ? female.getDeathDate() + "\n" : "no DOD\n");
+        appendPerson(s, male);
+        appendPerson(s, female);
 
         s.append("----Children----\n");
 
         for (IPerson c : children) {
-            s.append(c.getId()).append(" | ");
-            s.append(c.getFirstName()).append(" ");
-            s.append(c.getSurname()).append(" | ");
-            s.append(c.getSex()).append(" | ");
-            s.append(c.getBirthDate().getDate()).append(" | ");
-            s.append(c.getDeathDate() != null ? c.getDeathDate() + "\n" : "no DOD\n");
+            appendPerson(s, c);
         }
 
         s.append("--End Partnership: ");
@@ -99,7 +82,17 @@ public class Partnership implements IPartnership {
         return s.toString();
     }
 
-    public void setPartnershipDate(final ValipopDate startDate) {
+    private void appendPerson(StringBuilder s, IPerson person) {
+
+        s.append(person.getId()).append(" | ");
+        s.append(person.getFirstName()).append(" ");
+        s.append(person.getSurname()).append(" | ");
+        s.append(person.getSex()).append(" | ");
+        s.append(person.getBirthDate()).append(" | ");
+        s.append(person.getDeathDate() != null ? person.getDeathDate() + "\n" : "no DOD\n");
+    }
+
+    public void setPartnershipDate(final LocalDate startDate) {
         partnershipDate = startDate;
     }
 
@@ -116,12 +109,12 @@ public class Partnership implements IPartnership {
         nextId = 0;
     }
 
-    public void setMarriageDate(final ValipopDate marriageDate) {
+    public void setMarriageDate(final LocalDate marriageDate) {
         this.marriageDate = marriageDate;
     }
 
     @Override
-    public ValipopDate getMarriageDate() {
+    public LocalDate getMarriageDate() {
         return marriageDate;
     }
 
@@ -152,12 +145,12 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public ValipopDate getPartnershipDate() {
+    public LocalDate getPartnershipDate() {
         return partnershipDate;
     }
 
     @Override
-    public synchronized ValipopDate getSeparationDate(final RandomGenerator random) {
+    public synchronized LocalDate getSeparationDate(final RandomGenerator random) {
 
         if (earliestPossibleSeparationDate == null) return null;
         if (separationDate == null) setSeparationDate(random);
@@ -167,15 +160,15 @@ public class Partnership implements IPartnership {
 
     private void setSeparationDate(final RandomGenerator random) {
 
-        final ValipopDate maleMovedOnDate = getDateOfNextPostSeparationEvent(male, earliestPossibleSeparationDate);
-        final ValipopDate femaleMovedOnDate = getDateOfNextPostSeparationEvent(female, earliestPossibleSeparationDate);
+        final LocalDate maleMovedOnDate = getDateOfNextPostSeparationEvent(male, earliestPossibleSeparationDate);
+        final LocalDate femaleMovedOnDate = getDateOfNextPostSeparationEvent(female, earliestPossibleSeparationDate);
 
-        final ValipopDate earliestMovedOnDate;
+        final LocalDate earliestMovedOnDate;
 
         if (maleMovedOnDate != null) {
 
             if (femaleMovedOnDate != null) {
-                earliestMovedOnDate = (DateUtils.dateBefore(maleMovedOnDate, femaleMovedOnDate)) ? maleMovedOnDate : femaleMovedOnDate;
+                earliestMovedOnDate = maleMovedOnDate.isBefore( femaleMovedOnDate) ? maleMovedOnDate : femaleMovedOnDate;
             } else {
                 earliestMovedOnDate = maleMovedOnDate;
             }
@@ -187,7 +180,7 @@ public class Partnership implements IPartnership {
             } else {
 
                 // pick a date in the next 30 years
-                earliestMovedOnDate = earliestPossibleSeparationDate.getYearDate().advanceTime(30, TimeUnit.YEAR);
+                earliestMovedOnDate = earliestPossibleSeparationDate.plus(30, ChronoUnit.YEARS);
             }
         }
 
@@ -195,12 +188,12 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public ValipopDate getEarliestPossibleSeparationDate() {
+    public LocalDate getEarliestPossibleSeparationDate() {
         return earliestPossibleSeparationDate;
     }
 
     @Override
-    public void setEarliestPossibleSeparationDate(ValipopDate date) {
+    public void setEarliestPossibleSeparationDate(LocalDate date) {
         earliestPossibleSeparationDate = date;
     }
 

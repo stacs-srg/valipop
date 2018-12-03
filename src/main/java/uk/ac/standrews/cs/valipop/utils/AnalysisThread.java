@@ -7,11 +7,11 @@ import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Control;
 import uk.ac.standrews.cs.valipop.implementations.minimaSearch.MinimaSearch;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Year;
 
 import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.GEEGLM;
 
@@ -21,7 +21,7 @@ import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.G
 public class AnalysisThread extends Thread {
 
     private String runPurpose;
-    Integer maxBirthingAge;
+    int maxBirthingAge;
     SummaryRow summaryRow;
     Path resultsSummaryPath;
     String ctPath;
@@ -29,8 +29,7 @@ public class AnalysisThread extends Thread {
 
     public AnalysisThread(OBDModel model, String runPurpose) {
         this.runPurpose = runPurpose;
-        maxBirthingAge = model.getDesiredPopulationStatistics()
-                .getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
+        maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
         summaryRow = model.getSummaryRow();
         resultsSummaryPath = Paths.get(FileUtils.getResultsSummaryPath().toString());
         ctPath = new String(FileUtils.getContingencyTablesPath().toString());
@@ -59,7 +58,5 @@ public class AnalysisThread extends Thread {
         summaryRow.outputSummaryRowToFile(resultsSummaryPath);
 
         FactorSearch.threadCount--;
-
     }
-
 }

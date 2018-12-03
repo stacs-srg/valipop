@@ -16,13 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
-
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
-import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
-
+import java.time.Year;
 import java.util.Collection;
 
 
@@ -37,7 +31,7 @@ public interface InputMetaData<Label> {
     /**
      * @return the year to which the distribution pertains
      */
-    YearDate getYear();
+    Year getYear();
 
     /**
      * @return the 'real world' population which this distribution of statistical data has been drawn
@@ -60,5 +54,4 @@ public interface InputMetaData<Label> {
     Label getLargestLabel();
 
     Collection<Label> getLabels();
-
 }

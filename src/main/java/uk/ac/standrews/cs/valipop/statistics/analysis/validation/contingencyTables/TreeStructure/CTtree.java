@@ -27,13 +27,9 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SourceType;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.Logger;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -56,25 +52,25 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
     private PopulationStatistics expected;
 
-    private ValipopDate endDate;
-    private ValipopDate startDate;
+    private LocalDate endDate;
+    private LocalDate startDate;
 
     private SourceNodeInt simNode;
     private SourceNodeDouble statNode = null;
 
-    public CTtree(PeopleCollection population, PopulationStatistics expected, ValipopDate startDate, ValipopDate zeroDate, ValipopDate endDate, int startStepBack) {
+    public CTtree(PeopleCollection population, PopulationStatistics expected, LocalDate startDate, LocalDate zeroDate, LocalDate endDate, int startStepBack) {
+
         this.expected = expected;
         this.startDate = startDate;
-        this.endDate = new YearDate(endDate.getYear() - 2);
+        this.endDate = endDate.minus(2, ChronoUnit.YEARS);
 
-        YearDate prevY = zeroDate.getYearDate().advanceTime(new CompoundTimeUnit(startStepBack, TimeUnit.YEAR).negative()).getYearDate();
+        LocalDate prevY = zeroDate.minus(startStepBack, ChronoUnit.YEARS);
 
         log.info("CTree --- Populating tree with observed population");
 
-        for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
-             y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
+        for (LocalDate y = startDate; y.isBefore(endDate); y = y.plus(1, ChronoUnit.YEARS)) {
 
-            ExactDate prevDay = new ExactDate(31, 12, y.getYear() - 1);
+            LocalDate prevDay = LocalDate.of(y.getYear() - 1, 12, 31);
 
             // for every person in population
             for (IPerson person : population.getPeople()) {
@@ -116,11 +112,11 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         return null;
     }
 
-    public ValipopDate getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public ValipopDate getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
@@ -213,7 +209,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         }
     }
 
-    public void processPerson(IPerson person, ValipopDate currentDate, SourceType source) {
+    public void processPerson(IPerson person, LocalDate currentDate, SourceType source) {
 
         try {
             getChild(source).processPerson(person, currentDate);
@@ -233,7 +229,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
     }
 

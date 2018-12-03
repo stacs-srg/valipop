@@ -20,11 +20,9 @@ import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 
 
@@ -77,7 +75,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
      * @param start the start
      * @param end   the end
      */
-    public PeopleCollection(AdvanceableDate start, ValipopDate end, CompoundTimeUnit divisionSize) {
+    public PeopleCollection(LocalDate start, LocalDate end, Period divisionSize) {
 
         super(start, end, divisionSize);
 
@@ -128,7 +126,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     }
 
     @Override
-    public Collection<IPerson> getAllPersonsBornInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
+    public Collection<IPerson> getAllPersonsBornInTimePeriod(LocalDate firstDate, Period timePeriod) {
 
         Collection<IPerson> people = males.getAllPersonsBornInTimePeriod(firstDate, timePeriod);
         people.addAll(females.getAllPersonsBornInTimePeriod(firstDate, timePeriod));
@@ -136,7 +134,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     }
 
     @Override
-    public Collection<IPerson> getAllPersonsAliveInTimePeriod(AdvanceableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
+    public Collection<IPerson> getAllPersonsAliveInTimePeriod(LocalDate firstDate, Period timePeriod, Period maxAge) {
 
         Collection<IPerson> people = males.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge);
         people.addAll(females.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge));
@@ -173,12 +171,12 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     }
 
     @Override
-    public int getNumberOfPersons(AdvanceableDate firstDate, CompoundTimeUnit timePeriod) {
+    public int getNumberOfPersons(LocalDate firstDate, Period timePeriod) {
         return males.getNumberOfPersons(firstDate, timePeriod) + females.getNumberOfPersons(firstDate, timePeriod);
     }
 
     @Override
-    public Set<AdvanceableDate> getDivisionDates() {
+    public Set<LocalDate> getDivisionDates() {
         return females.getDivisionDates();
     }
 
@@ -216,49 +214,6 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     @Override
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    private Collection<IPerson> getPeopleBetweenDates(PersonCollection collection,
-                                                      AdvanceableDate firstDateOfInterest,
-                                                      AdvanceableDate lastDateOfInterest) {
-
-        Collection<IPerson> people = new ArrayList<>();
-
-        AdvanceableDate firstDivOfInterest = resolveDateToCorrectDivisionDate(firstDateOfInterest);
-        AdvanceableDate lastDivOfInterest = resolveDateToCorrectDivisionDate(lastDateOfInterest);
-
-        AdvanceableDate consideredDate = firstDivOfInterest;
-
-        while (DateUtils.dateBeforeOrEqual(consideredDate, lastDivOfInterest)) {
-
-            Collection<IPerson> temp = collection.getAllPersonsBornInTimePeriod(consideredDate, getDivisionSize());
-
-            if (DateUtils.datesEqual(firstDivOfInterest, consideredDate)) {
-
-                for (IPerson p : temp) {
-
-                    if (!DateUtils.dateBefore(p.getBirthDate(), firstDateOfInterest)) {
-                        people.add(p);
-                    }
-                }
-
-            } else if (DateUtils.datesEqual(lastDivOfInterest, consideredDate)) {
-
-                for (IPerson p : temp) {
-
-                    if (DateUtils.dateBefore(p.getBirthDate(), lastDateOfInterest)) {
-                        people.add(p);
-                    }
-                }
-
-            } else {
-                people.addAll(temp);
-            }
-
-            consideredDate = consideredDate.advanceTime(getDivisionSize());
-        }
-
-        return people;
     }
 
     public String toString() {

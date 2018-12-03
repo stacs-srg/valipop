@@ -23,12 +23,10 @@ import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvanceableDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Period;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -72,7 +70,7 @@ public class FactorSearch {
 
         int c = 0;
 
-        for(String s : split) {
+        for (String s : split) {
             ret[c++] = Double.valueOf(s);
         }
 
@@ -82,37 +80,35 @@ public class FactorSearch {
     static double[] bfs;
     static double[] dfs;
 
-    static CompoundTimeUnit[] iws;
+    static Period[] iws;
     static int[] minBirthSpacings;
     static int[] t0_pop_size;
 
     static RecordFormat output_record_format = RecordFormat.NONE;
 
-    static CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
-    static AdvanceableDate tS = new YearDate(1599);
-    static AdvanceableDate t0 = new YearDate(1855);
-    static AdvanceableDate tE = new YearDate(2015);
+    static Period simulation_time_step = Period.ofYears(1);
+    static LocalDate tS = LocalDate.of(1599, 1, 1);
+    static LocalDate t0 = LocalDate.of(1855, 1, 1);
+    static LocalDate tE = LocalDate.of(2015, 1, 1);
     static double set_up_br = 0.0233;
     static double set_up_dr = 0.0322;
 
     public static void runFactorSearch(int size0, double[] rfs, double[] prfs, double[] precisions, String dataFiles, int numberOfRunsPerSim, String runPurpose, String results_save_location) throws IOException, PreEmptiveOutOfMemoryWarning, InterruptedException {
 
-        iws = new CompoundTimeUnit[]{
-                new CompoundTimeUnit(10, TimeUnit.YEAR)
-        };
+        iws = new Period[]{Period.ofYears(10)};
 
         minBirthSpacings = new int[]{147};
         bfs = new double[]{0};
         dfs = new double[]{0};
         t0_pop_size = new int[]{size0};
 
-        for(double precision : precisions) {
+        for (double precision : precisions) {
             CTtree.NODE_MIN_COUNT = precision;
 
             for (int size : t0_pop_size) {
                 for (double rf : rfs) {
                     for (double prf : prfs) {
-                        for (CompoundTimeUnit iw : iws) {
+                        for (Period iw : iws) {
                             for (int minBirthSpacing : minBirthSpacings) {
                                 for (double bf : bfs) {
                                     for (double df : dfs) {

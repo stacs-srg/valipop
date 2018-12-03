@@ -17,26 +17,22 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.*;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.PartneringStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.SeparationStatsKey;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.ChildrenInYearOption;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
 import java.util.Set;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationNavigation.ageOnDate;
@@ -47,13 +43,13 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.population.Populatio
 public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRange> implements ControlSelfNode, ControlChildrenNode, RunnableNode {
 
     public SeparationNodeDouble(SeparationOption option, NumberOfChildrenInPartnershipNodeDouble parentNode, Double initCount, boolean init) {
+
         super(option, parentNode, initCount);
 
         if (!init) {
             calcCount();
             makeChildren();
         }
-
     }
 
     @Override
@@ -62,7 +58,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
         incCountByOne();
 
@@ -70,7 +66,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
         Integer newPartnerAge = null;
 
-        if (activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, currentDate.getYearDate())) {
+        if (activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, Year.of(currentDate.getYear()))) {
             IPerson partner = activePartnership.getPartnerOf(person);
             newPartnerAge = ageOnDate(partner, activePartnership.getPartnershipDate());
         }
@@ -113,7 +109,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
             double numberOfFemales = getCount();
-            CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+            Period timePeriod = Period.ofYears(1);
 
             MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
@@ -141,13 +137,14 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     public void advanceCount() {
 
         DiedNodeDouble diedN = (DiedNodeDouble) getAncestor(new DiedNodeDouble());
-        DiedOption died = diedN.getOption();
-        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+        boolean died = diedN.getOption();
 
-        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        if (died == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && diedN.getCount() > CTtree.NODE_MIN_COUNT) {
+        Year currentDate = getYearAtAge(yob, age);
+
+        if (!died && currentDate.isBefore( Year.of(getEndDate().getYear())) && diedN.getCount() > CTtree.NODE_MIN_COUNT) {
 
             SexNodeDouble s = (SexNodeDouble) getAncestor(new SexNodeDouble());
 
@@ -160,7 +157,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
             // Split count between branches
 
-            for (Node<DiedOption, ?, Double, ?> n : a.getChildren()) {
+            for (Node<Boolean, ?, Double, ?> n : a.getChildren()) {
 
                 DiedNodeDouble d = (DiedNodeDouble) n;
 
@@ -218,12 +215,12 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
             } else {
 
                 double forNPeople = getParent().getCount();
-                CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+                Period timePeriod = Period.ofYears(1);
 
-                YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-                Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+                Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+                int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-                ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+                LocalDate currentDate = getDateAtAge(yob, age);
 
                 SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
                         new SeparationStatsKey(numberOfChildrenInPartnership.getValue(), age, forNPeople, timePeriod, currentDate), null);
@@ -258,15 +255,14 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
             addChild(new IntegerRange("na"));
 
         } else {
-            ChildrenInYearOption ciy = ((ChildrenInYearNodeDouble) getAncestor(new ChildrenInYearNodeDouble())).getOption();
+            boolean ciy = ((ChildrenInYearNodeDouble) getAncestor(new ChildrenInYearNodeDouble())).getOption();
 
-            if (ciy == ChildrenInYearOption.NO) { // if no children in year then by definition no new partner can exit - thus no NPA
+            if (!ciy) { // if no children in year then by definition no new partner can exit - thus no NPA
                 addChild(new IntegerRange("na"));
 
             } else {
 
-                IntegerRange pncip = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                        getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
+                IntegerRange pncip = ((PreviousNumberOfChildrenInPartnershipNodeDouble) getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
 
                 // at this point we know this partnership has borne children, paired with the knowledge of if there has
                 // been any previous children in this partnership we can decide
@@ -276,13 +272,13 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 } else {
                     // or is a new partnership - thus record NPA
 
-                    YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-                    Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+                    Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+                    int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-                    ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+                    LocalDate currentDate = getDateAtAge(yob, age);
 
                     double numberOfFemales = getCount();
-                    CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+                    Period timePeriod = Period.ofYears(1);
 
                     MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 

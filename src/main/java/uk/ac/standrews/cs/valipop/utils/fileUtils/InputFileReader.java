@@ -17,23 +17,23 @@
 package uk.ac.standrews.cs.valipop.utils.fileUtils;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.MotherChildAdapter;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.Logger;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
-import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
-
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.AbstractLabelToAbstractValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.StringToDoubleSet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,6 +41,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Year;
 import java.util.*;
 
 /**
@@ -76,9 +77,9 @@ public class InputFileReader {
         return lines;
     }
 
-    public static Map<YearDate, Double> readInSingleInputFile(Path path, Config config) throws IOException, InvalidInputFileException {
+    public static Map<Year, Double> readInSingleInputFile(Path path, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, Double> data = new TreeMap<>();
+        Map<Year, Double> data = new TreeMap<>();
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 
@@ -103,14 +104,12 @@ public class InputFileReader {
                         s = lines.get(i);
                         split = s.split(TAB);
 
-                        YearDate year = null;
                         try {
-                            year = new MonthDate("01/01/" + split[0]).getYearDate();
+//                            year = new MonthDate("01/01/" + split[0]).getYearDate();
+                            data.put(Year.parse(split[0]), Double.parseDouble(split[1]));
                         } catch (NumberFormatException e) {
                             throw new InvalidInputFileException("The year is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
                         }
-
-                        data.put(year, Double.parseDouble(split[1]));
                     }
                     break;
             }
@@ -123,7 +122,7 @@ public class InputFileReader {
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 
-        YearDate year = null;
+        Year year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
@@ -138,7 +137,7 @@ public class InputFileReader {
             switch (split[0].toLowerCase()) {
                 case "year":
                     try {
-                        year = new YearDate(Integer.parseInt(split[1]));
+                        year = Year.parse(split[1]);
                     } catch (NumberFormatException e) {
                         throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
                     }
@@ -182,10 +181,7 @@ public class InputFileReader {
                         }
 
                         data.put(rowLabel,
-                                new SelfCorrectingOneDimensionDataDistribution(
-                                        year, sourcePopulation, sourceOrganisation, rowMap, config.getBinomialSampling(),
-                                        randomGenerator
-                                )
+                                new SelfCorrectingOneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, rowMap, config.getBinomialSampling(), randomGenerator)
                         );
                     }
                     break;
@@ -199,7 +195,7 @@ public class InputFileReader {
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 
-        YearDate year = null;
+        Year year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
@@ -214,7 +210,7 @@ public class InputFileReader {
             switch (split[0].toLowerCase()) {
                 case "year":
                     try {
-                        year = new YearDate(Integer.parseInt(split[1]));
+                        year = Year.parse(split[1]);
                     } catch (NumberFormatException e) {
                         throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
                     }
@@ -253,7 +249,7 @@ public class InputFileReader {
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 
-        YearDate year = null;
+        Year year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
@@ -268,7 +264,7 @@ public class InputFileReader {
             switch (split[0].toLowerCase()) {
                 case "year":
                     try {
-                        year = new YearDate(Integer.parseInt(split[1]));
+                        year = Year.parse(split[1]);
                     } catch (NumberFormatException e) {
                         throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
                     }
@@ -295,7 +291,7 @@ public class InputFileReader {
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 
-        YearDate year = null;
+        Year year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
@@ -309,7 +305,7 @@ public class InputFileReader {
             switch (split[0].toLowerCase()) {
                 case "year":
                     try {
-                        year = new YearDate(Integer.parseInt(split[1]));
+                        year = Year.parse(split[1]);
                     } catch (NumberFormatException e) {
                         throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
                     }
@@ -355,7 +351,7 @@ public class InputFileReader {
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 
-        YearDate year = null;
+        Year year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
@@ -370,7 +366,7 @@ public class InputFileReader {
             switch (split[0].toLowerCase()) {
                 case "year":
                     try {
-                        year = new YearDate(Integer.parseInt(split[1]));
+                        year = Year.parse(split[1]);
                     } catch (NumberFormatException e) {
                         throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
                     }
@@ -398,7 +394,7 @@ public class InputFileReader {
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 
-        YearDate year = null;
+        Year year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
@@ -413,7 +409,7 @@ public class InputFileReader {
             switch (split[0].toLowerCase()) {
                 case "year":
                     try {
-                        year = new YearDate(Integer.parseInt(split[1]));
+                        year = Year.parse(split[1]);
                     } catch (NumberFormatException e) {
                         throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
                     }
@@ -468,9 +464,7 @@ public class InputFileReader {
     }
 
     private static <L, V extends Number> Map<IntegerRange, LabelledValueSet<L, V>> readIn2DDataTable(
-            int i, List<String> lines, Path path, List<L> columnLabels,
-            Class<? extends AbstractLabelToAbstractValueSet<L, V>> setType)
-            throws InvalidInputFileException {
+            int i, List<String> lines, Path path, List<L> columnLabels, Class<? extends AbstractLabelToAbstractValueSet<L, V>> setType) throws InvalidInputFileException {
 
         try {
             Map<IntegerRange, LabelledValueSet<L, V>> data = new TreeMap<>();
@@ -510,8 +504,7 @@ public class InputFileReader {
                 data.put(rowLabel, setType.newInstance().init(rowMap));
             }
             return data;
-        }
-        catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }

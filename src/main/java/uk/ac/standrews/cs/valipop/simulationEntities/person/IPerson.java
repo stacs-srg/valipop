@@ -19,8 +19,8 @@ package uk.ac.standrews.cs.valipop.simulationEntities.person;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -61,7 +61,7 @@ public interface IPerson extends Comparable<IPerson> {
      *
      * @return the person's date of birth
      */
-    ValipopDate getBirthDate();
+    LocalDate getBirthDate();
 
     /**
      * Gets the person's place of birth, or null if not recorded.
@@ -74,7 +74,7 @@ public interface IPerson extends Comparable<IPerson> {
      *
      * @return the person's date of death
      */
-    ValipopDate getDeathDate();
+    LocalDate getDeathDate();
 
     /**
      * Gets the person's place of death, or null if not recorded.
@@ -112,7 +112,7 @@ public interface IPerson extends Comparable<IPerson> {
 
     void recordPartnership(IPartnership partnership);
 
-    void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics);
+    void recordDeath(LocalDate date, PopulationStatistics desiredPopulationStatistics);
 
     Collection<IPerson> getAllChildren();
 }

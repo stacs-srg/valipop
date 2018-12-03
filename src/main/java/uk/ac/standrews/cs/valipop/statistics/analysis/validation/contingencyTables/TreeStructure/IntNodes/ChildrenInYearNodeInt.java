@@ -17,31 +17,32 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.ChildrenInYearOption;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
+
+import java.time.LocalDate;
+import java.time.Year;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class ChildrenInYearNodeInt extends IntNode<ChildrenInYearOption, Integer> {
+public class ChildrenInYearNodeInt extends IntNode<Boolean, Integer> {
 
-    public ChildrenInYearNodeInt(final ChildrenInYearOption option, final NumberOfPreviousChildrenInAnyPartnershipNodeInt parentNode, final int initCount) {
+    public ChildrenInYearNodeInt(final Boolean option, final NumberOfPreviousChildrenInAnyPartnershipNodeInt parentNode, final int initCount) {
         super(option, parentNode, initCount);
     }
 
     @Override
-    public void processPerson(final IPerson person, final ValipopDate currentDate) {
+    public void processPerson(final IPerson person, final LocalDate currentDate) {
 
         incCountByOne();
 
         final IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
 
-        final int option = activePartnership == null ? 0 : PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, currentDate.getYearDate());
+        final int option = activePartnership == null ? 0 : PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, Year.of(currentDate.getYear()));
 
         try {
             getChild(option).processPerson(person, currentDate);

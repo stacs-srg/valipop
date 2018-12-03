@@ -5,10 +5,10 @@ import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.Year;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -59,7 +59,7 @@ public class CL_OBDModel {
 
         String run_path_string = FileUtils.getRunPath().toString();
 
-        int value = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
+        int value = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
 
         double v = RCaller.getGeeglmV("geeglm", run_path_string, run_path_string, value, model.getSummaryRow().getStartTime());
 

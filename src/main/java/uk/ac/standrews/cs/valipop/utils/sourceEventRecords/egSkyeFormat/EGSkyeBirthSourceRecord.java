@@ -1,10 +1,11 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 
 /**
@@ -15,8 +16,8 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
     private static Random rng = new Random();
 
     protected int familyID = -1;
-    protected ExactDate birthDate;
-    protected ExactDate registrationDate;
+    protected LocalDate birthDate;
+    protected LocalDate registrationDate;
     protected String mothersOccupation = "";
     protected String illegitimate = "";
     protected String marriageBaby = "";
@@ -27,7 +28,7 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
         super(person, population);
 
         familyID = parents_partnership_id;
-        birthDate = new ExactDate(person.getBirthDate());
+        birthDate = person.getBirthDate();
 
         if (parents_partnership_id != -1) {
             mothersOccupation = person.getParents().getFemalePartner().getOccupation();
@@ -35,7 +36,7 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
         }
 
         int registrationDay = rng.nextInt(43);
-        registrationDate = birthDate.advanceTime(registrationDay);
+        registrationDate = birthDate.plus(registrationDay, ChronoUnit.DAYS);
 
         illegitimate = person.isIllegitimate() ? "illegitimate" : "";
 
@@ -54,10 +55,10 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
                 "", "", "", "", "", "", "",
                 "", forename, surname, birthDate.toString(), "", "",
                 sex, fathers_forename, fathers_surname, fathers_occupation, mothers_forename,
-                mothers_maiden_surname, mothersOccupation, parents_marriage_date.getDay(),
+                mothers_maiden_surname, mothersOccupation, parents_marriage_date.getDayOfMonth(),
                 parents_marriage_date.getMonth(), parents_marriage_date.getYear(), parents_place_of_marriage,
                 "", "", "",
-                "", "", "", registrationDate.getDay(),
+                "", "", "", registrationDate.getDayOfMonth(),
                 registrationDate.getMonth(), registrationDate.getYear(), illegitimate, "SYNTHETIC DATA PRODUCED USING VALIPOP", "", "", "", "", deathID,
                 "", "", marriageBaby);
 

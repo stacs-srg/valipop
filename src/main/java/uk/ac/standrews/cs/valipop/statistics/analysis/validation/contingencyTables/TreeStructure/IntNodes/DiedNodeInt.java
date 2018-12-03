@@ -23,28 +23,26 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.DiedOption;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.Collection;
 import java.util.List;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
+public class DiedNodeInt extends IntNode<Boolean, IntegerRange> {
 
-    public DiedNodeInt(final DiedOption option, final AgeNodeInt parentNode, final int initCount) {
+    public DiedNodeInt(final Boolean option, final AgeNodeInt parentNode, final int initCount) {
         super(option, parentNode, initCount);
     }
 
     @SuppressWarnings("Duplicates")
     @Override
-    public void processPerson(final IPerson person, final ValipopDate currentDate) {
+    public void processPerson(final IPerson person, final LocalDate currentDate) {
 
         incCountByOne();
 
@@ -83,10 +81,10 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
             }
         }
 
-        YearDate yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
+        Year yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
         int age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
 
-        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        Year currentDate = Year.of(yob.getValue() + age);
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 

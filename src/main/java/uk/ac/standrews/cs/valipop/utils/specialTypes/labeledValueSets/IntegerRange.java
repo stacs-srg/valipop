@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange;
+package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ public class IntegerRange implements Comparable<IntegerRange> {
 
     public IntegerRange(String label) {
 
-        if(Objects.equals(label, "na")) {
+        if (Objects.equals(label, "na")) {
             value = "na";
         } else {
 
@@ -70,7 +70,7 @@ public class IntegerRange implements Comparable<IntegerRange> {
 
     public boolean contains(Integer integer) {
 
-        if(value.equals("na")) {
+        if (value.equals("na")) {
             throw new InvalidRangeException("Range value na - cannot contain value: " + integer);
         }
 
@@ -81,7 +81,6 @@ public class IntegerRange implements Comparable<IntegerRange> {
             // if single value
             return integer >= min && integer <= max;
         }
-
     }
 
     public Integer getValue() {
@@ -107,9 +106,9 @@ public class IntegerRange implements Comparable<IntegerRange> {
     public String toString() {
         String s = "";
 
-        if(value.equals("na")) {
+        if (value.equals("na")) {
             return value;
-        } else if(plus) {
+        } else if (plus) {
             s += min;
             s += "+";
         } else {
@@ -140,7 +139,7 @@ public class IntegerRange implements Comparable<IntegerRange> {
 
         String hc = "";
 
-        if(value.equals("na")) {
+        if (value.equals("na")) {
 
             hc += "0";
 

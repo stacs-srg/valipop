@@ -16,15 +16,14 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.Collection;
 
 /**
@@ -42,20 +41,20 @@ public class NumberOfChildrenInYearNodeInt extends IntNode<Integer, IntegerRange
 
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
+
         incCountByOne();
 
-        int prevChildren = ((PreviousNumberOfChildrenInPartnershipNodeInt)
-                getAncestor(new PreviousNumberOfChildrenInPartnershipNodeInt())).getOption().getValue();
+        int prevChildren = ((PreviousNumberOfChildrenInPartnershipNodeInt) getAncestor(new PreviousNumberOfChildrenInPartnershipNodeInt())).getOption().getValue();
 
-        int childrenThisYear = ((NumberOfChildrenInYearNodeInt)
-                getAncestor(new NumberOfChildrenInYearNodeInt())).getOption();
+        int childrenThisYear = ((NumberOfChildrenInYearNodeInt) getAncestor(new NumberOfChildrenInYearNodeInt())).getOption();
 
         int ncip = prevChildren + childrenThisYear;
         IntegerRange range = resolveToChildRange(ncip);
 
         try {
             getChild(range).processPerson(person, currentDate);
+
         } catch (ChildNotFoundException e) {
             addChild(range).processPerson(person, currentDate);
         }
@@ -74,29 +73,29 @@ public class NumberOfChildrenInYearNodeInt extends IntNode<Integer, IntegerRange
     @SuppressWarnings("Duplicates")
     private IntegerRange resolveToChildRange(Integer ncip) {
 
-        for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
-            if(aN.getOption().contains(ncip)) {
+        for (Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
+            if (aN.getOption().contains(ncip)) {
                 return aN.getOption();
             }
         }
 
-        YearDate yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
-        Integer age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
+        Year yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
+        int age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
 
-        ValipopDate currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        Year currentDate = Year.of(yob.getValue() + age);
 
         Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 
-        for(IntegerRange o : sepRanges) {
-            if(o.contains(ncip)) {
+        for (IntegerRange o : sepRanges) {
+            if (o.contains(ncip)) {
                 return o;
             }
         }
 
-        if(ncip == 0) {
+        if (ncip == 0) {
             return new IntegerRange(0);
         }
 
-        throw new Error("Did not resolve any permissable ranges");
+        throw new Error("Did not resolve any permissible ranges");
     }
 }

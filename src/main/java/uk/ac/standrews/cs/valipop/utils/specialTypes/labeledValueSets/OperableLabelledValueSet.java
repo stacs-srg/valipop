@@ -1,7 +1,5 @@
 package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
-
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */

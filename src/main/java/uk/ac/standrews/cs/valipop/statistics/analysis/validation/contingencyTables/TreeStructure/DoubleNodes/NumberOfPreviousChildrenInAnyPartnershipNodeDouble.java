@@ -17,22 +17,23 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ControlChildrenNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.ChildrenInYearOption;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+
+import java.time.LocalDate;
+import java.time.Year;
 
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNode<IntegerRange, ChildrenInYearOption> implements RunnableNode, ControlChildrenNode {
+public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNode<IntegerRange, Boolean> implements RunnableNode, ControlChildrenNode {
 
     public NumberOfPreviousChildrenInAnyPartnershipNodeDouble(IntegerRange option, PreviousNumberOfChildrenInPartnershipNodeDouble parentNode, Double initCount) {
         super(option, parentNode, initCount);
@@ -43,24 +44,23 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNo
     }
 
     @Override
-    public Node<ChildrenInYearOption, ?, Double, ?> makeChildInstance(ChildrenInYearOption childOption, Double initCount) {
+    public Node<Boolean, ?, Double, ?> makeChildInstance(Boolean childOption, Double initCount) {
         return new ChildrenInYearNodeDouble(childOption, this, initCount, false);
     }
 
     @Override
-    public void processPerson(IPerson person, ValipopDate currentDate) {
+    public void processPerson(IPerson person, LocalDate currentDate) {
 
         incCountByOne();
 
         IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
 
-        ChildrenInYearOption option;
+        boolean option;
 
         if (activePartnership == null) {
-            option = ChildrenInYearOption.NO;
+            option = false;
         } else {
-            option = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, currentDate.getYearDate()) == 0 ?
-                    ChildrenInYearOption.NO : ChildrenInYearOption.YES;
+            option = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, Year.of(currentDate.getYear())) != 0;
         }
 
         try {
@@ -84,7 +84,7 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNo
     @Override
     public void makeChildren() {
 
-        addChild(ChildrenInYearOption.YES);
-        addChild(ChildrenInYearOption.NO);
+        addChild(true);
+        addChild(false);
     }
 }

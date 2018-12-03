@@ -17,14 +17,13 @@
 package uk.ac.standrews.cs.valipop.export.gedcom;
 
 import org.gedcom4j.model.*;
-import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -39,9 +38,9 @@ public class GEDCOMPerson implements IPerson {
     private String first_name;
     protected String surname;
     protected SexOption sex;
-    private java.util.Date birth_date;
+    private LocalDate birth_date;
     private String birth_place;
-    private java.util.Date death_date;
+    private LocalDate death_date;
     private String death_place;
     protected String death_cause;
     protected String occupation;
@@ -155,12 +154,12 @@ public class GEDCOMPerson implements IPerson {
             switch (event.type) {
 
                 case BIRTH:
-                    birth_date = DateManipulation.parseDate(event.date.toString());
+                    birth_date = LocalDate.parse(event.date.toString());
                     birth_place = event.place.placeName;
                     break;
 
                 case DEATH:
-                    death_date = DateManipulation.parseDate(event.date.toString());
+                    death_date = LocalDate.parse(event.date.toString());
                     death_place = event.place.placeName;
                     death_cause = event.cause.toString();
                     break;
@@ -219,12 +218,12 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public ValipopDate getBirthDate() {
+    public LocalDate getBirthDate() {
         return null;
     }
 
     @Override
-    public ValipopDate getDeathDate() {
+    public LocalDate getDeathDate() {
         return null;
     }
 
@@ -249,7 +248,7 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public void recordDeath(ValipopDate date, PopulationStatistics desiredPopulationStatistics) {
+    public void recordDeath(LocalDate date, PopulationStatistics desiredPopulationStatistics) {
     }
 
     @Override

@@ -16,12 +16,12 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
-import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.Period;
 
 /**
  * Created by graham on 13/05/2014.
@@ -40,10 +40,6 @@ public abstract class SourceRecord {
 
     protected String image_quality;
 
-    public String getUid() {
-        return uid;
-    }
-
     public void setUid(final String uid) {
         this.uid = uid;
     }
@@ -54,46 +50,6 @@ public abstract class SourceRecord {
 
     public void setEntry(final String entry) {
         this.entry = entry;
-    }
-
-    public String getEntryCorrected() {
-        return entry_corrected;
-    }
-
-    public void setEntryCorrected(final String entry_corrected) {
-        this.entry_corrected = entry_corrected;
-    }
-
-    public String getRegistrationYear() {
-        return registration_year;
-    }
-
-    public void setRegistrationYear(final String registration_year) {
-        this.registration_year = registration_year;
-    }
-
-    public String getRegistrationDistrictNumber() {
-        return registration_district_number;
-    }
-
-    public void setRegistrationDistrictNumber(final String registration_district_number) {
-        this.registration_district_number = registration_district_number;
-    }
-
-    public String getRegistrationDistrictSuffix() {
-        return registration_district_suffix;
-    }
-
-    public void setRegistrationDistrictSuffix(final String registration_district_suffix) {
-        this.registration_district_suffix = registration_district_suffix;
-    }
-
-    public String getImageQuality() {
-        return image_quality;
-    }
-
-    public void setImageQuality(final String image_quality) {
-        this.image_quality = image_quality;
     }
 
     protected String getMaidenSurname(IPopulation population, IPerson female) {
@@ -129,44 +85,43 @@ public abstract class SourceRecord {
         builder.append(SEPARATOR);
     }
 
-    protected int fullYearsBetween(Date d1, Date d2) {
+    protected int fullYearsBetween(LocalDate d1, LocalDate d2) {
 
-        return d1.before(d2) ? DateManipulation.differenceInYears(d1, d2) : DateManipulation.differenceInYears(d2, d1);
+        return Period.between(d1, d2).getYears();
+
+//        return d1.before(d2) ? DateManipulation.differenceInYears(d1, d2) : DateManipulation.differenceInYears(d2, d1);
     }
 
     public abstract String getHeaders();
 
-    /**
-     * Created by graham on 14/05/2014.
-     */
-    public static class DateRecord {
-
-        private String day;
-        private String month;
-        private String year;
-
-        public String getDay() {
-            return day;
-        }
-
-        public void setDay(final String day) {
-            this.day = day;
-        }
-
-        public String getMonth() {
-            return month;
-        }
-
-        public void setMonth(final String month) {
-            this.month = month;
-        }
-
-        public String getYear() {
-            return year;
-        }
-
-        public void setYear(final String year) {
-            this.year = year;
-        }
-    }
+//    public static class DateRecord {
+//
+//        private String day;
+//        private String month;
+//        private String year;
+//
+//        public String getDay() {
+//            return day;
+//        }
+//
+//        public void setDay(final String day) {
+//            this.day = day;
+//        }
+//
+//        public String getMonth() {
+//            return month;
+//        }
+//
+//        public void setMonth(final String month) {
+//            this.month = month;
+//        }
+//
+//        public String getYear() {
+//            return year;
+//        }
+//
+//        public void setYear(final String year) {
+//            this.year = year;
+//        }
+//    }
 }

@@ -1,23 +1,24 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.MarriageSourceRecord;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
+
+import java.time.LocalDate;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
 
-    protected ExactDate marriageDate;
+    protected LocalDate marriageDate;
     protected int groomID;
     protected int brideID;
 
     public EGSkyeMarriageSourceRecord(IPartnership partnership, IPopulation population) {
         super(partnership, population);
 
-        marriageDate = new ExactDate(partnership.getPartnershipDate());
+        marriageDate = partnership.getPartnershipDate();
         groomID = partnership.getMalePartner().getId();
         brideID = partnership.getFemalePartner().getId();
     }
@@ -30,7 +31,7 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
         append(builder, "", "", uid, "", "", "",
                 "", "", "", "",
                 "", "", "", marriageDate.toString(), getGroomAgeOrDateOfBirth(), getBrideAgeOrDateOfBirth(), "",
-                "", "", "", "", "", "", "", marriageDate.toString(), marriageDate.getDay(), marriageDate.getMonth(), marriageDate.getYear(),
+                "", "", "", "", "", "", "", marriageDate.toString(), marriageDate.getDayOfMonth(), marriageDate.getMonth(), marriageDate.getYear(),
                 "", "", "", getGroomForename(), getGroomSurname(),
                 getGroomOccupation(), getGroomMaritalStatus(), getGroomAgeOrDateOfBirth(), getGroomAddress(),
                 "", getBrideForename(), getBrideSurname(), getBrideOccupation(),

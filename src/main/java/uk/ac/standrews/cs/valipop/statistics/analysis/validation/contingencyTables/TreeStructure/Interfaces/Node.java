@@ -21,8 +21,10 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
@@ -52,7 +54,7 @@ public abstract class Node<Op, cOp, Count extends Number, ChildCount extends Num
 
     public abstract void incCountByOne();
 
-    public abstract void processPerson(final IPerson person, final ValipopDate currentDate);
+    public abstract void processPerson(final IPerson person, final LocalDate currentDate);
 
     public Node<cOp, ?, ChildCount, ?> addChild(Node<cOp, ?, ChildCount, ?> child) {
 
@@ -140,11 +142,11 @@ public abstract class Node<Op, cOp, Count extends Number, ChildCount extends Num
         return getAncestor(new CTtree()).getInputStats();
     }
 
-    public ValipopDate getStartDate() {
+    public LocalDate getStartDate() {
         return getAncestor(new CTtree()).getStartDate();
     }
 
-    public ValipopDate getEndDate() {
+    public LocalDate getEndDate() {
         return getAncestor(new CTtree()).getEndDate();
     }
 
@@ -178,5 +180,15 @@ public abstract class Node<Op, cOp, Count extends Number, ChildCount extends Num
         System.out.println();
 
         return depth;
+    }
+
+    protected Year getYearAtAge(Year yearOfBirth, int age) {
+
+        return Year.of(yearOfBirth.getValue()).plus(age, ChronoUnit.YEARS);
+    }
+
+    protected LocalDate getDateAtAge(Year yearOfBirth, int age) {
+
+        return LocalDate.of(yearOfBirth.getValue(),1,1).plus(age, ChronoUnit.YEARS);
     }
 }

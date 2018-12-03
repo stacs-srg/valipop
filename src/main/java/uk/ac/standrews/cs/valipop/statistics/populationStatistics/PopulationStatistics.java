@@ -35,15 +35,13 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InputFileReader;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
+import java.time.Period;
+import java.time.Year;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
@@ -54,24 +52,23 @@ import java.util.*;
  */
 public class PopulationStatistics implements EventRateTables {
 
-    private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath;
-    private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath;
-    private Map<YearDate, SelfCorrectingProportionalDistribution> partnering;
-    private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
-    private Map<YearDate, ProportionalDistribution> multipleBirth;
-    private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth;
-    private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> marriage;
-    private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> separation;
+    private Map<Year, SelfCorrectingOneDimensionDataDistribution> maleDeath;
+    private Map<Year, SelfCorrectingOneDimensionDataDistribution> femaleDeath;
+    private Map<Year, SelfCorrectingProportionalDistribution> partnering;
+    private Map<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
+    private Map<Year, ProportionalDistribution> multipleBirth;
+    private Map<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth;
+    private Map<Year, SelfCorrectingOneDimensionDataDistribution> marriage;
+    private Map<Year, SelfCorrectingTwoDimensionDataDistribution> separation;
 
-    private Map<YearDate, Double> sexRatioBirth;
+    private Map<Year, Double> sexRatioBirth;
 
-    private Map<YearDate, ValiPopEnumeratedDistribution> maleForename;
-    private Map<YearDate, ValiPopEnumeratedDistribution> femaleForename;
+    private Map<Year, ValiPopEnumeratedDistribution> maleForenames;
+    private Map<Year, ValiPopEnumeratedDistribution> femaleForenames;
+    private Map<Year, ValiPopEnumeratedDistribution> surnames;
 
-    private Map<YearDate, ValiPopEnumeratedDistribution> surname;
-
-    private Map<YearDate, AgeDependantEnumeratedDistribution> maleDeathCauses;
-    private Map<YearDate, AgeDependantEnumeratedDistribution> femaleDeathCauses;
+    private Map<Year, AgeDependantEnumeratedDistribution> maleDeathCauses;
+    private Map<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses;
 
     // Population Constants
     private int minGestationPeriodDays = 147;
@@ -98,20 +95,20 @@ public class PopulationStatistics implements EventRateTables {
                 randomGenerator.setSeed(config.getSeed() == 0 ? DEFAULT_DETERMINISTIC_SEED : config.getSeed());
             }
 
-            Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath = readInSC1DDataFiles(config.getVarMaleLifetablePaths(), config);
-            Map<YearDate, AgeDependantEnumeratedDistribution> maleDeathCauses = readInDeathCauseDataFiles(config.getVarMaleDeathCausesPaths(), config);
-            Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath = readInSC1DDataFiles(config.getVarFemaleLifetablePaths(), config);
-            Map<YearDate, AgeDependantEnumeratedDistribution> femaleDeathCauses = readInDeathCauseDataFiles(config.getVarFemaleDeathCausesPaths(), config);
-            Map<YearDate, SelfCorrectingProportionalDistribution> partnering = readInAgeAndProportionalStatsInputFiles(config.getVarPartneringPaths(), config);
-            Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths(), config);
-            Map<YearDate, ProportionalDistribution> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
-            Map<YearDate, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth = readInSC1DDataFiles(config.getVarIllegitimateBirthPaths(), config);
-            Map<YearDate, SelfCorrectingOneDimensionDataDistribution> marriage = readInSC1DDataFiles(config.getVarMarriagePaths(), config);
-            Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> separation = readInSC2DDataFiles(config.getVarSeparationPaths(), config);
-            Map<YearDate, Double> sexRatioBirth = readInSingleInputDataFile(config.getVarBirthRatioPath(), config);
-            Map<YearDate, ValiPopEnumeratedDistribution> maleForename = readInNamesDataFiles(config.getVarMaleForenamePath(), config);
-            Map<YearDate, ValiPopEnumeratedDistribution> femaleForename = readInNamesDataFiles(config.getVarFemaleForenamePath(), config);
-            Map<YearDate, ValiPopEnumeratedDistribution> surname = readInNamesDataFiles(config.getVarSurnamePath(), config);
+            Map<Year, SelfCorrectingOneDimensionDataDistribution> maleDeath = readInSC1DDataFiles(config.getVarMaleLifetablePaths(), config);
+            Map<Year, AgeDependantEnumeratedDistribution> maleDeathCauses = readInDeathCauseDataFiles(config.getVarMaleDeathCausesPaths(), config);
+            Map<Year, SelfCorrectingOneDimensionDataDistribution> femaleDeath = readInSC1DDataFiles(config.getVarFemaleLifetablePaths(), config);
+            Map<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses = readInDeathCauseDataFiles(config.getVarFemaleDeathCausesPaths(), config);
+            Map<Year, SelfCorrectingProportionalDistribution> partnering = readInAgeAndProportionalStatsInputFiles(config.getVarPartneringPaths(), config);
+            Map<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths(), config);
+            Map<Year, ProportionalDistribution> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
+            Map<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth = readInSC1DDataFiles(config.getVarIllegitimateBirthPaths(), config);
+            Map<Year, SelfCorrectingOneDimensionDataDistribution> marriage = readInSC1DDataFiles(config.getVarMarriagePaths(), config);
+            Map<Year, SelfCorrectingTwoDimensionDataDistribution> separation = readInSC2DDataFiles(config.getVarSeparationPaths(), config);
+            Map<Year, Double> sexRatioBirth = readInSingleInputDataFile(config.getVarBirthRatioPath(), config);
+            Map<Year, ValiPopEnumeratedDistribution> maleForename = readInNamesDataFiles(config.getVarMaleForenamePath(), config);
+            Map<Year, ValiPopEnumeratedDistribution> femaleForename = readInNamesDataFiles(config.getVarFemaleForenamePath(), config);
+            Map<Year, ValiPopEnumeratedDistribution> surname = readInNamesDataFiles(config.getVarSurnamePath(), config);
 
             init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth,
                     marriage, separation, sexRatioBirth, maleForename, femaleForename, surname, config.getMinBirthSpacing(),
@@ -126,29 +123,33 @@ public class PopulationStatistics implements EventRateTables {
         this.randomGenerator = randomGenerator;
     }
 
-    public PopulationStatistics(Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
-                                Map<YearDate, AgeDependantEnumeratedDistribution> maleDeathCauses,
-                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
-                                Map<YearDate, AgeDependantEnumeratedDistribution> femaleDeathCauses,
-                                Map<YearDate, SelfCorrectingProportionalDistribution> partnering,
-                                Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
-                                Map<YearDate, ProportionalDistribution> multipleBirth,
-                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth,
-                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> marriage,
-                                Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> separation,
-                                Map<YearDate, Double> sexRatioBirths,
-                                Map<YearDate, ValiPopEnumeratedDistribution> maleForename,
-                                Map<YearDate, ValiPopEnumeratedDistribution> femaleForename,
-                                Map<YearDate, ValiPopEnumeratedDistribution> surname,
+    public PopulationStatistics(Map<Year, SelfCorrectingOneDimensionDataDistribution> maleDeath,
+                                Map<Year, AgeDependantEnumeratedDistribution> maleDeathCauses,
+                                Map<Year, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
+                                Map<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses,
+                                Map<Year, SelfCorrectingProportionalDistribution> partnering,
+                                Map<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
+                                Map<Year, ProportionalDistribution> multipleBirth,
+                                Map<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth,
+                                Map<Year, SelfCorrectingOneDimensionDataDistribution> marriage,
+                                Map<Year, SelfCorrectingTwoDimensionDataDistribution> separation,
+                                Map<Year, Double> sexRatioBirths,
+                                Map<Year, ValiPopEnumeratedDistribution> maleForenames,
+                                Map<Year, ValiPopEnumeratedDistribution> femaleForenames,
+                                Map<Year, ValiPopEnumeratedDistribution> surnames,
                                 int minBirthSpacingDays,
                                 int minGestationPeriodDays,
                                 RandomGenerator randomGenerator) {
 
         this.randomGenerator = randomGenerator;
-        init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth, marriage, separation, sexRatioBirths, maleForename, femaleForename, surname, minBirthSpacingDays, minGestationPeriodDays);
+        init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth, marriage, separation, sexRatioBirths, maleForenames, femaleForenames, surnames, minBirthSpacingDays, minGestationPeriodDays);
     }
 
-    private void init(Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath, Map<YearDate, AgeDependantEnumeratedDistribution> maleDeathCauses, Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath, Map<YearDate, AgeDependantEnumeratedDistribution> femaleDeathCauses, Map<YearDate, SelfCorrectingProportionalDistribution> partnering, Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth, Map<YearDate, ProportionalDistribution> multipleBirth, Map<YearDate, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth, Map<YearDate, SelfCorrectingOneDimensionDataDistribution> marriage, Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> separation, Map<YearDate, Double> sexRatioBirths, Map<YearDate, ValiPopEnumeratedDistribution> maleForename, Map<YearDate, ValiPopEnumeratedDistribution> femaleForename, Map<YearDate, ValiPopEnumeratedDistribution> surname, int minBirthSpacingDays, int minGestationPeriodDays) {
+    private void init(Map<Year, SelfCorrectingOneDimensionDataDistribution> maleDeath, Map<Year, AgeDependantEnumeratedDistribution> maleDeathCauses, Map<Year, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
+                      Map<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses, Map<Year, SelfCorrectingProportionalDistribution> partnering, Map<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
+                      Map<Year, ProportionalDistribution> multipleBirth, Map<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth, Map<Year, SelfCorrectingOneDimensionDataDistribution> marriage,
+                      Map<Year, SelfCorrectingTwoDimensionDataDistribution> separation, Map<Year, Double> sexRatioBirths, Map<Year, ValiPopEnumeratedDistribution> maleForename, Map<Year, ValiPopEnumeratedDistribution> femaleForename,
+                      Map<Year, ValiPopEnumeratedDistribution> surname, int minBirthSpacingDays, int minGestationPeriodDays) {
 
         this.maleDeath = maleDeath;
         this.maleDeathCauses = maleDeathCauses;
@@ -162,9 +163,9 @@ public class PopulationStatistics implements EventRateTables {
         this.separation = separation;
         this.sexRatioBirth = sexRatioBirths;
 
-        this.maleForename = maleForename;
-        this.femaleForename = femaleForename;
-        this.surname = surname;
+        this.maleForenames = maleForename;
+        this.femaleForenames = femaleForename;
+        this.surnames = surname;
 
         this.minBirthSpacingDays = minBirthSpacingDays;
         this.minGestationPeriodDays = minGestationPeriodDays;
@@ -178,37 +179,37 @@ public class PopulationStatistics implements EventRateTables {
 
         if (key instanceof DeathStatsKey) {
             DeathStatsKey k = (DeathStatsKey) key;
-            return getDeathRates(k.getDate(), k.getSex()).determineCount(k, config);
+            return getDeathRates(k.getYear(), k.getSex()).determineCount(k, config);
         }
 
         if (key instanceof BirthStatsKey) {
             BirthStatsKey k = (BirthStatsKey) key;
-            return getOrderedBirthRates(k.getDate()).determineCount(k, config);
+            return getOrderedBirthRates(k.getYear()).determineCount(k, config);
         }
 
         if (key instanceof MultipleBirthStatsKey) {
             MultipleBirthStatsKey k = (MultipleBirthStatsKey) key;
-            return getMultipleBirthRates(k.getDate()).determineCount(k, config);
+            return getMultipleBirthRates(k.getYear()).determineCount(k, config);
         }
 
         if (key instanceof IllegitimateBirthStatsKey) {
             IllegitimateBirthStatsKey k = (IllegitimateBirthStatsKey) key;
-            return getIllegitimateBirthRates(k.getDate()).determineCount(k, config);
+            return getIllegitimateBirthRates(k.getYear()).determineCount(k, config);
         }
 
         if (key instanceof MarriageStatsKey) {
             MarriageStatsKey k = (MarriageStatsKey) key;
-            return getMarriageRates(k.getDate()).determineCount(k, config);
+            return getMarriageRates(k.getYear()).determineCount(k, config);
         }
 
         if (key instanceof SeparationStatsKey) {
             SeparationStatsKey k = (SeparationStatsKey) key;
-            return getSeparationByChildCountRates(k.getDate()).determineCount(k, config);
+            return getSeparationByChildCountRates(k.getYear()).determineCount(k, config);
         }
 
         if (key instanceof PartneringStatsKey) {
             PartneringStatsKey k = (PartneringStatsKey) key;
-            return getPartneringRates(k.getDate()).determineCount(k, config);
+            return getPartneringRates(k.getYear()).determineCount(k, config);
         }
 
         throw new Error("Key based access not implemented for key class: " + key.getClass().toGenericString());
@@ -218,130 +219,133 @@ public class PopulationStatistics implements EventRateTables {
 
         if (achievedCount.getKey() instanceof DeathStatsKey) {
             DeathStatsKey k = (DeathStatsKey) achievedCount.getKey();
-            getDeathRates(k.getDate(), k.getSex()).returnAchievedCount(achievedCount);
+            getDeathRates(k.getYear(), k.getSex()).returnAchievedCount(achievedCount);
             return;
         }
 
         if (achievedCount.getKey() instanceof BirthStatsKey) {
             BirthStatsKey k = (BirthStatsKey) achievedCount.getKey();
-            getOrderedBirthRates(k.getDate()).returnAchievedCount(achievedCount);
+            getOrderedBirthRates(k.getYear()).returnAchievedCount(achievedCount);
             return;
         }
 
         if (achievedCount.getKey() instanceof MultipleBirthStatsKey) {
             MultipleBirthStatsKey k = (MultipleBirthStatsKey) achievedCount.getKey();
-            getMultipleBirthRates(k.getDate()).returnAchievedCount(achievedCount);
+            getMultipleBirthRates(k.getYear()).returnAchievedCount(achievedCount);
             return;
         }
 
         if (achievedCount.getKey() instanceof IllegitimateBirthStatsKey) {
             IllegitimateBirthStatsKey k = (IllegitimateBirthStatsKey) achievedCount.getKey();
-            getIllegitimateBirthRates(k.getDate()).returnAchievedCount(achievedCount);
+            getIllegitimateBirthRates(k.getYear()).returnAchievedCount(achievedCount);
             return;
         }
 
         if (achievedCount.getKey() instanceof MarriageStatsKey) {
             MarriageStatsKey k = (MarriageStatsKey) achievedCount.getKey();
-            getMarriageRates(k.getDate()).returnAchievedCount(achievedCount);
+            getMarriageRates(k.getYear()).returnAchievedCount(achievedCount);
             return;
         }
 
         if (achievedCount.getKey() instanceof SeparationStatsKey) {
             SeparationStatsKey k = (SeparationStatsKey) achievedCount.getKey();
-            getSeparationByChildCountRates(k.getDate()).returnAchievedCount(achievedCount);
+            getSeparationByChildCountRates(k.getYear()).returnAchievedCount(achievedCount);
             return;
         }
 
         if (achievedCount.getKey() instanceof PartneringStatsKey) {
             PartneringStatsKey k = (PartneringStatsKey) achievedCount.getKey();
-            getPartneringRates(k.getDate()).returnAchievedCount(achievedCount);
+            getPartneringRates(k.getYear()).returnAchievedCount(achievedCount);
             return;
         }
 
-        throw new Error("Key based access not implemented for key class: "
-                + achievedCount.getKey().getClass().toGenericString());
+        throw new Error("Key based access not implemented for key class: " + achievedCount.getKey().getClass().toGenericString());
     }
 
     @Override
-    public SelfCorrectingOneDimensionDataDistribution getDeathRates(ValipopDate year, SexOption sex) {
+    public SelfCorrectingOneDimensionDataDistribution getDeathRates(Year year, SexOption sex) {
+
         if (sex == SexOption.MALE) {
-            return maleDeath.get(getNearestYearInMap(year.getYearDate(), maleDeath));
+            return maleDeath.get(getNearestYearInMap(year, maleDeath));
         } else {
-            return femaleDeath.get(getNearestYearInMap(year.getYearDate(), femaleDeath));
+            return femaleDeath.get(getNearestYearInMap(year, femaleDeath));
         }
     }
 
     @Override
-    public EnumeratedDistribution getDeathCauseRates(ValipopDate year, SexOption sex, int age) {
+    public EnumeratedDistribution getDeathCauseRates(Year year, SexOption sex, int age) {
+
         if (sex == SexOption.MALE) {
-            return maleDeathCauses.get(getNearestYearInMap(year.getYearDate(), maleDeathCauses)).getDistributionForAge(age);
+            return maleDeathCauses.get(getNearestYearInMap(year, maleDeathCauses)).getDistributionForAge(age);
         } else {
-            return femaleDeathCauses.get(getNearestYearInMap(year.getYearDate(), femaleDeathCauses)).getDistributionForAge(age);
+            return femaleDeathCauses.get(getNearestYearInMap(year, femaleDeathCauses)).getDistributionForAge(age);
         }
     }
 
     @Override
-    public SelfCorrectingProportionalDistribution getPartneringRates(ValipopDate year) {
-        return partnering.get(getNearestYearInMap(year.getYearDate(), partnering));
+    public SelfCorrectingProportionalDistribution getPartneringRates(Year year) {
+        return partnering.get(getNearestYearInMap(year, partnering));
     }
 
     @Override
-    public SelfCorrectingOneDimensionDataDistribution getIllegitimateBirthRates(ValipopDate year) {
-        return illegitimateBirth.get(getNearestYearInMap(year.getYearDate(), illegitimateBirth));
+    public SelfCorrectingOneDimensionDataDistribution getIllegitimateBirthRates(Year year) {
+        return illegitimateBirth.get(getNearestYearInMap(year, illegitimateBirth));
     }
 
     @Override
-    public SelfCorrectingOneDimensionDataDistribution getMarriageRates(ValipopDate year) {
-        return marriage.get(getNearestYearInMap(year.getYearDate(), marriage));
+    public SelfCorrectingOneDimensionDataDistribution getMarriageRates(Year year) {
+        return marriage.get(getNearestYearInMap(year, marriage));
     }
 
     @Override
-    public SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(ValipopDate year) {
-        return orderedBirth.get(getNearestYearInMap(year.getYearDate(), orderedBirth));
+    public SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(Year year) {
+        return orderedBirth.get(getNearestYearInMap(year, orderedBirth));
     }
 
     @Override
-    public ProportionalDistribution getMultipleBirthRates(ValipopDate year) {
-        return multipleBirth.get(getNearestYearInMap(year.getYearDate(), multipleBirth));
+    public ProportionalDistribution getMultipleBirthRates(Year year) {
+        return multipleBirth.get(getNearestYearInMap(year, multipleBirth));
     }
 
     @Override
-    public SelfCorrectingTwoDimensionDataDistribution getSeparationByChildCountRates(ValipopDate year) {
-        return separation.get(getNearestYearInMap(year.getYearDate(), separation));
+    public SelfCorrectingTwoDimensionDataDistribution getSeparationByChildCountRates(Year year) {
+        return separation.get(getNearestYearInMap(year, separation));
     }
 
     @Override
-    public EnumeratedDistribution getForenameDistribution(ValipopDate year, SexOption sex) {
+    public EnumeratedDistribution getForenameDistribution(Year year, SexOption sex) {
+
         if (sex == SexOption.MALE) {
-            return maleForename.get(getNearestYearInMap(year.getYearDate(), maleForename));
+            return maleForenames.get(getNearestYearInMap(year, maleForenames));
         } else {
-            return femaleForename.get(getNearestYearInMap(year.getYearDate(), femaleForename));
+            return femaleForenames.get(getNearestYearInMap(year, femaleForenames));
         }
     }
 
     @Override
-    public EnumeratedDistribution getSurnameDistribution(ValipopDate year) {
-        return surname.get(getNearestYearInMap(year.getYearDate(), surname));
+    public EnumeratedDistribution getSurnameDistribution(Year year) {
+        return surnames.get(getNearestYearInMap(year, surnames));
     }
 
     @Override
-    public double getMaleProportionOfBirths(ValipopDate onDate) {
+    public double getMaleProportionOfBirths(Year onDate) {
         return sexRatioBirth.get(getNearestYearInMap(onDate, sexRatioBirth));
     }
 
-    private YearDate getNearestYearInMap(ValipopDate year, Map<YearDate, ?> map) {
+    private Year getNearestYearInMap(Year year, Map<Year, ?> map) {
 
-        int minDifferenceInMonths = Integer.MAX_VALUE;
-        YearDate nearestTableYear = null;
+        long minDifference = Long.MAX_VALUE;
+        Year nearestTableYear = null;
 
-        ArrayList<YearDate> orderedKeySet = new ArrayList<>(map.keySet());
-        Collections.sort(orderedKeySet);
+        ArrayList<Year> orderedKeySet = new ArrayList<>(map.keySet());
+        Collections.sort(orderedKeySet); // TODO why necessary?
 
+        for (Year tableYear : orderedKeySet) {
 
-        for (YearDate tableYear : orderedKeySet) {
-            int difference = DateUtils.differenceInMonths(tableYear, year.getYearDate()).getCount();
-            if (difference < minDifferenceInMonths) {
-                minDifferenceInMonths = difference;
+            long difference = Math.abs(year.until(tableYear, ChronoUnit.YEARS));
+
+            if (difference < minDifference) {
+                minDifference = difference;
                 nearestTableYear = tableYear;
             }
         }
@@ -361,11 +365,11 @@ public class PopulationStatistics implements EventRateTables {
         return randomGenerator;
     }
 
-    private static Map<YearDate, Double> readInSingleInputDataFile(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+    private static Map<Year, Double> readInSingleInputDataFile(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
         int c = 0;
 
-        Map<YearDate, Double> data = new TreeMap<>();
+        Map<Year, Double> data = new TreeMap<>();
 
         for (Path p : paths) {
             if (c == 1) {
@@ -378,15 +382,15 @@ public class PopulationStatistics implements EventRateTables {
         }
 
         if (data.isEmpty()) {
-            data.put(new YearDate(1600), 0.5);
+            data.put(Year.of(1600), 0.5);
         }
 
         return data;
     }
 
-    private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> readInSC1DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+    private Map<Year, SelfCorrectingOneDimensionDataDistribution> readInSC1DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> data = new TreeMap<>();
+        Map<Year, SelfCorrectingOneDimensionDataDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -396,9 +400,9 @@ public class PopulationStatistics implements EventRateTables {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private Map<YearDate, ValiPopEnumeratedDistribution> readInNamesDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
+    private Map<Year, ValiPopEnumeratedDistribution> readInNamesDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
-        Map<YearDate, ValiPopEnumeratedDistribution> data = new TreeMap<>();
+        Map<Year, ValiPopEnumeratedDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -408,9 +412,9 @@ public class PopulationStatistics implements EventRateTables {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private Map<YearDate, AgeDependantEnumeratedDistribution> readInDeathCauseDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
+    private Map<Year, AgeDependantEnumeratedDistribution> readInDeathCauseDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
-        Map<YearDate, AgeDependantEnumeratedDistribution> data = new TreeMap<>();
+        Map<Year, AgeDependantEnumeratedDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -420,9 +424,9 @@ public class PopulationStatistics implements EventRateTables {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> readInSC2DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+    private Map<Year, SelfCorrectingTwoDimensionDataDistribution> readInSC2DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> data = new TreeMap<>();
+        Map<Year, SelfCorrectingTwoDimensionDataDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -432,9 +436,9 @@ public class PopulationStatistics implements EventRateTables {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private Map<YearDate, SelfCorrectingProportionalDistribution> readInAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+    private Map<Year, SelfCorrectingProportionalDistribution> readInAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, SelfCorrectingProportionalDistribution> data = new TreeMap<>();
+        Map<Year, SelfCorrectingProportionalDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -444,9 +448,9 @@ public class PopulationStatistics implements EventRateTables {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private Map<YearDate, ProportionalDistribution> readInAndAdaptAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+    private Map<Year, ProportionalDistribution> readInAndAdaptAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, ProportionalDistribution> data = new TreeMap<>();
+        Map<Year, ProportionalDistribution> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
@@ -456,37 +460,57 @@ public class PopulationStatistics implements EventRateTables {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private static <T extends InputMetaData> Map<YearDate, T> insertDistributionsToMeetInputWidth(Config config, Map<YearDate, T> inputs) {
+    private static <T extends InputMetaData> Map<Year, T> insertDistributionsToMeetInputWidth(Config config, Map<Year, T> inputs) {
 
-        CompoundTimeUnit inputWidth = config.getInputWidth();
+        Period inputWidth = config.getInputWidth();
 
-        int stepBack = (int) (inputWidth.getCount() * Math.ceil((config.getT0().getYear() - config.getTS().getYear()) / (double) inputWidth.getCount()));
+        int diff = config.getT0().getYear() - config.getTS().getYear();
+        int stepBack = (int) (inputWidth.getYears() * Math.ceil(diff / (double) inputWidth.getYears()));
 
-        YearDate prevInputDate = config.getT0().advanceTime(new CompoundTimeUnit(stepBack, TimeUnit.YEAR).negative()).getYearDate();
+//        config.getT0().minus(Period.ofYears(stepBack)).getYear()
+
+//        MonthDate monthDate = config.getT0().advanceTime(new CompoundTimeUnit(stepBack, TimeUnit.YEAR).negative());
+        Year prevInputDate = Year.of(config.getT0().minus(Period.ofYears(stepBack)).getYear());
 
         int c = 1;
-        ValipopDate curDate;
 
-        YearDate[] years = inputs.keySet().toArray(new YearDate[inputs.keySet().size()]);
+        Year[] years = inputs.keySet().toArray(new Year[0]);
         Arrays.sort(years);
 
         if (years.length == 0) {
             return inputs;
         }
 
-        while (DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), years[0])) {
-            inputs.put(curDate.getYearDate(), inputs.get(years[0]));
+        Year curDate;
+        while (true) {
+
+            curDate = prevInputDate.plus(Period.ofYears(inputWidth.getYears() * c));
+            if (curDate.isAfter(years[0])) break;
+            inputs.put(curDate, inputs.get(years[0]));
             c++;
         }
 
+//        while (DateUtils.dateBeforeOrEqual(curDate = prevInputDate.plus(makePeriod(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())))), years[0])) {
+//            inputs.put(curDate.getYear(), inputs.get(years[0]));
+//            c++;
+//        }
+
         prevInputDate = years[0];
 
-        for (YearDate curInputDate : years) {
+        for (Year curInputDate : years) {
 
 
-            while (DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), curInputDate)) {
-                YearDate duplicateFrom = getNearestDate(curDate, prevInputDate, curInputDate);
-                inputs.put(curDate.getYearDate(), inputs.get(duplicateFrom));
+//            while (DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), curInputDate)) {
+//                Year duplicateFrom = getNearestDate(curDate, prevInputDate, curInputDate);
+//                inputs.put(curDate.getYear(), inputs.get(duplicateFrom));
+//                c++;
+//            }
+
+            while (true) {
+                curDate = prevInputDate.plus(Period.ofYears(inputWidth.getYears() * c));
+                if (curDate.isAfter(curInputDate)) break;
+                Year duplicateFrom = getNearestDate(curDate, prevInputDate, curInputDate);
+                inputs.put(curDate, inputs.get(duplicateFrom));
                 c++;
             }
 
@@ -494,18 +518,34 @@ public class PopulationStatistics implements EventRateTables {
             prevInputDate = curInputDate;
         }
 
-        while (DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), config.getTE())) {
-            inputs.put(curDate.getYearDate(), inputs.get(prevInputDate));
+//        while (DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), config.getTE())) {
+//            inputs.put(curDate.getYear(), inputs.get(prevInputDate));
+//            c++;
+//        }
+
+        while (true) {
+            curDate = prevInputDate.plus(Period.ofYears(inputWidth.getYears() * c));
+            if (curDate.isAfter(Year.of(config.getTE().getYear()))) break;
+//            inputs.put(curDate.getYear(), inputs.get(prevInputDate));
             c++;
         }
 
         return inputs;
     }
 
-    private static YearDate getNearestDate(ValipopDate referenceDate, YearDate option1, YearDate option2) {
+//    private static Period makePeriod(CompoundTimeUnit compoundTimeUnit) {
+//
+//        if (compoundTimeUnit.getUnit() == TimeUnit.MONTH) {
+//            return Period.ofMonths(compoundTimeUnit.getCount());
+//        } else {
+//            return Period.ofYears(compoundTimeUnit.getCount());
+//        }
+//    }
 
-        int refTo1 = DateUtils.differenceInDays(referenceDate, option1);
-        int refTo2 = DateUtils.differenceInDays(referenceDate, option2);
+    private static Year getNearestDate(Year referenceDate, Year option1, Year option2) {
+
+        int refTo1 = Math.abs(referenceDate.getValue() - option1.getValue());
+        int refTo2 = Math.abs(referenceDate.getValue() - option2.getValue());
 
         return (refTo1 < refTo2) ? option1 : option2;
     }

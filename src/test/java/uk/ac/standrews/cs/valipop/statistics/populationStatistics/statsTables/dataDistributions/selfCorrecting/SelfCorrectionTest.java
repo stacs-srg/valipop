@@ -17,20 +17,20 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
-import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.DeathStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
+import java.time.Period;
+import java.time.Year;
 import java.util.Map;
 import java.util.TreeMap;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -49,10 +49,7 @@ public class SelfCorrectionTest {
         data.put(new IntegerRange(4), 0.5);
         data.put(new IntegerRange(5), 0.01);
 
-        SelfCorrectingOneDimensionDataDistribution sc1DDD =
-                new SelfCorrectingOneDimensionDataDistribution(new YearDate(0), "test", "test", data, false, new JDKRandomGenerator());
-
-        return sc1DDD;
+        return new SelfCorrectingOneDimensionDataDistribution(Year.of(0), "test", "test", data, false, new JDKRandomGenerator());
     }
 
     @Test
@@ -61,7 +58,7 @@ public class SelfCorrectionTest {
         SelfCorrectingOneDimensionDataDistribution sc1DDD = createSC1DDD();
         OneDimensionDataDistribution sc1DDDCopy = sc1DDD.clone();
 
-        CompoundTimeUnit y = new CompoundTimeUnit(1, TimeUnit.YEAR);
+        Period y = Period.ofYears(1);
 
         for (IntegerRange iR : sc1DDD.getRate().keySet()) {
 
@@ -70,11 +67,11 @@ public class SelfCorrectionTest {
             // Basic first retrieval tests
             StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, y, null, SexOption.MALE);
             DeterminedCount r1 = sc1DDD.determineCount(k1, null);
-            Assert.assertEquals((int) Math.round(check * 100), (int) r1.getDeterminedCount(), DELTA);
+            assertEquals((int) Math.round(check * 100), (int) r1.getDeterminedCount(), DELTA);
 
             StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, y, null, SexOption.MALE);
             DeterminedCount r2 = sc1DDD.determineCount(k2, null);
-            Assert.assertEquals((int) Math.round(check * 1000), (int) r2.getDeterminedCount(), DELTA);
+            assertEquals((int) Math.round(check * 1000), (int) r2.getDeterminedCount(), DELTA);
         }
     }
 
@@ -84,24 +81,20 @@ public class SelfCorrectionTest {
         SelfCorrectingOneDimensionDataDistribution sc1DDD = createSC1DDD();
         OneDimensionDataDistribution sc1DDDCopy = sc1DDD.clone();
 
-        CompoundTimeUnit y = new CompoundTimeUnit(1, TimeUnit.YEAR);
-        CompoundTimeUnit m6 = new CompoundTimeUnit(6, TimeUnit.MONTH);
+        Period y = Period.ofYears(1);
 
-        CompoundTimeUnit[] tps = {y};
+        Period[] tps = {y};
 
-        for (CompoundTimeUnit tp : tps) {
+        for (Period tp : tps) {
 
             for (IntegerRange iR : sc1DDD.getRate().keySet()) {
 
                 StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, tp, null, SexOption.MALE);
-                StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, tp, null, SexOption.MALE);
-
-                // --- B
 
                 double c1 = sc1DDDCopy.getRate(iR.getValue());
 
                 DeterminedCount r1 = sc1DDD.determineCount(k1, null);
-                Assert.assertEquals((int) Math.round(c1 * r1.getKey().getForNPeople()), r1.getDeterminedCount());
+                assertEquals((int) Math.round(c1 * r1.getKey().getForNPeople()), r1.getDeterminedCount());
 
                 int rr2 = (int) Math.round(1.5 * (int) r1.getDeterminedCount());
                 r1.setFulfilledCount(rr2);
@@ -132,17 +125,12 @@ public class SelfCorrectionTest {
 
     private double calcAdditiveRate(StatsKey k1, double r1, StatsKey k2, double r2) {
 
-        double aR = (r1 * k1.getForNPeople() + r2 * k2.getForNPeople()) / (k1.getForNPeople() + k2.getForNPeople());
-
-        return aR;
+        return (r1 * k1.getForNPeople() + r2 * k2.getForNPeople()) / (k1.getForNPeople() + k2.getForNPeople());
     }
 
     private double calcExpectedCorrectiveRate(double targetRate, double returnedRate, StatsKey returnedKey, StatsKey checkKey) {
 
-        double expectedCorrectiveRate =
-                (targetRate * (returnedKey.getForNPeople() + checkKey.getForNPeople())
-                        - (returnedRate * returnedKey.getForNPeople()))
-                        / checkKey.getForNPeople();
+        double expectedCorrectiveRate = (targetRate * (returnedKey.getForNPeople() + checkKey.getForNPeople()) - (returnedRate * returnedKey.getForNPeople())) / checkKey.getForNPeople();
 
         if (expectedCorrectiveRate > 1) {
             return 1;
@@ -157,13 +145,7 @@ public class SelfCorrectionTest {
 
     private double calcUnfetteredExpectedCorrectiveRate(double targetRate, double returnedRate, StatsKey returnedKey, StatsKey checkKey) {
 
-        double expectedCorrectiveRate =
-                (targetRate * (returnedKey.getForNPeople()
-                        + checkKey.getForNPeople())
-                        - (returnedRate * returnedKey.getForNPeople()))
-                        / checkKey.getForNPeople();
-
-        return expectedCorrectiveRate;
+        return (targetRate * (returnedKey.getForNPeople() + checkKey.getForNPeople()) - (returnedRate * returnedKey.getForNPeople())) / checkKey.getForNPeople();
     }
 
     @Test
@@ -174,8 +156,8 @@ public class SelfCorrectionTest {
         int age = 5;
 
         int popSize = 1000000;
-        CompoundTimeUnit y = new CompoundTimeUnit(1, TimeUnit.YEAR);
-        CompoundTimeUnit m2 = new CompoundTimeUnit(2, TimeUnit.MONTH);
+        Period y = Period.ofYears(1);
+        Period m2 = Period.ofMonths(2);
 
         StatsKey yearK = new DeathStatsKey(age, popSize, y, null, SexOption.MALE);
         int expPopSize = popSize - data.determineCount(yearK, null).getDeterminedCount();
@@ -188,7 +170,7 @@ public class SelfCorrectionTest {
             popSize -= count;
         }
 
-        Assert.assertEquals(expPopSize, popSize);
+        assertEquals(expPopSize, popSize);
     }
 }
 

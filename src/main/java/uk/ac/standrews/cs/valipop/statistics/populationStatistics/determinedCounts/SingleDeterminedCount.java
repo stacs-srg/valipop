@@ -24,12 +24,11 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.Stat
 public class SingleDeterminedCount implements DeterminedCount<Integer, Double> {
 
     private StatsKey key;
-    int determinedCount;
+    private int determinedCount;
+    private int fulfilledCount;
 
-    int fufilledCount;
-
-    double rawUncorrectedCount;
-    double rawCorrectedCount;
+    private double rawUncorrectedCount;
+    private double rawCorrectedCount;
 
 
     public SingleDeterminedCount(StatsKey key, int determinedCount, double rawCorrectedCount, double rawUncorrectedCount) {
@@ -49,7 +48,7 @@ public class SingleDeterminedCount implements DeterminedCount<Integer, Double> {
     }
 
     public Integer getFulfilledCount() {
-        return fufilledCount;
+        return fulfilledCount;
     }
 
     @Override
@@ -63,6 +62,6 @@ public class SingleDeterminedCount implements DeterminedCount<Integer, Double> {
     }
 
     public void setFulfilledCount(Integer fulfilledCount) {
-        this.fufilledCount = fulfilledCount;
+        this.fulfilledCount = fulfilledCount;
     }
 }

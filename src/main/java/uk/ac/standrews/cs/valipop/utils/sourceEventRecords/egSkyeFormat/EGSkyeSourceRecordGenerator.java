@@ -24,13 +24,13 @@ import uk.ac.standrews.cs.utilities.archive.CommandLineArgs;
 import uk.ac.standrews.cs.utilities.archive.Diagnostic;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.ValipopDate;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 
 /**
  * Generates birth/death/marriage records for all the people in the database.
@@ -65,7 +65,7 @@ public class EGSkyeSourceRecordGenerator {
         MARRIAGE_RECORDS_PATH = outputDir + "/" + MARRIAGE_RECORDS_PATH;
     }
 
-    public void generateEventRecords(ValipopDate startDate) throws Exception {
+    public void generateEventRecords(LocalDate startDate) throws Exception {
 
         final long start_time = System.currentTimeMillis();
 

@@ -16,14 +16,14 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
-import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 
 /**
  * A representation of a Death Record in the form used by the Digitising Scotland Project.
@@ -81,19 +81,13 @@ import java.util.Date;
  */
 public class DeathSourceRecord extends IndividualSourceRecord {
 
-    public static final long FIRST_YEAR_DOB_PRESENT = 1966;
-    private static final SimpleDateFormat DOB_DATE_FORMAT = new SimpleDateFormat("ddMMyyyy");
+    private static final long FIRST_YEAR_DOB_PRESENT = 1966;
+    private static final DateTimeFormatter DOB_DATE_FORMAT =  DateTimeFormatter.ofPattern("ddMMyyyy");
 
-    private SourceRecord.DateRecord death_date;
+    private LocalDate death_date;
 
     private String death_age;
-    private String death_age_changed;
-
-    private String death_place;
     private String death_cause_a;
-    private String death_cause_b;
-    private String death_cause_c;
-    private String certifying_doctor;
 
     private String birth_date;
     private String occupation;
@@ -107,8 +101,6 @@ public class DeathSourceRecord extends IndividualSourceRecord {
 
     public DeathSourceRecord(final IPerson person, IPopulation population) {
 
-        death_date = new SourceRecord.DateRecord();
-
         // Attributes associated with individual
         setUid(String.valueOf(person.getId()));
         setSex(String.valueOf(person.getSex()));
@@ -117,10 +109,19 @@ public class DeathSourceRecord extends IndividualSourceRecord {
         setOccupation(person.getOccupation());
         setDeathCauseA(person.getDeathCause());
 
-        Date birth_date = person.getBirthDate().getDate();
-        Date death_date = person.getDeathDate().getDate();
+        LocalDate birth_date = person.getBirthDate();
+        death_date = person.getDeathDate();
 
-        processDates(birth_date, death_date);
+        if (death_date != null) {
+
+            int death_year = death_date.getYear();
+
+            setDeathAge(String.valueOf(Period.between(birth_date, death_date).getYears()));
+
+            if (death_year >= DeathSourceRecord.FIRST_YEAR_DOB_PRESENT) {
+                setBirthDate(birth_date.format( DOB_DATE_FORMAT));
+            }
+        }
 
         IPartnership parents_partnership = person.getParents();
         if (parents_partnership != null) {
@@ -129,91 +130,27 @@ public class DeathSourceRecord extends IndividualSourceRecord {
         }
     }
 
-    public String getDeathDay() {
-        return death_date.getDay();
-    }
-
-    public void setDeathDay(final String death_day) {
-        death_date.setDay(death_day);
-    }
-
-    public String getDeathMonth() {
-        return death_date.getMonth();
-    }
-
-    public void setDeathMonth(final String death_month) {
-        death_date.setMonth(death_month);
-    }
-
-    public String getDeathYear() {
-        return death_date.getYear();
-    }
-
-    public void setDeathYear(final String death_year) {
-        death_date.setYear(death_year);
-    }
-
-    public String getDeathAge() {
+    protected String getDeathAge() {
         return death_age;
     }
 
-    public void setDeathAge(final String death_age) {
+    private void setDeathAge(final String death_age) {
         this.death_age = death_age;
     }
 
-    public String getDeathAgeChanged() {
-        return death_age_changed;
-    }
-
-    public void setDeathAgeChanged(final String death_age_changed) {
-        this.death_age_changed = death_age_changed;
-    }
-
-    public String getDeathPlace() {
-        return death_place;
-    }
-
-    public void setDeathPlace(final String death_place) {
-        this.death_place = death_place;
-    }
-
-    public String getDeathCauseA() {
+    protected String getDeathCauseA() {
         return death_cause_a;
     }
 
-    public void setDeathCauseA(final String death_cause_a) {
+    private void setDeathCauseA(final String death_cause_a) {
         this.death_cause_a = death_cause_a;
-    }
-
-    public String getDeathCauseB() {
-        return death_cause_b;
-    }
-
-    public void setDeathCauseB(final String death_cause_b) {
-        this.death_cause_b = death_cause_b;
-    }
-
-    public String getDeathCauseC() {
-        return death_cause_c;
-    }
-
-    public void setDeathCauseC(final String death_cause_c) {
-        this.death_cause_c = death_cause_c;
-    }
-
-    public String getCertifyingDoctor() {
-        return certifying_doctor;
-    }
-
-    public void setCertifyingDoctor(final String certifying_doctor) {
-        this.certifying_doctor = certifying_doctor;
     }
 
     public String getBirthDate() {
         return birth_date;
     }
 
-    public void setBirthDate(final String birth_date) {
+    private void setBirthDate(final String birth_date) {
         this.birth_date = birth_date;
     }
 
@@ -225,43 +162,43 @@ public class DeathSourceRecord extends IndividualSourceRecord {
         this.occupation = occupation;
     }
 
-    public String getFatherDeceased() {
+    protected String getFatherDeceased() {
         return father_deceased;
     }
 
-    public void setFatherDeceased(final String father_deceased) {
+    protected void setFatherDeceased(final String father_deceased) {
         this.father_deceased = father_deceased;
     }
 
-    public String getMotherDeceased() {
+    protected String getMotherDeceased() {
         return mother_deceased;
     }
 
-    public void setMotherDeceased(final String mother_deceased) {
+    protected void setMotherDeceased(final String mother_deceased) {
         this.mother_deceased = mother_deceased;
     }
 
-    public String getMaritalStatus() {
+    protected String getMaritalStatus() {
         return marital_status;
     }
 
-    public void setMaritalStatus(final String marital_status) {
+    protected void setMaritalStatus(final String marital_status) {
         this.marital_status = marital_status;
     }
 
-    public String getSpousesNames() {
+    protected String getSpousesNames() {
         return spouses_names;
     }
 
-    public void setSpousesNames(final String spouses_names) {
+    protected void setSpousesNames(final String spouses_names) {
         this.spouses_names = spouses_names;
     }
 
-    public String getSpousesOccupations() {
+    protected String getSpousesOccupations() {
         return spouses_occupations;
     }
 
-    public void setSpousesOccupations(final String spouses_occupations) {
+    protected void setSpousesOccupations(final String spouses_occupations) {
 
         this.spouses_occupations = spouses_occupations;
     }
@@ -273,28 +210,13 @@ public class DeathSourceRecord extends IndividualSourceRecord {
 
         append(builder, uid, surname, forename, sex, registration_year, registration_district_number,
                 registration_district_suffix, entry, death_date.getYear(), death_age, mothers_maiden_surname,
-                surname_changed, forename_changed, death_age_changed, birth_date, occupation, marital_status,
-                spouses_names, spouses_occupations, death_date.getMonth(), death_date.getDay(),
-                death_place, fathers_forename, fathers_surname, fathers_occupation, father_deceased, mothers_forename,
+                surname_changed, forename_changed, "", birth_date, occupation, marital_status,
+                spouses_names, spouses_occupations, death_date.getMonth(), death_date.getDayOfMonth(),
+                "", fathers_forename, fathers_surname, fathers_occupation, father_deceased, mothers_forename,
                 mothers_surname, mothers_maiden_surname_changed, mother_deceased,
-                death_cause_a, death_cause_b, death_cause_c, certifying_doctor, entry_corrected, image_quality);
+                death_cause_a, "", "", "", entry_corrected, image_quality);
 
         return builder.toString();
-    }
-
-    private void processDates(final Date birth_date, final Date death_date) {
-
-        if (death_date != null) {
-
-            long death_year = DateManipulation.dateToYear(death_date);
-
-            setDeathYear(String.valueOf(death_year));
-            setDeathAge(String.valueOf(fullYearsBetween(birth_date, death_date)));
-
-            if (death_year >= DeathSourceRecord.FIRST_YEAR_DOB_PRESENT) {
-                setBirthDate(DateManipulation.formatDate(birth_date, DOB_DATE_FORMAT));
-            }
-        }
     }
 
     @Override

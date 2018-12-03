@@ -17,12 +17,15 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
 import uk.ac.standrews.cs.valipop.utils.Logger;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.time.Year;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -31,13 +34,13 @@ public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
 
     public static Logger log = new Logger(OneDimensionDataDistribution.class);
 
-    private final YearDate year;
+    private final Year year;
     private final String sourcePopulation;
     private final String sourceOrganisation;
 
     protected final Map<IntegerRange, Double> targetRates;
 
-    public OneDimensionDataDistribution(YearDate year,
+    public OneDimensionDataDistribution(Year year,
                                         String sourcePopulation,
                                         String sourceOrganisation,
                                         Map<IntegerRange, Double> tableData) {
@@ -56,7 +59,7 @@ public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
     }
 
     @Override
-    public YearDate getYear() {
+    public Year getYear() {
         return year;
     }
 

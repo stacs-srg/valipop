@@ -2,17 +2,14 @@ package uk.ac.standrews.cs.valipop.implementations.minimaSearch;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.implementations.SpaceExploredException;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Period;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -25,11 +22,11 @@ public class MinimaSearchTest {
 
     @Before
     public void setup() throws IOException {
-        Config config = new Config(new MonthDate(1,1), new MonthDate(1,100),
-                new MonthDate(1,200), 0, 0, 0, new CompoundTimeUnit(1, TimeUnit.YEAR),
+        Config config = new Config(LocalDate.of(1,1,1), LocalDate.of(100,1,1),
+                LocalDate.of(200,1,1), 0, 0, 0, Period.ofYears(1),
                 "src/test/resources/valipop/test-pop", "", "",
                 0, 0, true, 0, 0, 0,
-                0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null, 0, true);
+                0, Period.ofYears(1), RecordFormat.NONE, null, 0, true);
 
         OBDModel.setUpFileStructureAndLogs("testing", "test-time", "results");
 

@@ -3,11 +3,11 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.d
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 
 import java.security.InvalidParameterException;
+import java.time.Year;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -17,13 +17,13 @@ import java.util.TreeMap;
  */
 public class AgeDependantEnumeratedDistribution implements InputMetaData {
 
-    private final YearDate year;
+    private final Year year;
     private final String sourcePopulation;
     private final String sourceOrganisation;
 
     private final Map<IntegerRange, EnumeratedDistribution> distributionsByAge = new TreeMap<>();
 
-    public AgeDependantEnumeratedDistribution(YearDate year, String sourcePopulation, String sourceOrganisation,
+    public AgeDependantEnumeratedDistribution(Year year, String sourcePopulation, String sourceOrganisation,
                                               Map<IntegerRange, LabelledValueSet<String, Double>> item_probabilities, RandomGenerator random) throws InconsistentWeightException {
         this.year = year;
         this.sourceOrganisation = sourceOrganisation;
@@ -50,7 +50,7 @@ public class AgeDependantEnumeratedDistribution implements InputMetaData {
     }
 
     @Override
-    public YearDate getYear() {
+    public Year getYear() {
         return year;
     }
 

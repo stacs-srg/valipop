@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Iterator;
 
 /**
@@ -114,12 +114,12 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
 
     private String getIndividualNodeAttributes(final IPerson person) {
 
-        final Date date_of_death = person.getDeathDate().getDate();
+        final LocalDate date_of_death = person.getDeathDate();
 
         final StringBuilder builder = new StringBuilder();
 
         builder.append(" [label=\"b: ");
-        builder.append(formatter.format(person.getBirthDate().getDate()));
+        builder.append(formatter.format(person.getBirthDate()));
         if (date_of_death != null) {
             builder.append("\\nd: ");
             builder.append(formatter.format(date_of_death));
