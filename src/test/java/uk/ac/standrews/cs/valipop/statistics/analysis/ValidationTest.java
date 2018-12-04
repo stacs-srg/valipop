@@ -20,12 +20,11 @@ import static org.junit.Assert.assertEquals;
 public class ValidationTest {
 
     @Test
-    @Ignore
     public void test() throws IOException, StatsException {
 
         String runPurpose = "validation-testing";
-        String resultsPath = "src/test/resources/results/general-structure-testing/";
-        String pathToConfigFile = "src/main/resources/valipop/config/scot/config.txt";
+        String resultsPath = "src/test/resources/results/validation-test/";
+        String pathToConfigFile = "src/test/resources/valipop/validation-test-config.txt";
 
         String startTime = FileUtils.getDateTime();
 
@@ -44,4 +43,5 @@ public class ValidationTest {
 
         assertEquals(v, 0.0, 1e-10);
     }
+
 }

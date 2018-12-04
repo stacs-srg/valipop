@@ -43,7 +43,7 @@ public class CTtablePart extends CTtable {
                 try {
                     leaf.addDateVariable();
 
-                    if (Objects.equals(leaf.getVariable("Sex").getValue(), "FEMALE")) {
+                    if (Objects.equals(leaf.getVariable("Sex").getValue(), "F")) {
                         leaf.deleteVariable("Sex");
 
 //                        leaf.deleteVariable("YOB");
