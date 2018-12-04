@@ -108,6 +108,7 @@ public class Config {
 
     private boolean binomialSampling = true;
     private boolean deterministic = false;
+    private int seed = 0;
 
     // Filter method to exclude dot files from data file directory streams
     private DirectoryStream.Filter<Path> filter = file -> {
@@ -266,6 +267,10 @@ public class Config {
 
                     case "deterministic":
                         deterministic = split[1].toLowerCase().equals("true");
+                        break;
+
+                    case "seed":
+                        seed = Integer.parseInt(split[1]);
                         break;
                 }
             }
@@ -450,7 +455,6 @@ public class Config {
     }
 
     public int getSeed() {
-        int seed = 0;
         return seed;
     }
 
