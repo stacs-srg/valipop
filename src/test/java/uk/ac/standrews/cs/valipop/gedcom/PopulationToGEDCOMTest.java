@@ -17,12 +17,11 @@
 package uk.ac.standrews.cs.valipop.gedcom;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.PopulationConverter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,16 +40,15 @@ import static uk.ac.standrews.cs.utilities.FileManipulation.FILE_CHARSET;
  */
 public class PopulationToGEDCOMTest extends AbstractExporterTest {
 
-    protected static final String INTENDED_SUFFIX = "_intended.ged";
+    static final String INTENDED_SUFFIX = "_intended.ged";
 
-    public PopulationToGEDCOMTest(final IPopulation population, final String file_name) throws Exception {
+    public PopulationToGEDCOMTest(final IPopulation population, final String file_name) {
 
         super(population, file_name);
     }
 
-    @Ignore
     @Test
-    public void test() throws Exception {
+    public void GEDCOMExportIsAsExpected() throws Exception {
 
         final IPopulationWriter population_writer = new GEDCOMPopulationWriter(actual_output);
 
@@ -68,7 +66,7 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         intended_output = Paths.get(TEST_DIRECTORY_PATH_STRING, "gedcom", file_name_root + INTENDED_SUFFIX);
     }
 
-    public static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {
+    private static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {
 
         try (BufferedReader reader1 = Files.newBufferedReader(path1, FILE_CHARSET); BufferedReader reader2 = Files.newBufferedReader(path2, FILE_CHARSET)) {
 
