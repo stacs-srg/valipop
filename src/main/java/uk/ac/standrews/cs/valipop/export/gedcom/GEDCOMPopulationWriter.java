@@ -267,9 +267,9 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
 
     private void writeParentsPartnership(final IPerson person) {
 
-        final int parents_partnership_id = person.getParents().getId();
-        if (parents_partnership_id != -1) {
-            write(FAMILY_AS_CHILD_TAG, makeFamilyReference(parents_partnership_id));
+        IPartnership parents = person.getParents();
+        if (parents != null) {
+            write(FAMILY_AS_CHILD_TAG, makeFamilyReference(parents.getId()));
         }
     }
 

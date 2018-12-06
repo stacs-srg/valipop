@@ -46,7 +46,7 @@ public abstract class AbstractExporterTest {
     protected Path intended_output = null;
 
     @SuppressWarnings("MagicNumber")
-    protected static final int[] TEST_CASE_POPULATION_SIZES = new int[]{10000, 50000};
+    protected static final int[] TEST_CASE_POPULATION_SIZES = new int[]{1000, 10000, 50000};
     protected static final String[] TEST_CASE_FILE_NAME_ROOTS = new String[TEST_CASE_POPULATION_SIZES.length];
 
     static {
@@ -80,13 +80,6 @@ public abstract class AbstractExporterTest {
     private static Object[] makeTestConfiguration(final int population_size, final String file_name_root) throws Exception {
 
         String purpose = "DETERMINISTIC-TESTING";
-
-//        Config config = new Config(LocalDate.of(1599, 1, 1), LocalDate.of(1855, 1, 1),
-//                LocalDate.of(2015, 1, 1), population_size, 0.0133,
-//                0.0122, Period.ofYears(1), "src/test/resources/valipop/test-pop",
-//                "results", purpose, Period.ofDays(147),
-//                Period.ofDays(147), true, 0.0, 0.0, 1.0, 1.0,
-//                Period.ofYears(1), RecordFormat.NONE, 0, true);
 
         Config config = new Config(
                 LocalDate.of(1599, 1, 1),
