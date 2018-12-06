@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
@@ -18,6 +19,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class ValidationTest {
 
+    @Ignore
     @Test
     public void test() throws IOException, StatsException {
 
