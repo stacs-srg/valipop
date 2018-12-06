@@ -3,12 +3,11 @@ package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.Person;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
+import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.Period;
 
 import static org.junit.Assert.assertEquals;
 import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.ageOnDate;
@@ -21,12 +20,13 @@ public class PersonTest {
     @Test
     public void testAgeOnDate() {
 
-        Config config = new Config(LocalDate.of(1, 1, 1), LocalDate.of(100, 1, 1),
-                LocalDate.of(200, 1, 1), 0, 0, 0, null,
-                "src/test/resources/valipop/test-pop", "", "",
-                0, 0, true, 0, 0, 0,
-                0, Period.ofYears(1), RecordFormat.NONE, null, 0, true);
-        // use config to make make ps
+        Config config = new Config(
+                LocalDate.of(1, 1, 1),
+                LocalDate.of(100, 1, 1),
+                LocalDate.of(200, 1, 1),
+                0,
+                Paths.get("src/test/resources/valipop/test-pop")).setDeterministic(true);
+
         PopulationStatistics ps = new PopulationStatistics(config);
 
         Person p1 = new Person(SexOption.MALE, LocalDate.of(1900, 1, 1), null, ps, false);

@@ -30,7 +30,6 @@ public class SingleDeterminedCount implements DeterminedCount<Integer, Double> {
     private double rawUncorrectedCount;
     private double rawCorrectedCount;
 
-
     public SingleDeterminedCount(StatsKey key, int determinedCount, double rawCorrectedCount, double rawUncorrectedCount) {
         this.key = key;
         this.determinedCount = determinedCount;

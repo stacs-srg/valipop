@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces;
-
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
+package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> {
+public abstract class DoubleNode<Op extends Comparable<Op>, cOp extends Comparable<cOp>> extends Node<Op, cOp, Double, Double> {
 
     public DoubleNode(final Op option, final Node parentNode, final double initCount) {
         super(option, parentNode, initCount);

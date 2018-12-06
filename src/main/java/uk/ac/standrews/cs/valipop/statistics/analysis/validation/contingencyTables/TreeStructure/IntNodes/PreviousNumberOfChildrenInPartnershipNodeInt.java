@@ -18,8 +18,8 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
@@ -94,6 +94,6 @@ public class PreviousNumberOfChildrenInPartnershipNodeInt extends IntNode<Intege
             }
         }
 
-        throw new Error("Did not resolve any permissable ranges");
+        throw new Error("Did not resolve any permissible ranges");
     }
 }

@@ -1,22 +1,23 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
-import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat.EGSkyeSourceRecordGenerator;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecordGenerator;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat.RelationshipsTable;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat.SimplifiedSourceRecordGenerator;
 
+import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.logging.Logger;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class RecordGenerationFactory {
 
-    public static final Logger log = new Logger(RecordGenerationFactory.class);
+    public static final Logger log = Logger.getLogger(RecordGenerationFactory.class.getName());
 
-    public static void outputRecords(RecordFormat recordFormat, String recordsOutputDir,  PeopleCollection population, LocalDate startDate) {
+    public static void outputRecords(RecordFormat recordFormat, Path recordsOutputDir,  PeopleCollection population, LocalDate startDate) {
 
         switch(recordFormat) {
             case DS:
@@ -35,12 +36,13 @@ public class RecordGenerationFactory {
         }
     }
 
-    private static void extractSimplifiedBMDRecords(PeopleCollection population, String recordsDirPath) {
+    private static void extractSimplifiedBMDRecords(PeopleCollection population, Path recordsDirPath) {
         log.info("OBDModel --- Outputting Simplified BMD records");
 
         try {
             new SimplifiedSourceRecordGenerator(population, recordsDirPath).generateEventRecords(new String[0]);
             RelationshipsTable.outputData(recordsDirPath);
+
         } catch (Exception e) {
             log.info("Record generation failed");
             e.printStackTrace();
@@ -48,11 +50,12 @@ public class RecordGenerationFactory {
         }
     }
 
-    private static void extractBMDRecords(PeopleCollection population, String recordsDirPath) {
+    private static void extractBMDRecords(PeopleCollection population, Path recordsDirPath) {
         log.info("OBDModel --- Outputting BMD records");
 
         try {
             new SourceRecordGenerator(population, recordsDirPath).generateEventRecords(new String[0]);
+
         } catch (Exception e) {
             log.info("Record generation failed");
             e.printStackTrace();
@@ -60,7 +63,7 @@ public class RecordGenerationFactory {
         }
     }
 
-    private static void extractEGSkyeRecords(PeopleCollection population, String recordsDirPath, LocalDate startDate) {
+    private static void extractEGSkyeRecords(PeopleCollection population, Path recordsDirPath, LocalDate startDate) {
         log.info("OBDModel --- Outputting EG_SKYE records");
 
         try {

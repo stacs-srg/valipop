@@ -14,20 +14,12 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.fileUtils;
+package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class InvalidInputFileException extends Exception {
-
-    public InvalidInputFileException(String message, Exception cause) {
-        super(message, cause);
-    }
-
-    public InvalidInputFileException(String message) {
-        super(message);
-    }
-
-
+public enum SourceType {
+    STAT,
+    SIM
 }

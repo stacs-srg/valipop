@@ -1,6 +1,6 @@
 /*
- * Copyright 2014 Digitising Scotland project:
- * <http://digitisingscotland.cs.st-andrews.ac.uk/>
+ * Copyright 2017 Systems Research Group, University of St Andrews:
+ * <https://github.com/stacs-srg>
  *
  * This file is part of the module population_model.
  *
@@ -14,23 +14,18 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.statistics.distributions.general;
+package uk.ac.standrews.cs.valipop.utils;
 
 /**
- * Exception indicating a negative standard deviation supplied to a distribution.
- * 
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NegativeDeviationException extends Exception {
+public class InvalidInputFileException extends Exception {
 
-    private static final long serialVersionUID = -6878666381850895224L;
+    InvalidInputFileException(String message, Exception cause) {
+        super(message, cause);
+    }
 
-    /**
-     * Creates an exception.
-     * @param message the message
-     */
-    public NegativeDeviationException(final String message) {
-
+    InvalidInputFileException(String message) {
         super(message);
     }
 }

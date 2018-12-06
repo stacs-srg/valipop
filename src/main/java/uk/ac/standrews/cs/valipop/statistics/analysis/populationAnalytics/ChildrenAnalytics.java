@@ -16,23 +16,23 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
-import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
 import java.io.PrintStream;
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
- * An analytic class to analyse the distribution of child_ids.
+ * An analytic class to analyse the distribution of children.
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Tom Dalton
  */
 
-public class ChildrenAnalytics {
+class ChildrenAnalytics {
 
     private static final int MAX_CHILDREN = 100;
     private static final int ONE_HUNDRED = 100;
@@ -43,13 +43,7 @@ public class ChildrenAnalytics {
 
     private final Map<Integer, Double> fertilityRateByYear = new TreeMap<>();
 
-    /**
-     * Creates an analytic instance to analyse child_ids in a population.
-     *
-     * @param population the population to analyse
-     * @throws Exception if the analysis cannot be completed
-     */
-    public ChildrenAnalytics(final IPopulation population, PrintStream resultsOutput) {
+    ChildrenAnalytics(final IPopulation population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
@@ -57,12 +51,9 @@ public class ChildrenAnalytics {
         calculateTFRByYear();
     }
 
-    /**
-     * Prints out all analyses.
-     */
-    public void printAllAnalytics() {
+    void printAllAnalytics() {
 
-        final int sum = ArrayManipulation.sum(children_per_marriage);
+        final int sum = IntStream.of(children_per_marriage).sum();
 
         out.println("Children per marriage sizes:");
         for (int i = 0; i < children_per_marriage.length; i++) {
@@ -79,12 +70,7 @@ public class ChildrenAnalytics {
         }
     }
 
-    /**
-     * Analyses child_ids of marriages for the population.
-     *
-     * @throws Exception if the analysis cannot be completed
-     */
-    public void analyseChildren() {
+    private void analyseChildren() {
 
         for (final IPerson person : population.getPeople()) {
 
@@ -105,7 +91,7 @@ public class ChildrenAnalytics {
         }
     }
 
-    public void calculateTFRByYear() {
+    private void calculateTFRByYear() {
 
         Map<Integer, Integer> livingFemalesOfSBAgeInEachYear = new HashMap<>();
         Map<Integer, Integer> childrenBornInEachYear = new HashMap<>();
@@ -185,7 +171,7 @@ public class ChildrenAnalytics {
         }
     }
 
-    public static Integer getSmallestValueInSets(Set<Integer> a, Set<Integer> b) {
+    private static Integer getSmallestValueInSets(Set<Integer> a, Set<Integer> b) {
 
         ArrayList<Integer> sets = new ArrayList<>(a);
         sets.addAll(b);
@@ -199,7 +185,7 @@ public class ChildrenAnalytics {
         }
     }
 
-    public static Integer getLargestValueInSets(Set<Integer> a, Set<Integer> b) {
+    private static Integer getLargestValueInSets(Set<Integer> a, Set<Integer> b) {
 
         ArrayList<Integer> sets = new ArrayList<>(a);
         sets.addAll(b);

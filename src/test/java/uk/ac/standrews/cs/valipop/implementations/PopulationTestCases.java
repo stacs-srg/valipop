@@ -19,11 +19,10 @@ package uk.ac.standrews.cs.valipop.implementations;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,34 +49,16 @@ class PopulationTestCases {
 
     private static IPopulation fullPopulation(final int t0PopulationSize, int seed) throws Exception {
 
-        LocalDate tS = LocalDate.of(1599,1,1);
-        LocalDate t0 = LocalDate.of(1855,1,1);
-        LocalDate tE = LocalDate.of(2016,1,1);
-        double setUpBR = 0.0133;
-        double setUpDR = 0.0122;
-        Period simulationTimeStep = Period.ofYears(1);
-        String varPath = "src/test/resources/valipop/test-pop";
-        String resultsSavePath = "results";
+        LocalDate tS = LocalDate.of(1599, 1, 1);
+        LocalDate t0 = LocalDate.of(1855, 1, 1);
+        LocalDate tE = LocalDate.of(2016, 1, 1);
+
+        Path varPath = Paths.get("src/test/resources/valipop/test-pop");
         String runPurpose = "general-structure-testing";
-        int minBirthSpacing = 147;
-        int minGestationPeriodDays = 0;
-        boolean binomialSampling = true;
-        double birthFactor = 0.0;
-        double deathFactor = 0.0;
-        double recoveryFactor = 1.0;
-        double proportionalRecoveryFactor = 0;
-        Period inputWidth = Period.ofYears(10);
-        RecordFormat outputRecordFormat = RecordFormat.NONE;
-        String startTime = FileUtils.getDateTime();
-        boolean deterministic = true;
 
-        OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, resultsSavePath);
+        Config config = new Config(tS, t0, tE, t0PopulationSize, varPath).setRunPurpose(runPurpose).setDeterministic(true);
 
-        Config config = new Config(tS, t0, tE, t0PopulationSize, setUpBR, setUpDR, simulationTimeStep, varPath, resultsSavePath, runPurpose,
-                minBirthSpacing, minGestationPeriodDays, binomialSampling, birthFactor, deathFactor, recoveryFactor, proportionalRecoveryFactor,
-                inputWidth, outputRecordFormat, startTime, seed, deterministic);
-
-        OBDModel model = new OBDModel(startTime, config);
+        OBDModel model = new OBDModel(config);
         model.runSimulation();
 
         PeopleCollection population = model.getPopulation().getAllPeople();

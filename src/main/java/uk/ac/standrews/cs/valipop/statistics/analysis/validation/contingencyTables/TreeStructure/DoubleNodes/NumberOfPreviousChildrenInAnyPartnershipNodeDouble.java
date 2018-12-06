@@ -20,10 +20,9 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ControlChildrenNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ControlChildrenNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
 import java.time.LocalDate;
@@ -33,7 +32,7 @@ import java.time.Year;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNode<IntegerRange, Boolean> implements RunnableNode, ControlChildrenNode {
+public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNode<IntegerRange, Boolean> implements Runnable, ControlChildrenNode {
 
     public NumberOfPreviousChildrenInAnyPartnershipNodeDouble(IntegerRange option, PreviousNumberOfChildrenInPartnershipNodeDouble parentNode, Double initCount) {
         super(option, parentNode, initCount);
@@ -77,7 +76,7 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNo
     }
 
     @Override
-    public void runTask() {
+    public void run() {
         makeChildren();
     }
 

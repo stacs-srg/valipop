@@ -19,11 +19,8 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.VariableNotFoundExcepction;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
 
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -31,26 +28,21 @@ import java.util.Objects;
  */
 public class CTtableSep extends CTtable {
 
-    public CTtableSep(CTtree tree, PopulationStatistics inputStats) {
+    public CTtableSep(CTtree tree) {
 
-        Iterator<Node> leafs = tree.getLeafNodes().iterator();
-
-        while(leafs.hasNext()) {
-            Node n = leafs.next();
+        for (Node n : tree.getLeafNodes()) {
             CTRow leaf = n.toCTRow();
 
-            if(leaf != null && leaf.getCount() != null) {
+            if (leaf != null && leaf.getCount() != null) {
                 try {
                     leaf.addDateVariable();
 
                     if (Objects.equals(leaf.getVariable("Sex").getValue(), "F")) {
                         leaf.deleteVariable("Sex");
 
-//                        leaf.deleteVariable("YOB");
                         leaf.deleteVariable("Died");
                         leaf.deleteVariable("PNCIP");
                         leaf.deleteVariable("NPCIAP");
-//                        leaf.deleteVariable("CIY");
                         leaf.deleteVariable("NCIY");
                         leaf.deleteVariable("NPA");
                         leaf.deleteVariable("Age");
@@ -64,12 +56,10 @@ public class CTtableSep extends CTtable {
                         }
                     }
 
-                } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+                } catch (RuntimeException e) {
                     // Unfilled row - thus pass
                 }
             }
-
         }
     }
-
 }

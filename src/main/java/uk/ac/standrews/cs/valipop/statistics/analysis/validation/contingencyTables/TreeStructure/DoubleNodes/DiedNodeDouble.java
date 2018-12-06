@@ -19,10 +19,8 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.*;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.*;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.DeathStatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
@@ -39,9 +37,9 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements ControlSelfNode, RunnableNode, ControlChildrenNode {
+public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements ControlSelfNode, Runnable, ControlChildrenNode {
 
-    public DiedNodeDouble(Boolean option, AgeNodeDouble parentNode, boolean init) {
+    DiedNodeDouble(Boolean option, AgeNodeDouble parentNode, boolean init) {
         super(option, parentNode);
 
         if (!init) {
@@ -54,7 +52,7 @@ public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements
         }
     }
 
-    public DiedNodeDouble() {
+    DiedNodeDouble() {
         super();
     }
 
@@ -141,7 +139,7 @@ public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements
     }
 
     @Override
-    public void runTask() {
+    public void run() {
         advanceCount();
     }
 
@@ -174,7 +172,7 @@ public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements
     }
 
     @SuppressWarnings("Duplicates")
-    public IntegerRange resolveToChildRange(Integer pncip) {
+    IntegerRange resolveToChildRange(Integer pncip) {
 
         for (Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
             if (aN.getOption().contains(pncip)) {

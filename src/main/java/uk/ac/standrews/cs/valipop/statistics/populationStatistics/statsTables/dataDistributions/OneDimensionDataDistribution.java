@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
-import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
 
@@ -26,13 +25,14 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
 
-    public static Logger log = new Logger(OneDimensionDataDistribution.class);
+    public static Logger log = Logger.getLogger(OneDimensionDataDistribution.class.getName());
 
     private final Year year;
     private final String sourcePopulation;
@@ -49,13 +49,6 @@ public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
         this.sourcePopulation = sourcePopulation;
         this.sourceOrganisation = sourceOrganisation;
         this.targetRates = tableData;
-    }
-
-    public void updateValue(Integer row, double newValue) {
-
-        IntegerRange rowRange = resolveRowValue(row);
-
-        targetRates.replace(rowRange, newValue);
     }
 
     @Override
@@ -108,7 +101,7 @@ public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
         return targetRates.get(row);
     }
 
-    public IntegerRange resolveRowValue(Integer rowValue) {
+    protected IntegerRange resolveRowValue(Integer rowValue) {
 
         for (IntegerRange iR : targetRates.keySet()) {
             if (iR.contains(rowValue)) {

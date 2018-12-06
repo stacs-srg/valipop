@@ -20,22 +20,7 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class ValuesDoNotSumToWholeNumberException extends RuntimeException {
-
-    private String message;
-    private LabelledValueSet labelledValueSet;
-
-    public ValuesDoNotSumToWholeNumberException(String message, LabelledValueSet labelledValueSet) {
-        this.message = message;
-        this.labelledValueSet = labelledValueSet;
+    public ValuesDoNotSumToWholeNumberException(String message) {
+        super(message);
     }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    public LabelledValueSet getLabelledValueSet() {
-        return labelledValueSet;
-    }
-
 }

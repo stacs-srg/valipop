@@ -14,10 +14,9 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.statistics.distributions.general;
+package uk.ac.standrews.cs.valipop.statistics.distributions;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.valipop.statistics.distributions.StringWithCumulativeProbability;
 
 import java.io.Serializable;
 import java.util.*;
@@ -34,9 +33,9 @@ public class EnumeratedDistribution implements Distribution<String> {
     private static final Comparator<? super StringWithCumulativeProbability> ITEM_COMPARATOR = new ItemComparator();
 
     private final RandomGenerator random;
-    public StringWithCumulativeProbability[] items = null;
+    protected StringWithCumulativeProbability[] items = null;
 
-    protected EnumeratedDistribution(final RandomGenerator random) {
+    private EnumeratedDistribution(final RandomGenerator random) {
         this.random = random;
     }
 
@@ -53,11 +52,10 @@ public class EnumeratedDistribution implements Distribution<String> {
         configureProbabilities(item_probabilities);
     }
 
-    protected void configureProbabilities(final Map<String, Double> item_probabilities) throws InconsistentWeightException {
+    private void configureProbabilities(final Map<String, Double> item_probabilities) throws InconsistentWeightException {
 
         List<StringWithCumulativeProbability> items_temp = new ArrayList<>();
         Double cumulative_probability = 0.0;
-        int i = 0;
 
         for (final Map.Entry<String, Double> entry : item_probabilities.entrySet()) {
 

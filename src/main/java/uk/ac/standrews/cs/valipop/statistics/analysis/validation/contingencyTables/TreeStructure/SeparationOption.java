@@ -19,8 +19,9 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class VariableNotFoundExcepction extends Throwable {
-    public VariableNotFoundExcepction(String s) {
-        super(s);
-    }
+public enum SeparationOption {
+
+    YES,
+    NO,
+    NA
 }

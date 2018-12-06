@@ -20,4 +20,4 @@ death_factor = 0.0
 recovery_factor = 0.5
 output_tables = true
 deterministic = false
-binominal_sampling = true
+binomial_sampling = true

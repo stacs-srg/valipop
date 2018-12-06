@@ -19,12 +19,11 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.dates;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.temporal.ChronoUnit;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -47,11 +46,11 @@ public class DeathDateSelector extends DateSelector {
             if (person.getSex() == SexOption.MALE) {
 
                 // If a male with a child then the man cannot die more than the minimum gestation period before the birth date
-                LocalDate earliestPossibleDate = birthDateOfLastChild.minus( statistics.getMinGestationPeriod(), ChronoUnit.DAYS);
+                LocalDate earliestPossibleDate = birthDateOfLastChild.minus(statistics.getMinGestationPeriod());
                 return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, earliestPossibleDate);
 
             } else {
-                // If a female with a child then the cannot die before birth of child
+                // If a female with a child then they cannot die before birth of child
                 return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, birthDateOfLastChild);
             }
 
@@ -62,14 +61,11 @@ public class DeathDateSelector extends DateSelector {
 
     private LocalDate selectDateRestrictedByEarliestPossibleDate(LocalDate currentDate, Period consideredTimePeriod, LocalDate earliestPossibleDate) {
 
-        // if specified earliestPossibleDate is in consideredTimePeriod
-        if (!currentDate.isAfter( earliestPossibleDate)) {
+        if (!currentDate.isAfter(earliestPossibleDate)) {
 
-            // The select date between earliestPossibleDate and currentDate + consideredTimePeriod
             return selectRandomDate(earliestPossibleDate, currentDate.plus(consideredTimePeriod));
 
         } else {
-            // else all days in consideredTimePeriod are an option
             return selectRandomDate(currentDate, consideredTimePeriod);
         }
     }

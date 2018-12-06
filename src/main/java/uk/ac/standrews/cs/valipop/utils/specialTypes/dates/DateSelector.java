@@ -44,13 +44,11 @@ public class DateSelector {
 
     public LocalDate selectRandomDate(LocalDate earliestDate, Period timePeriod) {
 
-        int daysInWindow = DateUtils.getDaysInTimePeriod(earliestDate, timePeriod);
-
-        return selectRandomDate(earliestDate, daysInWindow);
+        return selectRandomDate(earliestDate, earliestDate.plus(timePeriod));
     }
 
     private LocalDate selectRandomDate(LocalDate earliestDate, int daysInWindow) {
 
-        return earliestDate.plus(daysInWindow, DAYS);
+        return earliestDate.plus(random.nextInt(daysInWindow), DAYS);
     }
 }

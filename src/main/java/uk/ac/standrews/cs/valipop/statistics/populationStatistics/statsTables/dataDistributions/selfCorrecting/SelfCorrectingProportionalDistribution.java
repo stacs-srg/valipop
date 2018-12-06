@@ -170,7 +170,6 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
             }
         }
         return max;
-
     }
 
     @Override
@@ -188,5 +187,4 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
 
         throw new InvalidRangeException("Given value not covered by rows - value " + rowValue);
     }
-
 }

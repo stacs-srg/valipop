@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.simulationEntities;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
 
 import java.time.LocalDate;

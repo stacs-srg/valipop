@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables;
 
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.MemoryUsageAnalysis;
-import uk.ac.standrews.cs.valipop.implementations.PreEmptiveOutOfMemoryWarning;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableInstances.*;
@@ -9,25 +9,21 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.NoTableRowsException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.Config;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class ContingencyTableFactory {
 
-    public static final Logger log = new Logger(ContingencyTableFactory.class);
+    public static final Logger log = Logger.getLogger(ContingencyTableFactory.class.getName());
 
-    public static void generateContingencyTables(PeopleCollection population, PopulationStatistics desired,
-                                                 Config config, SummaryRow summary, int zeroAdjustValue,
-                                                 int startStepBack) throws PreEmptiveOutOfMemoryWarning {
+    public static void generateContingencyTables(PeopleCollection population, PopulationStatistics desired, Config config, SummaryRow summary, int startStepBack)  {
 
         ProgramTimer tableTimer = new ProgramTimer();
 
@@ -39,34 +35,33 @@ public class ContingencyTableFactory {
         try {
             log.info("OBDModel --- Extracting and Outputting CTables to files");
 
-            CTtableOB obTable = new CTtableOB(fullTree, desired);
-            outputToFile(obTable, "ob-CT.csv");
+            CTtableOB obTable = new CTtableOB(fullTree);
+            outputToFile(obTable, "ob-CT.csv", config);
 
-            CTtableMB mbTable = new CTtableMB(fullTree, desired);
-            outputToFile(mbTable, "mb-CT.csv");
+            CTtableMB mbTable = new CTtableMB(fullTree);
+            outputToFile(mbTable, "mb-CT.csv", config);
 
-            CTtablePart partTable = new CTtablePart(fullTree, desired);
-            outputToFile(partTable, "part-CT.csv");
+            CTtablePart partTable = new CTtablePart(fullTree);
+            outputToFile(partTable, "part-CT.csv", config);
 
-            CTtableSep sepTable = new CTtableSep(fullTree, desired);
-            outputToFile(sepTable, "sep-CT.csv");
+            CTtableSep sepTable = new CTtableSep(fullTree);
+            outputToFile(sepTable, "sep-CT.csv", config);
 
             CTtableDeath deathTable = new CTtableDeath(fullTree);
-            outputToFile(deathTable, "death-CT.csv");
+            outputToFile(deathTable, "death-CT.csv", config);
 
-        } catch (IOException e) {
-            throw new Error("failed to make CT files");
-        } catch (NoTableRowsException e) {
-            e.printStackTrace();
+        } catch (IOException |NoTableRowsException e) {
+            throw new RuntimeException(e);
         }
 
         summary.setCTRunTime(tableTimer.getRunTimeSeconds());
     }
 
-    private static void outputToFile(CTtable table, String fileName) throws IOException, NoTableRowsException, PreEmptiveOutOfMemoryWarning {
+    private static void outputToFile(CTtable table, String fileName, Config config) throws IOException, NoTableRowsException {
 
         MemoryUsageAnalysis.log();
-        Path path = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), fileName);
+        Path path = config.getContingencyTablesPath().resolve( fileName);
+        Config.mkBlankFile(path);
         PrintStream ps = new PrintStream(path.toFile(), "UTF-8");
         table.outputToFile(ps);
         MemoryUsageAnalysis.log();

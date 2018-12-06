@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 
 /**
@@ -40,29 +39,22 @@ import java.time.LocalDate;
  */
 public class EGSkyeSourceRecordGenerator {
 
-    public String BIRTH_RECORDS_PATH = "birth_records.csv";
-    public String DEATH_RECORDS_PATH = "death_records.csv";
-    public String MARRIAGE_RECORDS_PATH = "marriage_records.csv";
+    private static final String BIRTH_RECORDS_PATH = "birth_records.csv";
+    private static final String DEATH_RECORDS_PATH = "death_records.csv";
+    private static final String MARRIAGE_RECORDS_PATH = "marriage_records.csv";
 
     // TODO allow output file paths to be configured, add -i option to output to console
 
     public static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 10;
     private static final String NUMBER_OF_PROGRESS_UPDATES_FLAG = "-u";
 
-    private IPopulation population;
+    private final IPopulation population;
+    private final Path outputDir;
 
-    public EGSkyeSourceRecordGenerator(IPopulation population) {
-
-        this(population, "valipop/output");
-    }
-
-    public EGSkyeSourceRecordGenerator(IPopulation population, String outputDir) {
+    public EGSkyeSourceRecordGenerator(IPopulation population, Path outputDir) {
 
         this.population = population;
-
-        BIRTH_RECORDS_PATH = outputDir + "/" + BIRTH_RECORDS_PATH;
-        DEATH_RECORDS_PATH = outputDir + "/" + DEATH_RECORDS_PATH;
-        MARRIAGE_RECORDS_PATH = outputDir + "/" + MARRIAGE_RECORDS_PATH;
+        this.outputDir = outputDir;
     }
 
     public void generateEventRecords(LocalDate startDate) throws Exception {
@@ -72,22 +64,21 @@ public class EGSkyeSourceRecordGenerator {
         final int number_of_progress_updates = CommandLineArgs.extractIntFromCommandLineArgs(new String[0], NUMBER_OF_PROGRESS_UPDATES_FLAG, DEFAULT_NUMBER_OF_PROGRESS_UPDATES);
 
         Diagnostic.traceNoSource("Generating birth records");
-        exportRecords(EGSkyeSourceRecordIterator.getBirthRecordIterator(population, startDate), BIRTH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
+        exportRecords(EGSkyeSourceRecordIterator.getBirthRecordIterator(population, startDate), outputDir.resolve(BIRTH_RECORDS_PATH), population.getNumberOfPeople(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
 
         Diagnostic.traceNoSource("Generating death records");
         // The population size is an overestimate of the number of death records, but it doesn't really matter.
-        exportRecords(EGSkyeSourceRecordIterator.getDeathRecordIterator(population, startDate), DEATH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
+        exportRecords(EGSkyeSourceRecordIterator.getDeathRecordIterator(population, startDate), outputDir.resolve(DEATH_RECORDS_PATH), population.getNumberOfPeople(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
 
         Diagnostic.traceNoSource("Generating marriage records");
-        exportRecords(EGSkyeSourceRecordIterator.getMarriageRecordIterator(population, startDate), MARRIAGE_RECORDS_PATH, population.getNumberOfPartnerships(), number_of_progress_updates);
+        exportRecords(EGSkyeSourceRecordIterator.getMarriageRecordIterator(population, startDate), outputDir.resolve(MARRIAGE_RECORDS_PATH), population.getNumberOfPartnerships(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
     }
 
-    private static void exportRecords(final Iterable<? extends SourceRecord> records, final String records_path_string, int number_of_records, final int number_of_progress_updates) throws IOException {
+    private static void exportRecords(final Iterable<? extends SourceRecord> records, final Path records_path, int number_of_records, final int number_of_progress_updates) throws IOException {
 
-        Path records_path = Paths.get(records_path_string);
         FileManipulation.createParentDirectoryIfDoesNotExist(records_path);
 
         ProgressIndicator progress_indicator = new PercentageProgressIndicator(number_of_progress_updates);
@@ -99,7 +90,7 @@ public class EGSkyeSourceRecordGenerator {
 
             for (final SourceRecord record : records) {
 
-                if(first) {
+                if (first) {
                     writer.println(record.getHeaders());
                     first = false;
                 }

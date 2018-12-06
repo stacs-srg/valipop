@@ -16,19 +16,17 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.utilities.FileManipulation;
 import uk.ac.standrews.cs.utilities.PercentageProgressIndicator;
 import uk.ac.standrews.cs.utilities.ProgressIndicator;
 import uk.ac.standrews.cs.utilities.TimeManipulation;
 import uk.ac.standrews.cs.utilities.archive.CommandLineArgs;
-import uk.ac.standrews.cs.utilities.archive.Diagnostic;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Generates birth/death/marriage records for all the people in the database.
@@ -38,29 +36,22 @@ import java.nio.file.Paths;
  */
 public class SourceRecordGenerator {
 
-    public String BIRTH_RECORDS_PATH = "birth_records.txt";
-    public String DEATH_RECORDS_PATH = "death_records.txt";
-    public String MARRIAGE_RECORDS_PATH = "marriage_records.txt";
+    private static final String BIRTH_RECORDS_PATH = "birth_records.txt";
+    private static final String DEATH_RECORDS_PATH = "death_records.txt";
+    private static final String MARRIAGE_RECORDS_PATH = "marriage_records.txt";
 
     // TODO allow output file paths to be configured, add -i option to output to console
 
-    public static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 10;
+    private static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 10;
     private static final String NUMBER_OF_PROGRESS_UPDATES_FLAG = "-u";
 
-    private IPopulation population;
+    private final IPopulation population;
+    private final Path outputDir;
 
-    public SourceRecordGenerator(IPopulation population) {
-
-        this(population, "basic/output");
-    }
-
-    public SourceRecordGenerator(IPopulation population, String outputDir) {
+    public SourceRecordGenerator(IPopulation population, Path outputDir) {
 
         this.population = population;
-
-        BIRTH_RECORDS_PATH = outputDir + "/" + BIRTH_RECORDS_PATH;
-        DEATH_RECORDS_PATH = outputDir + "/" + DEATH_RECORDS_PATH;
-        MARRIAGE_RECORDS_PATH = outputDir + "/" + MARRIAGE_RECORDS_PATH;
+        this.outputDir = outputDir;
 
     }
 
@@ -70,23 +61,19 @@ public class SourceRecordGenerator {
 
         final int number_of_progress_updates = CommandLineArgs.extractIntFromCommandLineArgs(args, NUMBER_OF_PROGRESS_UPDATES_FLAG, DEFAULT_NUMBER_OF_PROGRESS_UPDATES);
 
-        Diagnostic.traceNoSource("Generating birth records");
-        exportRecords(SourceRecordIterator.getBirthRecordIterator(population), BIRTH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
+        exportRecords(SourceRecordIterator.getBirthRecordIterator(population), outputDir.resolve(BIRTH_RECORDS_PATH), population.getNumberOfPeople(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
 
-        Diagnostic.traceNoSource("Generating death records");
         // The population size is an overestimate of the number of death records, but it doesn't really matter.
-        exportRecords(SourceRecordIterator.getDeathRecordIterator(population), DEATH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
+        exportRecords(SourceRecordIterator.getDeathRecordIterator(population), outputDir.resolve(DEATH_RECORDS_PATH), population.getNumberOfPeople(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
 
-        Diagnostic.traceNoSource("Generating marriage records");
-        exportRecords(SourceRecordIterator.getMarriageRecordIterator(population), MARRIAGE_RECORDS_PATH, population.getNumberOfPartnerships(), number_of_progress_updates);
+        exportRecords(SourceRecordIterator.getMarriageRecordIterator(population), outputDir.resolve(MARRIAGE_RECORDS_PATH), population.getNumberOfPartnerships(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
     }
 
-    private static void exportRecords(final Iterable<? extends SourceRecord> records, final String records_path_string, int number_of_records, final int number_of_progress_updates) throws IOException {
+    private static void exportRecords(final Iterable<? extends SourceRecord> records, final Path records_path, int number_of_records, final int number_of_progress_updates) throws IOException {
 
-        Path records_path = Paths.get(records_path_string);
         FileManipulation.createParentDirectoryIfDoesNotExist(records_path);
 
         ProgressIndicator progress_indicator = new PercentageProgressIndicator(number_of_progress_updates);

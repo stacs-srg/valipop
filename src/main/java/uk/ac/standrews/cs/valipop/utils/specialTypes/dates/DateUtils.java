@@ -19,8 +19,6 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.dates;
 import java.time.LocalDate;
 import java.time.Period;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -33,28 +31,14 @@ public class DateUtils {
         return Period.between(startDate, currentDate).toTotalMonths() % interval.toTotalMonths() == 0;
     }
 
-    public static LocalDate getEarlier(final LocalDate date1, final LocalDate date2) {
+    public static LocalDate earlierOf(final LocalDate date1, final LocalDate date2) {
 
         return date1.isAfter(date2) ? date2 : date1;
     }
 
-    public static LocalDate getLater(final LocalDate date1, final LocalDate date2) {
+    public static LocalDate laterOf(final LocalDate date1, final LocalDate date2) {
 
         return date1.isAfter(date2) ? date1 : date2;
-    }
-
-    /**
-     * Counts the number of days in the following time period given the starting date of the time period. The returned
-     * count is inclusive the first date given.
-     *
-     * @param date                 the day to count from
-     * @param consideredTimePeriod the number of months/years to count days for
-     * @return The number of days, inclusive of the starting day
-     */
-    public static int getDaysInTimePeriod(final LocalDate date, final Period consideredTimePeriod) {
-
-        LocalDate endDate = date.plus(consideredTimePeriod);
-        return (int)DAYS.between(date, endDate);
     }
 
     public static double stepsInYear(final Period timeStep) {

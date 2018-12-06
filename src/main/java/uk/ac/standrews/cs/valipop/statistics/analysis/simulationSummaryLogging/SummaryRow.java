@@ -16,21 +16,27 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging;
 
-
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SummaryRow {
 
-    private String startTime;
+    private static final String SEPARATOR = ",";
+
+    private LocalDateTime startTime;
     private String reason;
     private String codeVersion;
 
@@ -46,16 +52,14 @@ public class SummaryRow {
     private double deathFactor;
     private double recoveryFactor;
     private double proportionalRecoveryFactor;
-    private int minBirthSpacing;
+    private Period minBirthSpacing;
 
     private RecordFormat outputRecordFormat;
 
     private int seedPop;
 
-    // Post
-
     private Path resultsDirectory;
-    private String inputsDirectory;
+    private Path inputsDirectory;
 
     private int startPop;
     private int totalPop;
@@ -72,48 +76,34 @@ public class SummaryRow {
     private double recordsRunTime;
     private double statsRunTime;
 
-    private boolean binominalSampling;
+    private boolean binomialSampling;
 
     private long maxMemoryUsage = -1L;
     private Double v = Double.NaN;
 
-    public SummaryRow(Path resultsDirectory,
-                      String inputsDirectory,
-                      String startTime,
-                      String reason,
-                      String codeVersion,
-                      Period timestep,
-                      Period inputWidth,
-                      LocalDate startDate,
-                      LocalDate endDate,
-                      int simLength,
-                      double birthFactor,
-                      double deathFactor,
-                      double recoveryFactor,
-                      double proportionalRecoveryFactor,
-                      boolean binominalSampling,
-                      int minBirthSpacing,
-                      RecordFormat outputFormat,
-                      int seedPopSize) {
+    private Config config;
 
-        this.resultsDirectory = resultsDirectory;
-        this.inputsDirectory = inputsDirectory;
-        this.startTime = startTime;
+    public SummaryRow(Config config, String codeVersion) {
+
+        this.config = config;
+        this.resultsDirectory = config.getResultsSavePath().resolve( config.getRunPurpose()).resolve( config.getStartTime().toString());
+        this.inputsDirectory = config.getVarPath();
+        this.startTime = config.getStartTime();
+        this.reason = config.getRunPurpose();
         this.codeVersion = codeVersion;
-        this.timestep = timestep;
-        this.reason = reason;
-        this.inputWidth = inputWidth;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.simLength = simLength;
-        this.birthFactor = birthFactor;
-        this.deathFactor = deathFactor;
-        this.recoveryFactor = recoveryFactor;
-        this.binominalSampling = binominalSampling;
-        this.minBirthSpacing = minBirthSpacing;
-        this.outputRecordFormat = outputFormat;
-        this.proportionalRecoveryFactor = proportionalRecoveryFactor;
-        this.seedPop = seedPopSize;
+        this.timestep = config.getSimulationTimeStep();
+        this.inputWidth = config.getInputWidth();
+        this.startDate = config.getT0();
+        this.endDate = config.getTE();
+        this.simLength = (int) DAYS.between(startDate, endDate);
+        this.birthFactor = config.getBirthFactor();
+        this.deathFactor = config.getDeathFactor();
+        this.recoveryFactor = config.getRecoveryFactor();
+        this.proportionalRecoveryFactor = config.getProportionalRecoveryFactor();
+        this.binomialSampling = config.getBinomialSampling();
+        this.minBirthSpacing = config.getMinBirthSpacing();
+        this.outputRecordFormat = config.getOutputRecordFormat();
+        this.seedPop = config.getT0PopulationSize();
     }
 
     public void setStartPop(int startPop) {
@@ -164,42 +154,48 @@ public class SummaryRow {
         this.failedEligibilityChecks = failedEligibilityChecks;
     }
 
-    public String toSeparatedString(char sep) {
-        return startTime + sep + reason + sep + codeVersion + sep + inputsDirectory + sep + totalPop + sep + seedPop
-                + sep + completed + sep + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
-                + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
-                + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + birthFactor + sep
-                + deathFactor + sep + recoveryFactor + sep + proportionalRecoveryFactor + sep + binominalSampling + sep
-                + minBirthSpacing + sep + (maxMemoryUsage / 1e6) + sep + outputRecordFormat.toString() + sep
-                + v.toString() + sep + statsRunTime + sep + eligibilityChecks + sep + failedEligibilityChecks + "\n";
+    public String toString() {
+
+        return makeRow(startTime, reason, codeVersion, inputsDirectory, totalPop, seedPop,
+                completed, simLength, timestep, inputWidth, startPop,
+                endPop, peakPop, startDate, endDate, simRunTime,
+                ctRunTime, recordsRunTime, resultsDirectory, birthFactor,
+                deathFactor, recoveryFactor, proportionalRecoveryFactor, binomialSampling,
+                minBirthSpacing, (maxMemoryUsage / 1e6), outputRecordFormat.toString(),
+                v.toString(), statsRunTime, eligibilityChecks, failedEligibilityChecks) + "\n";
     }
 
-    public static String getSeparatedHeadings(char sep) {
-        return "Start Time" + sep + "Reason" + sep + "Code Version" + sep + "Inputs Directory" + sep + "Total Pop"
-                + sep + "Seed Pop Size" + sep + "Completed" + sep + "Sim Length" + sep + "Timestep" + sep
-                + "Input Width" + sep + "Start Pop" + sep + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep
-                + "End Date" + sep + "Sim Run time" + sep + "CT Run time" + sep + "Records Run time" + sep
-                + "Results Directory" + sep + "Birth Factor" + sep + "Death Factor" + sep + "Recovery Factor" + sep
-                + "Proportional Recovery Factor" + sep + "Binominal Sampling" + sep + "Min Birth Spacing" + sep
-                + "Peak Memory Usage (MB)" + sep + "Output Record Format" + sep + "v/M" + sep + "Stats Run Time" + sep
-                + "Eligibility Checks" + sep + "Failed Eligibility Checks";
+    private static String makeRow(Object... values) {
+
+        StringBuilder builder = new StringBuilder();
+
+        for (Object value : values) {
+            builder.append(value);
+            builder.append(SEPARATOR);
+        }
+
+        return builder.toString();
+    }
+
+    public static String getSeparatedHeadings() {
+
+        return makeRow("Start Time" ,"Reason", "Code Version", "Inputs Directory", "Total Pop",
+                 "Seed Pop Size", "Completed", "Sim Length", "Timestep" ,
+                 "Input Width", "Start Pop", "End Pop", "Peak Pop", "Start Date" ,
+                 "End Date", "Sim Run time", "CT Run time", "Records Run time" ,
+                 "Results Directory", "Birth Factor", "Death Factor", "Recovery Factor" ,
+                 "Proportional Recovery Factor", "binomial Sampling", "Min Birth Spacing" ,
+                 "Peak Memory Usage (MB)", "Output Record Format", "v/M", "Stats Run Time" ,
+                 "Eligibility Checks", "Failed Eligibility Checks");
     }
 
     public void outputSummaryRowToFile() {
         try {
-            FileUtils.writeSummaryRowToSummaryFiles(this);
-        } catch (IOException e) {
-            System.err.println("Summary row could not be printed to summary files. See message: ");
-            System.err.println(e.getMessage());
-        }
-    }
+            Files.write(config.getGlobalSummaryPath(), toString().getBytes(), StandardOpenOption.APPEND);
+            Files.write(config.getResultsSummaryPath(), toString().getBytes(), StandardOpenOption.APPEND);
 
-    public void outputSummaryRowToFile(Path currentResultsSummaryPath) {
-        try {
-            FileUtils.writeSummaryRowToSummaryFiles(this, currentResultsSummaryPath);
         } catch (IOException e) {
-            System.err.println("Summary row could not be printed to summary files. See message: ");
-            System.err.println(e.getMessage());
+            throw new RuntimeException("Summary row could not be printed to summary files", e);
         }
     }
 
@@ -207,7 +203,7 @@ public class SummaryRow {
         this.v = v;
     }
 
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 }

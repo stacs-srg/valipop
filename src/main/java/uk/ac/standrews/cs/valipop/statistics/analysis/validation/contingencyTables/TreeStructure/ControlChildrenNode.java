@@ -1,6 +1,6 @@
 /*
- * Copyright 2014 Digitising Scotland project:
- * <http://digitisingscotland.cs.st-andrews.ac.uk/>
+ * Copyright 2017 Systems Research Group, University of St Andrews:
+ * <https://github.com/stacs-srg>
  *
  * This file is part of the module population_model.
  *
@@ -14,20 +14,12 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.statistics.distributions.general;
+package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure;
 
 /**
- * Allows user to pick random samples from some distribution.
- * 
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
- *
- * @param <Value> the type of the samples
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface Distribution<Value> {
+public interface ControlChildrenNode {
 
-    /**
-     * Picks a random sample from the distribution.
-     * @return the next sample from the distribution
-     */
-    Value getSample();
+    void makeChildren();
 }
