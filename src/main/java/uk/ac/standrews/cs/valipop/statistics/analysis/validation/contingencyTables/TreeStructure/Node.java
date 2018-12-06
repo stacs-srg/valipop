@@ -14,12 +14,10 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces;
+package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 import java.time.LocalDate;
@@ -30,7 +28,7 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public abstract class Node<Op, cOp, Count extends Number, ChildCount extends Number> {
+public abstract class Node<Op extends Comparable<Op>, cOp extends Comparable<cOp>, Count extends Number, ChildCount extends Number> {
 
     private Count count;
     private Op option;
@@ -70,7 +68,7 @@ public abstract class Node<Op, cOp, Count extends Number, ChildCount extends Num
             return Collections.singleton(this);
         } else {
 
-            for (Node n : getChildren()) {
+            for (Node<cOp, ?, ChildCount, ?> n : getChildren()) {
                 childNodes.addAll(n.getLeafNodes());
             }
         }
@@ -125,7 +123,7 @@ public abstract class Node<Op, cOp, Count extends Number, ChildCount extends Num
         return parent;
     }
 
-    public void addDelayedTask(final RunnableNode node) {
+    public void addDelayedTask(final Runnable node) {
         getParent().addDelayedTask(node);
     }
 
@@ -150,7 +148,7 @@ public abstract class Node<Op, cOp, Count extends Number, ChildCount extends Num
         return getAncestor(new CTtree()).getEndDate();
     }
 
-    public int printDescent() {
+    private int printDescent() {
 
         int depth = 0;
 
@@ -189,6 +187,6 @@ public abstract class Node<Op, cOp, Count extends Number, ChildCount extends Num
 
     protected LocalDate getDateAtAge(Year yearOfBirth, int age) {
 
-        return LocalDate.of(yearOfBirth.getValue(),1,1).plus(age, ChronoUnit.YEARS);
+        return LocalDate.of(yearOfBirth.getValue(), 1, 1).plus(age, ChronoUnit.YEARS);
     }
 }

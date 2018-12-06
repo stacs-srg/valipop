@@ -28,6 +28,4 @@ public interface SelfCorrection<Type, Raw> {
     DeterminedCount determineCount(StatsKey key, Config config);
 
     void returnAchievedCount(DeterminedCount<Type, Raw> achievedCount);
-
-
 }

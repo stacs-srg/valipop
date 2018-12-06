@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
 /**
@@ -30,7 +31,7 @@ public class MemoryUsageAnalysis {
 
     private static double threshold = 0.975;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, StatsException {
 
         checkMemory = true;
 

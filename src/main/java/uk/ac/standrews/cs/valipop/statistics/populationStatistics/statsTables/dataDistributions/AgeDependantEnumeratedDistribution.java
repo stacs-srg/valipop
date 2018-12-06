@@ -1,8 +1,8 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.statistics.distributions.EnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 
@@ -29,24 +29,20 @@ public class AgeDependantEnumeratedDistribution implements InputMetaData {
         this.sourceOrganisation = sourceOrganisation;
         this.sourcePopulation = sourcePopulation;
 
-        for(IntegerRange iR : item_probabilities.keySet()) {
+        for (IntegerRange iR : item_probabilities.keySet()) {
             distributionsByAge.put(iR, new EnumeratedDistribution(item_probabilities.get(iR).getMap(), random));
         }
     }
 
     public EnumeratedDistribution getDistributionForAge(Integer age) {
 
-        for(IntegerRange iR : distributionsByAge.keySet()) {
-            if(iR.contains(age)) {
+        for (IntegerRange iR : distributionsByAge.keySet()) {
+            if (iR.contains(age)) {
                 return distributionsByAge.get(iR);
             }
         }
 
         throw new InvalidParameterException();
-    }
-
-    public String getDeathCauseByAge(Integer age) {
-        return getDistributionForAge(age).getSample();
     }
 
     @Override
@@ -66,17 +62,16 @@ public class AgeDependantEnumeratedDistribution implements InputMetaData {
 
     @Override
     public String getSmallestLabel() {
-        return "";
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getLargestLabel() {
-        return "";
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<String> getLabels() {
-
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

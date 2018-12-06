@@ -14,21 +14,10 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.statistics.distributions.general;
+package uk.ac.standrews.cs.valipop.statistics.distributions;
 
 /**
- * Exception indicating a negative weight supplied to a distribution.
- * 
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
+ * Created by graham on 29/04/2014.
  */
-public class NegativeWeightException extends Exception {
-
-    /**
-     * Creates an exception.
-     * @param message the message
-     */
-    public NegativeWeightException(final String message) {
-
-        super(message);
-    }
+public class InconsistentWeightException extends Exception {
 }

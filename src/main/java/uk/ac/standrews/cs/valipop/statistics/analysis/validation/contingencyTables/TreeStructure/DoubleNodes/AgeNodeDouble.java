@@ -19,10 +19,9 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ControlChildrenNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ControlChildrenNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
 import java.time.LocalDate;
@@ -33,7 +32,7 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class AgeNodeDouble extends DoubleNode<IntegerRange, Boolean> implements ControlChildrenNode, RunnableNode {
+public class AgeNodeDouble extends DoubleNode<IntegerRange, Boolean> implements ControlChildrenNode, Runnable {
 
     private boolean initNode = false;
 
@@ -98,7 +97,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, Boolean> implements 
     }
 
     @Override
-    public void runTask() {
+    public void run() {
         makeChildren();
     }
 

@@ -22,14 +22,12 @@ import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -81,17 +79,25 @@ public abstract class AbstractExporterTest {
 
     private static Object[] makeTestConfiguration(final int population_size, final String file_name_root) throws Exception {
 
-        String startTime = FileUtils.getDateTime();
         String purpose = "DETERMINISTIC-TESTING";
-        OBDModel.setUpFileStructureAndLogs(purpose, startTime, "results");
-        Config config = new Config(LocalDate.of( 1599,1,1), LocalDate.of(1855,1,1),
-                LocalDate.of( 2015,1,1), population_size, 0.0133,
-                0.0122, Period.ofYears(1), "src/test/resources/valipop/test-pop",
-                "results", purpose, 147,
-                147, true, 0.0, 0.0, 1.0, 1.0,
-                Period.ofYears(1), RecordFormat.NONE, startTime, 0, true);
 
-        OBDModel sim = new OBDModel(startTime, config);
+//        Config config = new Config(LocalDate.of(1599, 1, 1), LocalDate.of(1855, 1, 1),
+//                LocalDate.of(2015, 1, 1), population_size, 0.0133,
+//                0.0122, Period.ofYears(1), "src/test/resources/valipop/test-pop",
+//                "results", purpose, Period.ofDays(147),
+//                Period.ofDays(147), true, 0.0, 0.0, 1.0, 1.0,
+//                Period.ofYears(1), RecordFormat.NONE, 0, true);
+
+        Config config = new Config(
+                LocalDate.of(1599, 1, 1),
+                LocalDate.of(1855, 1, 1),
+                LocalDate.of(2015, 1, 1),
+                population_size,
+                Paths.get("src/test/resources/valipop/test-pop"));
+
+        config.setRunPurpose(purpose).setDeterministic(true);
+
+        OBDModel sim = new OBDModel(config);
         sim.runSimulation();
 
         final IPopulation population = sim.getPopulation().getAllPeople();

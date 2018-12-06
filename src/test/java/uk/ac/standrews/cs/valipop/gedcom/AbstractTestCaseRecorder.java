@@ -21,15 +21,12 @@ import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.PopulationConverter;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
+import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightException;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.Period;
 
 /**
  * Tests of Graphviz export.
@@ -44,14 +41,23 @@ public abstract class AbstractTestCaseRecorder {
 
             final Path path = Paths.get(AbstractExporterTest.TEST_DIRECTORY_PATH_STRING, getDirectoryName(), AbstractExporterTest.TEST_CASE_FILE_NAME_ROOTS[i] + getIntendedOutputFileSuffix());
 
-            String startTime = FileUtils.getDateTime();
-            Config config = new Config(LocalDate.of(1599, 1, 1), LocalDate.of(1855, 1, 1),
-                    LocalDate.of(2015, 1, 1), AbstractExporterTest.TEST_CASE_POPULATION_SIZES[i], 0.0133,
-                    0.0122, Period.ofYears(1), "src/test/resources/valipop/test-pop",
-                    "results", "DETERMINISTIC-TESTING", 147,
-                    147, true, 0.0, 0.0, 1.0, 1.0,
-                    Period.ofYears(1), RecordFormat.NONE, startTime, 0, true);
-            OBDModel sim = new OBDModel(startTime, config);
+//            Config config2 = new Config(LocalDate.of(1599, 1, 1), LocalDate.of(1855, 1, 1),
+//                    LocalDate.of(2015, 1, 1), AbstractExporterTest.TEST_CASE_POPULATION_SIZES[i], 0.0133,
+//                    0.0122, Period.ofYears(1), "src/test/resources/valipop/test-pop",
+//                    "results", "DETERMINISTIC-TESTING", Period.ofDays(147),
+//                    Period.ofDays(147), true, 0.0, 0.0, 1.0, 1.0,
+//                    Period.ofYears(1), RecordFormat.NONE, 0, true);
+
+            Config config = new Config(
+                    LocalDate.of(1599, 1, 1),
+                    LocalDate.of(1855, 1, 1),
+                    LocalDate.of(2015, 1, 1),
+                    AbstractExporterTest.TEST_CASE_POPULATION_SIZES[i],
+                    Paths.get("src/test/resources/valipop/test-pop"));
+
+            config.setRunPurpose("DETERMINISTIC-TESTING").setDeterministic(true);
+
+            OBDModel sim = new OBDModel(config);
             sim.runSimulation();
 
             final IPopulation abstract_population = sim.getPopulation().getAllPeople();

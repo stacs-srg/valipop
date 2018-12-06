@@ -2,19 +2,16 @@ package uk.ac.standrews.cs.valipop.implementations.minimaSearch;
 
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.*;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -46,26 +43,18 @@ public class MinimaSearch {
 
     private static Random rand = new Random();
 
-    private static String results_save_location = "src/main/resources/valipop/results/";
-
-    private static Period simulation_time_step = Period.ofYears(1);
     private static LocalDate tS = LocalDate.of(1691,1,1);
     private static LocalDate t0 = LocalDate.of(1855,1,1);
     private static LocalDate tE = LocalDate.of(2015,1,1);
-    private static double set_up_br = 0.0133;
-    private static double set_up_dr = 0.0122;
 
-    private static double rf = 0.5;
-    private static double prf = 0.5;
-    private static Period iw = Period.ofYears(10);
-    private static int minBirthSpacing = 147;
-
-    private static double bf = 0.0;
-    private static double df = 0.0;
+    private static double birthFactor;
+    private static double deathFactor;
+    private static double recoveryFactor = 0.5;
+    private static double proportionalRecoveryFactor = 0.5;
 
     private static double nanAsemtote = 1E6;
 
-    public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException, InconsistentWeightException {
+    public static void main(String[] args) throws StatsException, IOException {
 
         String[] pArgs = ProcessArgs.process(args, "MINIMA_SEARCH");
         if (!ProcessArgs.check(pArgs, "MINIMA_SEARCH")) {
@@ -73,7 +62,7 @@ public class MinimaSearch {
             throw new Error("Incorrect arguments given");
         }
 
-        String dataFiles = pArgs[0];
+        Path dataFiles = Paths.get(pArgs[0]);
         int seedSize = Integer.valueOf(pArgs[1]);
         String runPurpose = pArgs[2];
         Minimise minimise = Minimise.resolve(pArgs[3]);
@@ -92,7 +81,7 @@ public class MinimaSearch {
         }
     }
 
-    private static void runSearch(int populationSize, String dataFiles, double startFactor, double step, String runPurpose, int repeatRuns, Minimise minimiseFor, Control controlBy) throws IOException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning {
+    private static void runSearch(int populationSize, Path dataFiles, double startFactor, double step, String runPurpose, int repeatRuns, Minimise minimiseFor, Control controlBy) throws IOException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning {
 
         MinimaSearch.startFactor = startFactor;
         MinimaSearch.step = step;
@@ -101,8 +90,6 @@ public class MinimaSearch {
         setControllingFactor(controlBy, startFactor);
 
         nanAsemtote = nanAsemtote * repeatRuns;
-
-        RecordFormat output_record_format = RecordFormat.NONE;
 
         try {
 
@@ -115,21 +102,21 @@ public class MinimaSearch {
 
                 for (; n < repeatRuns; n++) {
 
-                    String startTime = FileUtils.getDateTime();
-                    OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
+                    Config config = new Config(tS, t0, tE, populationSize, dataFiles).setRunPurpose( runPurpose);
 
-                    Config config = new Config(tS, t0, tE, populationSize, set_up_br, set_up_dr,
-                            simulation_time_step, dataFiles, results_save_location, runPurpose,
-                            minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime, 0, false);
+                    config.setRecoveryFactor(recoveryFactor);
+                    config.setProportionalRecoveryFactor(proportionalRecoveryFactor);
+                    config.setBirthFactor(birthFactor);
+                    config.setDeathFactor(deathFactor);
 
-                    OBDModel model = new OBDModel(startTime, config);
+                    OBDModel model = new OBDModel(config);
 
                     try {
                         model.runSimulation();
                         model.analyseAndOutputPopulation(false);
 
-                        Integer maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
-                        double v = getV(minimiseFor, maxBirthingAge, runPurpose, controlBy, model.getSummaryRow().getStartTime());
+                        int maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
+                        double v = getV(minimiseFor, maxBirthingAge, controlBy, config);
 
                         // Failed population run may get a NaN from the V calc
                         if (Double.isNaN(v)) {
@@ -145,7 +132,7 @@ public class MinimaSearch {
                         if (minimiseFor != Minimise.GEEGLM) {
                             ProgramTimer statsTimer = new ProgramTimer();
 
-                            RCaller.generateAnalysisHTML(FileUtils.getRunPath().toString(),
+                            RCaller.generateAnalysisHTML(config.getRunPath(),
                                     model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue(),
                                     runPurpose + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy));
 
@@ -182,33 +169,17 @@ public class MinimaSearch {
         }
     }
 
-    private static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy, String startTime) throws IOException, StatsException {
+    public static double getV(Minimise minimiseFor, int maxBirthingAge, Control controlBy, Config config) throws IOException, StatsException {
 
         switch (minimiseFor) {
 
             case ALL:
-                return RCaller.getV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
+                return RCaller.getV(config.getContingencyTablesPath(), maxBirthingAge);
             case OB:
-                return RCaller.getObV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
+                return RCaller.getObV(config.getContingencyTablesPath(), maxBirthingAge);
             case GEEGLM:
-                String title = runPurpose + " - " + controlBy.toString() + ": " + String.valueOf(getControllingFactor(controlBy));
-                return RCaller.getGeeglmV(title, FileUtils.getRunPath().toString(), FileUtils.getRunPath().toString(), maxBirthingAge, startTime);
-        }
-
-        throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
-    }
-
-    public static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy, String ctPath, String runPath, String startTime) throws IOException, StatsException {
-
-        switch (minimiseFor) {
-
-            case ALL:
-                return RCaller.getV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
-            case OB:
-                return RCaller.getObV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
-            case GEEGLM:
-                String title = runPurpose + " - " + controlBy.toString() + ": " + String.valueOf(getControllingFactor(controlBy));
-                return RCaller.getGeeglmV(title, runPath, runPath, maxBirthingAge, startTime);
+                String title = config.getRunPurpose() + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy);
+                return RCaller.getGeeglmV(title, config.getRunPath(), maxBirthingAge, config.getStartTime());
         }
 
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
@@ -219,10 +190,10 @@ public class MinimaSearch {
         switch (controlBy) {
 
             case BF:
-                return bf;
+                return birthFactor;
 
             case DF:
-                return df;
+                return deathFactor;
         }
 
         throw new InvalidParameterException(controlBy.toString() + " did not resolve to a known parameter");
@@ -233,15 +204,16 @@ public class MinimaSearch {
         switch (controlBy) {
 
             case BF:
-                bf = startFactor;
+                birthFactor = startFactor;
                 break;
             case DF:
-                df = startFactor;
+                deathFactor = startFactor;
                 break;
         }
     }
 
     private static void handleRecoveryFromOutOfMemory(double factor, OBDModel model) {
+
         hardLimitBottomBoundFactor = factor + 0.1;
         bottomSearchBoundFactor = hardLimitBottomBoundFactor;
 
@@ -551,15 +523,11 @@ public class MinimaSearch {
                 if (newFactor < 0) {
                     if (DoubleComparer.equal(bottomSearchBoundFactor, hardLimitBottomBoundFactor, 0.0000001)) {
                         bottomSearchBoundFactor -= step * 2;
-//                        System.out.println("Suspected Minima out of search bounds - extending bottom search bound to : " + bottomSearchBoundFactor);
                     } else {
-//                        System.out.println("Suspected Minima out of search bounds beyond : " + bottomSearchBoundFactor);
-//                        System.out.println("Cannot extend search bound due to hard limit placed due to lack of heap space in earlier run - increase heap space to explore this area");
                         return jumpOut();
                     }
                 } else {
                     topSearchBoundFactor += step * 2;
-//                        System.out.println("Suspected Minima out of search bounds - extending top search bound to : " + topSearchBoundFactor);
                 }
             }
 
@@ -583,6 +551,5 @@ public class MinimaSearch {
     static void logFactortoV(double factor, double v) {
 
         points.addLast(new FVPoint(factor, v));
-
     }
 }

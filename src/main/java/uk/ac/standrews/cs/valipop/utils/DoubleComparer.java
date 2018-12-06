@@ -22,7 +22,6 @@ package uk.ac.standrews.cs.valipop.utils;
 public class DoubleComparer {
 
     public static boolean equal(double d1, double d2, double delta) {
-        double diff = Math.abs(d1 - d2);
-        return diff < delta;
+        return Math.abs(d1 - d2) < delta;
     }
 }

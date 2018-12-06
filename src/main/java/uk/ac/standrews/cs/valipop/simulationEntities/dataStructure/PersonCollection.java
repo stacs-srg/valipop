@@ -17,7 +17,6 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateBounds;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.MisalignedTimeDivisionException;
 
@@ -33,7 +32,7 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public abstract class PersonCollection implements DateBounds {
+public abstract class PersonCollection {
 
     // TODO what's the difference between a PersonCollection and a PeopleCollection?
 
@@ -106,7 +105,7 @@ public abstract class PersonCollection implements DateBounds {
      */
     Collection<IPerson> getAllPersonsAliveInTimePeriod(LocalDate firstDate, Period timePeriod, Period maxAge) {
 
-        Period tP = timePeriod.plus( maxAge);
+        Period tP = timePeriod.plus(maxAge);
 
         Collection<IPerson> peopleBorn = getAllPersonsBornInTimePeriod(firstDate.minus(maxAge), tP);
 
@@ -267,22 +266,18 @@ public abstract class PersonCollection implements DateBounds {
         return selectedPeople;
     }
 
-    @Override
     public LocalDate getStartDate() {
         return startDate;
     }
 
-    @Override
     public LocalDate getEndDate() {
         return endDate;
     }
 
-    @Override
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    @Override
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
@@ -336,7 +331,7 @@ public abstract class PersonCollection implements DateBounds {
         int sY = startDate.getYear();
 
         // Time unit in months
-        int tsc = (int)divisionSize.toTotalMonths();
+        int tsc = (int) divisionSize.toTotalMonths();
 
         int adm = (12 * ((dY - sY) % tsc)) + dM;
 

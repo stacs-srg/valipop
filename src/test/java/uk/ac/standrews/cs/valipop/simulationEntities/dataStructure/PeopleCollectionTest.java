@@ -20,13 +20,13 @@ package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.simulationEntities.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.Person;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
@@ -42,15 +42,16 @@ import static org.junit.Assert.assertTrue;
  */
 public class PeopleCollectionTest {
 
-    PopulationStatistics ps;
+    private PopulationStatistics ps;
 
     @Before
     public void setUpPopulationStatistics() {
-        Config config = new Config(LocalDate.of(1,1,1), LocalDate.of(100,1,1),
-                LocalDate.of(200,1,1), 0, 0, 0, null,
-                "src/test/resources/valipop/test-pop", "", "",
-                0, 0, true, 0, 0, 0,
-                0, Period.ofYears(1), RecordFormat.NONE, null, 0, true);
+        Config config = new Config(
+                LocalDate.of(1, 1, 1),
+                LocalDate.of(100, 1, 1),
+                LocalDate.of(200, 1, 1),
+                0,
+                Paths.get("src/test/resources/valipop/test-pop")).setDeterministic(true);
 
         ps = new PopulationStatistics(config);
     }
@@ -58,17 +59,17 @@ public class PeopleCollectionTest {
     @Test
     public void peopleInCorrectYearCornerCases() {
 
-        LocalDate s = LocalDate.of(0,1,1);
-        LocalDate e = LocalDate.of(3000,1,1);
+        LocalDate s = LocalDate.of(0, 1, 1);
+        LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
 
         PeopleCollection living = new PeopleCollection(s, e, y);
 
-        LocalDate b1 = LocalDate.of(1900,1,1);
-        LocalDate b2 = LocalDate.of(1900,1,2);
-        LocalDate b3 = LocalDate.of(1900, 12,31);
-        LocalDate b4 = LocalDate.of(1901,1,1);
+        LocalDate b1 = LocalDate.of(1900, 1, 1);
+        LocalDate b2 = LocalDate.of(1900, 1, 2);
+        LocalDate b3 = LocalDate.of(1900, 12, 31);
+        LocalDate b4 = LocalDate.of(1901, 1, 1);
 
         Person m1 = new Person(SexOption.MALE, b1, null, ps, false);
         Person m2 = new Person(SexOption.MALE, b2, null, ps, false);
@@ -91,13 +92,13 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for females
-        Collection<IPerson> females = living.getFemales().getByDatePeriodAndBirthOrder(LocalDate.of(1900,1,1), y, 0);
+        Collection<IPerson> females = living.getFemales().getByDatePeriodAndBirthOrder(LocalDate.of(1900, 1, 1), y, 0);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
         assertFalse(females.contains(f4));
 
-        Collection<IPerson> males = living.getMales().getAllPersonsBornInTimePeriod(LocalDate.of(1900,1,1), y);
+        Collection<IPerson> males = living.getMales().getAllPersonsBornInTimePeriod(LocalDate.of(1900, 1, 1), y);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
@@ -107,14 +108,14 @@ public class PeopleCollectionTest {
     @Test
     public void peopleInByYearAndBirthsCorrectPlace() {
 
-        LocalDate s = LocalDate.of(0,1,1);
-        LocalDate e = LocalDate.of( 3000,1,1);
+        LocalDate s = LocalDate.of(0, 1, 1);
+        LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
 
         PeopleCollection living = new PeopleCollection(s, e, y);
 
-        LocalDate start = LocalDate.of( 1600,1,1);
+        LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person m1 = new Person(SexOption.MALE, start, null, ps, false);
         Person m2 = new Person(SexOption.MALE, start, null, ps, false);
@@ -140,15 +141,15 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void peopleInByYearCorrectPlace()  {
+    public void peopleInByYearCorrectPlace() {
 
-        LocalDate s = LocalDate.of(0,1,1);
-        LocalDate e = LocalDate.of( 3000,1,1);
+        LocalDate s = LocalDate.of(0, 1, 1);
+        LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
         PeopleCollection living = new PeopleCollection(s, e, y);
 
-        LocalDate start = LocalDate.of( 1600,1,1);
+        LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person m1 = new Person(SexOption.MALE, start, null, ps, false);
         Person m2 = new Person(SexOption.MALE, start, null, ps, false);
@@ -181,15 +182,15 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void peopleInByGetAllCorrectPlace()  {
+    public void peopleInByGetAllCorrectPlace() {
 
-        LocalDate s = LocalDate.of(0,1,1);
-        LocalDate e = LocalDate.of( 3000,1,1);
+        LocalDate s = LocalDate.of(0, 1, 1);
+        LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
         PeopleCollection living = new PeopleCollection(s, e, y);
 
-        LocalDate start = LocalDate.of( 1600,1,1);
+        LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person m1 = new Person(SexOption.MALE, start, null, ps, false);
         Person m2 = new Person(SexOption.MALE, start, null, ps, false);
@@ -229,15 +230,15 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void femaleGivesBirthMoveOfBirthCountPosition() throws PersonNotFoundException  {
+    public void femaleGivesBirthMoveOfBirthCountPosition() throws PersonNotFoundException {
 
-        LocalDate s = LocalDate.of(0,1,1);
-        LocalDate e = LocalDate.of( 3000,1,1);
+        LocalDate s = LocalDate.of(0, 1, 1);
+        LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
         PeopleCollection living = new PeopleCollection(s, e, y);
 
-        LocalDate start = LocalDate.of( 1600,1,1);
+        LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
 
@@ -301,13 +302,13 @@ public class PeopleCollectionTest {
     @Test(expected = PersonNotFoundException.class)
     public void removeNonExistentFemaleFromEmptyCollection() throws PersonNotFoundException {
 
-        LocalDate s = LocalDate.of(0,1,1);
-        LocalDate e = LocalDate.of( 3000,1,1);
+        LocalDate s = LocalDate.of(0, 1, 1);
+        LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
         PeopleCollection living = new PeopleCollection(s, e, y);
 
-        LocalDate start = LocalDate.of( 1600,1,1);
+        LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
         living.removePerson(f1);
@@ -316,13 +317,13 @@ public class PeopleCollectionTest {
     @Test(expected = PersonNotFoundException.class)
     public void removeNonExistentFemale() throws PersonNotFoundException {
 
-        LocalDate s = LocalDate.of(0,1,1);
-        LocalDate e = LocalDate.of( 3000,1,1);
+        LocalDate s = LocalDate.of(0, 1, 1);
+        LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
         PeopleCollection living = new PeopleCollection(s, e, y);
 
-        LocalDate start = LocalDate.of( 1600,1,1);
+        LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
         Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
@@ -334,13 +335,13 @@ public class PeopleCollectionTest {
     @Test(expected = PersonNotFoundException.class)
     public void removeNonExistentMaleFromEmptyCollection() throws PersonNotFoundException {
 
-        LocalDate s = LocalDate.of(0,1,1);
-        LocalDate e = LocalDate.of( 3000,1,1);
+        LocalDate s = LocalDate.of(0, 1, 1);
+        LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
         PeopleCollection living = new PeopleCollection(s, e, y);
 
-        LocalDate start = LocalDate.of( 1600,1,1);
+        LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person m1 = new Person(SexOption.MALE, start, null, ps, false);
         living.removePerson(m1);
@@ -349,13 +350,13 @@ public class PeopleCollectionTest {
     @Test(expected = PersonNotFoundException.class)
     public void removeNonExistentMale() throws PersonNotFoundException {
 
-        LocalDate s = LocalDate.of(0,1,1);
-        LocalDate e = LocalDate.of( 3000,1,1);
+        LocalDate s = LocalDate.of(0, 1, 1);
+        LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
         PeopleCollection living = new PeopleCollection(s, e, y);
 
-        LocalDate start = LocalDate.of( 1600,1,1);
+        LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person m1 = new Person(SexOption.MALE, start, null, ps, false);
         Person m2 = new Person(SexOption.MALE, start, null, ps, false);

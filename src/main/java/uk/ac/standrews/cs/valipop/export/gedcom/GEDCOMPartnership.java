@@ -24,7 +24,6 @@ import org.gedcom4j.model.Individual;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 
-import javax.annotation.Nonnull;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -58,7 +57,7 @@ public class GEDCOMPartnership implements IPartnership {
     }
 
     @SuppressWarnings("CompareToUsesNonFinalVariable")
-    public int compareTo(@Nonnull final IPartnership other) {
+    public int compareTo(final IPartnership other) {
 
         return Integer.compare(id, other.getId());
     }

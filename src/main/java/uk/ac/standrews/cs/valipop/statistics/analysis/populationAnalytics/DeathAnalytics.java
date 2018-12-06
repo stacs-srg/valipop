@@ -16,20 +16,20 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
-import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.stream.IntStream;
 
 /**
  * An analytic class to analyse the distribution of deaths.
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  */
-public class DeathAnalytics {
+class DeathAnalytics {
 
     private static final int MAX_AGE_AT_DEATH = 110;
     private static final int ONE_HUNDRED = 100;
@@ -39,24 +39,16 @@ public class DeathAnalytics {
 
     private PrintStream out;
 
-    /**
-     * Creates an analytic instance to analyse deaths in a population.
-     *
-     * @param population the population to analyse
-     */
-    public DeathAnalytics(final IPopulation population, PrintStream resultsOutput) {
+    DeathAnalytics(final IPopulation population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
         analyseDeaths();
     }
 
-    /**
-     * Prints out all analyses.
-     */
-    public void printAllAnalytics() {
+    void printAllAnalytics() {
 
-        final int sum = ArrayManipulation.sum(age_at_death);
+        final int sum = IntStream.of(age_at_death).sum();
 
         out.println("Death distribution:");
         for (int i = 1; i < age_at_death.length; i++) {
@@ -64,10 +56,7 @@ public class DeathAnalytics {
         }
     }
 
-    /**
-     * Analyses deaths in the population.
-     */
-    public void analyseDeaths() {
+    private void analyseDeaths() {
 
         for (final IPerson person : population.getPeople()) {
 

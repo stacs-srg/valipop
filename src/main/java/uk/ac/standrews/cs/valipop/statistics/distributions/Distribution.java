@@ -14,13 +14,20 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.statistics.distributions.general;
+package uk.ac.standrews.cs.valipop.statistics.distributions;
 
 /**
- * Thrown by a restricted distribution when no possible return value lies between the specified maximum and minimum values.
+ * Allows user to pick random samples from some distribution.
  * 
- * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
+ *
+ * @param <Value> the type of the samples
  */
-public class NoPermissableValueException extends Exception {
+public interface Distribution<Value> {
 
+    /**
+     * Picks a random sample from the distribution.
+     * @return the next sample from the distribution
+     */
+    Value getSample();
 }

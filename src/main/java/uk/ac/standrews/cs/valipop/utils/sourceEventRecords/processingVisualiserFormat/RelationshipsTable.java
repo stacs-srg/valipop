@@ -16,11 +16,11 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat;
 
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
+import uk.ac.standrews.cs.valipop.Config;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -33,34 +33,33 @@ public class RelationshipsTable {
     final static ArrayList<String[]> relationshipsMother = new ArrayList<>();
     final static ArrayList<String[]> relationshipsMarriage = new ArrayList<>();
 
-    public static void outputData(String recordsDirPath) throws IOException {
+    public static void outputData(Path recordsDirPath) throws IOException {
 
         toFile(recordsDirPath, "clean-relationships.txt");
         confuseTheData();
 
         toFile(recordsDirPath, "messy-relationships.txt");
-
     }
 
-    private static void toFile(String recordsDirPath, String fileName) throws IOException {
+    private static void toFile(Path recordsDirPath, String fileName) throws IOException {
 
-        PrintStream ps = new PrintStream(FileUtils.mkBlankFile(Paths.get(recordsDirPath), fileName).toFile(), "UTF-8");
+        Path path = recordsDirPath.resolve(fileName);
+        Config.mkBlankFile(path);
+        PrintStream ps = new PrintStream(path.toFile(), "UTF-8");
 
-        for(String[] line : relationshipsMarriage) {
+        for (String[] line : relationshipsMarriage) {
             ps.println(asString(line));
         }
 
-        for(String[] line : relationshipsMother) {
+        for (String[] line : relationshipsMother) {
             ps.println(asString(line));
         }
 
-        for(String[] line : relationshipsFather) {
+        for (String[] line : relationshipsFather) {
             ps.println(asString(line));
         }
 
         ps.close();
-
-
     }
 
     public static void confuseTheData() {
@@ -77,7 +76,6 @@ public class RelationshipsTable {
         relationshipsFather.addAll(fRels);
         relationshipsMother.addAll(mRels);
         relationshipsMarriage.addAll(marRels);
-
     }
 
     private static void swapPrimaryValues(ArrayList<String[]> relations, int position) {
@@ -86,7 +84,7 @@ public class RelationshipsTable {
 
         ArrayList<String[]> used = new ArrayList<>();
 
-        for (int i = 0 ; i < relations.size() - 1; i++) {
+        for (int i = 0; i < relations.size() - 1; i++) {
             int r = rng.nextInt(relations.size());
 
             String[] swap = relations.remove(r);
@@ -104,7 +102,6 @@ public class RelationshipsTable {
         }
 
         relations.addAll(used);
-
     }
 
 
@@ -116,7 +113,7 @@ public class RelationshipsTable {
             String[] copy = new String[s.length];
 
             int c = 0;
-            for(String a : s) {
+            for (String a : s) {
                 copy[c++] = a;
             }
 
@@ -124,7 +121,6 @@ public class RelationshipsTable {
         }
 
         return ret;
-
     }
 
     private static String asString(String[] line) {
@@ -132,8 +128,8 @@ public class RelationshipsTable {
 
         boolean first = true;
 
-        for(String s : line) {
-            if(first) {
+        for (String s : line) {
+            if (first) {
                 ret.append(s);
                 first = false;
             } else {
@@ -143,6 +139,4 @@ public class RelationshipsTable {
 
         return ret.toString();
     }
-
-
 }

@@ -1,4 +1,4 @@
-package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
+package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys;
 
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 

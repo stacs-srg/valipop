@@ -1,11 +1,13 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
+import java.io.IOException;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class PaperManifestoRunner {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, StatsException {
 
         String resultsPath = "/home/tsd4/population-model/src/main/resources/valipop/results/";
         String configPath = "/home/tsd4/population-model/src/main/resources/valipop/config/scot/paper/";

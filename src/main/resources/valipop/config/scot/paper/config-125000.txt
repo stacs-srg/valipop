@@ -21,4 +21,4 @@ recovery_factor = 0.8
 proportional_recovery_factor = 0.1
 output_tables = true
 deterministic = false
-binominal_sampling = true
+binomial_sampling = true

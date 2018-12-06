@@ -1,16 +1,14 @@
 package uk.ac.standrews.cs.valipop.utils;
 
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.FactorSearch;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.implementations.StatsException;
 import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Control;
 import uk.ac.standrews.cs.valipop.implementations.minimaSearch.MinimaSearch;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Year;
 
 import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.GEEGLM;
@@ -20,20 +18,17 @@ import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.G
  */
 public class AnalysisThread extends Thread {
 
-    private String runPurpose;
-    int maxBirthingAge;
-    SummaryRow summaryRow;
-    Path resultsSummaryPath;
-    String ctPath;
-    String runPath;
+    private int maxBirthingAge;
+    private SummaryRow summaryRow;
 
-    public AnalysisThread(OBDModel model, String runPurpose) {
-        this.runPurpose = runPurpose;
+    private final Config config;
+
+    public AnalysisThread(OBDModel model, Config config) {
+
+        this.config = config;
+
         maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
         summaryRow = model.getSummaryRow();
-        resultsSummaryPath = Paths.get(FileUtils.getResultsSummaryPath().toString());
-        ctPath = new String(FileUtils.getContingencyTablesPath().toString());
-        runPath = new String(FileUtils.getRunPath().toString());
     }
 
     @Override
@@ -45,8 +40,9 @@ public class AnalysisThread extends Thread {
 
         double v = 99999;
         try {
-            v = MinimaSearch.getV(GEEGLM, maxBirthingAge, runPurpose, Control.BF, ctPath, runPath, summaryRow.getStartTime());
+            v = MinimaSearch.getV(GEEGLM, maxBirthingAge, Control.BF, config);
         } catch (IOException | StatsException e) {
+
             System.err.println("Error in AnalysisThread");
             System.err.println(e.getMessage());
             e.printStackTrace();
@@ -55,7 +51,7 @@ public class AnalysisThread extends Thread {
         summaryRow.setV(v);
         summaryRow.setStatsRunTime(statsTimer.getRunTimeSeconds());
 
-        summaryRow.outputSummaryRowToFile(resultsSummaryPath);
+        summaryRow.outputSummaryRowToFile();
 
         FactorSearch.threadCount--;
     }

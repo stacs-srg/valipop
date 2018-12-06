@@ -14,23 +14,14 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations;
+package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public enum SexOption {
+public interface ControlSelfNode {
 
-    MALE("M"),
-    FEMALE("F");
+    void advanceCount();
 
-    private final String representation;
-
-    SexOption(String representation) {
-        this.representation = representation;
-    }
-
-    public String toString() {
-        return representation;
-    }
+    void calcCount();
 }

@@ -5,11 +5,9 @@ import org.junit.Test;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.implementations.SpaceExploredException;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
-import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.Period;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -21,17 +19,16 @@ public class MinimaSearchTest {
     OBDModel model;
 
     @Before
-    public void setup() throws IOException {
+    public void setup() {
 
-        Config config = new Config(LocalDate.of(1,1,1), LocalDate.of(100,1,1),
-                LocalDate.of(200,1,1), 0, 0, 0, Period.ofYears(1),
-                "src/test/resources/valipop/test-pop", "", "",
-                0, 0, true, 0, 0, 0,
-                0, Period.ofYears(1), RecordFormat.NONE, null, 0, true);
+        Config config = new Config(
+                LocalDate.of(1,1,1),
+                LocalDate.of(100,1,1),
+                LocalDate.of(200,1,1),
+                0,
+                Paths.get("src/test/resources/valipop/test-pop")).setDeterministic( true);
 
-        OBDModel.setUpFileStructureAndLogs("testing", "test-time", "results");
-
-        model = new OBDModel("", config);
+        model = new OBDModel(config);
     }
 
     @Test

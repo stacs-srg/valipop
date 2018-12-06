@@ -9,5 +9,4 @@ public enum RecordFormat {
     VIS_PROCESSING,
     EG_SKYE,
     NONE
-
 }

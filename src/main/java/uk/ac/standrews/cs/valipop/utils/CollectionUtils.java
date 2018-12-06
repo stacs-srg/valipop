@@ -19,25 +19,26 @@ public class CollectionUtils {
     private static final int SHUFFLE_THRESHOLD = 5;
 
     public static void shuffle(List<?> list, RandomGenerator rnd) {
+
         int size = list.size();
         if (size < SHUFFLE_THRESHOLD || list instanceof RandomAccess) {
-            for (int i=size; i>1; i--)
-                Collections.swap(list, i-1, rnd.nextInt(i));
+            for (int i = size; i > 1; i--)
+                Collections.swap(list, i - 1, rnd.nextInt(i));
         } else {
-            Object arr[] = list.toArray();
+            Object[] array = list.toArray();
 
             // Shuffle array
-            for (int i=size; i>1; i--)
-                swap(arr, i-1, rnd.nextInt(i));
+            for (int i = size; i > 1; i--)
+                swap(array, i - 1, rnd.nextInt(i));
 
             // Dump array back into list
             // instead of using a raw type here, it's possible to capture
             // the wildcard but it will require a call to a supplementary
             // private method
             ListIterator it = list.listIterator();
-            for (int i=0; i<arr.length; i++) {
+            for (Object o : array) {
                 it.next();
-                it.set(arr[i]);
+                it.set(o);
             }
         }
     }

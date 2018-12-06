@@ -17,8 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.distributions;
 
 /**
- * Provides the functionality of a sting with associated cumulative probability.
- *
+ * Provides the functionality of a string with associated cumulative probability.
  */
 public class StringWithCumulativeProbability {
 

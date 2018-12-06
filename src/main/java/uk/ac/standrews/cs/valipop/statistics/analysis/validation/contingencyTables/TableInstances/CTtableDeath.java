@@ -16,14 +16,10 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableInstances;
 
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTCell;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.VariableNotFoundExcepction;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
-
-import java.util.Iterator;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -32,18 +28,14 @@ public class CTtableDeath extends CTtable {
 
     public CTtableDeath(CTtree tree) {
 
-        Iterator<Node> leafs = tree.getLeafNodes().iterator();
-
-        while(leafs.hasNext()) {
-            Node n = leafs.next();
+        for (Node n : tree.getLeafNodes()) {
             CTRow leaf = n.toCTRow();
 
-            if(leaf != null && leaf.getCount() != null) {
+            if (leaf != null && leaf.getCount() != null) {
 
                 try {
-                    CTCell date = leaf.addDateVariable();
+                    leaf.addDateVariable();
 
-//                    leaf.deleteVariable("YOB");
                     leaf.deleteVariable("PNCIP");
                     leaf.deleteVariable("NCIY");
                     leaf.deleteVariable("CIY");
@@ -60,13 +52,10 @@ public class CTtableDeath extends CTtable {
                         h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
                     }
 
-
-                } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+                } catch (RuntimeException e) {
                     // Unfilled row - thus pass
                 }
-
             }
-
         }
     }
 

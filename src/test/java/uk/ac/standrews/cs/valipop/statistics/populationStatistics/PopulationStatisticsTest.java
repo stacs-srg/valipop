@@ -24,7 +24,6 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.Birt
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
@@ -34,11 +33,12 @@ import java.time.Period;
  */
 public class PopulationStatisticsTest {
 
+    // TODO what properties do these test?
+
     @Test
     public void testA() {
 
-        Path p = Paths.get("src/test/resources/valipop/config-ps.txt");
-        Config config = new Config(p, "TEST", "...");
+        Config config = new Config(Paths.get("src/test/resources/valipop/config-ps.txt"));
         PopulationStatistics ps = new PopulationStatistics(config);
 
         int age = 20;
@@ -61,8 +61,7 @@ public class PopulationStatisticsTest {
     @Test
     public void testB() {
 
-        Path p = Paths.get("src/test/resources/valipop/config-ps.txt");
-        Config config = new Config(p, "TEST", "...");
+        Config config = new Config(Paths.get("src/test/resources/valipop/config-ps.txt"));
         PopulationStatistics ps = new PopulationStatistics(config);
 
         int age = 20;

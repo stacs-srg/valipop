@@ -26,5 +26,4 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRan
 public interface ProportionalDistribution extends
                         InputMetaData,
                         SelfCorrection<LabelledValueSet<IntegerRange, Integer>, LabelledValueSet<IntegerRange, Double>> {
-
 }

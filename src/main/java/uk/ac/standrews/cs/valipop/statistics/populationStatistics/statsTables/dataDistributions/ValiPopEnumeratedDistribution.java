@@ -2,8 +2,8 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.d
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.statistics.distributions.StringWithCumulativeProbability;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.statistics.distributions.EnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightException;
 
 import java.time.Year;
 import java.util.ArrayList;

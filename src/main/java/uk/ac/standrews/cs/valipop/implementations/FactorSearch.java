@@ -20,11 +20,9 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.AnalysisThread;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
-import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -33,10 +31,10 @@ import java.time.Period;
  */
 public class FactorSearch {
 
-    public static final int THREAD_LIMIT = 2;
+    private static final int THREAD_LIMIT = 2;
     public static int threadCount = 0;
 
-    public static void main(String[] args) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning, InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
 
         String[] pArgs = ProcessArgs.process(args, "FACTOR_SEARCH_PRECISION");
         if (!ProcessArgs.check(pArgs, "FACTOR_SEARCH_PRECISION")) {
@@ -44,7 +42,7 @@ public class FactorSearch {
             throw new Error("Incorrect arguments given");
         }
 
-        String dataFiles = pArgs[0];
+        Path dataFiles = Paths.get(pArgs[0]);
         int seedSize = Integer.valueOf(pArgs[1]);
         String runPurpose = pArgs[2];
         System.out.println(pArgs[3]);
@@ -53,7 +51,7 @@ public class FactorSearch {
         String rfsArg = pArgs[4];
         String prfsArg = pArgs[5];
 
-        String resultsDir = pArgs[6];
+        Path resultsDir = Paths.get(pArgs[6]);
 
         double[] precisions = toDoubleArray(pArgs[7]);
 
@@ -77,74 +75,61 @@ public class FactorSearch {
         return ret;
     }
 
-    static double[] bfs;
-    static double[] dfs;
+    private static void runFactorSearch(int size0, double[] recovery_factors, double[] proportional_recovery_factors, double[] precisions, Path dataFiles, int numberOfRunsPerSim, String runPurpose, Path results_save_location) throws InterruptedException {
 
-    static Period[] iws;
-    static int[] minBirthSpacings;
-    static int[] t0_pop_size;
+        final LocalDate tS = LocalDate.of(1599, 1, 1);
+        final LocalDate t0 = LocalDate.of(1855, 1, 1);
+        final LocalDate tE = LocalDate.of(2015, 1, 1);
 
-    static RecordFormat output_record_format = RecordFormat.NONE;
+        final double set_up_br = 0.0233;
+        final double set_up_dr = 0.0322;
 
-    static Period simulation_time_step = Period.ofYears(1);
-    static LocalDate tS = LocalDate.of(1599, 1, 1);
-    static LocalDate t0 = LocalDate.of(1855, 1, 1);
-    static LocalDate tE = LocalDate.of(2015, 1, 1);
-    static double set_up_br = 0.0233;
-    static double set_up_dr = 0.0322;
-
-    public static void runFactorSearch(int size0, double[] rfs, double[] prfs, double[] precisions, String dataFiles, int numberOfRunsPerSim, String runPurpose, String results_save_location) throws IOException, PreEmptiveOutOfMemoryWarning, InterruptedException {
-
-        iws = new Period[]{Period.ofYears(10)};
-
-        minBirthSpacings = new int[]{147};
-        bfs = new double[]{0};
-        dfs = new double[]{0};
-        t0_pop_size = new int[]{size0};
+        final Period[] input_widths = new Period[]{Period.ofYears(10)};
+        final Period[] minBirthSpacings = new Period[]{Period.ofDays(147)};
+        final double[] birth_factors = new double[]{0};
+        final double[] death_factors = new double[]{0};
+        final int[] t0_pop_sizes = new int[]{size0};
 
         for (double precision : precisions) {
             CTtree.NODE_MIN_COUNT = precision;
 
-            for (int size : t0_pop_size) {
-                for (double rf : rfs) {
-                    for (double prf : prfs) {
-                        for (Period iw : iws) {
-                            for (int minBirthSpacing : minBirthSpacings) {
-                                for (double bf : bfs) {
-                                    for (double df : dfs) {
+            for (int size : t0_pop_sizes) {
+                for (double recovery_factor : recovery_factors) {
+                    for (double proportional_recovery_factor : proportional_recovery_factors) {
+                        for (Period input_width : input_widths) {
+                            for (Period minBirthSpacing : minBirthSpacings) {
+                                for (double birth_factor : birth_factors) {
+                                    for (double death_factor : death_factors) {
+                                        for (int n = 0; n < numberOfRunsPerSim; n++) {
 
-                                        try {
+                                            Config config = new Config(tS, t0, tE, size, dataFiles);
 
-                                            for (int n = 0; n < numberOfRunsPerSim; n++) {
+                                            config.setRunPurpose(runPurpose);
+                                            config.setSetupBirthRate(set_up_br);
+                                            config.setSetupDeathRate(set_up_dr);
+                                            config.setRecoveryFactor(recovery_factor);
+                                            config.setProportionalRecoveryFactor(proportional_recovery_factor);
+                                            config.setInputWidth(input_width);
+                                            config.setMinBirthSpacing(minBirthSpacing);
+                                            config.setBirthFactor(birth_factor);
+                                            config.setDeathFactor(death_factor);
+                                            config.setResultsSavePath(results_save_location);
 
-                                                String startTime = FileUtils.getDateTime();
-                                                OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
+                                            OBDModel model = new OBDModel(config);
+                                            try {
+                                                model.runSimulation();
+                                                model.analyseAndOutputPopulation(false);
 
-                                                Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
-                                                        simulation_time_step, dataFiles, results_save_location, runPurpose,
-                                                        minBirthSpacing, minBirthSpacing, true, bf, df, rf, prf, iw, output_record_format, startTime, 0, false);
-
-                                                OBDModel model = new OBDModel(startTime, config);
-                                                try {
-                                                    model.runSimulation();
-                                                    model.analyseAndOutputPopulation(false);
-                                                } catch (PreEmptiveOutOfMemoryWarning e) {
-                                                    model.getSummaryRow().outputSummaryRowToFile();
-                                                    throw e;
-                                                }
-
-                                                while (threadCount >= THREAD_LIMIT) {
-                                                    Thread.sleep(10000);
-                                                }
-
-                                                new AnalysisThread(model, runPurpose).start();
+                                            } catch (PreEmptiveOutOfMemoryWarning e) {
+                                                model.getSummaryRow().outputSummaryRowToFile();
+                                                throw e;
                                             }
 
-                                        } catch (IOException e) {
-                                            String message = "Model failed due to Input/Output exception, check that this program has " +
-                                                    "permission to read or write on disk. Also, check supporting input files are present at location " +
-                                                    "specified in config setup code : " + e.getMessage();
-                                            throw new IOException(message, e);
+                                            while (threadCount >= THREAD_LIMIT) {
+                                                Thread.sleep(10000);
+                                            }
+
+                                            new AnalysisThread(model, config).start();
                                         }
                                     }
                                 }

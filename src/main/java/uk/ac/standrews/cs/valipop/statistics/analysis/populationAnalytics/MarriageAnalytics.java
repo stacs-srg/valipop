@@ -16,48 +16,40 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
-import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * An analytic class to analyse the distribution of marriages.
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  */
-public class MarriageAnalytics {
+class MarriageAnalytics {
 
     private static final int MAX_MARRIAGES = 10;
     private static final int ONE_HUNDRED = 100;
 
-    private final int[] count_marriages = new int[MAX_MARRIAGES]; // tracks marriage size
+    private final int[] count_marriages = new int[MAX_MARRIAGES];
     private final IPopulation population;
 
     private PrintStream out;
 
-    /**
-     * Creates an analytic instance to analyse marriages in a population.
-     *
-     * @param population the population to analyse
-     */
-    public MarriageAnalytics(final IPopulation population, PrintStream resultsOutput) {
+    MarriageAnalytics(final IPopulation population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
         analyseMarriages();
     }
 
-    /**
-     * Prints out all analyses.
-     */
-    public void printAllAnalytics() {
+    void printAllAnalytics() {
 
-        final int sum = ArrayManipulation.sum(count_marriages);
+        final int sum = IntStream.of(count_marriages).sum();
 
         out.println("Male marriage sizes:");
         out.println("\t unmarried: " + count_marriages[0]);
@@ -69,10 +61,7 @@ public class MarriageAnalytics {
         }
     }
 
-    /**
-     * Analyses marriages for the population.
-     */
-    public void analyseMarriages() {
+    private void analyseMarriages() {
 
         for (final IPerson person : population.getPeople()) {
 

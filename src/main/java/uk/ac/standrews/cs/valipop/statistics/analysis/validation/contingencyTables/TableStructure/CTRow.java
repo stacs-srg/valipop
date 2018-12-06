@@ -16,8 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure;
 
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.VariableNotFoundExcepction;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,20 +57,21 @@ public abstract class CTRow<count extends Number> {
         return cells;
     }
 
-    public CTCell getVariable(String variable) throws VariableNotFoundExcepction {
-        for(CTCell cell : cells) {
-            if(Objects.equals(variable, cell.getVariable())) {
+    public CTCell getVariable(String variable) {
+
+        for (CTCell cell : cells) {
+            if (Objects.equals(variable, cell.getVariable())) {
                 return cell;
             }
         }
-        throw new VariableNotFoundExcepction("Cell not in row");
+        throw new RuntimeException("Cell not in row");
     }
 
     public void setVariable(String variable, String value) {
 
         try {
             getVariable(variable).setValue(value);
-        } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+        } catch (RuntimeException e) {
             addVariable(variable, value);
         }
     }
@@ -81,29 +80,20 @@ public abstract class CTRow<count extends Number> {
         cells.add(new CTCell(variable, value));
     }
 
-    public CTCell addDateVariable() throws VariableNotFoundExcepction {
+    public void addDateVariable() {
 
-        try {
-            Integer yob = Integer.valueOf(getVariable("YOB").getValue());
-            Integer age = Integer.valueOf(getVariable("Age").getValue());
+        Integer yob = Integer.valueOf(getVariable("YOB").getValue());
+        Integer age = Integer.valueOf(getVariable("Age").getValue());
 
-            Integer date = yob + age;
+        Integer date = yob + age;
 
-            addVariable("Date", String.valueOf(date));
-
-            return getVariable("Date");
-
-        } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-            throw new Error(variableNotFoundExcepction.getMessage(), variableNotFoundExcepction);
-        } catch (NumberFormatException e) {
-            throw new VariableNotFoundExcepction("Unfilled Row");
-        }
+        addVariable("Date", String.valueOf(date));
     }
 
     public void deleteVariable(String variable) {
         try {
             cells.remove(getVariable(variable));
-        } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+        } catch (RuntimeException e) {
             // this is okay - it's effectively deleted as it isn't there in the first place
         }
     }
@@ -114,11 +104,11 @@ public abstract class CTRow<count extends Number> {
 
         StringBuilder s = new StringBuilder();
 
-        for(CTCell cell : cells) {
-            s.append(cell.getValue() + sep);
+        for (CTCell cell : cells) {
+            s.append(cell.getValue()).append(sep);
         }
 
-        s.append(getCount() + "\n");
+        s.append(getCount()).append("\n");
 
         return s.toString();
     }
@@ -126,8 +116,8 @@ public abstract class CTRow<count extends Number> {
     public String hash() {
 
         StringBuilder s = new StringBuilder();
-        for(CTCell cell : cells) {
-            s.append(cell.getVariable() + cell.getValue());
+        for (CTCell cell : cells) {
+            s.append(cell.getVariable()).append(cell.getValue());
         }
 
         return s.toString();

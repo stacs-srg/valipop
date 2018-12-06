@@ -33,6 +33,8 @@ public class ProgramTimer {
 
         long runEndTime;
 
+        // TODO stopped and endTime never get assigned
+
         if (stopped) {
             runEndTime = endTime;
         } else {

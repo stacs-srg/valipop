@@ -16,69 +16,60 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure;
 
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.VariableNotFoundExcepction;
-
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public abstract class CTtable {
 
-    protected HashMap<String, CTRow> table = new HashMap<>();
+    protected Map<String, CTRow> table = new HashMap<>();
 
     public void outputToFile(PrintStream ps) throws NoTableRowsException {
 
         int simZeroFreqs = 0;
         int statZeroFreqs = 0;
-        ps.print(getVarNames(","));
+        ps.print(getVarNames());
 
-        for(CTRow row : table.values()) {
+        for (CTRow row : table.values()) {
 
-            if(row.countGreaterThan(0.1)) {
+            if (row.countGreaterThan(0.1)) {
 
                 ps.print(row.toString(","));
 
-                try {
+                Collection<CTCell> cells = row.getCells();
 
-                    Collection<CTCell> cells = row.getCells();
+                CTRowInt twin = new CTRowInt(cells);
 
-                    CTRowInt twin = new CTRowInt(cells);
+                if (Objects.equals(row.getVariable("Source").getValue(), "STAT")) {
 
-                    if(Objects.equals(row.getVariable("Source").getValue(), "STAT")) {
+                    twin.setVariable("Source", "SIM");
+                    CTRow t = table.get(twin.hash());
 
-                        twin.setVariable("Source", "SIM");
-                        CTRow t = table.get(twin.hash());
-
-                        if(t == null) { simZeroFreqs++; }
-
-                    } else {
-
-                        twin.setVariable("Source", "STAT");
-                        CTRow t = table.get(twin.hash());
-
-                        if(t == null) { statZeroFreqs++; }
-
+                    if (t == null) {
+                        simZeroFreqs++;
                     }
-                } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-                    variableNotFoundExcepction.printStackTrace();
-                }
 
+                } else {
+
+                    twin.setVariable("Source", "STAT");
+                    CTRow t = table.get(twin.hash());
+
+                    if (t == null) {
+                        statZeroFreqs++;
+                    }
+                }
             }
         }
 
         ps.close();
-
     }
 
-    protected String getVarNames(String sep) throws NoTableRowsException {
+    private String getVarNames() throws NoTableRowsException {
 
         ArrayList<String> keys = new ArrayList<>(table.keySet());
-        if(keys.size() == 0) {
+        if (keys.size() == 0) {
             throw new NoTableRowsException();
         }
 
@@ -86,16 +77,13 @@ public abstract class CTtable {
 
         StringBuilder s = new StringBuilder();
 
-        for(Object cell : row.getCells()) {
+        for (Object cell : row.getCells()) {
 
-            s.append(((CTCell) cell).getVariable() + sep);
-
+            s.append(((CTCell) cell).getVariable()).append(",");
         }
 
         s.append("freq\n");
 
-
         return s.toString();
     }
-
 }

@@ -20,12 +20,8 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRowInt;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.*;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.VariableNotFoundExcepction;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.*;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
 import java.io.PrintStream;
@@ -62,113 +58,108 @@ public class CTtableFull extends CTtable {
 
                     ps.print(leaf.toString(","));
 
-                    try {
+                    if (Objects.equals(leaf.getVariable("Source").getValue(), "STAT")) {
 
-                        if (Objects.equals(leaf.getVariable("Source").getValue(), "STAT")) {
-
-                            Year year = Year.parse(leaf.getVariable("YOB").getValue());
-                            SexOption sex;
-                            switch (leaf.getVariable("Sex").getValue()) {
-                                case "MALE":
-                                    sex = SexOption.MALE;
-                                    break;
-                                case "FEMALE":
-                                    sex = SexOption.FEMALE;
-                                    break;
-                                default:
-                                    throw new Error();
-                            }
-
-                            IntegerRange age = new IntegerRange(leaf.getVariable("Age").getValue());
-
-                            boolean died;
-                            switch (leaf.getVariable("Died").getValue()) {
-                                case "YES":
-                                    died = true;
-                                    break;
-                                case "NO":
-                                    died = false;
-                                    break;
-                                default:
-                                    throw new Error();
-                            }
-
-                            IntegerRange pncip = new IntegerRange(leaf.getVariable("PNCIP").getValue());
-                            IntegerRange npciap = new IntegerRange(leaf.getVariable("NPCIAP").getValue());
-
-                            boolean ciy;
-                            switch (leaf.getVariable("CIY").getValue()) {
-                                case "YES":
-                                    ciy = true;
-                                    break;
-                                case "NO":
-                                    ciy = false;
-                                    break;
-                                default:
-                                    throw new Error();
-                            }
-
-                            int nciy = Integer.parseInt(leaf.getVariable("NCIY").getValue());
-                            IntegerRange ncip = new IntegerRange(leaf.getVariable("NCIP").getValue());
-
-                            SeparationOption sep;
-                            switch (leaf.getVariable("Separated").getValue()) {
-                                case "YES":
-                                    sep = SeparationOption.YES;
-                                    break;
-                                case "NO":
-                                    sep = SeparationOption.NO;
-                                    break;
-                                case "NA":
-                                    sep = SeparationOption.NA;
-                                    break;
-                                default:
-                                    throw new Error();
-                            }
-
-                            IntegerRange npa = new IntegerRange(leaf.getVariable("NPA").getValue());
-
-                            try {
-                                SourceNodeInt sN = (SourceNodeInt) tree.getChild(SourceType.SIM);
-                                YOBNodeInt yobN = (YOBNodeInt) sN.getChild(year);
-                                SexNodeInt sexN = (SexNodeInt) yobN.getChild(sex);
-                                AgeNodeInt ageN = (AgeNodeInt) sexN.getChild(age);
-                                DiedNodeInt diedN = (DiedNodeInt) ageN.getChild(died);
-                                PreviousNumberOfChildrenInPartnershipNodeInt pncipN = (PreviousNumberOfChildrenInPartnershipNodeInt) diedN.getChild(pncip);
-                                NumberOfPreviousChildrenInAnyPartnershipNodeInt npciapN = (NumberOfPreviousChildrenInAnyPartnershipNodeInt) pncipN.getChild(npciap);
-                                ChildrenInYearNodeInt ciyN = (ChildrenInYearNodeInt) npciapN.getChild(ciy);
-                                NumberOfChildrenInYearNodeInt nciyN = (NumberOfChildrenInYearNodeInt) ciyN.getChild(nciy);
-                                NumberOfChildrenInPartnershipNodeInt ncipN = (NumberOfChildrenInPartnershipNodeInt) nciyN.getChild(ncip);
-                                SeparationNodeInt sepN = (SeparationNodeInt) ncipN.getChild(sep);
-                                NewPartnerAgeNodeInt npaN = (NewPartnerAgeNodeInt) sepN.getChild(npa);
-
-                                // If we got here then this node exists - we don't need to add it
-                            } catch (ChildNotFoundException e) {
-                                // If we couldn't find the node then we need to add it
-
-                                CTCell[] cells = {
-                                        new CTCell("Source", "SIM"),
-                                        new CTCell("YOB", String.valueOf(year.getValue())),
-                                        new CTCell("Sex", sex.toString()),
-                                        new CTCell("Age", age.toString()),
-                                        new CTCell("Died", String.valueOf(died)),
-                                        new CTCell("PNCIP", pncip.toString()),
-                                        new CTCell("NPCIAP", npciap.toString()),
-                                        new CTCell("CIY", String.valueOf(ciy)),
-                                        new CTCell("NCIY", String.valueOf(nciy)),
-                                        new CTCell("NCIP", ncip.toString()),
-                                        new CTCell("Separated", sep.toString()),
-                                        new CTCell("NPA", npa.toString())
-                                };
-
-                                CTRowInt r = new CTRowInt(new ArrayList<>(Arrays.asList(cells)));
-                                r.setCount(zeroAdjustValue);
-
-                                ps.print(r.toString(","));
-                            }
+                        Year year = Year.parse(leaf.getVariable("YOB").getValue());
+                        SexOption sex;
+                        switch (leaf.getVariable("Sex").getValue()) {
+                            case "MALE":
+                                sex = SexOption.MALE;
+                                break;
+                            case "FEMALE":
+                                sex = SexOption.FEMALE;
+                                break;
+                            default:
+                                throw new Error();
                         }
-                    } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-                        variableNotFoundExcepction.printStackTrace();
+
+                        IntegerRange age = new IntegerRange(leaf.getVariable("Age").getValue());
+
+                        boolean died;
+                        switch (leaf.getVariable("Died").getValue()) {
+                            case "YES":
+                                died = true;
+                                break;
+                            case "NO":
+                                died = false;
+                                break;
+                            default:
+                                throw new Error();
+                        }
+
+                        IntegerRange pncip = new IntegerRange(leaf.getVariable("PNCIP").getValue());
+                        IntegerRange npciap = new IntegerRange(leaf.getVariable("NPCIAP").getValue());
+
+                        boolean ciy;
+                        switch (leaf.getVariable("CIY").getValue()) {
+                            case "YES":
+                                ciy = true;
+                                break;
+                            case "NO":
+                                ciy = false;
+                                break;
+                            default:
+                                throw new Error();
+                        }
+
+                        int nciy = Integer.parseInt(leaf.getVariable("NCIY").getValue());
+                        IntegerRange ncip = new IntegerRange(leaf.getVariable("NCIP").getValue());
+
+                        SeparationOption sep;
+                        switch (leaf.getVariable("Separated").getValue()) {
+                            case "YES":
+                                sep = SeparationOption.YES;
+                                break;
+                            case "NO":
+                                sep = SeparationOption.NO;
+                                break;
+                            case "NA":
+                                sep = SeparationOption.NA;
+                                break;
+                            default:
+                                throw new Error();
+                        }
+
+                        IntegerRange npa = new IntegerRange(leaf.getVariable("NPA").getValue());
+
+                        try {
+                            SourceNodeInt sN = (SourceNodeInt) tree.getChild(SourceType.SIM);
+                            YOBNodeInt yobN = (YOBNodeInt) sN.getChild(year);
+                            SexNodeInt sexN = (SexNodeInt) yobN.getChild(sex);
+                            AgeNodeInt ageN = (AgeNodeInt) sexN.getChild(age);
+                            DiedNodeInt diedN = (DiedNodeInt) ageN.getChild(died);
+                            PreviousNumberOfChildrenInPartnershipNodeInt pncipN = (PreviousNumberOfChildrenInPartnershipNodeInt) diedN.getChild(pncip);
+                            NumberOfPreviousChildrenInAnyPartnershipNodeInt npciapN = (NumberOfPreviousChildrenInAnyPartnershipNodeInt) pncipN.getChild(npciap);
+                            ChildrenInYearNodeInt ciyN = (ChildrenInYearNodeInt) npciapN.getChild(ciy);
+                            NumberOfChildrenInYearNodeInt nciyN = (NumberOfChildrenInYearNodeInt) ciyN.getChild(nciy);
+                            NumberOfChildrenInPartnershipNodeInt ncipN = (NumberOfChildrenInPartnershipNodeInt) nciyN.getChild(ncip);
+                            SeparationNodeInt sepN = (SeparationNodeInt) ncipN.getChild(sep);
+                            NewPartnerAgeNodeInt npaN = (NewPartnerAgeNodeInt) sepN.getChild(npa);
+
+                            // If we got here then this node exists - we don't need to add it
+                        } catch (ChildNotFoundException e) {
+                            // If we couldn't find the node then we need to add it
+
+                            CTCell[] cells = {
+                                    new CTCell("Source", "SIM"),
+                                    new CTCell("YOB", String.valueOf(year.getValue())),
+                                    new CTCell("Sex", sex.toString()),
+                                    new CTCell("Age", age.toString()),
+                                    new CTCell("Died", String.valueOf(died)),
+                                    new CTCell("PNCIP", pncip.toString()),
+                                    new CTCell("NPCIAP", npciap.toString()),
+                                    new CTCell("CIY", String.valueOf(ciy)),
+                                    new CTCell("NCIY", String.valueOf(nciy)),
+                                    new CTCell("NCIP", ncip.toString()),
+                                    new CTCell("Separated", sep.toString()),
+                                    new CTCell("NPA", npa.toString())
+                            };
+
+                            CTRowInt r = new CTRowInt(new ArrayList<>(Arrays.asList(cells)));
+                            r.setCount(zeroAdjustValue);
+
+                            ps.print(r.toString(","));
+                        }
                     }
                 }
             }

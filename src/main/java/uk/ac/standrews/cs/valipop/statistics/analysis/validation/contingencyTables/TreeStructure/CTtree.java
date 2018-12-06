@@ -21,32 +21,27 @@ import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.SourceNodeInt;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ContingencyTable;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.RunnableNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SourceType;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.utils.Logger;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-
+import java.util.logging.Logger;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class CTtree extends Node<String, SourceType, Number, Number> implements ContingencyTable {
+public class CTtree extends Node<String, SourceType, Number, Number> {
 
-    public static final Logger log = new Logger(CTtree.class);
+    public static final Logger log = Logger.getLogger(CTtree.class.getName());
 
-    private LinkedList<RunnableNode> deathTasks = new LinkedList<>();
-    private LinkedList<RunnableNode> ageTasks = new LinkedList<>();
-    private LinkedList<RunnableNode> nciyTasks = new LinkedList<>();
-    private LinkedList<RunnableNode> nciapTasks = new LinkedList<>();
-    private LinkedList<RunnableNode> sepTasks = new LinkedList<>();
+    private LinkedList<Runnable> deathTasks = new LinkedList<>();
+    private LinkedList<Runnable> ageTasks = new LinkedList<>();
+    private LinkedList<Runnable> nciyTasks = new LinkedList<>();
+    private LinkedList<Runnable> nciapTasks = new LinkedList<>();
+    private LinkedList<Runnable> sepTasks = new LinkedList<>();
 
     public static double NODE_MIN_COUNT = 1E-66;
 
@@ -104,7 +99,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         childNodes.addAll(statNode.getLeafNodes());
 
         return childNodes;
-
     }
 
     @Override
@@ -154,7 +148,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     }
 
     @Override
-    public void addDelayedTask(RunnableNode node) {
+    public void addDelayedTask(Runnable node) {
 
         if (node instanceof DiedNodeDouble) {
             deathTasks.add(node);
@@ -169,15 +163,14 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         }
     }
 
-    @Override
-    public void executeDelayedTasks() {
+    private void executeDelayedTasks() {
 
         log.info("CTree --- Initialising tree - death nodes from seed");
 
         while (!deathTasks.isEmpty()) {
-            RunnableNode n = deathTasks.removeFirst();
 
-            n.runTask();
+            Runnable n = deathTasks.removeFirst();
+            n.run();
         }
 
         while (nciyTasks.size() + sepTasks.size() + nciapTasks.size() + ageTasks.size() != 0) {
@@ -185,13 +178,15 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
             while (nciyTasks.size() + sepTasks.size() + nciapTasks.size() != 0) {
 
                 while (!sepTasks.isEmpty()) {
-                    RunnableNode n = sepTasks.removeFirst();
-                    n.runTask();
+
+                    Runnable n = sepTasks.removeFirst();
+                    n.run();
                 }
 
                 while (!nciapTasks.isEmpty()) {
-                    RunnableNode n = nciapTasks.removeFirst();
-                    n.runTask();
+
+                    Runnable n = nciapTasks.removeFirst();
+                    n.run();
                 }
             }
 
@@ -200,11 +195,11 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
                     break;
                 }
 
-                RunnableNode n = ageTasks.removeFirst();
+                Runnable n = ageTasks.removeFirst();
                 AgeNodeDouble a = (AgeNodeDouble) n;
                 YOBNodeDouble y = (YOBNodeDouble) a.getAncestor(new YOBNodeDouble());
                 log.info("CTree --- Creating nodes for year: " + y.getOption().toString());
-                n.runTask();
+                n.run();
             }
         }
     }
@@ -231,11 +226,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     @Override
     public void processPerson(IPerson person, LocalDate currentDate) {
 
-    }
-
-    @Override
-    public Node getRootNode() {
-        return null;
     }
 
     @Override

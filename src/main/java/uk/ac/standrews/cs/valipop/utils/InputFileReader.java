@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.fileUtils;
+package uk.ac.standrews.cs.valipop.utils;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
@@ -27,13 +27,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.utils.Logger;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.AbstractLabelToAbstractValueSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.StringToDoubleSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Year;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -51,67 +46,52 @@ public class InputFileReader {
 
     private static final String TAB = "\t";
     private static final String COMMENT_INDICATOR = "#";
-    public static Logger log = new Logger(InputFileReader.class);
+    public static Logger log = Logger.getLogger(InputFileReader.class.getName());
 
     public static Collection<String> getAllLines(Path path) throws IOException {
 
         Collection<String> lines = new ArrayList<>();
-        String line;
 
         // Reads in all lines to a collection of Strings
         try (BufferedReader reader = Files.newBufferedReader(path)) {
 
+            String line;
             while ((line = reader.readLine()) != null) {
 
-                if (line.startsWith(COMMENT_INDICATOR) || line.length() == 0) {
-                    continue;
-                } else {
+                if (!line.startsWith(COMMENT_INDICATOR) && line.length() != 0) {
                     lines.add(line);
                 }
             }
-
-        } catch (IOException e) {
-            throw new IOException("Unable to read in the lines of the file: " + path.toString(), e);
         }
 
         return lines;
     }
 
-    public static Map<Year, Double> readInSingleInputFile(Path path, Config config) throws IOException, InvalidInputFileException {
+    public static Map<Year, Double> readInSingleInputFile(Path path) throws IOException, InvalidInputFileException {
 
         Map<Year, Double> data = new TreeMap<>();
 
         List<String> lines = new ArrayList<>(getAllLines(path));
-
-        String sourcePopulation = null;
-        String sourceOrganisation = null;
 
         for (int i = 0; i < lines.size(); i++) {
 
             String s = lines.get(i);
             String[] split = s.split(TAB);
 
-            switch (split[0].toLowerCase()) {
-                case "population":
-                    sourcePopulation = split[1];
-                    break;
-                case "source":
-                    sourceOrganisation = split[1];
-                    break;
-                case "data":
-                    i++; // go to next line for data rows
-                    for (; i < lines.size(); i++) {
-                        s = lines.get(i);
-                        split = s.split(TAB);
+            if (split[0].toLowerCase().equals("data")) {
 
-                        try {
-//                            year = new MonthDate("01/01/" + split[0]).getYearDate();
-                            data.put(Year.parse(split[0]), Double.parseDouble(split[1]));
-                        } catch (NumberFormatException e) {
-                            throw new InvalidInputFileException("The year is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
-                        }
+                i++; // go to next line for data rows
+                for (; i < lines.size(); i++) {
+                    s = lines.get(i);
+                    split = s.split(TAB);
+
+                    try {
+                        data.put(Year.parse(split[0]), Double.parseDouble(split[1]));
+
+                    } catch (NumberFormatException e) {
+                        throw new InvalidInputFileException("The year is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
                     }
-                    break;
+                }
             }
         }
 
@@ -343,8 +323,8 @@ public class InputFileReader {
     public static SelfCorrectingOneDimensionDataDistribution readInSC1DDataFile(Path path, Config config, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException {
 
         OneDimensionDataDistribution d = readIn1DDataFile(path);
-        return new SelfCorrectingOneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(),
-                d.getSourceOrganisation(), d.cloneData(), config.getBinomialSampling(), randomGenerator);
+        return new SelfCorrectingOneDimensionDataDistribution(
+                d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData(), config.getBinomialSampling(), randomGenerator);
     }
 
     public static SelfCorrectingProportionalDistribution readInAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {

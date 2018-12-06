@@ -18,14 +18,12 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.IntNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNode;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.List;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.diedInYear;
 
@@ -33,8 +31,6 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class AgeNodeInt extends IntNode<IntegerRange, Boolean> {
-
-    private List<IPerson> people = new ArrayList<>();
 
     AgeNodeInt(IntegerRange option, SexNodeInt parentNode, Integer initCount) {
         super(option, parentNode, initCount);
@@ -46,8 +42,6 @@ public class AgeNodeInt extends IntNode<IntegerRange, Boolean> {
 
     @Override
     public void processPerson(IPerson person, LocalDate currentDate) {
-
-        people.add(person);
 
         incCountByOne();
 

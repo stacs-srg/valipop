@@ -154,9 +154,8 @@ public class ProcessArgs {
 
     private static boolean standardCheck(String[] args) {
 
-        return args.length == 3
-                && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
-                && !Objects.equals(args[2], "");
+        return args.length == 1
+                && !Objects.equals(args[0], "");
     }
 
     private static boolean nRunsCheck(String[] args) {

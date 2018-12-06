@@ -7,8 +7,7 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<IntegerRange, Double>
-        implements OperableLabelledValueSet<IntegerRange, Double> {
+public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<IntegerRange, Double> implements OperableLabelledValueSet<IntegerRange, Double> {
 
     private static double DELTA = 1E-2;
 
@@ -83,8 +82,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
         double sumRounded = Math.round(sum);
 
         if (!DoubleComparer.equal(sum, sumRounded, DELTA)) {
-            throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as " +
-                    "values do not sum to a whole number", this);
+            throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as values do not sum to a whole number");
         }
 
         int sumInt = (int) sumRounded;
@@ -128,12 +126,12 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
     @SuppressWarnings("Duplicates")
     @Override
     public OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues() {
+
         double sum = productOfLabelsAndValues().getSumOfValues();
         double sumRounded = Math.round(sum);
 
         if (!DoubleComparer.equal(sum, sumRounded, DELTA)) {
-            throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as " +
-                    "values do not sum to a whole number", this);
+            throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as values do not sum to a whole number");
         }
 
         int sumInt = (int) sumRounded;
@@ -170,8 +168,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
                 // catch and increase to self - then the up will put in a lower order birth
                 IntegerRange largestReducatbleLabel;
                 try {
-                    largestReducatbleLabel =
-                            roundingSet.getLargestLabelOfNonZeroValueAndLabelPreferablyLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                    largestReducatbleLabel = roundingSet.getLargestLabelOfNonZeroValueAndLabelPreferablyLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
                 } catch (NoSuchElementException e) {
                     largestReducatbleLabel = this.smallestLabel();
                 }

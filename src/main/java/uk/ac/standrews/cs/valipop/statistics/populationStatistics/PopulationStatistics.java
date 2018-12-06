@@ -19,9 +19,9 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.EnumeratedDistribution;
-import uk.ac.standrews.cs.valipop.statistics.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.distributions.EnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.EventRateTables;
@@ -32,9 +32,8 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.utils.Logger;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.InputFileReader;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
+import uk.ac.standrews.cs.valipop.utils.InputFileReader;
+import uk.ac.standrews.cs.valipop.utils.InvalidInputFileException;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -43,6 +42,7 @@ import java.time.Period;
 import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * The PopulationStatistics holds data about the rate at which specified events occur to specified subsets of
@@ -70,29 +70,19 @@ public class PopulationStatistics implements EventRateTables {
     private Map<Year, AgeDependantEnumeratedDistribution> maleDeathCauses;
     private Map<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses;
 
-    // Population Constants
-    private int minGestationPeriodDays = 147;
-    private int minBirthSpacingDays = 147;
+    private Period minGestationPeriod;
+    private Period minBirthSpacing;
     private RandomGenerator randomGenerator;
 
-    private static Logger log = new Logger(PopulationStatistics.class);
+    private static Logger log = Logger.getLogger(PopulationStatistics.class.getName());
 
-    private static final int DEFAULT_DETERMINISTIC_SEED = 56854687;
-
-    /**
-     * Creates a PopulationStatistics object.
-     *
-     * @return the quantified event occurrences
-     */
     public PopulationStatistics(Config config) {
 
         try {
-            log.info("Creating PopulationStatistics instance");
-
-            this.randomGenerator = new JDKRandomGenerator();
+            randomGenerator = new JDKRandomGenerator();
 
             if (config.deterministic()) {
-                randomGenerator.setSeed(config.getSeed() == 0 ? DEFAULT_DETERMINISTIC_SEED : config.getSeed());
+                randomGenerator.setSeed(config.getSeed());
             }
 
             Map<Year, SelfCorrectingOneDimensionDataDistribution> maleDeath = readInSC1DDataFiles(config.getVarMaleLifetablePaths(), config);
@@ -105,14 +95,14 @@ public class PopulationStatistics implements EventRateTables {
             Map<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth = readInSC1DDataFiles(config.getVarIllegitimateBirthPaths(), config);
             Map<Year, SelfCorrectingOneDimensionDataDistribution> marriage = readInSC1DDataFiles(config.getVarMarriagePaths(), config);
             Map<Year, SelfCorrectingTwoDimensionDataDistribution> separation = readInSC2DDataFiles(config.getVarSeparationPaths(), config);
-            Map<Year, Double> sexRatioBirth = readInSingleInputDataFile(config.getVarBirthRatioPath(), config);
+            Map<Year, Double> sexRatioBirth = readInSingleInputDataFile(config.getVarBirthRatioPath());
             Map<Year, ValiPopEnumeratedDistribution> maleForename = readInNamesDataFiles(config.getVarMaleForenamePath(), config);
             Map<Year, ValiPopEnumeratedDistribution> femaleForename = readInNamesDataFiles(config.getVarFemaleForenamePath(), config);
             Map<Year, ValiPopEnumeratedDistribution> surname = readInNamesDataFiles(config.getVarSurnamePath(), config);
 
             init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth,
                     marriage, separation, sexRatioBirth, maleForename, femaleForename, surname, config.getMinBirthSpacing(),
-                    config.getMinGestationPeriodDays());
+                    config.getMinGestationPeriod());
 
         } catch (IOException | InvalidInputFileException | InconsistentWeightException e) {
             throw new RuntimeException(e);
@@ -137,19 +127,19 @@ public class PopulationStatistics implements EventRateTables {
                                 Map<Year, ValiPopEnumeratedDistribution> maleForenames,
                                 Map<Year, ValiPopEnumeratedDistribution> femaleForenames,
                                 Map<Year, ValiPopEnumeratedDistribution> surnames,
-                                int minBirthSpacingDays,
-                                int minGestationPeriodDays,
+                                Period minBirthSpacing,
+                                Period minGestationPeriod,
                                 RandomGenerator randomGenerator) {
 
         this.randomGenerator = randomGenerator;
-        init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth, marriage, separation, sexRatioBirths, maleForenames, femaleForenames, surnames, minBirthSpacingDays, minGestationPeriodDays);
+        init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth, marriage, separation, sexRatioBirths, maleForenames, femaleForenames, surnames, minBirthSpacing, minGestationPeriod);
     }
 
     private void init(Map<Year, SelfCorrectingOneDimensionDataDistribution> maleDeath, Map<Year, AgeDependantEnumeratedDistribution> maleDeathCauses, Map<Year, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
                       Map<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses, Map<Year, SelfCorrectingProportionalDistribution> partnering, Map<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                       Map<Year, ProportionalDistribution> multipleBirth, Map<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth, Map<Year, SelfCorrectingOneDimensionDataDistribution> marriage,
                       Map<Year, SelfCorrectingTwoDimensionDataDistribution> separation, Map<Year, Double> sexRatioBirths, Map<Year, ValiPopEnumeratedDistribution> maleForename, Map<Year, ValiPopEnumeratedDistribution> femaleForename,
-                      Map<Year, ValiPopEnumeratedDistribution> surname, int minBirthSpacingDays, int minGestationPeriodDays) {
+                      Map<Year, ValiPopEnumeratedDistribution> surname, Period minBirthSpacing, Period minGestationPeriod) {
 
         this.maleDeath = maleDeath;
         this.maleDeathCauses = maleDeathCauses;
@@ -167,8 +157,8 @@ public class PopulationStatistics implements EventRateTables {
         this.femaleForenames = femaleForename;
         this.surnames = surname;
 
-        this.minBirthSpacingDays = minBirthSpacingDays;
-        this.minGestationPeriodDays = minGestationPeriodDays;
+        this.minBirthSpacing = minBirthSpacing;
+        this.minGestationPeriod = minGestationPeriod;
     }
 
     /*
@@ -353,19 +343,19 @@ public class PopulationStatistics implements EventRateTables {
         return nearestTableYear;
     }
 
-    public int getMinBirthSpacing() {
-        return minBirthSpacingDays;
+    public Period getMinBirthSpacing() {
+        return minBirthSpacing;
     }
 
-    public int getMinGestationPeriod() {
-        return minGestationPeriodDays;
+    public Period getMinGestationPeriod() {
+        return minGestationPeriod;
     }
 
     public RandomGenerator getRandomGenerator() {
         return randomGenerator;
     }
 
-    private static Map<Year, Double> readInSingleInputDataFile(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+    private static Map<Year, Double> readInSingleInputDataFile(DirectoryStream<Path> paths) throws IOException, InvalidInputFileException {
 
         int c = 0;
 
@@ -373,13 +363,14 @@ public class PopulationStatistics implements EventRateTables {
 
         for (Path p : paths) {
             if (c == 1) {
-                throw new Error("Too many sex ratio files - there should only be one - remove any additional files from the ratio_birth directory");
+                throw new RuntimeException("Too many sex ratio files - there should only be one - remove any additional files from the ratio_birth directory");
             }
 
-            data = InputFileReader.readInSingleInputFile(p, config);
-
+            data = InputFileReader.readInSingleInputFile(p);
             c++;
         }
+
+        // TODO shouldn't be hard-wired
 
         if (data.isEmpty()) {
             data.put(Year.of(1600), 0.5);

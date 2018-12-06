@@ -92,8 +92,8 @@ public class Population {
 
     private PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) {
 
-        LocalDate start = DateUtils.getEarlier(col1.getStartDate(), col2.getStartDate());
-        LocalDate end = DateUtils.getLater(col1.getStartDate(), col2.getStartDate());
+        LocalDate start = DateUtils.earlierOf(col1.getStartDate(), col2.getStartDate());
+        LocalDate end = DateUtils.laterOf(col1.getStartDate(), col2.getStartDate());
 
         PeopleCollection cloneCol1 = col1.clone();
         PeopleCollection cloneCol2 = col2.clone();

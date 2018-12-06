@@ -23,17 +23,15 @@ import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.AnalyticsRunner;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.ContingencyTableFactory;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SexOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.MarriageStatsKey;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MarriageStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
-import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
-import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordGenerationFactory;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
@@ -43,14 +41,13 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.MarriageDateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.logging.Logger;
 
-import static java.time.temporal.ChronoUnit.DAYS;
 import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.*;
 
 /**
@@ -58,20 +55,21 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
  */
 public class OBDModel {
 
+    // TODO use more informative class name
+
     private static final String CODE_VERSION = "dev-bf";
     private static final int MINIMUM_POPULATION_SIZE = 100;
     private static final int EARLIEST_AGE_OF_MARRIAGE = 16;
     private static final int MAX_ATTEMPTS = 10;
     private static final Period MAX_AGE = Period.ofYears(110);
 
-    private static final Logger log = new Logger(OBDModel.class);
+    private static final Logger log = Logger.getLogger(OBDModel.class.getName());
     private static final int BIRTH_ADJUSTMENT_BOUND = 1000000;
 
     private final Config config;
     private final SummaryRow summary;
     private final PopulationStatistics desired;
     private final Population population;
-    private final PrintWriter birthOrders;
     private final RandomGenerator randomNumberGenerator;
     private final LocalDate endOfInitPeriod;
     private final Collection<IPerson> partnersToSeparate;
@@ -88,53 +86,38 @@ public class OBDModel {
     private int deathCount = 0;
     private int numberOfBirthsInThisTimestep = 0;
 
-    public static void setUpFileStructureAndLogs(final String runPurpose, final String startTime, final String resultsPath) throws IOException {
+    private PrintWriter birthOrders;
 
-        // This has to be run prior to creating the Config file as the file structure and log file need to be created
-        // prior to the first logging event that occurs when generating the config
-        // And errors in this method are sent to standard error
+    public OBDModel(final Config config) {
 
-        FileUtils.makeDirectoryStructure(runPurpose, startTime, resultsPath);
-        Logger.setLogFilePath(FileUtils.pathToLogDir(runPurpose, startTime, resultsPath));
-    }
+        try {
+            this.config = config;
 
-    public OBDModel(final String startTime, final Config config) {
+            currentTime = config.getTS();
 
-        this.config = config;
+            partnersToSeparate = new HashSet<>();
+            population = new Population(config);
+            desired = new PopulationStatistics(config);
 
-        currentTime = config.getTS();
+            birthOrders = new PrintWriter(config.getBirthOrdersPath().toFile());
+            randomNumberGenerator = desired.getRandomGenerator();
+            currentHypotheticalPopulationSize = calculateStartingPopulationSize();
 
-        partnersToSeparate = new HashSet<>();
-        population = new Population(config);
-        desired = new PopulationStatistics(config);
+            birthDateSelector = new DateSelector(randomNumberGenerator);
+            deathDateSelector = new DeathDateSelector(randomNumberGenerator);
+            marriageDateSelector = new MarriageDateSelector(randomNumberGenerator);
 
-        birthOrders = FileUtils.mkDumpFile("order.csv");
-        randomNumberGenerator = desired.getRandomGenerator();
-        currentHypotheticalPopulationSize = calculateStartingPopulationSize();
+            log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
-        birthDateSelector = new DateSelector(randomNumberGenerator);
-        deathDateSelector = new DeathDateSelector(randomNumberGenerator);
-        marriageDateSelector = new MarriageDateSelector(randomNumberGenerator);
+            Period timeStep = Period.ofYears(desired.getOrderedBirthRates(Year.of(currentTime.getYear())).getLargestLabel().getValue());
+            endOfInitPeriod = currentTime.plus(timeStep);
 
-        log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
+            log.info("End of Initialisation Period set: " + endOfInitPeriod);
 
-        Period timeStep = Period.ofYears(desired.getOrderedBirthRates(Year.of(currentTime.getYear())).getLargestLabel().getValue());
-        endOfInitPeriod = currentTime.plus(timeStep);
-
-        log.info("End of Initialisation Period set: " + endOfInitPeriod);
-
-        summary = new SummaryRow(Paths.get(config.getResultsSavePath().toString(), config.getRunPurpose(), startTime),
-                config.getVarPath(), startTime, config.getRunPurpose(), CODE_VERSION, config.getSimulationTimeStep(),
-                config.getInputWidth(), config.getT0(), config.getTE(),
-                differenceInDays(config.getT0(), config.getTE()),
-                config.getBirthFactor(), config.getDeathFactor(), config.getRecoveryFactor(),
-                config.getProportionalRecoveryFactor(), config.getBinomialSampling(), config.getMinBirthSpacing(),
-                config.getOutputRecordFormat(), config.getT0PopulationSize());
-    }
-
-    private int differenceInDays(LocalDate t0, LocalDate te) {
-
-        return (int) DAYS.between(t0, te);
+            summary = new SummaryRow(config, CODE_VERSION);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void runSimulation() {
@@ -162,17 +145,17 @@ public class OBDModel {
 
         if (config.getOutputTables()) {
             // the 5 year step back is to combat the kick in the early stages of the CTtables for STAT - run in RStudio with no cleaning to see - potential bug in CTtree?
-            ContingencyTableFactory.generateContingencyTables(population.getAllPeople(), desired, config, summary, 0, 5);
+            ContingencyTableFactory.generateContingencyTables(population.getAllPeople(), desired, config, summary, 5);
         }
 
         if (config.getOutputRecordFormat() != RecordFormat.NONE) {
-            RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), FileUtils.getRecordsDirPath().toString(), population.getAllPeople(), config.getT0());
+            RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), config.getRecordsDirPath(), population.getAllPeople(), config.getT0());
         }
 
         final ProgramTimer recordTimer = new ProgramTimer();
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
 
-        try (PrintStream resultsOutput = new PrintStream(FileUtils.getDetailedResultsPath().toFile(), "UTF-8")) {
+        try (PrintStream resultsOutput = new PrintStream(config.getDetailedResultsPath().toFile(), "UTF-8")) {
 
             AnalyticsRunner.runAnalytics(population.getAllPeople(config.getT0(), config.getTE(), MAX_AGE), resultsOutput);
 
@@ -236,12 +219,12 @@ public class OBDModel {
         birthsCount += numberBorn;
         numberOfBirthsInThisTimestep += numberBorn;
 
-        logEntry.append(numberBorn + "\t");
+        logEntry.append(numberBorn).append("\t");
 
         if (!initialisationFinished() && timeFromInitialisationStartIsWholeTimeUnit()) {
 
             final int shortFallInBirths = initialisePeople();
-            logEntry.append(shortFallInBirths + "\t");
+            logEntry.append(shortFallInBirths).append("\t");
 
         } else if (initialisationFinished()) {
             logEntry.append(0 + "\t");
@@ -249,7 +232,7 @@ public class OBDModel {
 
         final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
         deathCount += numberDying;
-        logEntry.append(numberDying + "\t");
+        logEntry.append(numberDying).append("\t");
 
         if (simulationStarted()) {
             population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
@@ -279,7 +262,7 @@ public class OBDModel {
 
     private void recordPeopleCounts(final StringBuilder logEntry) {
 
-        logEntry.append(population.getLivingPeople().getNumberOfPeople() + "\t");
+        logEntry.append(population.getLivingPeople().getNumberOfPeople()).append("\t");
         logEntry.append(population.getDeadPeople().getNumberOfPeople());
     }
 
@@ -298,7 +281,7 @@ public class OBDModel {
         birthsCount = 0;
     }
 
-    public double toDecimalRepresentation(Period period) {
+    private double toDecimalRepresentation(Period period) {
 
         return period.toTotalMonths() / (double) DateUtils.MONTHS_IN_YEAR;
     }
@@ -417,6 +400,7 @@ public class OBDModel {
 
         determinedCount.setFulfilledCount(fulfilled);
 
+        // TODO Does this output get used?
         birthOrders.println(currentTime.getYear() + "," + age + "," + range + "," + fulfilled + "," + numberOfChildren);
 
         desired.returnAchievedCount(determinedCount);
@@ -430,7 +414,7 @@ public class OBDModel {
             final double birthFactor = config.getBirthFactor();
             final int adjuster = (int) Math.ceil(birthFactor);
 
-            // TODO Don't know what's going on here - if birthFactor is zero, as it in several configurations, next line yields NaN.
+            // TODO If birthFactor is zero, as it in several configurations, next line yields NaN.
 
             if (desired.getRandomGenerator().nextInt(BIRTH_ADJUSTMENT_BOUND) < Math.abs(birthFactor / adjuster) * BIRTH_ADJUSTMENT_BOUND) {
                 return (birthFactor < 0) ? adjuster : -adjuster;
@@ -703,7 +687,7 @@ public class OBDModel {
             final LocalDate motherLastPrevPartneringEvent = getDateOfLastLegitimatePartnershipEventBeforeDate(partnership.getFemalePartner(), lastBirthDate);
             final LocalDate fatherLastPrevPartneringEvent = getDateOfLastLegitimatePartnershipEventBeforeDate(partnership.getMalePartner(), lastBirthDate);
 
-            final LocalDate earliestPossibleMarriageDate = DateUtils.getLater(motherLastPrevPartneringEvent, fatherLastPrevPartneringEvent);
+            final LocalDate earliestPossibleMarriageDate = DateUtils.laterOf(motherLastPrevPartneringEvent, fatherLastPrevPartneringEvent);
 
             if (earliestPossibleMarriageDate.isBefore(lastBirthDate)) {
                 marriageDate = marriageDateSelector.selectRandomDate(earliestPossibleMarriageDate, lastBirthDate);
@@ -769,15 +753,6 @@ public class OBDModel {
     private LocalDate getEarliestMarriageDate(final IPerson person) {
 
         return person.getBirthDate().plus(EARLIEST_AGE_OF_MARRIAGE, ChronoUnit.YEARS);
-
-//        // Handle the leap year baby...
-//        final ValipopDate temp = birthDate.getMonthDate().advanceTime(EARLIEST_AGE_OF_MARRIAGE, TimeUnit.YEAR);
-//
-//        if (temp.getMonth() == DateUtils.FEB && !DateUtils.isLeapYear(temp.getYear()) && birthDate.getDay() == DateUtils.DAYS_IN_LEAP_FEB) {
-//            return new ExactDate(birthDate.getDay() - 1, temp.getMonth(), temp.getYear());
-//        } else {
-//            return new ExactDate(birthDate.getDay(), temp.getMonth(), temp.getYear());
-//        }
     }
 
     private static SexOption getSex(final PopulationCounts counts, final PopulationStatistics statistics, final LocalDate currentDate) {
@@ -932,7 +907,7 @@ public class OBDModel {
 
         if (lastChild != null) {
 
-            final LocalDate earliestDateOfNextChild = lastChild.getBirthDate().plus(desired.getMinBirthSpacing(), DAYS);
+            final LocalDate earliestDateOfNextChild = lastChild.getBirthDate().plus(desired.getMinBirthSpacing());
 
             // Returns true if last child was born far enough in the past for another child to be born at currentTime
             return earliestDateOfNextChild.isBefore(currentTime);
@@ -1308,10 +1283,6 @@ public class OBDModel {
 
         MothersNeedingPartners() {
             this(new ArrayList<>(), 0);
-        }
-
-        MothersNeedingPartners(final List<NewMother> mothers) {
-            this(mothers, 0);
         }
 
         MothersNeedingPartners(final List<NewMother> mothers, final int newlyProducedChildren) {
