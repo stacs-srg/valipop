@@ -42,6 +42,13 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
 
     static final String INTENDED_SUFFIX = "_intended.ged";
 
+    @Before
+    public void setup() throws IOException {
+
+        actual_output = Files.createTempFile(null, ".ged");
+        intended_output = Paths.get(TEST_DIRECTORY_PATH_STRING, "gedcom", file_name_root + INTENDED_SUFFIX);
+    }
+
     public PopulationToGEDCOMTest(final IPopulation population, final String file_name) {
 
         super(population, file_name);
@@ -57,13 +64,6 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         }
 
         assertThatFilesHaveSameContent(actual_output, intended_output);
-    }
-
-    @Before
-    public void setup() throws IOException {
-
-        actual_output = Files.createTempFile(null, ".ged");
-        intended_output = Paths.get(TEST_DIRECTORY_PATH_STRING, "gedcom", file_name_root + INTENDED_SUFFIX);
     }
 
     private static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {

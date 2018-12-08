@@ -37,17 +37,10 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public abstract class AbstractExporterTest {
 
-    public static final String TEST_DIRECTORY_PATH_STRING = "src/test/resources/valipop/";
+    static final String TEST_DIRECTORY_PATH_STRING = "src/test/resources/valipop/";
 
-    protected final IPopulation population;
-    protected final String file_name_root;
-
-    protected Path actual_output = null;
-    protected Path intended_output = null;
-
-    @SuppressWarnings("MagicNumber")
-    protected static final int[] TEST_CASE_POPULATION_SIZES = new int[]{1000, 10000, 50000};
-    protected static final String[] TEST_CASE_FILE_NAME_ROOTS = new String[TEST_CASE_POPULATION_SIZES.length];
+    static final int[] TEST_CASE_POPULATION_SIZES = new int[]{100, 1000, 10000, 50000};
+    static final String[] TEST_CASE_FILE_NAME_ROOTS = new String[TEST_CASE_POPULATION_SIZES.length];
 
     static {
         for (int i = 0; i < TEST_CASE_FILE_NAME_ROOTS.length; i++) {
@@ -55,7 +48,13 @@ public abstract class AbstractExporterTest {
         }
     }
 
-    public AbstractExporterTest(final IPopulation population, final String file_name_root) {
+    protected final IPopulation population;
+    final String file_name_root;
+
+    Path actual_output = null;
+    Path intended_output = null;
+
+    AbstractExporterTest(final IPopulation population, final String file_name_root) {
 
         this.population = population;
         this.file_name_root = file_name_root;
@@ -77,7 +76,7 @@ public abstract class AbstractExporterTest {
         Files.delete(actual_output);
     }
 
-    private static Object[] makeTestConfiguration(final int population_size, final String file_name_root) throws Exception {
+    private static Object[] makeTestConfiguration(final int population_size, final String file_name_root) {
 
         String purpose = "DETERMINISTIC-TESTING";
 
@@ -93,7 +92,7 @@ public abstract class AbstractExporterTest {
         OBDModel sim = new OBDModel(config);
         sim.runSimulation();
 
-        final IPopulation population = sim.getPopulation().getAllPeople();
+        final IPopulation population = sim.getPopulation().getPeople();
         population.setDescription(String.valueOf(population_size));
 
         return new Object[]{population, file_name_root};

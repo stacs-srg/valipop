@@ -17,16 +17,11 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.Partnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.Person;
-import uk.ac.standrews.cs.valipop.simulationEntities.PopulationCounts;
+import uk.ac.standrews.cs.valipop.simulationEntities.*;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Collection;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -38,23 +33,38 @@ public class Population {
 
     private PopulationCounts populationCounts;
 
-    public Population(Config config) {
+    public Population(final Config config) {
 
         Person.resetIds();
         Partnership.resetIds();
 
-        livingPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep());
-        livingPeople.setDescription("living");
+        livingPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep(), "living");
 
-        deadPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep());
-        deadPeople.setDescription(("dead"));
+        deadPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep(), "dead");
 
         populationCounts = new PopulationCounts();
     }
 
-    public PeopleCollection getAllPeople() {
+    public PeopleCollection getPeople() {
 
-        return makePeopleCollection(livingPeople, deadPeople);
+        return combine(livingPeople, deadPeople);
+    }
+
+    public PeopleCollection getPeople(final LocalDate first, final LocalDate last, final Period maxAge) {
+
+        final PeopleCollection result = new PeopleCollection(first, last, Period.ofYears(1), "combined");
+
+        Period period = Period.between(first, last);
+
+        for (final IPerson person : livingPeople.getPeopleAliveInTimePeriod(first, period, maxAge)) {
+            result.add(person);
+        }
+
+        for (final IPerson person : deadPeople.getPeopleAliveInTimePeriod(first, period, maxAge)) {
+            result.add(person);
+        }
+
+        return result;
     }
 
     public PeopleCollection getLivingPeople() {
@@ -69,46 +79,25 @@ public class Population {
         return populationCounts;
     }
 
-    public PeopleCollection getAllPeople(LocalDate first, LocalDate last, Period maxAge) {
+    private PeopleCollection combine(final PeopleCollection collection1, final PeopleCollection collection2) {
 
-        Period tp = Period.ofMonths(Math.abs((int)Period.between(first, last).toTotalMonths()));
+        final LocalDate start = DateUtils.earlierOf(collection1.getStartDate(), collection2.getStartDate());
+        final LocalDate end = DateUtils.laterOf(collection1.getStartDate(), collection2.getStartDate());
 
-        Collection<IPerson> l = livingPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
-        Collection<IPerson> d = deadPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
+        final PeopleCollection cloned1 = collection1.clone();
+        final PeopleCollection cloned2 = collection2.clone();
 
-        PeopleCollection pC = new PeopleCollection(first, last, Period.ofYears(1));
-        pC.setDescription("combined");
+        cloned1.setStartDate(start);
+        cloned1.setEndDate(end);
 
-        for(IPerson p : l) {
-            pC.addPerson(p);
+        for (IPerson person : cloned2) {
+            cloned1.add(person);
         }
 
-        for(IPerson p : d) {
-            pC.addPerson(p);
+        for (IPartnership person : cloned2.getPartnerships()) {
+            cloned1.add(person);
         }
 
-        return pC;
-    }
-
-    private PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) {
-
-        LocalDate start = DateUtils.earlierOf(col1.getStartDate(), col2.getStartDate());
-        LocalDate end = DateUtils.laterOf(col1.getStartDate(), col2.getStartDate());
-
-        PeopleCollection cloneCol1 = col1.clone();
-        PeopleCollection cloneCol2 = col2.clone();
-
-        cloneCol1.setStartDate(start);
-        cloneCol1.setEndDate(end);
-
-        for (IPerson p : cloneCol2.getPeople()) {
-            cloneCol1.addPerson(p);
-        }
-
-        for (IPartnership p : cloneCol2.getPartnerships()) {
-            cloneCol1.addPartnershipToIndex(p);
-        }
-
-        return cloneCol1;
+        return cloned1;
     }
 }

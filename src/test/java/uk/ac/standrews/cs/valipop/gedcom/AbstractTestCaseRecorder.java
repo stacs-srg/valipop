@@ -28,11 +28,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 
-/**
- * Tests of Graphviz export.
- *
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
- */
 public abstract class AbstractTestCaseRecorder {
 
     protected void recordTestCase() throws Exception {
@@ -40,13 +35,6 @@ public abstract class AbstractTestCaseRecorder {
         for (int i = 0; i < AbstractExporterTest.TEST_CASE_POPULATION_SIZES.length; i++) {
 
             final Path path = Paths.get(AbstractExporterTest.TEST_DIRECTORY_PATH_STRING, getDirectoryName(), AbstractExporterTest.TEST_CASE_FILE_NAME_ROOTS[i] + getIntendedOutputFileSuffix());
-
-//            Config config2 = new Config(LocalDate.of(1599, 1, 1), LocalDate.of(1855, 1, 1),
-//                    LocalDate.of(2015, 1, 1), AbstractExporterTest.TEST_CASE_POPULATION_SIZES[i], 0.0133,
-//                    0.0122, Period.ofYears(1), "src/test/resources/valipop/test-pop",
-//                    "results", "DETERMINISTIC-TESTING", Period.ofDays(147),
-//                    Period.ofDays(147), true, 0.0, 0.0, 1.0, 1.0,
-//                    Period.ofYears(1), RecordFormat.NONE, 0, true);
 
             Config config = new Config(
                     LocalDate.of(1599, 1, 1),
@@ -60,7 +48,7 @@ public abstract class AbstractTestCaseRecorder {
             OBDModel sim = new OBDModel(config);
             sim.runSimulation();
 
-            final IPopulation abstract_population = sim.getPopulation().getAllPeople();
+            final IPopulation abstract_population = sim.getPopulation().getPeople();
             final IPopulationWriter population_writer = getPopulationWriter(path, abstract_population);
 
             try (PopulationConverter converter = new PopulationConverter(abstract_population, population_writer)) {

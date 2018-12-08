@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -43,6 +44,7 @@ public abstract class GeneralPopulationStructureTest {
     private static final int PARTNERSHIP_ITERATION_SAMPLE_THRESHOLD = 20;
     private static final int PARTNERSHIP_ITERATION_SAMPLE_START = 10;
     private static final int MAX_REASONABLE_FAMILY_SIZE = 20;
+    private static final int POPULATION_SIZE_LIMIT_FOR_EXPENSIVE_TESTS = 10000;
 
     private final IPopulation population;
     private final int initialSize;
@@ -72,18 +74,20 @@ public abstract class GeneralPopulationStructureTest {
     }
 
     @Test
-    public void numberOfPeopleIsConsistent()  {
+    public void numberOfPeopleIsConsistentAndIDsArentRepeated() {
 
-        final Set<Integer> people = new HashSet<>();
+        final Set<Integer> ids = new HashSet<>();
+
         for (final IPerson person : population.getPeople()) {
-            assertFalse(people.contains(person.getId()));
-            people.add(person.getId());
+            assertFalse(ids.contains(person.getId()));
+            ids.add(person.getId());
         }
-        assertEquals(population.getNumberOfPeople(), people.size());
+
+        assertEquals(population.getNumberOfPeople(), ids.size());
     }
 
     @Test
-    public void numberOfPartnershipsIsConsistent()  {
+    public void numberOfPartnershipsIsConsistent() {
 
         final Set<Integer> partnerships = new HashSet<>();
         for (final IPartnership partnership : population.getPartnerships()) {
@@ -100,13 +104,13 @@ public abstract class GeneralPopulationStructureTest {
     }
 
     @Test(expected = NoSuchElementException.class)
-    public void tooManyPartnershipIterations()  {
+    public void tooManyPartnershipIterations() {
 
         doTooManyIterations(population.getPartnerships().iterator(), population.getNumberOfPartnerships());
     }
 
     @Test
-    public void peopleRetrievedConsistently()  {
+    public void peopleRetrievedConsistently() {
 
         // Check consistency after iteration, if the population is large enough to take a sample from the middle.
 
@@ -121,15 +125,17 @@ public abstract class GeneralPopulationStructureTest {
             assertRetrievedConsistently(sample);
         }
 
-        // Check consistency during iteration.
+        if (testingSmallPopulation()) {
+            // Check consistency during iteration.
 
-        for (final IPerson person : population.getPeople()) {
-            assertRetrievedConsistently(person);
+            for (final IPerson person : population.getPeople()) {
+                assertRetrievedConsistently(person);
+            }
         }
     }
 
     @Test
-    public void partnershipsRetrievedConsistently()  {
+    public void partnershipsRetrievedConsistently() {
 
         // Check consistency after iteration, if the population is large enough to take a sample from the middle.
 
@@ -154,7 +160,7 @@ public abstract class GeneralPopulationStructureTest {
     }
 
     @Test
-    public void familiesNotTooLarge()  {
+    public void familiesNotTooLarge() {
 
         for (final IPartnership partnership : population.getPartnerships()) {
             assertTrue(partnership.getChildren().size() <= MAX_REASONABLE_FAMILY_SIZE);
@@ -165,7 +171,6 @@ public abstract class GeneralPopulationStructureTest {
     public void birthsBeforeDeaths() {
 
         for (final IPerson person : population.getPeople()) {
-
             assertBirthBeforeDeath(person);
         }
     }
@@ -174,7 +179,6 @@ public abstract class GeneralPopulationStructureTest {
     public void birthInfoConsistent() {
 
         for (final IPerson person : population.getPeople()) {
-
             assertBirthInfoConsistent(person);
         }
     }
@@ -183,8 +187,15 @@ public abstract class GeneralPopulationStructureTest {
     public void deathInfoConsistent() {
 
         for (final IPerson person : population.getPeople()) {
-
             assertDeathInfoConsistent(person);
+        }
+    }
+
+    @Test
+    public void agesAtDeathNotTooHigh() {
+
+        for (final IPerson person : population.getPeople()) {
+            assertAgeAtDeathNotTooHigh(person);
         }
     }
 
@@ -192,7 +203,6 @@ public abstract class GeneralPopulationStructureTest {
     public void birthsBeforeMarriages() {
 
         for (final IPerson person : population.getPeople()) {
-
             assertBirthBeforeMarriages(person);
         }
     }
@@ -201,7 +211,6 @@ public abstract class GeneralPopulationStructureTest {
     public void marriagesBeforeDeaths() {
 
         for (final IPerson person : population.getPeople()) {
-
             assertMarriagesBeforeDeath(person);
         }
     }
@@ -210,7 +219,6 @@ public abstract class GeneralPopulationStructureTest {
     public void sexesConsistent() {
 
         for (final IPartnership partnership : population.getPartnerships()) {
-
             assertSexesConsistent(partnership);
         }
     }
@@ -219,7 +227,6 @@ public abstract class GeneralPopulationStructureTest {
     public void surnamesInheritedOnMaleLine() {
 
         for (final IPerson person : population.getPeople()) {
-
             assertSurnameInheritedOnMaleLine(person);
         }
     }
@@ -228,7 +235,6 @@ public abstract class GeneralPopulationStructureTest {
     public void noSiblingPartners() {
 
         for (final IPerson person : population.getPeople()) {
-
             assertNoneOfChildrenAreSiblingPartners(person);
         }
     }
@@ -237,7 +243,6 @@ public abstract class GeneralPopulationStructureTest {
     public void noParentPartnerOfChild() {
 
         for (final IPartnership partnership : population.getPartnerships()) {
-
             assertParentNotPartnerOfChild(partnership);
         }
     }
@@ -246,7 +251,6 @@ public abstract class GeneralPopulationStructureTest {
     public void parentsHaveSensibleAgesAtBirths() {
 
         for (final IPartnership partnership : population.getPartnerships()) {
-
             assertParentsHaveSensibleAgesAtBirth(partnership);
         }
     }
@@ -254,10 +258,16 @@ public abstract class GeneralPopulationStructureTest {
     @Test
     public void parentsAndChildrenConsistent() {
 
-        for (final IPartnership partnership : population.getPartnerships()) {
+        if (testingSmallPopulation()) {
 
-            assertParentsAndChildrenConsistent(partnership);
+            for (final IPartnership partnership : population.getPartnerships()) {
+                assertParentsAndChildrenConsistent(partnership);
+            }
         }
+    }
+
+    private boolean testingSmallPopulation() {
+        return initialSize <= POPULATION_SIZE_LIMIT_FOR_EXPENSIVE_TESTS;
     }
 
     private static void assertBirthInfoConsistent(final IPerson person) {
@@ -269,7 +279,13 @@ public abstract class GeneralPopulationStructureTest {
 
         for (final IPerson child : partnership.getChildren()) {
             assertEquals(child.getParents(), partnership);
+            assertChildIsPresentInPopulation(child);
         }
+    }
+
+    private void assertChildIsPresentInPopulation(final IPerson child) {
+
+        assertNotNull(population.findPerson(child.getId()));
     }
 
     private void assertParentsHaveSensibleAgesAtBirth(final IPartnership partnership) {
@@ -310,6 +326,16 @@ public abstract class GeneralPopulationStructureTest {
     private static void assertDeathInfoConsistent(final IPerson person) {
 
         assertFalse(!deathDateIsDefined(person) && (deathPlaceIsDefined(person) || deathCauseIsDefined(person)));
+    }
+
+    private void assertAgeAtDeathNotTooHigh(final IPerson person) {
+
+        assertTrue(deathDateIsDefined(person) || ageAtEndOfSimulationNotTooHigh(person));
+    }
+
+    private boolean ageAtEndOfSimulationNotTooHigh(final IPerson person) {
+
+        return Period.between(person.getBirthDate(), population.getEndDate()).minus(OBDModel.MAX_AGE).isNegative();
     }
 
     private static boolean deathDateIsDefined(IPerson person) {
@@ -378,7 +404,7 @@ public abstract class GeneralPopulationStructureTest {
             final LocalDate death_date = person.getDeathDate();
             final LocalDate birth_date = person.getBirthDate();
 
-            assertFalse(birth_date.isAfter( death_date));
+            assertFalse(birth_date.isAfter(death_date));
         }
     }
 
@@ -392,7 +418,7 @@ public abstract class GeneralPopulationStructureTest {
                 if (partnership.getMarriageDate() != null) {
 
                     final LocalDate marriage_date = partnership.getMarriageDate();
-                    assertFalse(birth_date.isAfter( marriage_date));
+                    assertFalse(birth_date.isAfter(marriage_date));
                 }
             }
         }
@@ -408,7 +434,7 @@ public abstract class GeneralPopulationStructureTest {
                 if (partnership.getMarriageDate() != null) {
 
                     final LocalDate marriage_date = partnership.getMarriageDate();
-                    assertFalse(marriage_date.isAfter( death_date));
+                    assertFalse(marriage_date.isAfter(death_date));
                 }
             }
         }
@@ -423,10 +449,8 @@ public abstract class GeneralPopulationStructureTest {
 
     private void assertRetrievedConsistently(final IPerson person) {
 
-        final int id = person.getId();
-        final IPerson retrieved_person = population.findPerson(id);
-
-        assertEquals(id, retrieved_person.getId());
+        final IPerson retrieved_person = population.findPerson(person.getId());
+        assertEquals(person, retrieved_person);
     }
 
     private void assertRetrievedConsistently(final IPartnership[] sample) {

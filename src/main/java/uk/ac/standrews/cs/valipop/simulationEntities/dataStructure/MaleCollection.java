@@ -29,7 +29,6 @@ import java.util.*;
  */
 public class MaleCollection extends PersonCollection {
 
-    // this is by year of birth
     private final Map<LocalDate, Collection<IPerson>> byYear = new TreeMap<>();
 
     /**
@@ -41,23 +40,19 @@ public class MaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    public MaleCollection(LocalDate start, LocalDate end, Period divisionSize) {
+    public MaleCollection(final LocalDate start, final LocalDate end, final Period divisionSize, final String description) {
 
-        super(start, end, divisionSize);
+        super(start, end, divisionSize, description);
 
-        for (LocalDate d = start; !d.isAfter( end); d = d.plus(divisionSize)) {
-            byYear.put(d, new ArrayList<>());
+        for (LocalDate date = start; !date.isAfter(end); date = date.plus(divisionSize)) {
+            byYear.put(date, new ArrayList<>());
         }
     }
 
-    /*
-    -------------------- PersonCollection abstract methods --------------------
-     */
-
     @Override
-    public Collection<IPerson> getAll() {
+    public Collection<IPerson> getPeople() {
 
-        Collection<IPerson> people = new ArrayList<>();
+        final Collection<IPerson> people = new ArrayList<>();
 
         for (Collection<IPerson> persons : byYear.values()) {
             people.addAll(persons);
@@ -67,18 +62,18 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    void addPeople(Collection<IPerson> people, LocalDate divisionDate) {
+    void addPeople(final Collection<IPerson> people, final LocalDate divisionDate) {
 
-        Collection<IPerson> collection = byYear.get(divisionDate);
+        final Collection<IPerson> collection = byYear.get(divisionDate);
         if (collection != null) {
             people.addAll(collection);
         }
     }
 
     @Override
-    public void addPerson(IPerson person) {
+    public void add(IPerson person) {
 
-        LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
+        final LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
 
         if (byYear.containsKey(divisionDate)) {
             byYear.get(divisionDate).add(person);
@@ -89,32 +84,35 @@ public class MaleCollection extends PersonCollection {
             newList.add(person);
             byYear.put(divisionDate, newList);
         }
+
+        size++;
     }
 
     @Override
-    public void removePerson(IPerson person) {
+    public void remove(IPerson person) {
 
         Collection<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate()));
 
-        // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {
             throw new PersonNotFoundException("Specified person not found in data structure");
         }
+
+        size--;
     }
 
     @Override
-    public int getNumberOfPersons() {
-        return getAll().size();
+    public int getNumberOfPeople() {
+        return size;
     }
 
     @Override
-    public int getNumberOfPersons(LocalDate firstDate, Period timePeriod) {
+    public int getNumberOfPeople(LocalDate firstDate, Period timePeriod) {
 
-        return getAllPersonsBornInTimePeriod(firstDate, timePeriod).size();
+        return getPeopleBornInTimePeriod(firstDate, timePeriod).size();
     }
 
     @Override
     public Set<LocalDate> getDivisionDates() {
-        return new TreeSet<>(byYear.keySet());
+        return byYear.keySet();
     }
 }

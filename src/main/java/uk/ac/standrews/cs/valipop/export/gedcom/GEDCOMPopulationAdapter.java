@@ -29,6 +29,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.Iterator;
 
 /**
@@ -132,6 +133,16 @@ public class GEDCOMPopulationAdapter implements IPopulation {
     public int getNumberOfPartnerships() {
 
         return parser.gedcom.families.values().size();
+    }
+
+    @Override
+    public LocalDate getStartDate() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public LocalDate getEndDate() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

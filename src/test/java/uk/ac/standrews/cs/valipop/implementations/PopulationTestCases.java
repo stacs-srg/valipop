@@ -28,10 +28,11 @@ import java.util.List;
 
 class PopulationTestCases {
 
-    static List<Object[]> getTestCases() throws Exception {
+    static List<Object[]> getTestCases()  {
 
         List<Object[]> testCases = new ArrayList<>();
 
+        testCases.add(new Object[]{fullPopulation(1000, 56854687), 1000});
         testCases.add(new Object[]{fullPopulation(10000, 56854687), 10000});
         testCases.add(new Object[]{fullPopulation(20000, 56854687), 20000});
         testCases.add(new Object[]{fullPopulation(30000, 56854687), 30000});
@@ -47,7 +48,7 @@ class PopulationTestCases {
         return testCases;
     }
 
-    private static IPopulation fullPopulation(final int t0PopulationSize, int seed) throws Exception {
+    private static IPopulation fullPopulation(final int t0PopulationSize, final int seed)  {
 
         LocalDate tS = LocalDate.of(1599, 1, 1);
         LocalDate t0 = LocalDate.of(1855, 1, 1);
@@ -61,7 +62,7 @@ class PopulationTestCases {
         OBDModel model = new OBDModel(config);
         model.runSimulation();
 
-        PeopleCollection population = model.getPopulation().getAllPeople();
+        PeopleCollection population = model.getPopulation().getPeople();
         population.setDescription("initial size=" + t0PopulationSize + ", seed=" + seed);
         return population;
     }

@@ -88,7 +88,7 @@ public class PopulationConverter implements AutoCloseable {
         population_writer.close();
     }
 
-    private void initialiseProgressIndicator() throws Exception {
+    private void initialiseProgressIndicator() {
 
         if (progress_indicator != null) {
             progress_indicator.setTotalSteps(population.getNumberOfPeople() + population.getNumberOfPartnerships());

@@ -32,13 +32,15 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public abstract class PersonCollection {
+public abstract class PersonCollection implements Iterable<IPerson> {
 
     // TODO what's the difference between a PersonCollection and a PeopleCollection?
 
     private LocalDate startDate;
     private LocalDate endDate;
     private Period divisionSize;
+    protected String description;
+    protected int size = 0;
 
     /**
      * Instantiates a new PersonCollection. The dates specify the earliest and latest expected birth dates of
@@ -49,10 +51,12 @@ public abstract class PersonCollection {
      * @param startDate the start date
      * @param endDate   the end date
      */
-    PersonCollection(LocalDate startDate, LocalDate endDate, Period divisionSize) {
+    PersonCollection(LocalDate startDate, LocalDate endDate, Period divisionSize, String description) {
+
         this.startDate = startDate;
         this.endDate = endDate;
         this.divisionSize = divisionSize;
+        this.description = description;
     }
 
     /**
@@ -62,14 +66,14 @@ public abstract class PersonCollection {
      *
      * @return All people in the PersonCollection
      */
-    public abstract Collection<IPerson> getAll();
+    public abstract Collection<IPerson> getPeople();
 
     /**
      * Adds the given person to the PersonCollection.
      *
      * @param person the person to be added
      */
-    abstract void addPerson(IPerson person);
+    abstract void add(final IPerson person);
 
     /**
      * Removes the specified person from this PersonCollection.
@@ -77,16 +81,7 @@ public abstract class PersonCollection {
      * @param person the person to be removed
      * @throws PersonNotFoundException If the specified person is not found then an exception is thrown
      */
-    abstract void removePerson(IPerson person) throws PersonNotFoundException;
-
-    /**
-     * Counts and returns the number of people in the PersonCollection. This may be very expensive as it involves
-     * combining the counts of many under-lying Collection objects. If the instance contains an index it will likely be
-     * more efficient to take the size of the index as the count.
-     *
-     * @return the number of persons in the PersonCollection
-     */
-    abstract int getNumberOfPersons();
+    abstract void remove(final IPerson person) throws PersonNotFoundException;
 
     /**
      * Counts and returns the number of people born in the given year in the PersonCollection. This may be very
@@ -95,7 +90,18 @@ public abstract class PersonCollection {
      *
      * @return the number of persons in the PersonCollection
      */
-    public abstract int getNumberOfPersons(LocalDate firstDate, Period timePeriod);
+    public abstract int getNumberOfPeople(final LocalDate firstDate, final Period timePeriod);
+
+    public abstract Set<LocalDate> getDivisionDates();
+
+    /**
+     * Returns the number of people.
+     *
+     * @return the number of persons
+     */
+    public int getNumberOfPeople() {
+        return size;
+    }
 
     /**
      * Gets all the people in the PersonCollection who were alive in the given years.
@@ -103,17 +109,15 @@ public abstract class PersonCollection {
      * @param firstDate the year of birth of the desired cohort
      * @return the desired cohort
      */
-    Collection<IPerson> getAllPersonsAliveInTimePeriod(LocalDate firstDate, Period timePeriod, Period maxAge) {
-
-        Period tP = timePeriod.plus(maxAge);
-
-        Collection<IPerson> peopleBorn = getAllPersonsBornInTimePeriod(firstDate.minus(maxAge), tP);
+    Collection<IPerson> getPeopleAliveInTimePeriod(final LocalDate firstDate, final Period timePeriod, final Period maxAge) {
 
         Collection<IPerson> peopleAlive = new ArrayList<>();
 
-        for (IPerson p : peopleBorn) {
-            if (diedAfter(p, firstDate)) {
-                peopleAlive.add(p);
+        Collection<IPerson> peopleBorn = getPeopleBornInTimePeriod(firstDate.minus(maxAge), timePeriod.plus(maxAge));
+
+        for (IPerson person : peopleBorn) {
+            if (diedAfter(person, firstDate)) {
+                peopleAlive.add(person);
             }
         }
 
@@ -130,19 +134,18 @@ public abstract class PersonCollection {
      * @return the random Collection of people who have been removed
      * @throws InsufficientNumberOfPeopleException If there are less people alive for the given year of birth than
      */
-    @SuppressWarnings("Duplicates")
     public Collection<IPerson> removeNPersons(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt) throws InsufficientNumberOfPeopleException {
 
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(divisionSize, timePeriod);
+        final int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(divisionSize, timePeriod);
 
         if (divisionsInPeriod <= 0) {
             throw new MisalignedTimeDivisionException();
         }
 
-        List<IPerson> people = new ArrayList<>();
+        final List<IPerson> people = new ArrayList<>();
         LocalDate divisionDate = firstDate;
 
-        LinkedList<LocalDate> reusableDivisions = new LinkedList<>();
+        final LinkedList<LocalDate> reusableDivisions = new LinkedList<>();
 
         // find all the division dates
         for (int i = 0; i < divisionsInPeriod; i++) {
@@ -164,7 +167,7 @@ public abstract class PersonCollection {
                     return people;
                 } else {
                     throw new InsufficientNumberOfPeopleException("Not enought people in time period to meet request of " +
-                            numberToRemove + " females from " + firstDate.toString() + " and following time period " + timePeriod.toString());
+                            numberToRemove + " females from " + firstDate + " and following time period " + timePeriod);
                 }
             }
 
@@ -175,7 +178,7 @@ public abstract class PersonCollection {
                 numberOfReusableDivisions = reusableDivisions.size();
                 divisionsUsed = 0;
 
-                double tempNumberToRemoveFromDivisions = (numberToRemove - people.size()) / (double) reusableDivisions.size();
+                final double tempNumberToRemoveFromDivisions = (numberToRemove - people.size()) / (double) reusableDivisions.size();
                 if (tempNumberToRemoveFromDivisions < 1) {
                     // in the case where we are down to the last couple of people (defined by the current number of
                     // reusable divisions minus 1) we proceed to remove 1 person from each interval in turn until we
@@ -187,13 +190,13 @@ public abstract class PersonCollection {
             }
 
             // dequeue division
-            LocalDate consideredDivision = reusableDivisions.removeFirst();
+            final LocalDate consideredDivision = reusableDivisions.removeFirst();
             divisionsUsed++;
 
-            Collection<IPerson> selectedPeople = removeNPersonsFromDivision(numberToRemoveFromDivision, consideredDivision);
+            final Collection<IPerson> selectedPeople = removeNPersonsFromDivision(numberToRemoveFromDivision, consideredDivision);
             people.addAll(selectedPeople);
 
-            // if more people in division keep note incase of shortfall in other divisions
+            // if more people in division keep note in case of shortfall in other divisions
             if (selectedPeople.size() >= numberToRemoveFromDivision) {
                 // enqueue division is still containing people
                 reusableDivisions.addLast(consideredDivision);
@@ -209,11 +212,11 @@ public abstract class PersonCollection {
      * @param firstDate the year of birth of the desired cohort
      * @return the desired cohort
      */
-    public Collection<IPerson> getAllPersonsBornInTimePeriod(LocalDate firstDate, Period timePeriod) {
+    public Collection<IPerson> getPeopleBornInTimePeriod(final LocalDate firstDate, final Period timePeriod) {
 
-        Collection<IPerson> people = new ArrayList<>();
+        final Collection<IPerson> people = new ArrayList<>();
 
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
+        final int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
 
         if (divisionsInPeriod <= 0) {
             throw new MisalignedTimeDivisionException();
@@ -232,35 +235,35 @@ public abstract class PersonCollection {
         return people;
     }
 
-    void addPeople(Collection<IPerson> people, LocalDate divisionDate) {
+    @Override
+    public Iterator<IPerson> iterator() {
+        return getPeople().iterator();
+    }
+
+    void addPeople(final Collection<IPerson> people, final LocalDate divisionDate) {
 
     }
 
-    private Collection<IPerson> removeNPersonsFromDivision(int numberToRemove, LocalDate divisionDate) {
+    private Collection<IPerson> removeNPersonsFromDivision(final int numberToRemove, final LocalDate divisionDate) {
 
-        // The selected people
-        Collection<IPerson> selectedPeople = new ArrayList<>();
+        final Collection<IPerson> selectedPeople = new ArrayList<>();
 
         if (numberToRemove == 0) {
             return selectedPeople;
         }
 
-        LinkedList<IPerson> cohort = new LinkedList<>(getAllPersonsBornInTimePeriod(divisionDate, divisionSize));
+        final LinkedList<IPerson> cohort = new LinkedList<>(getPeopleBornInTimePeriod(divisionDate, divisionSize));
 
         while (selectedPeople.size() < numberToRemove) {
 
-            if (cohort.size() <= 0) {
+            if (cohort.isEmpty()) {
                 return selectedPeople;
             }
 
-            IPerson p = cohort.removeFirst();
+            final IPerson person = cohort.removeFirst();
 
-            try {
-                removePerson(p);
-                selectedPeople.add(p);
-            } catch (PersonNotFoundException e) {
-                throw new ConcurrentModificationException();
-            }
+            remove(person);
+            selectedPeople.add(person);
         }
 
         return selectedPeople;
@@ -274,11 +277,11 @@ public abstract class PersonCollection {
         return endDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(final LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    void setEndDate(final LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -286,11 +289,9 @@ public abstract class PersonCollection {
         return divisionSize;
     }
 
-    public abstract Set<LocalDate> getDivisionDates();
+    public Set<LocalDate> getDivisionDates(final Period forTimeStep) {
 
-    public Set<LocalDate> getDivisionDates(Period forTimeStep) {
-
-        int jump = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), forTimeStep);
+        final int jump = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), forTimeStep);
 
         if (jump == -1) {
             throw new MisalignedTimeDivisionException();
@@ -302,27 +303,29 @@ public abstract class PersonCollection {
 
         int count = jump;
 
-        Set<LocalDate> allDivs = getDivisionDates();
-        Set<LocalDate> selectedDivs = new TreeSet<>();
+        final Set<LocalDate> allDivisionDates = getDivisionDates();
+        final Set<LocalDate> selectedDivisionDates = new TreeSet<>();
 
-        for (LocalDate div : allDivs) {
+        for (LocalDate date : allDivisionDates) {
 
             if (count == jump) {
-                selectedDivs.add(div);
+                selectedDivisionDates.add(date);
                 count = 0;
             }
 
             count++;
         }
 
-        return selectedDivs;
+        return selectedDivisionDates;
     }
 
-    boolean checkDateAlignmentToDivisions(LocalDate date) {
+    boolean checkDateAlignmentToDivisions(final LocalDate date) {
         return DateUtils.matchesInterval(date, divisionSize, startDate);
     }
 
-    LocalDate resolveDateToCorrectDivisionDate(LocalDate date) {
+    LocalDate resolveDateToCorrectDivisionDate(final LocalDate date) {
+
+        // TODO clarify
 
         int dM = date.getMonth().getValue();
         int dY = date.getYear();
