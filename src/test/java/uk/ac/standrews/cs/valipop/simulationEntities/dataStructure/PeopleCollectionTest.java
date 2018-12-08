@@ -64,7 +64,7 @@ public class PeopleCollectionTest {
 
         Period y = Period.ofYears(1);
 
-        PeopleCollection living = new PeopleCollection(s, e, y);
+        PeopleCollection living = new PeopleCollection(s, e, y, "");
 
         LocalDate b1 = LocalDate.of(1900, 1, 1);
         LocalDate b2 = LocalDate.of(1900, 1, 2);
@@ -81,14 +81,14 @@ public class PeopleCollectionTest {
         Person f3 = new Person(SexOption.FEMALE, b3, null, ps, false);
         Person f4 = new Person(SexOption.FEMALE, b4, null, ps, false);
 
-        living.addPerson(m1);
-        living.addPerson(m2);
-        living.addPerson(m3);
-        living.addPerson(m4);
-        living.addPerson(f1);
-        living.addPerson(f2);
-        living.addPerson(f3);
-        living.addPerson(f4);
+        living.add(m1);
+        living.add(m2);
+        living.add(m3);
+        living.add(m4);
+        living.add(f1);
+        living.add(f2);
+        living.add(f3);
+        living.add(f4);
 
         // are people added present in the correct place
         // for females
@@ -98,7 +98,7 @@ public class PeopleCollectionTest {
         assertTrue(females.contains(f3));
         assertFalse(females.contains(f4));
 
-        Collection<IPerson> males = living.getMales().getAllPersonsBornInTimePeriod(LocalDate.of(1900, 1, 1), y);
+        Collection<IPerson> males = living.getMales().getPeopleBornInTimePeriod(LocalDate.of(1900, 1, 1), y);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
@@ -113,7 +113,7 @@ public class PeopleCollectionTest {
 
         Period y = Period.ofYears(1);
 
-        PeopleCollection living = new PeopleCollection(s, e, y);
+        PeopleCollection living = new PeopleCollection(s, e, y,"");
 
         LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -125,12 +125,12 @@ public class PeopleCollectionTest {
         Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
         Person f3 = new Person(SexOption.FEMALE, start, null, ps, false);
 
-        living.addPerson(m1);
-        living.addPerson(m2);
-        living.addPerson(m3);
-        living.addPerson(f1);
-        living.addPerson(f2);
-        living.addPerson(f3);
+        living.add(m1);
+        living.add(m2);
+        living.add(m3);
+        living.add(f1);
+        living.add(f2);
+        living.add(f3);
 
         // are people added present in the correct place
         // for females
@@ -147,7 +147,7 @@ public class PeopleCollectionTest {
         LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
-        PeopleCollection living = new PeopleCollection(s, e, y);
+        PeopleCollection living = new PeopleCollection(s, e, y,"");
 
         LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -159,23 +159,23 @@ public class PeopleCollectionTest {
         Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
         Person f3 = new Person(SexOption.FEMALE, start, null, ps, false);
 
-        living.addPerson(m1);
-        living.addPerson(m2);
-        living.addPerson(m3);
-        living.addPerson(f1);
-        living.addPerson(f2);
-        living.addPerson(f3);
+        living.add(m1);
+        living.add(m2);
+        living.add(m3);
+        living.add(f1);
+        living.add(f2);
+        living.add(f3);
 
         // are people added present in the correct place
         // for males
-        Collection<IPerson> males = living.getMales().getAllPersonsBornInTimePeriod(start, y);
+        Collection<IPerson> males = living.getMales().getPeopleBornInTimePeriod(start, y);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
 
-        Collection<IPerson> females = living.getFemales().getAllPersonsBornInTimePeriod(start, y);
+        Collection<IPerson> females = living.getFemales().getPeopleBornInTimePeriod(start, y);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -188,7 +188,7 @@ public class PeopleCollectionTest {
         LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
-        PeopleCollection living = new PeopleCollection(s, e, y);
+        PeopleCollection living = new PeopleCollection(s, e, y,"");
 
         LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -200,27 +200,27 @@ public class PeopleCollectionTest {
         Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
         Person f3 = new Person(SexOption.FEMALE, start, null, ps, false);
 
-        living.addPerson(m1);
-        living.addPerson(m2);
-        living.addPerson(m3);
-        living.addPerson(f1);
-        living.addPerson(f2);
-        living.addPerson(f3);
+        living.add(m1);
+        living.add(m2);
+        living.add(m3);
+        living.add(f1);
+        living.add(f2);
+        living.add(f3);
 
         // are people added present in the correct place
         // for males
-        Collection<IPerson> males = living.getMales().getAll();
+        Collection<IPerson> males = living.getMales().getPeople();
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
-        Collection<IPerson> females = living.getFemales().getAll();
+        Collection<IPerson> females = living.getFemales().getPeople();
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
 
-        Collection<IPerson> all = living.getAll();
+        Collection<IPerson> all = living.getPeople();
         assertTrue(all.contains(m1));
         assertTrue(all.contains(m2));
         assertTrue(all.contains(m3));
@@ -236,7 +236,7 @@ public class PeopleCollectionTest {
         LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
-        PeopleCollection living = new PeopleCollection(s, e, y);
+        PeopleCollection living = new PeopleCollection(s, e, y,"");
 
         LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -248,19 +248,19 @@ public class PeopleCollectionTest {
         Person c2 = new Person(SexOption.FEMALE, start.plus(25, ChronoUnit.YEARS), null, ps, false);
         Person c3 = new Person(SexOption.MALE, start.plus(32, ChronoUnit.YEARS), null, ps, false);
 
-        living.addPerson(f1);
+        living.add(f1);
 
         // can we move females (with births) - single birth
 
-        living.removePerson(f1);
+        living.remove(f1);
 
         Partnership p1 = new Partnership(m1, f1, c1.getBirthDate());
         p1.addChildren(Collections.singletonList(c1));
         m1.recordPartnership(p1);
         f1.recordPartnership(p1);
-        living.addPerson(c1);
+        living.add(c1);
 
-        living.addPerson(f1);
+        living.add(f1);
 
         // are they in the new place
         Collection<IPerson> people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate(), y, 1);
@@ -271,19 +271,19 @@ public class PeopleCollectionTest {
         assertFalse(people.contains(f1));
 
         // check for children
-        people = living.getAll();
+        people = living.getPeople();
         assertTrue(people.contains(c1));
 
 
-        living.removePerson(f1);
+        living.remove(f1);
 
         // can we move females (with births) - twin births
         p1.addChildren(Arrays.asList(c2, c3));
 
-        living.addPerson(c2);
-        living.addPerson(c3);
+        living.add(c2);
+        living.add(c3);
 
-        living.addPerson(f1);
+        living.add(f1);
 
         // are they in the new place
         people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate(), y, 3);
@@ -294,7 +294,7 @@ public class PeopleCollectionTest {
         assertFalse(people.contains(f1));
 
         // check for children
-        people = living.getAll();
+        people = living.getPeople();
         assertTrue(people.contains(c2));
         assertTrue(people.contains(c3));
     }
@@ -306,12 +306,12 @@ public class PeopleCollectionTest {
         LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
-        PeopleCollection living = new PeopleCollection(s, e, y);
+        PeopleCollection living = new PeopleCollection(s, e, y,"");
 
         LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
-        living.removePerson(f1);
+        living.remove(f1);
     }
 
     @Test(expected = PersonNotFoundException.class)
@@ -321,15 +321,15 @@ public class PeopleCollectionTest {
         LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
-        PeopleCollection living = new PeopleCollection(s, e, y);
+        PeopleCollection living = new PeopleCollection(s, e, y,"");
 
         LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
         Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
 
-        living.addPerson(f2);
-        living.removePerson(f1);
+        living.add(f2);
+        living.remove(f1);
     }
 
     @Test(expected = PersonNotFoundException.class)
@@ -339,12 +339,12 @@ public class PeopleCollectionTest {
         LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
-        PeopleCollection living = new PeopleCollection(s, e, y);
+        PeopleCollection living = new PeopleCollection(s, e, y,"");
 
         LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person m1 = new Person(SexOption.MALE, start, null, ps, false);
-        living.removePerson(m1);
+        living.remove(m1);
     }
 
     @Test(expected = PersonNotFoundException.class)
@@ -354,14 +354,14 @@ public class PeopleCollectionTest {
         LocalDate e = LocalDate.of(3000, 1, 1);
 
         Period y = Period.ofYears(1);
-        PeopleCollection living = new PeopleCollection(s, e, y);
+        PeopleCollection living = new PeopleCollection(s, e, y,"");
 
         LocalDate start = LocalDate.of(1600, 1, 1);
 
         Person m1 = new Person(SexOption.MALE, start, null, ps, false);
         Person m2 = new Person(SexOption.MALE, start, null, ps, false);
 
-        living.addPerson(m2);
-        living.removePerson(m1);
+        living.add(m2);
+        living.remove(m1);
     }
 }

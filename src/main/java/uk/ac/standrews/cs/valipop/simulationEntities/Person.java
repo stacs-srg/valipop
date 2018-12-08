@@ -59,7 +59,7 @@ public class Person implements IPerson {
         firstName = getForename(statistics);
         surname = getSurname(statistics);
 
-        representation = firstName + " " + surname + ": " + id;
+        representation = firstName + " " + surname + " (" + id + ") " + birthDate;
     }
 
     public String toString() {

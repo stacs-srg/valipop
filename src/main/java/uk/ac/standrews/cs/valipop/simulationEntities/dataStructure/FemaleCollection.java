@@ -27,7 +27,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
 
-
 /**
  * The FemaleCollection is a specialised concrete implementation of a PersonCollection. The implementation offers an
  * additional layer of division below the year of birth level which divides females out into separate collections based
@@ -48,125 +47,19 @@ public class FemaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    FemaleCollection(LocalDate start, LocalDate end, Period divisionSize) {
-        super(start, end, divisionSize);
+    FemaleCollection(final LocalDate start, final LocalDate end, final Period divisionSize, final String description) {
 
-        for (LocalDate d = start; !d.isAfter( end); d = d.plus(divisionSize)) {
-            byBirthYearAndNumberOfChildren.put(d, new TreeMap<>());
-        }
-    }
+        super(start, end, divisionSize, description);
 
-    /*
-    -------------------- Specialised female methods --------------------
-     */
-
-    /**
-     * Returns the highest birth order (number of children) among women in the specified year of birth.
-     *
-     * @param dateOfBirth the year of birth of the mothers in question
-     * @return the highest birth order value
-     */
-    private int getHighestBirthOrder(LocalDate dateOfBirth, Period period) {
-
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
-
-        if (divisionsInPeriod == -1) {
-            throw new MisalignedTimeDivisionException();
-        }
-
-        LocalDate divisionDate = dateOfBirth;
-
-        int highestBirthOrder = 0;
-
-        for (int i = 0; i < divisionsInPeriod; i++) {
-
-            Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
-
-            if (temp != null && MapUtils.getMax(temp.keySet()) > highestBirthOrder) {
-                highestBirthOrder = MapUtils.getMax(temp.keySet());
-            }
-
-            // move on to the new division date until we've covered the required divisions
-            divisionDate = divisionDate.plus(getDivisionSize());
-        }
-
-        return highestBirthOrder;
-    }
-
-    /**
-     * Gets the {@link Collection} of mothers born in the given year with the specified birth order (i.e. number of
-     * children)
-     *
-     * @param date       the date
-     * @param period     the period following the date to find people from
-     * @param birthOrder the number of children
-     * @return the by number of children
-     */
-    Collection<IPerson> getByDatePeriodAndBirthOrder(LocalDate date, Period period, Integer birthOrder) {
-
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
-
-        if (divisionsInPeriod == -1) {
-            throw new MisalignedTimeDivisionException();
-        }
-
-        ArrayList<IPerson> people = new ArrayList<>();
-        LocalDate divisionDate = date;
-
-        for (int i = 0; i < divisionsInPeriod; i++) {
-
-            try {
-                people.addAll(byBirthYearAndNumberOfChildren.get(divisionDate).get(birthOrder));
-            } catch (NullPointerException e) {
-                // If no data exists for the year or the given birth order in the given year, then there's no one to add
-            }
-
-            // move on to the new division date until we've covered the required divisions
-            divisionDate = divisionDate.plus(getDivisionSize());
-        }
-
-        return people;
-    }
-
-    public Collection<IPerson> getByDatePeriodAndBirthOrder(LocalDate date, Period period, IntegerRange birthOrder) {
-
-        int highestBirthOrder = getHighestBirthOrder(date, period);
-
-        if (!birthOrder.isPlus()) {
-            highestBirthOrder = birthOrder.getMax();
-        }
-
-        Collection<IPerson> people = new ArrayList<>();
-
-        for (int i = birthOrder.getMin(); i <= highestBirthOrder; i++) {
-            people.addAll(getByDatePeriodAndBirthOrder(date, period, i));
-        }
-
-        return people;
-    }
-
-
-    private Map<Integer, Collection<IPerson>> getAllPeopleFromDivision(LocalDate divisionDate) {
-
-        LocalDate date = divisionDate;
-
-        if (byBirthYearAndNumberOfChildren.containsKey(date)) {
-            return byBirthYearAndNumberOfChildren.get(date);
-
-        } else {
-            if (checkDateAlignmentToDivisions(divisionDate)) {
-                // Division date is reasonable but no people exist in it yet
-                return new HashMap<>();
-            } else {
-                throw new MisalignedTimeDivisionException("Date provided to underlying population structure does not align");
-            }
+        for (LocalDate date = start; !date.isAfter(end); date = date.plus(divisionSize)) {
+            byBirthYearAndNumberOfChildren.put(date, new TreeMap<>());
         }
     }
 
     @Override
-    public Collection<IPerson> getAll() {
+    public Collection<IPerson> getPeople() {
 
-        Collection<IPerson> people = new ArrayList<>();
+        final Collection<IPerson> people = new ArrayList<>();
 
         for (Map<Integer, Collection<IPerson>> map : byBirthYearAndNumberOfChildren.values()) {
             for (Collection<IPerson> collection : map.values()) {
@@ -178,7 +71,9 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    void addPeople(Collection<IPerson> people, LocalDate divisionDate) {
+    void addPeople(final Collection<IPerson> people, final LocalDate divisionDate) {
+
+        // TODO confusing naming mismatch between this and next method
 
         for (Collection<IPerson> collection : getAllPeopleFromDivision(divisionDate).values()) {
             people.addAll(collection);
@@ -186,7 +81,7 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public void addPerson(IPerson person) {
+    public void add(final IPerson person) {
 
         final LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
         final int numberOfChildren = countChildren(person);
@@ -210,28 +105,28 @@ public class FemaleCollection extends PersonCollection {
             newMap.put(numberOfChildren, newList);
             byBirthYearAndNumberOfChildren.put(divisionDate, newMap);
         }
+
+        size++;
     }
 
     @Override
-    public void removePerson(IPerson person) {
+    public void remove(final IPerson person) {
 
-        Collection<IPerson> people = byBirthYearAndNumberOfChildren.get(resolveDateToCorrectDivisionDate(person.getBirthDate())).get(countChildren(person));
+        final LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
+        final Map<Integer, Collection<IPerson>> familySizeMap = byBirthYearAndNumberOfChildren.get(divisionDate);
+        final Collection<IPerson> people = familySizeMap.get(countChildren(person));
 
-        // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {
             throw new PersonNotFoundException("Specified person not found in data structure");
         }
+
+        size--;
     }
 
     @Override
-    public int getNumberOfPersons() {
-        return getAll().size();
-    }
+    public int getNumberOfPeople(final LocalDate firstDate, final Period timePeriod) {
 
-    @Override
-    public int getNumberOfPersons(LocalDate firstDate, Period timePeriod) {
-
-        return getAllPersonsBornInTimePeriod(firstDate, timePeriod).size();
+        return getPeopleBornInTimePeriod(firstDate, timePeriod).size();
     }
 
     @Override
@@ -239,11 +134,108 @@ public class FemaleCollection extends PersonCollection {
         return new TreeSet<>(byBirthYearAndNumberOfChildren.keySet());
     }
 
-    /*
-    -------------------- Private helper methods --------------------
-     */
+    public Collection<IPerson> getByDatePeriodAndBirthOrder(final LocalDate date, final Period period, final IntegerRange birthOrder) {
 
-    private int countChildren(IPerson person) {
+        int highestBirthOrder = getHighestBirthOrder(date, period);
+
+        if (!birthOrder.isPlus()) {
+            highestBirthOrder = birthOrder.getMax();
+        }
+
+        final Collection<IPerson> people = new ArrayList<>();
+
+        for (int i = birthOrder.getMin(); i <= highestBirthOrder; i++) {
+            people.addAll(getByDatePeriodAndBirthOrder(date, period, i));
+        }
+
+        return people;
+    }
+
+    /**
+     * Returns the highest birth order (number of children) among women in the specified year of birth.
+     *
+     * @param dateOfBirth the year of birth of the mothers in question
+     * @return the highest birth order value
+     */
+    private int getHighestBirthOrder(final LocalDate dateOfBirth, final Period period) {
+
+        final int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
+
+        if (divisionsInPeriod == -1) {
+            throw new MisalignedTimeDivisionException();
+        }
+
+        LocalDate divisionDate = dateOfBirth;
+
+        int highestBirthOrder = 0;
+
+        for (int i = 0; i < divisionsInPeriod; i++) {
+
+            final Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
+
+            if (temp != null && MapUtils.getMax(temp.keySet()) > highestBirthOrder) {
+                highestBirthOrder = MapUtils.getMax(temp.keySet());
+            }
+
+            // move on to the new division date until we've covered the required divisions
+            divisionDate = divisionDate.plus(getDivisionSize());
+        }
+
+        return highestBirthOrder;
+    }
+
+    /**
+     * Gets the {@link Collection} of mothers born in the given year with the specified birth order (i.e. number of
+     * children)
+     *
+     * @param date       the date
+     * @param period     the period following the date to find people from
+     * @param birthOrder the number of children
+     * @return the by number of children
+     */
+    Collection<IPerson> getByDatePeriodAndBirthOrder(final LocalDate date, final Period period, final int birthOrder) {
+
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
+
+        if (divisionsInPeriod == -1) {
+            throw new MisalignedTimeDivisionException();
+        }
+
+        final ArrayList<IPerson> people = new ArrayList<>();
+        LocalDate divisionDate = date;
+
+        for (int i = 0; i < divisionsInPeriod; i++) {
+
+            try {
+                people.addAll(byBirthYearAndNumberOfChildren.get(divisionDate).get(birthOrder));
+
+            } catch (NullPointerException e) {
+                // If no data exists for the year or the given birth order in the given year, then there's no one to add
+            }
+
+            // move on to the new division date until we've covered the required divisions
+            divisionDate = divisionDate.plus(getDivisionSize());
+        }
+
+        return people;
+    }
+
+    private Map<Integer, Collection<IPerson>> getAllPeopleFromDivision(final LocalDate divisionDate) {
+
+        if (byBirthYearAndNumberOfChildren.containsKey(divisionDate)) {
+            return byBirthYearAndNumberOfChildren.get(divisionDate);
+
+        } else {
+            if (checkDateAlignmentToDivisions(divisionDate)) {
+                // Division date is reasonable but no people exist in it yet
+                return new HashMap<>();
+            } else {
+                throw new MisalignedTimeDivisionException("Date provided to underlying population structure does not align");
+            }
+        }
+    }
+
+    private int countChildren(final IPerson person) {
 
         int count = 0;
 

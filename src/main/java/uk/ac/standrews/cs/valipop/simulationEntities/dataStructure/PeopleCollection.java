@@ -25,46 +25,15 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
 
-
 /**
- * The class PeopleCollection is a concrete instance of the PersonCollection class. It provides the layout to structure
- * and index a population of males and females and provide access to them.
- *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class PeopleCollection extends PersonCollection implements IPopulation, Cloneable {
 
-    private String description = "";
+    private final MaleCollection males;
+    private final FemaleCollection females;
 
-    private MaleCollection males;
-    private FemaleCollection females;
-
-    private final Map<Integer, IPerson> peopleIndex = new HashMap<>();
     private final Map<Integer, IPartnership> partnershipIndex = new HashMap<>();
-
-    // TODO decide on which part approach using either line above or below
-    private List<IPartnership> partTemp = new ArrayList<>();
-
-    public PeopleCollection clone() {
-
-        PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate(), getDivisionSize());
-
-        for (IPerson m : males.getAll()) {
-            clone.addPerson(m);
-        }
-
-        for (IPerson f : females.getAll()) {
-            clone.addPerson(f);
-        }
-
-        for (Map.Entry<Integer, IPartnership> k : partnershipIndex.entrySet()) {
-            clone.addPartnershipToIndex(k.getValue());
-        }
-
-        clone.setDescription(description);
-
-        return clone;
-    }
 
     /**
      * Instantiates a new PersonCollection. The dates specify the earliest and latest expected birth dates of
@@ -75,41 +44,55 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
      * @param start the start
      * @param end   the end
      */
-    public PeopleCollection(LocalDate start, LocalDate end, Period divisionSize) {
+    public PeopleCollection(final LocalDate start, final LocalDate end, final Period divisionSize, final String description) {
 
-        super(start, end, divisionSize);
+        super(start, end, divisionSize, description);
 
-        males = new MaleCollection(start, end, divisionSize);
-        females = new FemaleCollection(start, end, divisionSize);
+        males = new MaleCollection(start, end, divisionSize, description);
+        females = new FemaleCollection(start, end, divisionSize, description);
     }
 
-    /**
-     * @return the part of the population data structure containing the males
-     */
+    @Override
+    public PeopleCollection clone() {
+
+        final PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate(), getDivisionSize(), description);
+
+        for (IPerson person : males) {
+            clone.add(person);
+        }
+
+        for (IPerson person : females) {
+            clone.add(person);
+        }
+
+        for (IPartnership partnership : partnershipIndex.values()) {
+            clone.add(partnership);
+        }
+
+        return clone;
+    }
+
     public MaleCollection getMales() {
         return males;
     }
 
-    /**
-     * @return the part of the population data structure containing the females
-     */
     public FemaleCollection getFemales() {
         return females;
     }
 
-    /**
-     * Adds partnership to  the partnership index.
-     *
-     * @param partnership the partnership
-     */
-    public void addPartnershipToIndex(IPartnership partnership) {
+    public void add(final IPartnership partnership) {
+
         partnershipIndex.put(partnership.getId(), partnership);
-        partTemp.add(partnership);
     }
 
-    public void removePartnershipFromIndex(IPartnership partnership) {
-        partnershipIndex.remove(partnership.getId(), partnership);
-        partTemp.remove(partnership);
+    public void removeMales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt) throws InsufficientNumberOfPeopleException {
+
+        removePeople(males, numberToRemove, firstDate, timePeriod, bestAttempt);
+    }
+
+    public void removeFemales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt) throws InsufficientNumberOfPeopleException {
+
+        removePeople(females, numberToRemove, firstDate, timePeriod, bestAttempt);
     }
 
     /*
@@ -117,62 +100,64 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
      */
 
     @Override
-    public Collection<IPerson> getAll() {
+    public Collection<IPerson> getPeople() {
 
-        Collection<IPerson> people = ((PersonCollection) females).getAll();
-        people.addAll(((PersonCollection) males).getAll());
+        final Collection<IPerson> people = females.getPeople();
+        people.addAll(males.getPeople());
 
         return people;
     }
 
     @Override
-    public Collection<IPerson> getAllPersonsBornInTimePeriod(LocalDate firstDate, Period timePeriod) {
+    public Collection<IPerson> getPeopleBornInTimePeriod(final LocalDate firstDate, final Period timePeriod) {
 
-        Collection<IPerson> people = males.getAllPersonsBornInTimePeriod(firstDate, timePeriod);
-        people.addAll(females.getAllPersonsBornInTimePeriod(firstDate, timePeriod));
+        final Collection<IPerson> people = females.getPeopleBornInTimePeriod(firstDate, timePeriod);
+        people.addAll(males.getPeopleBornInTimePeriod(firstDate, timePeriod));
+
         return people;
     }
 
     @Override
-    public Collection<IPerson> getAllPersonsAliveInTimePeriod(LocalDate firstDate, Period timePeriod, Period maxAge) {
+    public Collection<IPerson> getPeopleAliveInTimePeriod(final LocalDate firstDate, final Period timePeriod, final Period maxAge) {
 
-        Collection<IPerson> people = males.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge);
-        people.addAll(females.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge));
+        Collection<IPerson> people = females.getPeopleAliveInTimePeriod(firstDate, timePeriod, maxAge);
+        people.addAll(males.getPeopleAliveInTimePeriod(firstDate, timePeriod, maxAge));
+
         return people;
     }
 
     @Override
-    public void addPerson(IPerson person) {
+    public void add(final IPerson person) {
 
         if (person.getSex() == SexOption.MALE) {
-            males.addPerson(person);
+            males.add(person);
 
         } else {
-            females.addPerson(person);
-        }
-
-        peopleIndex.put(person.getId(), person);
-    }
-
-    @Override
-    public void removePerson(IPerson person) {
-
-        if (person.getSex() == SexOption.MALE) {
-            males.removePerson(person);
-
-        } else {
-            females.removePerson(person);
+            females.add(person);
         }
     }
 
     @Override
-    public int getNumberOfPersons() {
-        return getAll().size();
+    public void remove(final IPerson person) {
+
+        if (person.getSex() == SexOption.MALE) {
+            males.remove(person);
+
+        } else {
+            females.remove(person);
+        }
     }
 
     @Override
-    public int getNumberOfPersons(LocalDate firstDate, Period timePeriod) {
-        return males.getNumberOfPersons(firstDate, timePeriod) + females.getNumberOfPersons(firstDate, timePeriod);
+    public int getNumberOfPeople() {
+
+        return females.getNumberOfPeople() + males.getNumberOfPeople();
+    }
+
+    @Override
+    public int getNumberOfPeople(final LocalDate firstDate, final Period timePeriod) {
+
+        return females.getNumberOfPeople(firstDate, timePeriod) + males.getNumberOfPeople(firstDate, timePeriod);
     }
 
     @Override
@@ -180,20 +165,24 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         return females.getDivisionDates();
     }
 
-    @Override
-    public Iterable<IPerson> getPeople() {
-        return new ArrayList<>(getAll());
-    }
 
     @Override
     public Iterable<IPartnership> getPartnerships() {
-        return new ArrayList<>(partTemp);
+
+        return partnershipIndex.values();
     }
 
     @Override
-    public IPerson findPerson(int i) {
+    public IPerson findPerson(final int id) {
 
-        return peopleIndex.get(i);
+        for (IPerson person : males) {
+            if (person.getId() == id) return person;
+        }
+
+        for (IPerson person : females) {
+            if (person.getId() == id) return person;
+        }
+        return null;
     }
 
     @Override
@@ -202,21 +191,36 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     }
 
     @Override
-    public int getNumberOfPeople() {
-        return getAll().size();
-    }
-
-    @Override
     public int getNumberOfPartnerships() {
         return partnershipIndex.size();
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
     public String toString() {
         return description;
+    }
+
+    private void removePeople(final PersonCollection collection, final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt) throws InsufficientNumberOfPeopleException {
+
+        final Collection<IPerson> removed = collection.removeNPersons(numberToRemove, firstDate, timePeriod, true);
+        for (IPerson person : removed) {
+            removeChildFromParentsPartnership(person);
+        }
+    }
+
+    private void removeChildFromParentsPartnership(final IPerson person) {
+
+        final IPartnership parents = person.getParents();
+        if (parents != null) {
+
+            final IPerson mother = parents.getFemalePartner();
+            remove(mother);
+            parents.getChildren().remove(person);
+            add(mother);
+        }
     }
 }

@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities;
 
+import java.time.LocalDate;
+
 /**
  * Interface for all population models.
  */
@@ -63,6 +65,10 @@ public interface IPopulation {
      * @return the number of partnerships in the population
      */
     int getNumberOfPartnerships();
+
+    LocalDate getStartDate();
+
+    LocalDate getEndDate();
 
     /**
      * Sets a description for the population, which may be useful for testing and debugging.

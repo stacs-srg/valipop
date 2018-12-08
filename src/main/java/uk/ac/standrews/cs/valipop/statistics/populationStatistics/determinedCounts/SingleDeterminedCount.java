@@ -35,7 +35,6 @@ public class SingleDeterminedCount implements DeterminedCount<Integer, Double> {
         this.determinedCount = determinedCount;
         this.rawCorrectedCount = rawCorrectedCount;
         this.rawUncorrectedCount = rawUncorrectedCount;
-
     }
 
     public Integer getDeterminedCount() {

@@ -67,7 +67,7 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
     private static final String FAMILY_AS_SPOUSE_TAG = "FAMS";
     private static final String FAMILY_AS_CHILD_TAG = "FAMC";
 
-    private static final DateTimeFormatter FORMAT =  DateTimeFormatter.ofPattern("dd MM yyyy");
+    private static final DateTimeFormatter FORMAT =  DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     private int level = 0;
 
@@ -144,7 +144,7 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
         write(TRAILER_TAG);
     }
 
-    protected static int idToInt(final String id) {
+    static int idToInt(final String id) {
 
         // Assume the string starts with an @ and another character, and ends with an @.
         return Integer.parseInt(id.substring(2, id.length() - 1));

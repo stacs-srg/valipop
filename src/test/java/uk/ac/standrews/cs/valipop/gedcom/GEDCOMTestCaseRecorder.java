@@ -30,6 +30,10 @@ import java.nio.file.Path;
  */
 public class GEDCOMTestCaseRecorder extends AbstractTestCaseRecorder {
 
+    // TODO write round-trip test checking that re-importing generated GEDCOM gives equivalent population.
+
+    // The generated GEDCOM files can be checked for validity at: http://ged-inline.elasticbeanstalk.com/validate
+
     public static void main(final String[] args) throws Exception {
 
         new GEDCOMTestCaseRecorder().recordTestCase();
