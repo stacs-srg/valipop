@@ -17,10 +17,8 @@
 package uk.ac.standrews.cs.valipop.simulationEntities;
 
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -75,6 +73,8 @@ public interface IPerson extends Comparable<IPerson> {
      */
     LocalDate getDeathDate();
 
+    void setDeathDate(LocalDate deathDate);
+
     /**
      * Gets the person's place of death, or null if not recorded.
      * @return the person's place of death
@@ -93,6 +93,8 @@ public interface IPerson extends Comparable<IPerson> {
      */
     String getDeathCause();
 
+    void setDeathCause(String deathCause);
+
     /**
      * Gets the person's partnerships.
      *
@@ -110,8 +112,4 @@ public interface IPerson extends Comparable<IPerson> {
     boolean isIllegitimate();
 
     void recordPartnership(IPartnership partnership);
-
-    void recordDeath(LocalDate date, PopulationStatistics desiredPopulationStatistics);
-
-    Collection<IPerson> getAllChildren();
 }

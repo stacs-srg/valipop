@@ -67,7 +67,7 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
     private static final String FAMILY_AS_SPOUSE_TAG = "FAMS";
     private static final String FAMILY_AS_CHILD_TAG = "FAMC";
 
-    private static final DateTimeFormatter FORMAT =  DateTimeFormatter.ofPattern("dd MMM yyyy");
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     private int level = 0;
 

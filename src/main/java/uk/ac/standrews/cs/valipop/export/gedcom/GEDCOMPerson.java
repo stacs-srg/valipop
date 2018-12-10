@@ -20,11 +20,9 @@ import org.gedcom4j.model.*;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
-import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +32,7 @@ import java.util.List;
  */
 public class GEDCOMPerson implements IPerson {
 
+    private final GEDCOMPopulationAdapter adapter;
     protected int id;
     private String first_name;
     protected String surname;
@@ -44,9 +43,8 @@ public class GEDCOMPerson implements IPerson {
     private String death_place;
     protected String death_cause;
     protected String occupation;
-    private String string_rep;
-    protected List<Integer> partnerships;
-    private int parents_partnership_id;
+    private List<Integer> partnership_ids;
+    private int parent_id;
 
     @Override
     public int getId() {
@@ -84,6 +82,11 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
+    public void setDeathCause(final String deathCause) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String getOccupation() {
         return occupation;
     }
@@ -102,18 +105,14 @@ public class GEDCOMPerson implements IPerson {
 
     @Override
     public String toString() {
-        return string_rep;
+        return "GEDCOM person";
     }
 
     private static final String MALE_STRING = SexOption.MALE.toString();
 
-    /**
-     * Initialises the partnership.
-     *
-     * @param individual the GEDCOM person representation
-     * @throws ParseException if the birth or death date is incorrectly formatted
-     */
-    GEDCOMPerson(final Individual individual) throws ParseException {
+    GEDCOMPerson(final Individual individual, GEDCOMPopulationAdapter adapter) {
+
+        this.adapter = adapter;
 
         setId(individual);
         setSex(individual);
@@ -121,6 +120,7 @@ public class GEDCOMPerson implements IPerson {
         setParents(individual);
         setEvents(individual);
         setOccupation(individual);
+        setPartnerships(individual);
     }
 
     private void setId(final Individual individual) {
@@ -144,24 +144,41 @@ public class GEDCOMPerson implements IPerson {
     private void setParents(final Individual individual) {
 
         final List<FamilyChild> families = individual.familiesWhereChild;
-        parents_partnership_id = !families.isEmpty() ? GEDCOMPopulationWriter.idToInt(families.get(0).family.xref) : -1;
+        parent_id = !families.isEmpty() ? GEDCOMPopulationWriter.idToInt(families.get(0).family.xref) : -1;
     }
 
-    private void setEvents(final Individual individual) throws ParseException {
+    private void setPartnerships(final Individual individual) {
+
+        partnership_ids = new ArrayList<>();
+
+        List<FamilySpouse> familiesWhereSpouse = individual.familiesWhereSpouse;
+
+        for (FamilySpouse family : familiesWhereSpouse) {
+            partnership_ids.add(GEDCOMPopulationWriter.idToInt(family.family.xref));
+        }
+    }
+
+    private void setEvents(final Individual individual) {
 
         for (final IndividualEvent event : individual.events) {
 
             switch (event.type) {
 
                 case BIRTH:
-                    birth_date = LocalDate.parse(event.date.toString());
-                    birth_place = event.place.placeName;
+                    birth_date = LocalDate.parse(event.date.toString(), GEDCOMPopulationAdapter.FORMATTER);
+                    if (event.place != null) {
+                        birth_place = event.place.placeName;
+                    }
                     break;
 
                 case DEATH:
-                    death_date = LocalDate.parse(event.date.toString());
-                    death_place = event.place.placeName;
-                    death_cause = event.cause.toString();
+                    death_date = LocalDate.parse(event.date.toString(), GEDCOMPopulationAdapter.FORMATTER);
+                    if (event.place != null) {
+                        death_place = event.place.placeName;
+                    }
+                    if (event.cause != null) {
+                        death_cause = event.cause.toString();
+                    }
                     break;
 
                 default:
@@ -209,7 +226,7 @@ public class GEDCOMPerson implements IPerson {
                 final int start = name.indexOf('/');
                 final int end = name.lastIndexOf('/');
                 if (end > start) {
-                    name = name.substring(0, start) + name.substring(end + 1);
+                    name = name.substring(0, start).trim() + name.substring(end + 1).trim();
                 }
             }
             builder.append(name);
@@ -219,22 +236,32 @@ public class GEDCOMPerson implements IPerson {
 
     @Override
     public LocalDate getBirthDate() {
-        return null;
+        return birth_date;
     }
 
     @Override
     public LocalDate getDeathDate() {
-        return null;
+        return death_date;
+    }
+
+    @Override
+    public void setDeathDate(final LocalDate deathDate) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public List<IPartnership> getPartnerships() {
-        return null;
+
+        List<IPartnership> partnerships = new ArrayList<>();
+        for (int id : partnership_ids) {
+            partnerships.add(adapter.findPartnership(id));
+        }
+        return partnerships;
     }
 
     @Override
     public IPartnership getParents() {
-        return null;
+        return adapter.findPartnership(parent_id);
     }
 
     @Override
@@ -244,20 +271,11 @@ public class GEDCOMPerson implements IPerson {
 
     @Override
     public void recordPartnership(IPartnership partnership) {
-
-    }
-
-    @Override
-    public void recordDeath(LocalDate date, PopulationStatistics desiredPopulationStatistics) {
-    }
-
-    @Override
-    public Collection<IPerson> getAllChildren() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int compareTo(IPerson o) {
-        return 0;
+        return Integer.compare(id, o.getId());
     }
 }

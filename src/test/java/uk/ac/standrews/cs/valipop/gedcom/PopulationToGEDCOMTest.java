@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.PopulationConverter;
+import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationAdapter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 
@@ -41,6 +42,7 @@ import static uk.ac.standrews.cs.utilities.FileManipulation.FILE_CHARSET;
 public class PopulationToGEDCOMTest extends AbstractExporterTest {
 
     static final String INTENDED_SUFFIX = "_intended.ged";
+    private static final int POPULATION_SIZE_LIMIT_FOR_EXPENSIVE_TESTS = 1000;
 
     @Before
     public void setup() throws IOException {
@@ -64,6 +66,36 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         }
 
         assertThatFilesHaveSameContent(actual_output, intended_output);
+    }
+
+    @Test
+    public void reImportGivesSamePopulation() throws Exception {
+
+        if (testingSmallPopulation()) {
+
+            Path path1 = Files.createTempFile(null, ".ged");
+            Path path2 = Files.createTempFile(null, ".ged");
+
+            final IPopulationWriter population_writer1 = new GEDCOMPopulationWriter(path1);
+            final IPopulationWriter population_writer2 = new GEDCOMPopulationWriter(path2);
+
+            try (PopulationConverter converter = new PopulationConverter(population, population_writer1)) {
+                converter.convert();
+            }
+
+            IPopulation imported = new GEDCOMPopulationAdapter(path1);
+
+            try (PopulationConverter converter = new PopulationConverter(imported, population_writer2)) {
+                converter.convert();
+            }
+
+            assertThatFilesHaveSameContent(path1, path2);
+        }
+    }
+
+    private boolean testingSmallPopulation() {
+
+        return Integer.parseInt(population.toString()) <= POPULATION_SIZE_LIMIT_FOR_EXPENSIVE_TESTS;
     }
 
     private static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {

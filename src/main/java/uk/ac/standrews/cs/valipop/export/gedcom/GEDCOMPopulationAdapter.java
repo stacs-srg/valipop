@@ -20,17 +20,17 @@ import org.gedcom4j.model.Family;
 import org.gedcom4j.model.Individual;
 import org.gedcom4j.parser.GedcomParser;
 import org.gedcom4j.parser.GedcomParserException;
-import uk.ac.standrews.cs.utilities.MappedIterator;
-import uk.ac.standrews.cs.utilities.Mapper;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.Iterator;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Provides abstract interface to a population represented in a GEDCOM file.
@@ -42,6 +42,8 @@ public class GEDCOMPopulationAdapter implements IPopulation {
 
     private final GedcomParser parser;
     private String description;
+
+    static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     /**
      * Initialises the adapter for a given GEDCOM file.
@@ -59,46 +61,29 @@ public class GEDCOMPopulationAdapter implements IPopulation {
     @Override
     public Iterable<IPerson> getPeople() {
 
-        final Iterator<Individual> gedcom_iterator = parser.gedcom.individuals.values().iterator();
+        List<IPerson> people = new ArrayList<>();
 
-        return new Iterable<IPerson>() {
+        for (Individual individual : parser.gedcom.individuals.values()) {
+            people.add(new GEDCOMPerson(individual, this));
+        }
 
-            private final Mapper<Individual, IPerson> mapper = individual -> {
-                try {
-                    return new GEDCOMPerson(individual);
+        Collections.sort(people);
 
-                } catch (final ParseException e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-            };
-
-            @Override
-            public Iterator<IPerson> iterator() {
-                return new MappedIterator<>(gedcom_iterator, mapper);
-            }
-        };
+        return people;
     }
 
     @Override
     public Iterable<IPartnership> getPartnerships() {
 
-        final Iterator<Family> gedcom_iterator = parser.gedcom.families.values().iterator();
+        List<IPartnership> partnerships = new ArrayList<>();
 
-        return new Iterable<IPartnership>() {
+        for (Family family : parser.gedcom.families.values()) {
+            partnerships.add(new GEDCOMPartnership(family, this));
+        }
 
-            private final Mapper<Family, IPartnership> mapper = family -> {
-                try {
-                    return new GEDCOMPartnership(family);
-                } catch (final ParseException e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-            };
+        Collections.sort(partnerships);
 
-            @Override
-            public Iterator<IPartnership> iterator() {
-                return new MappedIterator<>(gedcom_iterator, mapper);
-            }
-        };
+        return partnerships;
     }
 
     @Override

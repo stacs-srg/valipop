@@ -23,8 +23,8 @@ public class PopulationNavigation {
 
         if (parents != null) {
 
-            siblings.addAll(parents.getMalePartner().getAllChildren());
-            siblings.addAll(parents.getFemalePartner().getAllChildren());
+            siblings.addAll(getAllChildren(parents.getMalePartner()));
+            siblings.addAll(getAllChildren(parents.getFemalePartner()));
         }
 
         return siblings;
@@ -132,7 +132,7 @@ public class PopulationNavigation {
 
         if (generations > 0) {
 
-            for (IPerson child : person.getAllChildren()) {
+            for (IPerson child : getAllChildren(person)) {
 
                 descendants.add(child);
                 descendants.addAll(descendantsOf(child, generations - 1));
@@ -140,6 +140,17 @@ public class PopulationNavigation {
         }
 
         return descendants;
+    }
+
+    public static Collection<IPerson> getAllChildren(IPerson person) {
+
+        Collection<IPerson> children = new ArrayList<>();
+
+        for (IPartnership partnership : person.getPartnerships()) {
+            children.addAll(partnership.getChildren());
+        }
+
+        return children;
     }
 
     private static Collection<IPerson> ancestorsOf(IPerson person, int generations) {

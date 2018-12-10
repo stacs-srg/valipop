@@ -21,6 +21,10 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Converts a population from one representation to another.
  *
@@ -54,7 +58,7 @@ public class PopulationConverter implements AutoCloseable {
      * @param progress_indicator a progress indicator
      * @throws Exception if the progress indicator cannot be initialised
      */
-    public PopulationConverter(final IPopulation population, final IPopulationWriter population_writer, final ProgressIndicator progress_indicator) throws Exception {
+    public PopulationConverter(final IPopulation population, final IPopulationWriter population_writer, final ProgressIndicator progress_indicator) {
 
         this(population, population_writer);
 
@@ -64,18 +68,16 @@ public class PopulationConverter implements AutoCloseable {
 
     /**
      * Creates a new population representation by passing each person and partnership in the population to the population writer.
-     *
-     * @throws Exception if a person or partnership cannot be converted
      */
-    public void convert() throws Exception {
+    public void convert() {
 
-        for (final IPerson person : population.getPeople()) {
+        for (final IPerson person : sort(population.getPeople())) {
 
             population_writer.recordPerson(person);
             progressStep();
         }
 
-        for (final IPartnership partnership : population.getPartnerships()) {
+        for (final IPartnership partnership : sort(population.getPartnerships())) {
 
             population_writer.recordPartnership(partnership);
             progressStep();
@@ -86,6 +88,16 @@ public class PopulationConverter implements AutoCloseable {
     public void close() throws Exception {
 
         population_writer.close();
+    }
+
+    private <T extends Comparable<T>> Iterable<T> sort(final Iterable<T> unsorted) {
+
+        List<T> list = new ArrayList<>();
+        for (T value : unsorted) {
+            list.add(value);
+        }
+        Collections.sort(list);
+        return list;
     }
 
     private void initialiseProgressIndicator() {
