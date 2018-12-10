@@ -1190,8 +1190,12 @@ public class OBDModel {
             // choose date of death
             final LocalDate deathDate = deathDateSelector.selectDate(person, desired, currentTime, config.getSimulationTimeStep());
 
-            // execute death
-            person.recordDeath(deathDate, desired);
+            int ageAtDeath = Period.between(person.getBirthDate(), deathDate).getYears();
+            final String deathCause = desired.getDeathCauseRates(Year.of(deathDate.getYear()), person.getSex(), ageAtDeath).getSample();
+
+            person.setDeathDate(deathDate);
+            person.setDeathCause(deathCause);
+
             killed++;
 
             // move person to correct place in data structure

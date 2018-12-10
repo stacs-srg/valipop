@@ -20,10 +20,8 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -87,6 +85,12 @@ public class Person implements IPerson {
     }
 
     @Override
+    public void setDeathDate(final LocalDate deathDate) {
+
+        this.deathDate = deathDate;
+    }
+
+    @Override
     public List<IPartnership> getPartnerships() {
         return partnerships;
     }
@@ -135,6 +139,12 @@ public class Person implements IPerson {
     }
 
     @Override
+    public void setDeathCause(final String deathCause) {
+
+        this.deathCause = deathCause;
+    }
+
+    @Override
     public int compareTo(IPerson other) {
         return Integer.compare(id, other.getId());
     }
@@ -155,27 +165,6 @@ public class Person implements IPerson {
     @Override
     public void recordPartnership(IPartnership partnership) {
         partnerships.add(partnership);
-    }
-
-    @Override
-    public void recordDeath(LocalDate date, PopulationStatistics statistics) {
-
-        deathDate = date;
-
-        int ageAtDeath = Period.between(birthDate, deathDate).getYears();
-        deathCause = statistics.getDeathCauseRates(Year.of(deathDate.getYear()), getSex(), ageAtDeath).getSample();
-    }
-
-    @Override
-    public Collection<IPerson> getAllChildren() {
-
-        Collection<IPerson> children = new ArrayList<>();
-
-        for (IPartnership partnership : getPartnerships()) {
-            children.addAll(partnership.getChildren());
-        }
-
-        return children;
     }
 
     private static int getNewId() {

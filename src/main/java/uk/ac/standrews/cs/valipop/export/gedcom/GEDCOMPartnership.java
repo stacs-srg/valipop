@@ -23,8 +23,8 @@ import org.gedcom4j.model.FamilyEventType;
 import org.gedcom4j.model.Individual;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,18 +38,15 @@ import java.util.List;
 public class GEDCOMPartnership implements IPartnership {
 
     protected int id;
-    private int male_partner_id;
-    private int female_partner_id;
-    protected LocalDate marriage_date;
+    private int male_id;
+    private int female_id;
+    private LocalDate marriage_date;
     private String marriage_place;
-    protected List<Integer> child_ids;
+    private List<Integer> child_ids;
+    private GEDCOMPopulationAdapter adapter;
 
     public int getId() {
         return id;
-    }
-
-    public int getPartnerOf(final int id) {
-        return id == male_partner_id ? female_partner_id : id == female_partner_id ? male_partner_id : -1;
     }
 
     public String getMarriagePlace() {
@@ -71,17 +68,13 @@ public class GEDCOMPartnership implements IPartnership {
         return id;
     }
 
-    /**
-     * Initialises the partnership.
-     *
-     * @param family the GEDCOM family representation
-     * @throws ParseException if the marriage date is incorrectly formatted
-     */
-    GEDCOMPartnership(final Family family) throws ParseException {
+    GEDCOMPartnership(final Family family, GEDCOMPopulationAdapter adapter) {
+
+        this.adapter = adapter;
 
         id = getId(family.xref);
-        male_partner_id = getId(family.husband.xref);
-        female_partner_id = getId(family.wife.xref);
+        male_id = getId(family.husband.xref);
+        female_id = getId(family.wife.xref);
 
         setMarriage(family);
         setChildren(family);
@@ -92,13 +85,15 @@ public class GEDCOMPartnership implements IPartnership {
         return GEDCOMPopulationWriter.idToInt(reference);
     }
 
-    private void setMarriage(final Family family) throws ParseException {
+    private void setMarriage(final Family family) {
 
         for (final FamilyEvent event : family.events) {
 
             if (event.type == FamilyEventType.MARRIAGE) {
-                marriage_date = LocalDate.parse(event.date.toString());
-                marriage_place = event.place.placeName;
+                marriage_date = LocalDate.parse(event.date.toString(), GEDCOMPopulationAdapter.FORMATTER);
+                if (event.place != null) {
+                    marriage_place = event.place.placeName;
+                }
             }
         }
     }
@@ -111,55 +106,68 @@ public class GEDCOMPartnership implements IPartnership {
         }
     }
 
+    @Override
     public IPerson getFemalePartner() {
-        return null;
+        return adapter.findPerson(female_id);
     }
 
+    @Override
     public IPerson getMalePartner() {
-        return null;
+        return adapter.findPerson(male_id);
     }
 
+    @Override
     public IPerson getPartnerOf(IPerson person) {
-        return null;
+        return adapter.findPerson(person.getSex() == SexOption.MALE ? female_id : male_id);
     }
 
+    @Override
     public List<IPerson> getChildren() {
-        return null;
+
+        List<IPerson> children = new ArrayList<>();
+        for (int child_id : child_ids) {
+            children.add(adapter.findPerson(child_id));
+        }
+        return children;
     }
 
+    @Override
     public LocalDate getPartnershipDate() {
-        return null;
+        return marriage_date;
     }
 
+    @Override
     public LocalDate getSeparationDate(RandomGenerator randomGenerator) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
+    @Override
     public LocalDate getEarliestPossibleSeparationDate() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setEarliestPossibleSeparationDate(LocalDate date) {
-
+        throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setMarriageDate(LocalDate marriageDate) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public LocalDate getMarriageDate() {
-        return null;
+        return marriage_date;
     }
 
     @Override
     public void addChildren(Collection<IPerson> children) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setPartnershipDate(LocalDate startDate) {
-
+        throw new UnsupportedOperationException();
     }
 }
