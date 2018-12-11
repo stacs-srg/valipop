@@ -13,13 +13,13 @@ set_up_dr = 0.0322
 results_save_location = src/main/resources/valipop/results
 output_record_format = NONE
 # these are things we'll be wanting to tune to minimise deviance
-min_birth_spacing = P147D
-min_gestation_period = P147D
+min_birth_spacing = 147
+min_gestation_period = 147
 birth_factor = 0.0
 death_factor = 0.0
 recovery_factor = 1.0
 proportional_recovery_factor = 1.0
 output_tables = true
 deterministic = true
-seed = 2
-binomial_sampling = true
+seed = 10
+binominal_sampling = true
