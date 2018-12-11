@@ -19,8 +19,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class ValidationTest {
 
-    @Ignore
     @Test
+    @Ignore
     public void test() throws IOException, StatsException {
 
         String runPurpose = "validation-testing";
