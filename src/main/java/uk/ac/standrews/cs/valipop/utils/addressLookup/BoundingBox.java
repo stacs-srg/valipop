@@ -1,9 +1,13 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
+import java.io.Serializable;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class BoundingBox {
+public class BoundingBox implements Serializable {
+
+    private static final long serialVersionUID = 568989809832084920L;
 
     private Coords bottomLeft;
     private Coords topRight;

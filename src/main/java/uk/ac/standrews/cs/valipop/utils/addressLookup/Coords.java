@@ -1,9 +1,13 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
+import java.io.Serializable;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class Coords {
+public class Coords implements Serializable {
+
+    private static final long serialVersionUID = 1209867823409878923L;
 
     final double lat;
     final double lon;

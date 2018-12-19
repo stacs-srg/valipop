@@ -4,25 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.awt.font.ImageGraphicAttribute;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Area {
+public class Area implements Serializable {
 
-    private static final int ABODES_PER_KM = 500;
+    private static final long serialVersionUID = 8749827387328328989L;
 
     private static ObjectMapper mapper = new ObjectMapper();
-
-    // TODO persist me!
-    private static Map<String, AreaSet> areaSets = new HashMap<>();
-    private static long nextErrorID = -1;
 
     @JsonProperty("error")
     private String error = "none";
@@ -56,27 +51,33 @@ public class Area {
 
     // a street can be made up of many areas, the offset prevents each subpart having the same house numbers
     private long numberingOffset = 0;
-    private long numberOfAbodes = 1;
     private long maximumNumberOfAbodes = 0;
 
-    private ArrayList<Address> addresses = new ArrayList<>();
+    private transient ArrayList<Address> addresses = new ArrayList<>();
 
-    public static Area makeArea(String jsonInput) throws IOException, InvalidCoordSet {
+    public static Area makeArea(String jsonInput, Cache cache) throws IOException, InvalidCoordSet, InterruptedException {
         Area area = mapper.readValue(jsonInput, Area.class);
 
         if(area.error.equals("none")) {
+
+            // do we already have this area?
+            Area a = cache.areaIndex.get(area.placeId);
+            if(a != null) {
+                return a;
+            }
+
             area.boundingBox = new BoundingBox(area.boundingBoxString);
             area.details = OpenStreetMapAPI.getPlaceFromAPI(area.placeId);
 
             if (area.isResidential()) {
-                area.maximumNumberOfAbodes = Math.round(ABODES_PER_KM * GPSDistanceConverter.distance(area.boundingBox.getBottomLeft(), area.boundingBox.getTopRight(), 'K'));
+                area.maximumNumberOfAbodes = Math.round(ReverseGeocodeLookup.ABODES_PER_KM * GPSDistanceConverter.distance(area.boundingBox.getBottomLeft(), area.boundingBox.getTopRight(), 'K'));
 
                 try {
                     String areaString = area.getAreaSetString();
-                    AreaSet set = areaSets.get(areaString);
+                    AreaSet set = cache.areaSets.get(areaString);
 
                     if (set == null) {
-                        areaSets.put(areaString, new AreaSet(area));
+                        cache.areaSets.put(areaString, new AreaSet(area));
                     } else {
                         area.numberingOffset = set.addArea(area);
                     }
@@ -88,9 +89,10 @@ public class Area {
 
             }
 
+            cache.areaIndex.put(area.placeId, area);
 
         } else {
-            area.placeId = nextErrorID--;
+            area.placeId = cache.nextErrorID--;
         }
 
         return area;
@@ -123,8 +125,9 @@ public class Area {
             }
         }
 
-        if(numberOfAbodes - 1 < maximumNumberOfAbodes) {
-            Address newAddress = new Address(numberingOffset + numberOfAbodes++, this);
+        if(addresses.size() < maximumNumberOfAbodes) {
+            // +1 so that house numbers don't start at zero!
+            Address newAddress = new Address(numberingOffset + addresses.size() + 1, this);
             addresses.add(newAddress);
             return newAddress;
         }

@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.Person;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**

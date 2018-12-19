@@ -19,7 +19,22 @@ import java.util.Map;
  */
 public class OpenStreetMapAPI {
 
-    public static Area getAreaFromAPI(double lat, double lon) throws IOException, InvalidCoordSet {
+    public static long lastAPIRequestTime = System.currentTimeMillis();
+    public static long requestGapMillis = 1000;
+
+    public static void rateLimiter() throws InterruptedException {
+
+        long wait = requestGapMillis - (System.currentTimeMillis() - lastAPIRequestTime);
+
+        if(wait > 0) {
+            Thread.sleep(wait);
+        }
+
+        lastAPIRequestTime = System.currentTimeMillis();
+
+    }
+
+    public static Area getAreaFromAPI(double lat, double lon, Cache cache) throws IOException, InvalidCoordSet, InterruptedException {
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("format", "json");
@@ -31,11 +46,11 @@ public class OpenStreetMapAPI {
 
         StringBuffer content = callAPI(url);
 
-        return Area.makeArea(content.toString());
+        return Area.makeArea(content.toString(), cache);
 
     }
 
-    public static Place getPlaceFromAPI(long placeId) throws IOException, InvalidCoordSet {
+    public static Place getPlaceFromAPI(long placeId) throws IOException, InterruptedException {
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("format", "json");
@@ -49,12 +64,15 @@ public class OpenStreetMapAPI {
 
     }
 
-    private static StringBuffer callAPI(URL url) throws IOException {
+    private static StringBuffer callAPI(URL url) throws IOException, InterruptedException {
+
+        rateLimiter();
+
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         con.setRequestProperty("Content-Type", "application/json");
-        con.setConnectTimeout(5000);
-        con.setReadTimeout(5000);
+        con.setConnectTimeout(30000);
+        con.setReadTimeout(30000);
         con.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36");
 
         System.out.println(con.toString());
