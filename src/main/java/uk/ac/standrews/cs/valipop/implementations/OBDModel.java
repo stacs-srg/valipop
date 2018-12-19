@@ -535,6 +535,10 @@ public class OBDModel {
 
         final IPartnership marriage = createNewPartnership(numChildrenInPartnership, father, mother, isIllegitimate, marriedAtBirth);
 
+        if(marriage.getChildren().size() == 0) {
+            System.out.println("???");
+        }
+
         marriageCounts.setFulfilledCount(marriage.getMarriageDate() != null ? numChildrenInPartnership : 0);
         desired.returnAchievedCount(marriageCounts);
 

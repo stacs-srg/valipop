@@ -215,12 +215,28 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     private void removeChildFromParentsPartnership(final IPerson person) {
 
         final IPartnership parents = person.getParents();
-        if (parents != null) {
 
+        if (parents != null) {
             final IPerson mother = parents.getFemalePartner();
             remove(mother);
             parents.getChildren().remove(person);
+
+            if(parents.getChildren().size() == 0) {
+                cancelPartnership(parents);
+            }
+
             add(mother);
         }
+    }
+
+    private void cancelPartnership(IPartnership partnership) {
+
+        // remove from parents partnership history
+        partnership.getMalePartner().getPartnerships().remove(partnership);
+        partnership.getFemalePartner().getPartnerships().remove(partnership);
+
+        // remove partnership from index
+        partnershipIndex.remove(partnership.getId());
+
     }
 }

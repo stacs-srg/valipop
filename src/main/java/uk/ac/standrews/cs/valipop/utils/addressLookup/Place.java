@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -12,10 +13,11 @@ import java.util.Map;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Place {
+public class Place implements Serializable {
+
+    private static final long serialVersionUID = 1234214123787932423L;
 
     private static ObjectMapper mapper = new ObjectMapper();
-
 
     @JsonProperty("category")
     private String category;
