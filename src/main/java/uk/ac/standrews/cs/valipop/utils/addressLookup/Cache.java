@@ -90,7 +90,7 @@ public class Cache implements Serializable {
         return cache;
     }
 
-    private void setFilePath(String filePath) {
+    public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
 
