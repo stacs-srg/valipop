@@ -3,7 +3,15 @@ package uk.ac.standrews.cs.valipop.utils.addressLookup;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.*;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,10 +26,6 @@ public class PlanetXML {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, InvalidCoordSet, InterruptedException {
 
-        Document document = readInDocument("src/main/resources/valipop/geography-cache/scotland-latest.osm");
-
-        populateNodeMap(document);
-
         String file = "src/main/resources/valipop/geography-cache/scotland-residential-ways.ser";
 
         Cache cache = new Cache();
@@ -32,6 +36,7 @@ public class PlanetXML {
             System.exit(1);
         } catch (FileNotFoundException e) {
             System.err.println("No cache found at file path - proceeding to construct new cache");
+            cache.setFilePath(file);
         } catch (NotSerializableException e) {
             System.err.println("Cache malformed? If from previous error then please delete: " + file);
             System.exit(1);
@@ -39,9 +44,11 @@ public class PlanetXML {
 
         ReverseGeocodeLookup rgl = new ReverseGeocodeLookup(cache);
 
-        addResidentialWaysToCache(document, rgl);
+        parseXML("src/main/resources/valipop/geography-cache/scotland-latest.osm", rgl);
 
         cache.writeToFile();
+
+        System.out.println("END OF SCOTLAND PLANET XML REACHED!!!");
 
 
     }
@@ -141,6 +148,96 @@ public class PlanetXML {
         return nodes.size() != 0 ? nodes.get(nodes.size() / 2) : null;
 
     }
+
+    private static void parseXML(String fileName, ReverseGeocodeLookup rgl) throws InterruptedException, InvalidCoordSet, IOException {
+
+        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+        try {
+            XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileName));
+
+            String wayId = null;
+            ArrayList<String> waysNodes = new ArrayList<>();
+
+            boolean residentialWay = false;
+
+
+            int i = 0;
+            while(xmlEventReader.hasNext()){
+
+                if(i != 0 && i % 1000 == 0) {
+                    System.out.println(i);
+                    rgl.cache.writeToFile();
+                }
+
+                i++;
+
+                XMLEvent xmlEvent = xmlEventReader.nextEvent();
+                if (xmlEvent.isStartElement()){
+                    StartElement startElement = xmlEvent.asStartElement();
+
+                    if(startElement.getName().getLocalPart().equals("node")){
+
+                        //Get the 'id' attribute from Employee element
+                        String id = startElement.getAttributeByName(new QName("id")).getValue();
+                        String lat = startElement.getAttributeByName(new QName("lat")).getValue();
+                        String lon = startElement.getAttributeByName(new QName("lon")).getValue();
+
+                        Coords coords = new Coords(lat, lon);
+
+                        nodeMap.put(id, coords);
+
+                    } else if(startElement.getName().getLocalPart().equals("way")){
+
+                        wayId = startElement.getAttributeByName(new QName("id")).getValue();
+
+                    } else if(startElement.getName().getLocalPart().equals("nd")){
+
+                        String nodeRef = startElement.getAttributeByName(new QName("ref")).getValue();
+                        waysNodes.add(nodeRef);
+
+                    } else if(startElement.getName().getLocalPart().equals("tag")) {
+
+                        String key = startElement.getAttributeByName(new QName("k")).getValue();
+
+                        if(key.equals("highway")) {
+                            String value = startElement.getAttributeByName(new QName("v")).getValue();
+                            residentialWay = residentialWay || value.equals("residential");
+                        }
+
+                    }
+                }
+
+                //if Employee end element is reached, add employee object to list
+                if(xmlEvent.isEndElement()){
+                    EndElement endElement = xmlEvent.asEndElement();
+                    if(endElement.getName().getLocalPart().equals("way")){
+
+                        if(wayId != null) {
+                            if(residentialWay) {
+                                if (waysNodes.size() != 0) {
+                                    String middlingNode = waysNodes.get(waysNodes.size() / 2);
+                                    Coords mid = nodeMap.get(middlingNode);
+
+                                    if (mid != null) {
+                                        rgl.getArea(mid);
+                                    }
+                                }
+                                residentialWay = false;
+                            }
+                        }
+
+                        waysNodes.clear();
+
+                    }
+                }
+            }
+
+        } catch (FileNotFoundException | XMLStreamException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public static Element getElement(NodeList nodeList, int index) {
 

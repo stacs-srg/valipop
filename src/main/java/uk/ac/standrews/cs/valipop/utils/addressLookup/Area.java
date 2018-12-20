@@ -101,7 +101,7 @@ public class Area implements Serializable {
     public String getAreaSetString() throws IncompleteAreaInformationException {
         String s = "";
 
-        if(road == null || suburb == null && town == null) {
+        if(road == null || suburb == null && town == null && county == null) {
             throw new IncompleteAreaInformationException();
         }
 
