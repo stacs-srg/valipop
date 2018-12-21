@@ -55,7 +55,7 @@ public class Area implements Serializable {
 
     private transient ArrayList<Address> addresses = new ArrayList<>();
 
-    public static Area makeArea(String jsonInput, Cache cache) throws IOException, InvalidCoordSet, InterruptedException {
+    public static Area makeArea(String jsonInput, Cache cache) throws IOException, InvalidCoordSet, InterruptedException, APIOverloadedException {
         Area area = mapper.readValue(jsonInput, Area.class);
 
         if(area.error.equals("none")) {
