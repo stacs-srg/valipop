@@ -53,7 +53,7 @@ public class PlanetXML {
 
     }
 
-    private static void addResidentialWaysToCache(Document document, ReverseGeocodeLookup rgl) throws InterruptedException, InvalidCoordSet, IOException {
+    private static void addResidentialWaysToCache(Document document, ReverseGeocodeLookup rgl) throws InterruptedException, InvalidCoordSet, IOException, APIOverloadedException {
 
         NodeList wayList = document.getElementsByTagName("way");
 
@@ -219,7 +219,17 @@ public class PlanetXML {
                                     Coords mid = nodeMap.get(middlingNode);
 
                                     if (mid != null) {
-                                        rgl.getArea(mid);
+
+                                        boolean retrieved = false;
+
+                                        while(!retrieved) {
+                                            try {
+                                                rgl.getArea(mid);
+                                                retrieved = true;
+                                            } catch (APIOverloadedException e) {
+                                                Thread.sleep(1000 * 60 * 10);
+                                            }
+                                        }
                                     }
                                 }
                                 residentialWay = false;
