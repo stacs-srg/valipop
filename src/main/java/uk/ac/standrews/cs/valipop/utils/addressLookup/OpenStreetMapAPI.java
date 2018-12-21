@@ -34,7 +34,7 @@ public class OpenStreetMapAPI {
 
     }
 
-    public static Area getAreaFromAPI(double lat, double lon, Cache cache) throws IOException, InvalidCoordSet, InterruptedException {
+    public static Area getAreaFromAPI(double lat, double lon, Cache cache) throws IOException, InvalidCoordSet, InterruptedException, APIOverloadedException {
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("format", "json");
@@ -50,7 +50,7 @@ public class OpenStreetMapAPI {
 
     }
 
-    public static Place getPlaceFromAPI(long placeId) throws IOException, InterruptedException {
+    public static Place getPlaceFromAPI(long placeId) throws IOException, InterruptedException, APIOverloadedException {
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("format", "json");
@@ -64,7 +64,7 @@ public class OpenStreetMapAPI {
 
     }
 
-    private static StringBuffer callAPI(URL url) throws IOException, InterruptedException {
+    private static StringBuffer callAPI(URL url) throws IOException, InterruptedException, APIOverloadedException {
 
         rateLimiter();
 
@@ -77,7 +77,11 @@ public class OpenStreetMapAPI {
 
         System.out.println(con.toString());
 
-        int status = con.getResponseCode();
+        try {
+            int status = con.getResponseCode();
+        } catch (java.io.IOException e) {
+            throw new APIOverloadedException();
+        }
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));

@@ -18,11 +18,11 @@ public class ReverseGeocodeLookup {
     }
 
 
-    public Area getArea(Coords coords) throws IOException, InvalidCoordSet, InterruptedException {
+    public Area getArea(Coords coords) throws IOException, InvalidCoordSet, InterruptedException, APIOverloadedException {
         return getArea(coords.lat, coords.lon);
     }
 
-    public Area getArea(double lat, double lon) throws IOException, InvalidCoordSet, InterruptedException {
+    public Area getArea(double lat, double lon) throws IOException, InvalidCoordSet, InterruptedException, APIOverloadedException {
 
         // look up in cache
         Area area = cache.checkCache(lat, lon);
