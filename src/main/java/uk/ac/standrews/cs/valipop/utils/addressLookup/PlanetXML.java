@@ -162,11 +162,20 @@ public class PlanetXML {
 
 
             int i = 0;
+
+            long time = System.currentTimeMillis();
+            long gap = 1000 * 60 * 10;
+
             while(xmlEventReader.hasNext()){
 
-                if(i != 0 && i % 1000 == 0) {
+                if(i != 0 && i % 10000 == 0) {
                     System.out.println(i);
                     rgl.cache.writeToFile();
+                }
+
+                if(System.currentTimeMillis() - time > gap) {
+                    System.out.println("Regular. 10 min pause");
+                    Thread.sleep(1000 * 60 * 10);
                 }
 
                 i++;
@@ -227,7 +236,8 @@ public class PlanetXML {
                                                 rgl.getArea(mid);
                                                 retrieved = true;
                                             } catch (APIOverloadedException e) {
-                                                Thread.sleep(1000 * 60 * 10);
+                                                System.out.println("Block. 30 min pause");
+                                                Thread.sleep(1000 * 60 * 30);
                                             }
                                         }
                                     }
