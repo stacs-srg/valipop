@@ -176,6 +176,7 @@ public class PlanetXML {
                 if(System.currentTimeMillis() - time > gap) {
                     System.out.println("Regular. 10 min pause");
                     Thread.sleep(1000 * 60 * 10);
+                    time = System.currentTimeMillis();
                 }
 
                 i++;
