@@ -61,23 +61,23 @@ public class Area implements Serializable {
         if(area.error.equals("none")) {
 
             // do we already have this area?
-            Area a = cache.areaIndex.get(area.placeId);
+            Area a = cache.getAreaByID(area.placeId);
             if(a != null) {
                 return a;
             }
 
             area.boundingBox = new BoundingBox(area.boundingBoxString);
-            area.details = OpenStreetMapAPI.getPlaceFromAPI(area.placeId);
+            area.details = OpenStreetMapAPI.getPlaceFromAPI(area.placeId, cache);
 
             if (area.isResidential()) {
                 area.maximumNumberOfAbodes = Math.round(ReverseGeocodeLookup.ABODES_PER_KM * GPSDistanceConverter.distance(area.boundingBox.getBottomLeft(), area.boundingBox.getTopRight(), 'K'));
 
                 try {
                     String areaString = area.getAreaSetString();
-                    AreaSet set = cache.areaSets.get(areaString);
+                    AreaSet set = cache.getAreaSet(areaString);
 
                     if (set == null) {
-                        cache.areaSets.put(areaString, new AreaSet(area));
+                        cache.addAreaSet(areaString, new AreaSet(area));
                     } else {
                         area.numberingOffset = set.addArea(area);
                     }
@@ -89,10 +89,10 @@ public class Area implements Serializable {
 
             }
 
-            cache.areaIndex.put(area.placeId, area);
+            cache.addToAreaIndex(area.placeId, area);
 
         } else {
-            area.placeId = cache.nextErrorID--;
+            area.placeId = cache.decrementErrorID();
         }
 
         return area;

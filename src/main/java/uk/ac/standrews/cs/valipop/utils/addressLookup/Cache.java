@@ -1,6 +1,9 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,18 +15,20 @@ public class Cache implements Serializable {
 
     private static final long serialVersionUID = 748931747946237593L;
 
-    ArrayList<Area> areaDB = new ArrayList<>();
+    private ArrayList<Area> areaDB = new ArrayList<>();
 
     private Map<Double, Map<Double, Area>> lookupHistory = new HashMap<>();
 
-    Map<String, AreaSet> areaSets = new HashMap<>();
+    private Map<String, AreaSet> areaSets = new HashMap<>();
 
-    long nextErrorID = -1;
+    private long nextErrorID = -1;
 
-    Map<Long, Area> areaIndex = new HashMap<>();
+    private Map<Long, Area> areaIndex = new HashMap<>();
 
     private final int HISTORY_PRECISION = 4;
     private final double PRECISION_ADJUSTMENT = Math.pow(10, HISTORY_PRECISION);
+
+    private boolean updated = false;
 
     private transient String filePath;
 
@@ -69,11 +74,18 @@ public class Cache implements Serializable {
 
     public void writeToFile(String fileName) throws IOException {
 
-        FileOutputStream fileOut = new FileOutputStream(fileName);
-        ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-        objectOut.writeObject(this);
-        objectOut.flush();
-        objectOut.close();
+        if(updated) {
+            FileOutputStream fileOut = new FileOutputStream(fileName + ".new");
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(this);
+            objectOut.flush();
+            objectOut.close();
+
+            // Ensures writing a new copy either complete or the old version survives
+            Files.move(Paths.get(fileName + ".new"), Paths.get(fileName), StandardCopyOption.ATOMIC_MOVE);
+
+            updated = false;
+        }
 
     }
 
@@ -94,4 +106,31 @@ public class Cache implements Serializable {
         this.filePath = filePath;
     }
 
+    public void addArea(Area area) {
+        areaDB.add(area);
+        updated = true;
+    }
+
+    public AreaSet getAreaSet(String areaString) {
+        return areaSets.get(areaString);
+    }
+
+    public void addAreaSet(String areaString, AreaSet areaSet) {
+        areaSets.put(areaString, areaSet);
+        updated = true;
+    }
+
+    public long decrementErrorID() {
+        updated = true;
+        return nextErrorID--;
+    }
+
+    public Area getAreaByID(long placeID) {
+        return areaIndex.get(placeID);
+    }
+
+    public void addToAreaIndex(long placeId, Area area) {
+        areaIndex.put(placeId, area);
+        updated = true;
+    }
 }
