@@ -22,13 +22,27 @@ public class OpenStreetMapAPI {
     public static long lastAPIRequestTime = System.currentTimeMillis();
     public static long requestGapMillis = 1000;
 
-    public static void rateLimiter() throws InterruptedException {
+    public static int requestsSinceLastPause = 0;
+    public static int requestCap = 3600;
+
+    public static void rateLimiter(Cache cache) throws InterruptedException, IOException {
 
         long wait = requestGapMillis - (System.currentTimeMillis() - lastAPIRequestTime);
 
         if(wait > 0) {
             Thread.sleep(wait);
         }
+
+        requestsSinceLastPause++;
+
+        if(requestsSinceLastPause >= requestCap / 12) {
+            cache.writeToFile();
+
+            Thread.sleep(1000 * 60 * 5);
+            System.out.println("Prec. 5 min pause");
+            requestsSinceLastPause = 0;
+        }
+
 
         lastAPIRequestTime = System.currentTimeMillis();
 
@@ -44,13 +58,13 @@ public class OpenStreetMapAPI {
 
         URL url = new URL("https://nominatim.openstreetmap.org/reverse.php?" + getParamsString(parameters));
 
-        StringBuffer content = callAPI(url);
+        StringBuffer content = callAPI(url, cache);
 
         return Area.makeArea(content.toString(), cache);
 
     }
 
-    public static Place getPlaceFromAPI(long placeId) throws IOException, InterruptedException, APIOverloadedException {
+    public static Place getPlaceFromAPI(long placeId, Cache cache) throws IOException, InterruptedException, APIOverloadedException {
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("format", "json");
@@ -58,15 +72,15 @@ public class OpenStreetMapAPI {
 
         URL url = new URL("https://nominatim.openstreetmap.org/details.php?" + getParamsString(parameters));
 
-        StringBuffer content = callAPI(url);
+        StringBuffer content = callAPI(url, cache);
 
         return Place.makePlace(content.toString());
 
     }
 
-    private static StringBuffer callAPI(URL url) throws IOException, InterruptedException, APIOverloadedException {
+    private static StringBuffer callAPI(URL url, Cache cache) throws IOException, InterruptedException, APIOverloadedException {
 
-        rateLimiter();
+        rateLimiter(cache);
 
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");

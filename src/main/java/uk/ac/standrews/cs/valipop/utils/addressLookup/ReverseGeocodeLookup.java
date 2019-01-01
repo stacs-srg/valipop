@@ -32,7 +32,7 @@ public class ReverseGeocodeLookup {
             area = OpenStreetMapAPI.getAreaFromAPI(lat, lon, cache);
 
             if(!area.isErroneous() && area.isWay()) {
-                cache.areaDB.add(area);
+                cache.addArea(area);
             }
 
             // Check if requested point falls in requested boundng box, if not then keep note of which BB the point relates to

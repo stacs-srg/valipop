@@ -163,21 +163,21 @@ public class PlanetXML {
 
             int i = 0;
 
-            long time = System.currentTimeMillis();
-            long gap = 1000 * 60 * 10;
+//            long time = System.currentTimeMillis();
+//            long gap = 1000 * 60 * 10;
 
             while(xmlEventReader.hasNext()){
 
-                if(i != 0 && i % 10000 == 0) {
+                if(i != 0 && i % 1000000 == 0) {
                     System.out.println(i);
-                    rgl.cache.writeToFile();
+//                    rgl.cache.writeToFile();
                 }
 
-                if(System.currentTimeMillis() - time > gap) {
-                    System.out.println("Regular. 10 min pause");
-                    Thread.sleep(1000 * 60 * 10);
-                    time = System.currentTimeMillis();
-                }
+//                if(System.currentTimeMillis() - time > gap) {
+//                    System.out.println("Regular. 10 min pause");
+//                    Thread.sleep(1000 * 60 * 10);
+//                    time = System.currentTimeMillis();
+//                }
 
                 i++;
 
