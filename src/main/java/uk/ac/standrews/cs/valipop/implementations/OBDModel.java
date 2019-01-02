@@ -46,6 +46,7 @@ import java.time.Period;
 import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.*;
@@ -63,7 +64,13 @@ public class OBDModel {
     private static final int MAX_ATTEMPTS = 10;
     public static final Period MAX_AGE = Period.ofYears(110);
 
-    private static final Logger log = Logger.getLogger(OBDModel.class.getName());
+    private static final Logger log;
+
+    static {
+        log = Logger.getLogger(OBDModel.class.getName());
+        log.setLevel(Level.INFO);
+    }
+
     private static final int BIRTH_ADJUSTMENT_BOUND = 1000000;
 
     private final Config config;
@@ -313,6 +320,7 @@ public class OBDModel {
         if (shortFallInBirths >= 0) {
             createOrphanChildren(shortFallInBirths);
         } else {
+            // REMOVED BY TOM - CHECKING THIS - but think this should rather be later handled by self correction mechanisms
             removePeople(-shortFallInBirths);
         }
     }
