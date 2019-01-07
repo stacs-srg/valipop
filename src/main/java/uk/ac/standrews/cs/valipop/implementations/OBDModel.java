@@ -323,6 +323,7 @@ public class OBDModel {
             // REMOVED BY TOM - CHECKING THIS - but think this should rather be later handled by self correction mechanisms
             removePeople(-shortFallInBirths);
         }
+
     }
 
     private void removePeople(final int excessBirths) {

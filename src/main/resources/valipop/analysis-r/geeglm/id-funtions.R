@@ -126,8 +126,8 @@ addCohortIDs.ob2 <- function(in.data) {
 addCohortIDs.death <- function(in.data) {
   
   e <- min(in.data$YOB)
-  maleL <- max(in.data[which(in.data$Sex == "MALE"),]$YOB)
-  femaleL <- max(in.data[which(in.data$Sex == "FEMALE"),]$YOB)
+  maleL <- max(in.data[which(in.data$Sex == "M"),]$YOB)
+  femaleL <- max(in.data[which(in.data$Sex == "F"),]$YOB)
   
   data.id <- in.data
   
@@ -152,29 +152,29 @@ addCohortIDs.death <- function(in.data) {
 addCohortIDs.death2 <- function(in.data) {
   
   e <- min(in.data$YOB)
-  maleL <- max(in.data[which(in.data$Sex == "MALE"),]$YOB)
-  femaleL <- max(in.data[which(in.data$Sex == "FEMALE"),]$YOB)
+  maleL <- max(in.data[which(in.data$Sex == "M"),]$YOB)
+  femaleL <- max(in.data[which(in.data$Sex == "F"),]$YOB)
   
   data.id <- in.data
   
   data.id = within(data.id, {
     idvar = ifelse(Source == "SIM", 
-                   ifelse(Sex == "MALE",
-                          ifelse(Died == "YES",
+                   ifelse(Sex == "M",
+                          ifelse(Died == "true",
                             (YOB - e) + bin2dec(c(TRUE, TRUE, TRUE)) * (maleL - e + 1),
                             (YOB - e) + bin2dec(c(TRUE, TRUE, FALSE)) * (maleL - e + 1)
                           ),
-                          ifelse(Died == "YES",
+                          ifelse(Died == "true",
                              (YOB - e) + bin2dec(c(TRUE, FALSE, TRUE)) * (femaleL - e + 1),
                              (YOB - e) + bin2dec(c(TRUE, FALSE, FALSE)) * (femaleL - e + 1)
                           )
                    ),
-                   ifelse(Sex == "MALE", 
-                          ifelse(Died == "YES",
+                   ifelse(Sex == "M", 
+                          ifelse(Died == "true",
                             (YOB - e) + bin2dec(c(FALSE, TRUE, TRUE)) * (maleL - e + 1),
                             (YOB - e) + bin2dec(c(FALSE, TRUE, FALSE)) * (maleL - e + 1)
                           ),
-                          ifelse(Died == "YES",
+                          ifelse(Died == "true",
                              (YOB - e) + bin2dec(c(FALSE, FALSE, TRUE)) * (femaleL - e + 1),
                              (YOB - e) + bin2dec(c(FALSE, FALSE, FALSE)) * (femaleL - e + 1)
                           )
@@ -411,8 +411,8 @@ bin2dec <- function(binaryvector) {
 addPanelIDs.SY <- function(in.data) {
   data.id = within(in.data, {
     idvar = ifelse(Source == "SIM", 
-                   ifelse(Sex == "MALE", as.numeric(paste("1", "1", YOB, sep = "")), as.numeric(paste("1", "2", YOB, sep = ""))),
-                   ifelse(Sex == "MALE", as.numeric(paste("1", "1", YOB, sep = "")), as.numeric(paste("1", "2", YOB, sep = ""))))
+                   ifelse(Sex == "M", as.numeric(paste("1", "1", YOB, sep = "")), as.numeric(paste("1", "2", YOB, sep = ""))),
+                   ifelse(Sex == "M", as.numeric(paste("1", "1", YOB, sep = "")), as.numeric(paste("1", "2", YOB, sep = ""))))
   })
   
   data.id = within(data.id, {

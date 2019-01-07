@@ -1,6 +1,6 @@
 
 plotCohorts <- function(Death.data, age, title, xlim = c(1855, 2010)) {
-  death <- "NO"
+  death <- "false"
 
   #label <- "iw:100y - with MB - FACTOR 0.007462401"
   #label <- "iw:NO-SC - MB - F1 - BS + 1 - fix to undercounting of SIM"
@@ -8,11 +8,11 @@ plotCohorts <- function(Death.data, age, title, xlim = c(1855, 2010)) {
   
   Death.data <- Death.data[order(Death.data$Date), ]
   
-  Death.data.sim.male <- Death.data[which(Death.data$Age == age & Death.data$Source == "SIM" & Death.data$Sex == "MALE" & Death.data$Died == death ) , ]
-  Death.data.sim.female <- Death.data[which(Death.data$Age == age & Death.data$Source == "SIM" & Death.data$Sex == "FEMALE" & Death.data$Died == death ) , ]
+  Death.data.sim.male <- Death.data[which(Death.data$Age == age & Death.data$Source == "SIM" & Death.data$Sex == "M" & Death.data$Died == death ) , ]
+  Death.data.sim.female <- Death.data[which(Death.data$Age == age & Death.data$Source == "SIM" & Death.data$Sex == "F" & Death.data$Died == death ) , ]
   
-  Death.data.stat.male <- Death.data[which(Death.data$Age == age & Death.data$Source == "STAT" & Death.data$Sex == "MALE" & Death.data$Died == death ) , ]
-  Death.data.stat.female <- Death.data[which(Death.data$Age == age & Death.data$Source == "STAT" & Death.data$Sex == "FEMALE" & Death.data$Died == death ) , ]
+  Death.data.stat.male <- Death.data[which(Death.data$Age == age & Death.data$Source == "STAT" & Death.data$Sex == "M" & Death.data$Died == death ) , ]
+  Death.data.stat.female <- Death.data[which(Death.data$Age == age & Death.data$Source == "STAT" & Death.data$Sex == "F" & Death.data$Died == death ) , ]
   
   maxY <- max(Death.data[which(Death.data$Age == age & Death.data$Died == death) , ]$freq) * 1.05
   minY <- min(Death.data[which(Death.data$Age == age & Death.data$Died == death) , ]$freq) * 0.95
