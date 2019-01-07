@@ -34,19 +34,19 @@ public class ProcessArgs {
             System.err.println("No config file given as 1st arg");
         }
 
-        try {
-            processed[1] = args[1];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("No results write path given as 2nd arg");
-        }
-
-        try {
-            processed[2] = args[2];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("No run purpose given as 3rd arg");
-        }
 
         if (executionType.equals("MINIMA_SEARCH") || executionType.equals("N-RUNS") || executionType.equals("FACTOR_SEARCH") || executionType.equals("FACTOR_SEARCH_PRECISION")) {
+            try {
+                processed[1] = args[1];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("No results write path given as 2nd arg");
+            }
+
+            try {
+                processed[2] = args[2];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("No run purpose given as 3rd arg");
+            }
 
             try {
                 processed[3] = args[3];
