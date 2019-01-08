@@ -12,7 +12,7 @@ addCohortIDs.ob <- function(in.data) {
     
     idvar <- 
       
-      ifelse(CIY == "YES",
+      ifelse(CIY == "true",
              
              ifelse(Source == "SIM", 
                     ifelse(NPCIAP == "0", 
@@ -133,11 +133,11 @@ addCohortIDs.death <- function(in.data) {
   
   data.id = within(data.id, {
     idvar = ifelse(Source == "SIM", 
-                   ifelse(Sex == "MALE", 
+                   ifelse(Sex == "M",
                           (YOB - e) + bin2dec(c(TRUE, TRUE)) * (maleL - e + 1),
                           (YOB - e) + bin2dec(c(TRUE, FALSE)) * (femaleL - e + 1)
                    ),
-                   ifelse(Sex == "MALE", 
+                   ifelse(Sex == "M",
                           (YOB - e) + bin2dec(c(FALSE, TRUE)) * (maleL - e + 1),
                           (YOB - e) + bin2dec(c(FALSE, FALSE)) * (femaleL - e + 1)
                    )
@@ -169,7 +169,7 @@ addCohortIDs.death2 <- function(in.data) {
                              (YOB - e) + bin2dec(c(TRUE, FALSE, FALSE)) * (femaleL - e + 1)
                           )
                    ),
-                   ifelse(Sex == "M", 
+                   ifelse(Sex == "M",
                           ifelse(Died == "true",
                             (YOB - e) + bin2dec(c(FALSE, TRUE, TRUE)) * (maleL - e + 1),
                             (YOB - e) + bin2dec(c(FALSE, TRUE, FALSE)) * (maleL - e + 1)

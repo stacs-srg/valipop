@@ -38,7 +38,7 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRange> implements ControlSelfNode, ControlChildrenNode, Runnable {
+public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRange> implements ControlSelfNode, ControlChildrenNode, RunnableNode {
 
     public SeparationNodeDouble(SeparationOption option, NumberOfChildrenInPartnershipNodeDouble parentNode, Double initCount, boolean init) {
 

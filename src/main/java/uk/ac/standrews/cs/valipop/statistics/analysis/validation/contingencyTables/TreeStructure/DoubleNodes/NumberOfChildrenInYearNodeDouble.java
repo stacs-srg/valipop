@@ -33,7 +33,7 @@ import java.util.Collection;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, IntegerRange> implements ControlSelfNode, ControlChildrenNode, Runnable {
+public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, IntegerRange> implements ControlSelfNode, ControlChildrenNode, RunnableNode {
 
     private Collection<IPerson> people = new ArrayList<>();
 

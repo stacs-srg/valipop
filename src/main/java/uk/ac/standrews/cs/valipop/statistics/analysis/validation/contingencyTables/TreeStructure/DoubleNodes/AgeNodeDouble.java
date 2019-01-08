@@ -18,10 +18,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ControlChildrenNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNode;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.*;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
 import java.time.LocalDate;
@@ -32,7 +29,7 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class AgeNodeDouble extends DoubleNode<IntegerRange, Boolean> implements ControlChildrenNode, Runnable {
+public class AgeNodeDouble extends DoubleNode<IntegerRange, Boolean> implements ControlChildrenNode, RunnableNode {
 
     private boolean initNode = false;
 

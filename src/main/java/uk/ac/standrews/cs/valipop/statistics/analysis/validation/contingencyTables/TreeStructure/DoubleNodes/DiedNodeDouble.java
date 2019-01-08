@@ -37,7 +37,7 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements ControlSelfNode, Runnable, ControlChildrenNode {
+public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements ControlSelfNode, RunnableNode, ControlChildrenNode {
 
     DiedNodeDouble(Boolean option, AgeNodeDouble parentNode, boolean init) {
         super(option, parentNode);

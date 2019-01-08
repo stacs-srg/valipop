@@ -23,7 +23,8 @@ public class ContingencyTableFactory {
 
     public static final Logger log = Logger.getLogger(ContingencyTableFactory.class.getName());
 
-    public static void generateContingencyTables(PeopleCollection population, PopulationStatistics desired, Config config, SummaryRow summary, int startStepBack)  {
+    public static void generateContingencyTables(PeopleCollection population, PopulationStatistics desired,
+                                                 Config config, SummaryRow summary, int startStepBack)  {
 
         ProgramTimer tableTimer = new ProgramTimer();
 
@@ -50,7 +51,7 @@ public class ContingencyTableFactory {
             CTtableDeath deathTable = new CTtableDeath(fullTree);
             outputToFile(deathTable, "death-CT.csv", config);
 
-        } catch (IOException |NoTableRowsException e) {
+        } catch (IOException | NoTableRowsException e) {
             throw new RuntimeException(e);
         }
 
