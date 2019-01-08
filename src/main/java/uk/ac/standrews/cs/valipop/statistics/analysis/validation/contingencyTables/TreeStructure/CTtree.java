@@ -37,11 +37,11 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
 
     public static final Logger log = Logger.getLogger(CTtree.class.getName());
 
-    private LinkedList<Runnable> deathTasks = new LinkedList<>();
-    private LinkedList<Runnable> ageTasks = new LinkedList<>();
-    private LinkedList<Runnable> nciyTasks = new LinkedList<>();
-    private LinkedList<Runnable> nciapTasks = new LinkedList<>();
-    private LinkedList<Runnable> sepTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> deathTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> ageTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> nciyTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> nciapTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> sepTasks = new LinkedList<>();
 
     public static double NODE_MIN_COUNT = 1E-66;
 
@@ -148,7 +148,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
     }
 
     @Override
-    public void addDelayedTask(Runnable node) {
+    public void addDelayedTask(RunnableNode node) {
 
         if (node instanceof DiedNodeDouble) {
             deathTasks.add(node);
@@ -169,7 +169,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
 
         while (!deathTasks.isEmpty()) {
 
-            Runnable n = deathTasks.removeFirst();
+            RunnableNode n = deathTasks.removeFirst();
             n.run();
         }
 
@@ -179,13 +179,13 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
 
                 while (!sepTasks.isEmpty()) {
 
-                    Runnable n = sepTasks.removeFirst();
+                    RunnableNode n = sepTasks.removeFirst();
                     n.run();
                 }
 
                 while (!nciapTasks.isEmpty()) {
 
-                    Runnable n = nciapTasks.removeFirst();
+                    RunnableNode n = nciapTasks.removeFirst();
                     n.run();
                 }
             }
@@ -195,7 +195,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
                     break;
                 }
 
-                Runnable n = ageTasks.removeFirst();
+                RunnableNode n = ageTasks.removeFirst();
                 AgeNodeDouble a = (AgeNodeDouble) n;
                 YOBNodeDouble y = (YOBNodeDouble) a.getAncestor(new YOBNodeDouble());
                 log.info("CTree --- Creating nodes for year: " + y.getOption().toString());

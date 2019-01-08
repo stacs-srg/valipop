@@ -53,7 +53,7 @@ public class SourceNodeInt extends IntNode<SourceType, Year> {
         return new YOBNodeInt(childOption, this, initCount);
     }
 
-    public void addDelayedTask(Runnable node) {
+    public void addDelayedTask(RunnableNode node) {
         parent.addDelayedTask(node);
     }
 

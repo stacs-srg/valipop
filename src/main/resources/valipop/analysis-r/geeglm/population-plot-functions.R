@@ -35,8 +35,8 @@ plotOB <- function(Birth.data, title) {
   
   sourceSummary(Birth.data)
 
-  Birth.data.sim <- Birth.data[which(Birth.data$Source == "SIM" & Birth.data$CIY == "YES"),]
-  Birth.data.stat <- Birth.data[which(Birth.data$Source == "STAT" & Birth.data$CIY == "YES"),]
+  Birth.data.sim <- Birth.data[which(Birth.data$Source == "SIM" & Birth.data$CIY == "true"),]
+  Birth.data.stat <- Birth.data[which(Birth.data$Source == "STAT" & Birth.data$CIY == "true"),]
   
   maxY <- max(Birth.data$freq) * 1.05
   minY <- min(Birth.data$freq) * 0.95

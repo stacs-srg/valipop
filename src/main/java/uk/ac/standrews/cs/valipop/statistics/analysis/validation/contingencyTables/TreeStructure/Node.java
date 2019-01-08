@@ -123,7 +123,7 @@ public abstract class Node<Op extends Comparable<Op>, cOp extends Comparable<cOp
         return parent;
     }
 
-    public void addDelayedTask(final Runnable node) {
+    public void addDelayedTask(final RunnableNode node) {
         getParent().addDelayedTask(node);
     }
 
