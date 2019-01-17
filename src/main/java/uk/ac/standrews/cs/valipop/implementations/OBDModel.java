@@ -333,8 +333,14 @@ public class OBDModel {
 
         final Period timeStep = config.getSimulationTimeStep();
 
-        population.getLivingPeople().removeMales(numberOfMalesToRemove, currentTime, timeStep, true);
-        population.getLivingPeople().removeFemales(numberOfFemalesToRemove, currentTime, timeStep, true);
+        // TODO why is this a loop? Seems to try to remove n people n times...
+        for (int i = 0; i < numberOfMalesToRemove; i++) {
+            population.getLivingPeople().getMales().removeNPersons(numberOfMalesToRemove, currentTime, timeStep, true);
+        }
+
+        for (int i = 0; i < numberOfFemalesToRemove; i++) {
+            population.getLivingPeople().getFemales().removeNPersons(numberOfFemalesToRemove, currentTime, timeStep, true);
+        }
     }
 
     private void createOrphanChildren(final int shortFallInBirths) {
@@ -606,22 +612,39 @@ public class OBDModel {
 
         int determinedCount = initialCount;
 
+        IPerson head = null; // keeps track of first man seen to prevent infinite loop
+
         // Keep going until enough females have been matched for this range
         while (determinedCount > 0 && !women.isEmpty()) {
 
             final IPerson man = men.pollFirst();
-            final NewMother woman = women.pollFirst();
+            NewMother woman = women.pollFirst();
 
-            // check whether these people can be lawfully partnered...
+            // if man is head of list - i.e. this is the second time round
+            if (man == head) {
+                // thus female has not been able to be matched
+                unmatchedFemales.add(woman);
+                head = null;
+
+                // get next woman to check for partnering
+                if (women.isEmpty()) break;
+                woman = women.pollFirst();
+            }
+
+            // check if there is any reason why these people cannot lawfully be partnered...
             if (eligible(man, woman)) {
-
+                // if they can - then note as a proposed partnership
                 proposedPartnerships.add(new ProposedPartnership(man, woman.newMother, woman.numberOfChildrenInMaternity));
                 determinedCount--;
+                head = null;
 
             } else {
-
+                // else we need to loop through more men - so keep track of the first man we looked at
+                if (head == null) {
+                    head = man;
+                }
                 men.addLast(man);
-                unmatchedFemales.add(woman);
+                women.addFirst(woman);
             }
         }
         return determinedCount;
@@ -641,10 +664,13 @@ public class OBDModel {
             final double totalShortfall = zeroedNegShortfalls.getSumOfValues();
             final double shortfallToShare = totalShortfall / (double) numberOfRangesWithSpareMen;
 
-            final OperableLabelledValueSet<IntegerRange, Double> set1 = partnerCounts.valuesAddNWhereCorrespondingLabelNegativeInLVS(shortfallToShare, shortfallCounts);
-            final LabelledValueSet<IntegerRange, Double> set2 = set1.valuesSubtractValues(zeroedNegShortfalls);
+//            final OperableLabelledValueSet<IntegerRange, Double> set1 = partnerCounts.valuesAddNWhereCorrespondingLabelNegativeInLVS(shortfallToShare, shortfallCounts);
+//            final LabelledValueSet<IntegerRange, Double> set2 = set1.valuesSubtractValues(zeroedNegShortfalls);
+//
+//            partnerCounts = new IntegerRangeToDoubleSet(set2).controlledRoundingMaintainingSum();
 
-            partnerCounts = new IntegerRangeToDoubleSet(set2).controlledRoundingMaintainingSum();
+            partnerCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesAddNWhereCorrespondingLabelNegativeInLVS(shortfallToShare, shortfallCounts)
+                    .valuesSubtractValues(zeroedNegShortfalls)).controlledRoundingMaintainingSum();
 
         } while (shortfallCounts.countPositiveValues() != 0);
 
@@ -752,9 +778,9 @@ public class OBDModel {
             childrenBirthDate = child.getBirthDate();
         }
 
-        partnership.addChildren(children);
         setMarriageDate(partnership, marriedAtBirth, childrenBirthDate);
         partnership.setPartnershipDate(childrenBirthDate);
+        partnership.addChildren(children);
     }
 
     private void setMarriageDate(final IPartnership partnership, final boolean marriedAtBirth, final LocalDate childrenBirthDate) {

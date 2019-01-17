@@ -227,7 +227,15 @@ public class PopulationNavigation {
 
     public static int ageOnDate(IPerson person, LocalDate currentDate) {
 
-        return Period.between(person.getBirthDate(), currentDate).getYears();
+        LocalDate birthDate = person.getBirthDate();
+
+        if (birthDate.getDayOfMonth() == 1 && birthDate.getMonthValue() == 1) {
+            int age = Period.between(person.getBirthDate(), currentDate).getYears() - 1;
+            return age == -1 ? 0 : age;
+        } else {
+            return Period.between(person.getBirthDate(), currentDate).getYears();
+        }
+
     }
 
     public static int numberOfChildrenInLatestPartnership(IPerson person) {
