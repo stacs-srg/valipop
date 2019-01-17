@@ -24,7 +24,7 @@ import java.lang.management.ManagementFactory;
  */
 public class MemoryUsageAnalysis {
 
-    private static boolean checkMemory = false;
+    private static boolean checkMemory = true;
 
     private static long maxSimUsage = 0L;
     private static long maxRunUsage = 0L;

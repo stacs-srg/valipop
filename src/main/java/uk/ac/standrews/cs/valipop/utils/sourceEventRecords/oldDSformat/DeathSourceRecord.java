@@ -90,14 +90,14 @@ public class DeathSourceRecord extends IndividualSourceRecord {
     private String death_cause_a;
 
     private String birth_date;
-    private String occupation;
+    private String occupation = "";
 
     private String father_deceased = "";
     private String mother_deceased = "";
 
-    private String marital_status;
-    private String spouses_names;
-    private String spouses_occupations;
+    private String marital_status = "";
+    private String spouses_names = "";
+    private String spouses_occupations = "";
 
     public DeathSourceRecord(final IPerson person, IPopulation population) {
 
