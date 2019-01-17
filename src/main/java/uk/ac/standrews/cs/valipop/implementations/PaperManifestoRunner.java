@@ -9,11 +9,11 @@ public class PaperManifestoRunner {
 
     public static void main(String[] args) throws IOException, StatsException {
 
-//        String resultsPath = "/home/tsd4/population-model/src/main/resources/valipop/results/";
-//        String configPath = "/home/tsd4/population-model/src/main/resources/valipop/config/scot/paper/";
+        String resultsPath = "/home/tsd4/population-model/src/main/resources/valipop/results/";
+        String configPath = "/home/tsd4/population-model/src/main/resources/valipop/config/scot/paper/";
 
-        String resultsPath = "/Users/tsd4/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/results/";
-        String configPath = "/Users/tsd4/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/config/scot/paper/";
+//        String resultsPath = "/Users/tsd4/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/results/";
+//        String configPath = "/Users/tsd4/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/config/scot/paper/";
 
 
         CL_RunNModels.runNModels(new String[]{configPath + "config-7812.txt", resultsPath, "PAPER-MANI", "25"});
