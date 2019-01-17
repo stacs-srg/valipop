@@ -466,6 +466,10 @@ public class Config {
 
     private static void mkSummaryFile(Path summaryFilePath) {
 
+        if(summaryFilePath.toFile().exists()) {
+            return;
+        }
+
         try {
             mkBlankFile(summaryFilePath);
             PrintWriter write = new PrintWriter(summaryFilePath.toFile());
@@ -589,10 +593,18 @@ public class Config {
     private void configureLogging() {
 
         try {
+
+            Logger globalLogger = Logger.getLogger("");
+
+            // When running sims back to back we need to first stop writing to the old log file
+            for(Handler h : globalLogger.getHandlers()) {
+                globalLogger.removeHandler(h);
+            }
+
             Handler handler = new FileHandler(pathToLogDir(runPurpose, startTime, resultsSavePath).toString());
             handler.setFormatter(new SimpleFormatter());
 
-            Logger globalLogger = Logger.getLogger("");
+
             globalLogger.addHandler(handler);
             globalLogger.setLevel(logLevel);
 
