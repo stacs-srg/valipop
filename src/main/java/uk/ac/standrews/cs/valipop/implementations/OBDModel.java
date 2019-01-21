@@ -156,11 +156,12 @@ public class OBDModel {
             ContingencyTableFactory.generateContingencyTables(population.getPeople(), desired, config, summary, 5);
         }
 
+        final ProgramTimer recordTimer = new ProgramTimer();
+
         if (config.getOutputRecordFormat() != RecordFormat.NONE) {
             RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), config.getRecordsDirPath(), population.getPeople(), config.getT0());
         }
 
-        final ProgramTimer recordTimer = new ProgramTimer();
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
 
         try (PrintStream resultsOutput = new PrintStream(config.getDetailedResultsPath().toFile(), "UTF-8")) {

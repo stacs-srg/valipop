@@ -49,6 +49,8 @@ public class DateSelector {
 
     private LocalDate selectRandomDate(LocalDate earliestDate, int daysInWindow) {
 
+        daysInWindow = daysInWindow == 0 ? 1 : Math.abs(daysInWindow);
+
         return earliestDate.plus(random.nextInt(daysInWindow), DAYS);
     }
 }

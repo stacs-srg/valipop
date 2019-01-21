@@ -36,13 +36,12 @@ filesToDF <- function(path, ..., onlyGetStatErrors = FALSE) {
   }
   
   df[, "Start.Time.Date"] <- NA
-  df$Start.Time.Date <- sapply(strsplit(as.character(df$Start.Time),":"), '[', 1)
+  df$Start.Time.Date <- df$Start.Time
   
-  df$Start.Time.Date <- paste(substr(df$Start.Time.Date, 1,4), substr(df$Start.Time.Date, 5,15), sep = "/")
-  df$Start.Time.Date <- paste(substr(df$Start.Time.Date, 1,7), substr(df$Start.Time.Date, 8,16), sep = "/")
-  df$Start.Time.Date <- paste(substr(df$Start.Time.Date, 1,10), substr(df$Start.Time.Date, 12,17), sep = " ")
-  df$Start.Time.Date <- paste(substr(df$Start.Time.Date, 1,13), substr(df$Start.Time.Date, 14,17), sep = ":")
-  df$Start.Time.Date <- paste(substr(df$Start.Time.Date, 1,16), substr(df$Start.Time.Date, 17,18), sep = ":")
+  df$Start.Time.Date <- paste(substr(df$Start.Time.Date, 1,4), substr(df$Start.Time.Date, 6,19), sep = "/")
+  df$Start.Time.Date <- paste(substr(df$Start.Time.Date, 1,7), substr(df$Start.Time.Date, 9,19), sep = "/")
+  df$Start.Time.Date <- paste(substr(df$Start.Time.Date, 1,10), substr(df$Start.Time.Date, 12,19), sep = " ")
+  
   Sys.setenv(TZ="Europe/London")
   df$Start.Time.Date <- strftime(df$Start.Time.Date, format = "%Y/%m/%d %H:%M:%S")
   
@@ -124,7 +123,7 @@ fileToSummaryDF <- function(path, filter = NA) {
 
 selectFromFullDF <- function(fullDF, selected) {
   
-  chosenDF <- data.frame(matrix(ncol = 32, nrow = 0))
+  chosenDF <- data.frame(matrix(ncol = 33, nrow = 0))
   colnames(chosenDF) <- colnames(fullDF)
   
   for(r in 1:nrow(selected)) {

@@ -44,6 +44,8 @@ public class Cache implements Serializable {
             if(area.containsPoint(lat, lon)) {
                 // Here we are just taking the first one we find - may want to change this later
                 // (Bounding boxes can overlap due to their definition)
+
+                addHistory(lat, lon, area);
                 return area;
             }
         }
