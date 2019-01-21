@@ -15,8 +15,6 @@ public class RandomLookup {
     static final String[] SCOTLAND_COORDS = {"54.4","59.4","-7.9","-1.3"};
     static BoundingBox SCOTLAND;
 
-
-
     static {
         try {
             SCOTLAND = new BoundingBox(SCOTLAND_COORDS);

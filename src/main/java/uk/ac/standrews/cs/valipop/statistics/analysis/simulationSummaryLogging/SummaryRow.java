@@ -169,10 +169,14 @@ public class SummaryRow {
 
         StringBuilder builder = new StringBuilder();
 
-        for (Object value : values) {
+        for (int i = 0 ; i < values.length - 1; i ++) {
+            Object value = values[i];
+
             builder.append(value);
             builder.append(SEPARATOR);
         }
+
+        builder.append(values[values.length - 1]);
 
         return builder.toString();
     }

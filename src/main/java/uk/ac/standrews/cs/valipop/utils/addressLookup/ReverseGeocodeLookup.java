@@ -27,7 +27,7 @@ public class ReverseGeocodeLookup {
         // look up in cache
         Area area = cache.checkCache(lat, lon);
 
-        // if not found the hit API
+        // if not found then hit API
         if(area == null) {
             area = OpenStreetMapAPI.getAreaFromAPI(lat, lon, cache);
 

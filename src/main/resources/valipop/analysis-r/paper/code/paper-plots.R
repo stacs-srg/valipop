@@ -49,6 +49,9 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/ja-batch1/ja-batch1-results-summary.cs
 df.all <- filesToDF("/cs/tmp/tsd4/results/PAPER-MANI/PAPER-MANI-results-summary.csv",
                     onlyGetStatErrors = FALSE)
 
+df.all <- filesToDF("/cs/tmp/tsd4/results/mani-paper-19/mani-paper-19-results-summary.csv",
+                    onlyGetStatErrors = FALSE)
+
 summary(df.all)
 
 
