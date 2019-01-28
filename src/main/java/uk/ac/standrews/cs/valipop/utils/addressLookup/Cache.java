@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,7 +46,6 @@ public class Cache implements Serializable {
                 // Here we are just taking the first one we find - may want to change this later
                 // (Bounding boxes can overlap due to their definition)
 
-                addHistory(lat, lon, area);
                 return area;
             }
         }
@@ -111,6 +111,10 @@ public class Cache implements Serializable {
     public void addArea(Area area) {
         areaDB.add(area);
         updated = true;
+    }
+
+    public List<Area> getAllAreas() {
+        return areaDB;
     }
 
     public AreaSet getAreaSet(String areaString) {

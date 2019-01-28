@@ -18,8 +18,12 @@ package uk.ac.standrews.cs.valipop.simulationEntities;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Cache;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -44,6 +48,10 @@ public class Partnership implements IPartnership {
     private LocalDate separationDate = null;
     private LocalDate earliestPossibleSeparationDate = null;
 
+    private String marriageLocation;
+
+    private boolean finalised = false;
+
     public Partnership(final IPerson male, final IPerson female, final LocalDate partnershipDate) {
 
         this(male, female);
@@ -57,6 +65,7 @@ public class Partnership implements IPartnership {
 
         this.male = male;
         this.female = female;
+
     }
 
     public String toString() {
@@ -104,6 +113,21 @@ public class Partnership implements IPartnership {
         return id;
     }
 
+    @Override
+    public boolean isFinalised() {
+        return finalised;
+    }
+
+    @Override
+    public void setFinalised(boolean finalised) {
+        this.finalised = finalised;
+    }
+
+    @Override
+    public void setMarriagePlace(String place) {
+        marriageLocation = place;
+    }
+
     public static synchronized void resetIds() {
         nextId = 0;
     }
@@ -119,7 +143,7 @@ public class Partnership implements IPartnership {
 
     @Override
     public String getMarriagePlace() {
-        return null;
+        return marriageLocation;
     }
 
     @Override

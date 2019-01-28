@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop.simulationEntities;
 
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -112,4 +113,8 @@ public interface IPerson extends Comparable<IPerson> {
     boolean isIllegitimate();
 
     void recordPartnership(IPartnership partnership);
+
+    Address getAddress(LocalDate onDate);
+
+    void setAddress(LocalDate onDate, Address address);
 }

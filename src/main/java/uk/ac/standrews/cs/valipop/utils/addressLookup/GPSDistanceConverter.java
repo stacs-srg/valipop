@@ -26,12 +26,37 @@ public class GPSDistanceConverter {
         return (dist);
     }
 
+    public static Coords move(Coords origin, double distanceKM, double onBearing) {
+
+        double theta = Math.toRadians(onBearing);
+
+        double lat = origin.lat + (360 * distanceKM * Math.cos(theta) / (2 * Math.PI * getEarthRadius(origin.lat)));
+        double lon = origin.lon + (360 * distanceKM * Math.sin(theta) / (2 * Math.PI * getEarthRadius(origin.lat) * Math.sin(deg2rad(90 - origin.lat))));
+
+        return new Coords(lat, lon);
+
+    }
+
     private static double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }
 
     private static double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
+    }
+
+    private static final double EQUATOR_RADIUS = 6378.137;
+    private static final double POLAR_RADIUS = 6356.752;
+
+    private static double getEarthRadius(double lat) {
+
+        lat = deg2rad(lat);
+
+        return Math.sqrt(
+            (Math.pow(Math.pow(EQUATOR_RADIUS, 2) * Math.cos(lat), 2) + Math.pow(Math.pow(POLAR_RADIUS, 2) * Math.sin(lat), 2))
+                    /
+            (Math.pow(EQUATOR_RADIUS * Math.cos(lat), 2) + Math.pow(POLAR_RADIUS * Math.sin(lat), 2))
+        );
     }
 
 }

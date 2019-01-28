@@ -52,6 +52,9 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/PAPER-MANI/PAPER-MANI-results-summary.
 df.all <- filesToDF("/cs/tmp/tsd4/results/mani-paper-19/mani-paper-19-results-summary.csv",
                     onlyGetStatErrors = FALSE)
 
+df.all <- filesToDF("~/Desktop/mani-19.csv",
+                    onlyGetStatErrors = FALSE)
+
 summary(df.all)
 
 
@@ -70,7 +73,7 @@ summary(t)
 std <- function(x) sd(x)/sqrt(length(x))
 
 calcCI <- function(data) {
-  if(nrow(data) <= 1) {
+  if(length(data) <= 1) {
     print("CI FROM ONE OBSERVATION?!?")
     return(data)
   }
@@ -241,8 +244,8 @@ p6 <- ggplot(df) + theme + scale +
   xlab("Average of Total Population Size") +
   ylab("Memory Usage (MB)") +
   ggtitle("Memory Usage against Total Population Size") +
-  scale_x_continuous(trans='log', breaks=c(300000, 500000, 1250000, 2500000, 5000000, 10000000,20000000)) +
-  scale_y_continuous(trans='log', breaks=c(5000,10000, 20000, 40000, 80000))
+  scale_x_continuous(trans='log', breaks=c(300000, 500000, 1250000, 2500000, 5000000, 10000000,20000000))
+  #scale_y_continuous(trans='log', breaks=c(5000,10000, 20000, 40000, 80000))
 
 ggsave(plot = p6, 
        filename = "memory_plot.png",

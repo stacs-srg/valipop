@@ -22,4 +22,4 @@ proportional_recovery_factor = 1.0
 output_tables = false
 deterministic = false
 binomial_sampling = true
-run_purpose = fixing-refactor44-sumary-row
+run_purpose = geography-testing
