@@ -786,22 +786,23 @@ public class OBDModel {
 
         // these need to happen post recording of new partnership
         handleSeperationMoves(motherLastParntership, mother);
-        handleSeperationMoves(fatherLastParntership, father);
 
-        // re-insert parents into population, this allows their position in the data structure to be updated
-        population.getLivingPeople().add(mother);
-        population.getLivingPeople().add(father);
-
-        handleAddressChanges(partnership);
-
-        // here do marriage place
-        if(partnership.getMarriageDate() != null && partnership.getMarriagePlace() == null) {
-            partnership.setMarriagePlace(mother.getAddress(partnership.getMarriageDate()).toShortForm());
+        if(!illegitimate) {
+            handleSeperationMoves(fatherLastParntership, father);
+            handleAddressChanges(partnership);
         }
 
         for(IPerson child : partnership.getChildren()) {
             child.setAddress(child.getBirthDate(), partnership.getFemalePartner().getAddress(child.getBirthDate()));
         }
+
+        if(partnership.getMarriageDate() != null && partnership.getMarriagePlace() == null) {
+            partnership.setMarriagePlace(mother.getAddress(partnership.getMarriageDate()).toShortForm());
+        }
+
+        // re-insert parents into population, this allows their position in the data structure to be updated
+        population.getLivingPeople().add(mother);
+        population.getLivingPeople().add(father);
 
         return partnership;
     }
