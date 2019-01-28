@@ -49,6 +49,21 @@ public class GEDCOMPartnership implements IPartnership {
         return id;
     }
 
+    @Override
+    public boolean isFinalised() {
+        return true;
+    }
+
+    @Override
+    public void setFinalised(boolean finalised) {
+
+    }
+
+    @Override
+    public void setMarriagePlace(String place) {
+        marriage_place = place;
+    }
+
     public String getMarriagePlace() {
         return marriage_place;
     }

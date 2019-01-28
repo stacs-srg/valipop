@@ -20,6 +20,7 @@ import org.gedcom4j.model.*;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -271,6 +272,16 @@ public class GEDCOMPerson implements IPerson {
 
     @Override
     public void recordPartnership(IPartnership partnership) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Address getAddress(LocalDate onDate) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setAddress(LocalDate onDate, Address address) {
         throw new UnsupportedOperationException();
     }
 

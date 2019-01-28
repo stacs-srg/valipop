@@ -24,6 +24,8 @@ import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,11 +148,13 @@ public class MarriageSourceRecord extends SourceRecord {
         setGroomSurname(groom.getSurname());
         setGroomOccupation(groom.getOccupation());
         setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate(), marriage_date)));
+        setGroomAddress(groom.getAddress(marriage_date.minus(1, ChronoUnit.DAYS)).toString());
 
         setBrideForename(bride.getFirstName());
         setBrideSurname(bride.getSurname());
         setBrideOccupation(bride.getOccupation());
         setBrideAgeOrDateOfBirth(String.valueOf(fullYearsBetween(bride.getBirthDate(), marriage_date)));
+        setBrideAddress(bride.getAddress(marriage_date.minus(1, ChronoUnit.DAYS)).toString());
 
         final IPartnership groom_parents_partnership = groom.getParents();
         if (groom_parents_partnership != null) {
@@ -244,6 +248,10 @@ public class MarriageSourceRecord extends SourceRecord {
         return groom_address;
     }
 
+    public void setGroomAddress(String groomAddress) {
+        this.groom_address = groomAddress;
+    }
+
 
     public String getGroomAgeOrDateOfBirth() {
         return groom_age_or_date_of_birth;
@@ -331,6 +339,10 @@ public class MarriageSourceRecord extends SourceRecord {
 
     public String getBrideAddress() {
         return bride_address;
+    }
+
+    public void setBrideAddress(String brideAddress) {
+        this.bride_address = brideAddress;
     }
 
     public String getBrideAgeOrDateOfBirth() {

@@ -119,6 +119,8 @@ public class Area implements Serializable {
 
     public Address getFreeAddress() {
 
+        if(addresses == null) addresses = new ArrayList<>();
+
         for(Address address : addresses) {
             if(!address.isInhabited()) {
                 return address;
@@ -150,23 +152,13 @@ public class Area implements Serializable {
     public String toString() {
         StringBuilder s = new StringBuilder();
 
-        s.append("--- Area: " + placeId + " ---\n");
-
         if(!isErroneous()) {
-            s.append(road + ", " + suburb + ", " + town + ", " + county + "\n");
-            s.append(state + ", " + postcode + "\n");
-            s.append("bl: " + boundingBox.getBottomLeft().toString() + "\n");
-            s.append("tr: " + boundingBox.getTopRight().toString() + "\n");
-            s.append("centroid: " + details.getCentroid().toString() + "\n");
-            s.append("catergory: " + details.getCategory() + "\n");
-            s.append("type: " + details.getType() + "\n");
-            s.append("way id: " + details.getOsmWayID() + "\n");
-            s.append("max abodes: " + maximumNumberOfAbodes + "\n");
-        } else {
-            s.append("ERRONEOUS AREA - " + error + "\n");
-        }
+            s.append(road + ", " + suburb + ", " + town + ", " + county + ", ");
+            s.append(state + ", " + postcode);
 
-        s.append("---  EOA: " + placeId + " ---\n");
+        } else {
+            s.append("ERRONEOUS AREA - " + error);
+        }
 
         return s.toString();
     }
@@ -182,4 +174,37 @@ public class Area implements Serializable {
     public String getState() {
         return (state == null ? "" : state);
     }
+
+    public Coords getCentriod() {
+        return details.getCentroid();
+    }
+
+    public double getDistanceTo(double lat, double lon) {
+        return Math.sqrt(Math.pow(lat - getCentriod().lat, 2) + Math.pow(lon - getCentriod().lon, 2));
+    }
+
+    public double getDistanceTo(Coords coords) {
+        return getDistanceTo(coords.lat, coords.lon);
+    }
+
+    public String getRoad() {
+        return road;
+    }
+
+    public String getSuburb() {
+        return suburb;
+    }
+
+    public String getTown() {
+        return town;
+    }
+
+    public String getCounty() {
+        return county;
+    }
+
+    public String getPostcode() {
+        return postcode;
+    }
+
 }

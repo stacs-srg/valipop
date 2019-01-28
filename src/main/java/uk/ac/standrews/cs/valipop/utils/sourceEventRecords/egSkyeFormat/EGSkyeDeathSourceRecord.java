@@ -26,12 +26,14 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
     protected LocalDate registrationDate;
     protected String mothersOccupation;
     protected String marriageIDs;
+    protected String deathAddress;
 
     public EGSkyeDeathSourceRecord(IPerson person, IPopulation population) {
 
         super(person, population);
 
         deathDate = person.getDeathDate();
+        deathAddress = person.getAddress(deathDate).toString();
 
         if (person.getParents() != null) {
 
@@ -137,7 +139,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
                 "", "", "", forename, surname, getOccupation(),
                 getMaritalStatus(), sex, getSpousesNames(), getSpousesOccupations(), deathDate.toString(),
                 deathDate.getDayOfMonth(), deathDate.getMonth(), deathDate.getYear(),
-                "", "", getDeathAge(), getDeathAge(), fathers_forename,
+                deathAddress, "", getDeathAge(), getDeathAge(), fathers_forename,
                 fathers_surname, "", getFatherDeceased(), mothers_forename,
                 mothers_maiden_surname, "", getMotherDeceased(), getDeathCauseA(),
                 "", "", "", "",

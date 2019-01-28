@@ -85,4 +85,10 @@ public interface IPartnership extends Comparable<IPartnership> {
      * @return the partnership's unique identifier
      */
     int getId();
+
+    boolean isFinalised();
+
+    void setFinalised(boolean finalised);
+
+    void setMarriagePlace(String place);
 }

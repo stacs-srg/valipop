@@ -18,11 +18,14 @@ package uk.ac.standrews.cs.valipop.simulationEntities;
 
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -44,6 +47,8 @@ public class Person implements IPerson {
     private final boolean illegitimate;
 
     private String deathCause = "";
+
+    TreeMap<LocalDate, Address> addressHistory = new TreeMap<>();
 
     public Person(SexOption sex, LocalDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean illegitimate) {
 
@@ -165,6 +170,24 @@ public class Person implements IPerson {
     @Override
     public void recordPartnership(IPartnership partnership) {
         partnerships.add(partnership);
+    }
+
+    @Override
+    public Address getAddress(LocalDate onDate) {
+        Map.Entry<LocalDate, Address> entry = addressHistory.floorEntry(onDate);
+        if(entry != null)
+            return entry.getValue();
+
+        return null;
+    }
+
+    @Override
+    public void setAddress(LocalDate onDate, Address address) {
+        if(addressHistory.size() != 0)
+            getAddress(onDate).removeInhabitant(this);
+
+        address.addInhabitant(this);
+        addressHistory.put(onDate, address);
     }
 
     private static int getNewId() {

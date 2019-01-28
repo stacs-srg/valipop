@@ -14,6 +14,7 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
     protected LocalDate marriageDate;
     protected int groomID;
     protected int brideID;
+    protected String marriageLocation;
 
     public EGSkyeMarriageSourceRecord(IPartnership partnership, IPopulation population) {
         super(partnership, population);
@@ -21,6 +22,8 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
         marriageDate = partnership.getPartnershipDate();
         groomID = partnership.getMalePartner().getId();
         brideID = partnership.getFemalePartner().getId();
+
+        marriageLocation = partnership.getMarriagePlace();
     }
 
     @Override
@@ -32,7 +35,7 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
                 "", "", "", "",
                 "", "", "", marriageDate.toString(), getGroomAgeOrDateOfBirth(), getBrideAgeOrDateOfBirth(), "",
                 "", "", "", "", "", "", "", marriageDate.toString(), marriageDate.getDayOfMonth(), marriageDate.getMonth(), marriageDate.getYear(),
-                "", "", "", getGroomForename(), getGroomSurname(),
+                marriageLocation, "", "", getGroomForename(), getGroomSurname(),
                 getGroomOccupation(), getGroomMaritalStatus(), getGroomAgeOrDateOfBirth(), getGroomAddress(),
                 "", getBrideForename(), getBrideSurname(), getBrideOccupation(),
                 getBrideMaritalStatus(), getBrideAgeOrDateOfBirth(), getBrideAddress(), "",
