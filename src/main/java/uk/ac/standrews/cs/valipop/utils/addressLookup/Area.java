@@ -207,4 +207,8 @@ public class Area implements Serializable {
         return postcode;
     }
 
+    public Long getPlaceID() {
+        return placeId;
+    }
+
 }

@@ -35,7 +35,7 @@ public class Address {
     }
 
     public boolean isInhabited() {
-        return inhabitants.size() == 0;
+        return inhabitants.size() != 0;
     }
 
     public Area getArea() {
