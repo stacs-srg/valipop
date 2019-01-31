@@ -20,6 +20,6 @@ death_factor = 0.0
 recovery_factor = 1.0
 proportional_recovery_factor = 1.0
 output_tables = false
-deterministic = false
+deterministic = true
 binomial_sampling = true
 run_purpose = geography-testing

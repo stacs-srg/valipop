@@ -32,10 +32,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCoun
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Cache;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.DistanceSelector;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.*;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordGenerationFactory;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
@@ -622,18 +619,27 @@ public class OBDModel {
                     newAddress = geography.getEmptyAddressAtDistance(lastFemaleAddress.getArea().getCentriod(), moveDistance);
                 }
 
+                System.out.println(GPSDistanceConverter.distance(lastMaleAddress.getArea().getCentriod(), lastFemaleAddress.getArea().getCentriod(), 'K'));
+
             }
         }
 
         father.setAddress(moveDate, newAddress);
         mother.setAddress(moveDate, newAddress);
 
-        while(lastMaleAddress != null && lastMaleAddress.getInhabitants().size() != 0)
-            lastMaleAddress.getInhabitants().get(0).setAddress(moveDate, newAddress);
+        if(father.getPartnerships().size() > 1) // if this is the persons first partnership then they are a child at their own address - therefore they don't take the other inhabitants (i.e. parents and siblings) into their new marriage home
+            while(lastMaleAddress != null && lastMaleAddress.getInhabitants().size() != 0) {
+                IPerson individual = lastMaleAddress.getInhabitants().get(0);
+                LocalDate individualMoveDate = moveDate.isBefore(individual.getBirthDate()) ? individual.getBirthDate() : moveDate;
+                individual.setAddress(individualMoveDate, newAddress);
+            }
 
-
-        while(lastFemaleAddress != null && lastFemaleAddress.getInhabitants().size() != 0)
-            lastFemaleAddress.getInhabitants().get(0).setAddress(moveDate, newAddress);
+        if(mother.getPartnerships().size() > 1) // if this is the persons first partnership then they are a child at their own address - therefore they don't take the other inhabitants (i.e. parents and siblings) into their new marriage home
+            while(lastFemaleAddress != null && lastFemaleAddress.getInhabitants().size() != 0) {
+                IPerson individual = lastFemaleAddress.getInhabitants().get(0);
+                LocalDate individualMoveDate = moveDate.isBefore(individual.getBirthDate()) ? individual.getBirthDate() : moveDate;
+                individual.setAddress(individualMoveDate, newAddress);
+            }
 
     }
 
@@ -790,6 +796,8 @@ public class OBDModel {
         if(!illegitimate) {
             handleSeperationMoves(fatherLastParntership, father);
             handleAddressChanges(partnership);
+        } else if(motherLastParntership == null) {
+            mother.setAddress(partnership.getPartnershipDate(), geography.getEmptyAddressAtDistance(father.getAddress(LocalDate.MAX).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance()));
         }
 
         for(IPerson child : partnership.getChildren()) {

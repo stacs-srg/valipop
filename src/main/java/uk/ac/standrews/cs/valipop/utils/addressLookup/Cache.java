@@ -68,7 +68,36 @@ public class Cache implements Serializable {
         return Math.round(d * PRECISION_ADJUSTMENT) / PRECISION_ADJUSTMENT;
     }
 
+    public void removeArea(Area area)  {
 
+        areaIndex.remove(area.getPlaceID(), area);
+
+        Map<Double, Area> index = lookupHistory.get(round(area.getCentriod().lat));
+        if(index != null) {
+            index.remove(round(area.getCentriod().lon), area);
+
+            if (index.size() == 0) {
+                lookupHistory.remove(round(area.getCentriod().lat), index);
+            }
+        }
+
+        areaDB.remove(area);
+
+        for(AreaSet aS : areaSets.values()) {
+            aS.getAreas().remove(area);
+
+            if(aS.getAreas().size() == 0) {
+                try {
+                    areaSets.remove(area.getAreaSetString(), area);
+                } catch (IncompleteAreaInformationException e) {
+                    // if an areaset string cannot be generated then the area will never have been added to areaSets.
+                    // Thus we needn't worry about not being able to remove it
+                }
+            }
+
+        }
+
+    }
 
     public void writeToFile() throws IOException {
         writeToFile(filePath);
@@ -138,5 +167,9 @@ public class Cache implements Serializable {
     public void addToAreaIndex(long placeId, Area area) {
         areaIndex.put(placeId, area);
         updated = true;
+    }
+
+    public int size() {
+        return areaDB.size();
     }
 }

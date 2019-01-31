@@ -183,8 +183,14 @@ public class Person implements IPerson {
 
     @Override
     public void setAddress(LocalDate onDate, Address address) {
-        if(addressHistory.size() != 0)
+        if(addressHistory.size() != 0) {
             getAddress(onDate).removeInhabitant(this);
+
+            // if children get shuttled around before birth then remove old addresses
+            if(addressHistory.get(onDate) != null) {
+                addressHistory.remove(onDate);
+            }
+        }
 
         address.addInhabitant(this);
         addressHistory.put(onDate, address);
