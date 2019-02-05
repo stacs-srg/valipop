@@ -48,7 +48,7 @@ public class Person implements IPerson {
 
     private String deathCause = "";
 
-    TreeMap<LocalDate, Address> addressHistory = new TreeMap<>();
+    private TreeMap<LocalDate, Address> addressHistory = new TreeMap<>();
 
     public Person(SexOption sex, LocalDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean illegitimate) {
 
@@ -91,7 +91,6 @@ public class Person implements IPerson {
 
     @Override
     public void setDeathDate(final LocalDate deathDate) {
-
         this.deathDate = deathDate;
     }
 
@@ -120,15 +119,14 @@ public class Person implements IPerson {
         return surname;
     }
 
-    // TODO Implement geography model
     @Override
     public String getBirthPlace() {
-        return null;
+        return getAddress(birthDate).toString();
     }
 
     @Override
     public String getDeathPlace() {
-        return null;
+        return getAddress(deathDate).toString();
     }
 
     // TODO Implement occupation assignment
@@ -183,13 +181,21 @@ public class Person implements IPerson {
 
     @Override
     public void setAddress(LocalDate onDate, Address address) {
-        if(addressHistory.size() != 0) {
-            getAddress(onDate).removeInhabitant(this);
+        if(addressHistory.size() != 0) { // Pass this bit if no previous address
+
+            if(getAddress(onDate) != null)
+                getAddress(onDate).removeInhabitant(this);
 
             // if children get shuttled around before birth then remove old addresses
             if(addressHistory.get(onDate) != null) {
+                addressHistory.get(onDate).removeInhabitant(this);
                 addressHistory.remove(onDate);
+            } else if(addressHistory.ceilingEntry(onDate) != null) { // if theres a future move - from a forced illegitimacy move - we scratch that move
+                addressHistory.ceilingEntry(onDate).getValue().removeInhabitant(this);
+                addressHistory.remove(addressHistory.ceilingKey(onDate));
             }
+
+
         }
 
         address.addInhabitant(this);

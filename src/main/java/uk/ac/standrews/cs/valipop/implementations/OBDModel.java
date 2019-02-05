@@ -782,6 +782,9 @@ public class OBDModel {
         final IPartnership partnership = new Partnership(father, mother);
         makeChildren(partnership, numberOfChildren, illegitimate, marriedAtBirth);
 
+        if(illegitimate)
+            partnership.setFinalised(true);
+
         population.getLivingPeople().add(partnership);
 
         IPartnership motherLastParntership = PopulationNavigation.getLastPartnership(mother);
@@ -831,23 +834,31 @@ public class OBDModel {
                 // flip coin for who gets the kids
                 boolean keepKids = randomNumberGenerator.nextBoolean();
 
+                Address oldFamilyAddress = rePartneringPartner.getAddress(sepDate);
+
                 if (keepHouse) {
                     // ex moves
                     Address exsNewAddress = geography.getEmptyAddressAtDistance(ex.getAddress(sepDate).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
                     ex.setAddress(sepDate, exsNewAddress);
 
                     // kids move to ex
-                    if (!keepKids)
-                        for (IPerson c : lastPartnership.getChildren())
-                            c.setAddress(sepDate, exsNewAddress);
+                    if (!keepKids) {
+                        for (IPerson c : lastPartnership.getChildren()) {
+                            if(oldFamilyAddress.getInhabitants().contains(c))
+                                c.setAddress(sepDate, exsNewAddress);
+                        }
+                    }
 
                 } else {
                     Address newAddress = geography.getEmptyAddressAtDistance(rePartneringPartner.getAddress(sepDate).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
                     rePartneringPartner.setAddress(sepDate, newAddress);
 
-                    if (keepKids)
-                        for (IPerson c : lastPartnership.getChildren())
-                            c.setAddress(sepDate, newAddress);
+                    if (keepKids) {
+                        for (IPerson c : lastPartnership.getChildren()) {
+                            if(oldFamilyAddress.getInhabitants().contains(c))
+                                c.setAddress(sepDate, newAddress);
+                        }
+                    }
 
                 }
 
@@ -1376,6 +1387,18 @@ public class OBDModel {
 
             person.setDeathDate(deathDate);
             person.setDeathCause(deathCause);
+
+            for(IPartnership partnership : person.getPartnerships()) {
+                if(!partnership.isFinalised()) {
+                    LocalDate sepDate = partnership.getSeparationDate(randomNumberGenerator);
+
+                    if(sepDate != null) {
+                        handleSeperationMoves(partnership, person);
+                    }
+                }
+                partnership.setFinalised(true);
+
+            }
 
             Address lastAddress = person.getAddress(deathDate);
             if(lastAddress != null) {
