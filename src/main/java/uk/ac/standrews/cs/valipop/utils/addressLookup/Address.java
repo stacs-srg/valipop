@@ -60,10 +60,10 @@ public class Address {
         int count = 2;
 
         if(area.getSuburb() != null && count-- > 0)
-            s.append(area.getSuburb());
+            s.append(area.getSuburb() + " ");
 
         if(area.getTown() != null && count-- > 0)
-            s.append(area.getTown());
+            s.append(area.getTown() + " ");
 
         if(area.getCounty() != null && count > 0)
             s.append(area.getCounty());

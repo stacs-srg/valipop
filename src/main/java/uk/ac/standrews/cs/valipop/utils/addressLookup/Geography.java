@@ -69,6 +69,8 @@ public class Geography {
 
         // convert distance in to lat/long degrees
 
+        int stepBy = 6;
+
         int angle = rand.nextInt(360);
         int count = 0;
 
@@ -81,11 +83,11 @@ public class Geography {
 
             count++;
 
-            if(++angle >= 360) {
+            if((angle += stepBy) >= 360) {
                angle -= 360;
             }
 
-        } while (address == null && count < 360);
+        } while (address == null && count < 360 / stepBy);
 
         if(address == null) {
             address = getNearestEmptyAddressAtDistance(origin, distance);
@@ -227,10 +229,10 @@ public class Geography {
 
         }
 
-        if(nearestAddress == null) {
-            System.out.println("Something seems broke - cannot find the 'nearest' address to below location: ");
-            System.out.println(lat + ", " + lon);
-        }
+//        if(nearestAddress == null) {
+//            System.out.println("Something seems broke - cannot find the 'nearest' address to below location: ");
+//            System.out.println(lat + ", " + lon);
+//        }
 
         return nearestAddress;
 

@@ -7,6 +7,8 @@ public class GPSDistanceConverter {
 
     public static double distance(Coords a, Coords b, char unit) {
 
+        unit = Character.toUpperCase(unit);
+
         double lat1 = a.lat;
         double lon1 = a.lon;
 
