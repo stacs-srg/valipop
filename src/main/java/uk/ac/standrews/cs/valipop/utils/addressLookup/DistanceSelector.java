@@ -1,6 +1,8 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
 import org.apache.commons.math3.distribution.PoissonDistribution;
+import org.apache.commons.math3.distribution.UniformRealDistribution;
+import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
@@ -11,19 +13,22 @@ public class DistanceSelector {
     RandomGenerator random;
 
     private final PoissonDistribution distribution;
+    private final UniformRealDistribution secondaryDistribution;
 
-    private static final double poissonM = 7;
+
+    private static final double poissonM = 7.0;
     private static final double averageMoveDistance = 21.0;
 
     public DistanceSelector(RandomGenerator random) {
 
         this.random = random;
         distribution = new PoissonDistribution(random, poissonM - 0.5, PoissonDistribution.DEFAULT_EPSILON, PoissonDistribution.DEFAULT_MAX_ITERATIONS);
+        secondaryDistribution = new UniformRealDistribution(random, 0.0, averageMoveDistance / poissonM, UniformRealDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
     }
 
     public double selectRandomDistance() {
 
-        return Math.round(distribution.sample() * averageMoveDistance / poissonM);
+        return (distribution.sample() * averageMoveDistance / poissonM) + secondaryDistribution.sample();
 
     }
 

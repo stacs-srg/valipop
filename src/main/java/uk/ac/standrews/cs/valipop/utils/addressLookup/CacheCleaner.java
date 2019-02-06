@@ -15,9 +15,13 @@ public class CacheCleaner {
 
         Cache cache = Cache.readFromFile(file);
 
-        removeNonScotlandAreas(cache);
+        for(Area area : cache.getAllAreas()) {
+            System.out.println(area.toString());
+        }
 
-        cache.writeToFile();
+//        removeNullAddressAreas(cache);
+
+//        cache.writeToFile();
 
 
     }
@@ -64,6 +68,40 @@ public class CacheCleaner {
             cache.removeArea(area);
             System.out.println(cache.size());
         }
+
+    }
+
+    private static void removeNullAddressAreas(Cache cache) {
+
+        System.out.println(cache.size());
+
+        Collection<Area> toRemove = new ArrayList<>();
+
+        for(Area area : cache.getAllAreas()) {
+
+            int count = 0;
+
+            if(area.getRoad() == null)
+                count++;
+
+            if(area.getSuburb() == null)
+                count++;
+
+            if(count == 2)
+                toRemove.add(area);
+
+        }
+
+        System.out.println(toRemove.size());
+
+
+
+        for(Area area : toRemove) {
+            cache.removeArea(area);
+//            System.out.println(area.toString());
+        }
+
+        System.out.println(cache.size());
 
     }
 

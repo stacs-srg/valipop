@@ -117,7 +117,7 @@ public class Area implements Serializable {
 
     }
 
-    public Address getFreeAddress() {
+    public Address getFreeAddress(Geography geography) {
 
         if(addresses == null) addresses = new ArrayList<>();
 
@@ -129,7 +129,7 @@ public class Area implements Serializable {
 
         if(addresses.size() < maximumNumberOfAbodes) {
             // +1 so that house numbers don't start at zero!
-            Address newAddress = new Address(numberingOffset + addresses.size() + 1, this);
+            Address newAddress = new Address(numberingOffset + addresses.size() + 1, this, geography);
             addresses.add(newAddress);
             return newAddress;
         }
@@ -151,15 +151,35 @@ public class Area implements Serializable {
 
     public String toString() {
         StringBuilder s = new StringBuilder();
+        s.append("\"");
 
         if(!isErroneous()) {
-            s.append(road + ", " + suburb + ", " + town + ", " + county + ", ");
-            s.append(state + ", " + postcode);
+
+            int count = 3;
+
+            if(getRoad() != null && count-- > 0)
+                s.append(getRoad());
+
+            if(getSuburb() != null && count-- > 0) {
+                if (count != 2) s.append(", ");
+                s.append(getSuburb());
+            }
+
+            if(getTown() != null && count-- > 0) {
+                if (count != 2) s.append(", ");
+                s.append(getTown());
+            }
+
+            if(getCounty() != null && count-- > 0) {
+                if (count != 2) s.append(", ");
+                s.append(getCounty());
+            }
 
         } else {
             s.append("ERRONEOUS AREA - " + error);
         }
 
+        s.append("\"");
         return s.toString();
     }
 
@@ -209,6 +229,20 @@ public class Area implements Serializable {
 
     public Long getPlaceID() {
         return placeId;
+    }
+
+    public boolean isFull() {
+
+        if(addresses == null) addresses = new ArrayList<>();
+
+        if(addresses.size() < maximumNumberOfAbodes)
+            return false;
+
+        for(Address address : addresses)
+            if(!address.isInhabited())
+                return false;
+
+        return true;
     }
 
 }

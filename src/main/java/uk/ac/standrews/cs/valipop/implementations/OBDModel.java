@@ -606,20 +606,20 @@ public class OBDModel {
             if(lastFemaleAddress == null) {
                 newAddress = geography.getRandomEmptyAddress();
             } else {
-                newAddress = geography.getEmptyAddressAtDistance(lastFemaleAddress.getArea().getCentriod(), moveDistance);
+                newAddress = geography.getNearestEmptyAddressAtDistance(lastFemaleAddress.getArea().getCentriod(), moveDistance);
             }
         } else {
             if(lastFemaleAddress == null) {
-                newAddress = geography.getEmptyAddressAtDistance(lastMaleAddress.getArea().getCentriod(), moveDistance);
+                newAddress = geography.getNearestEmptyAddressAtDistance(lastMaleAddress.getArea().getCentriod(), moveDistance);
             } else {
                 // both already have address, so flip coin to decide who acts as origin for move
                 if(randomNumberGenerator.nextBoolean()) {
-                    newAddress = geography.getEmptyAddressAtDistance(lastMaleAddress.getArea().getCentriod(), moveDistance);
+                    newAddress = geography.getNearestEmptyAddressAtDistance(lastMaleAddress.getArea().getCentriod(), moveDistance);
                 } else {
-                    newAddress = geography.getEmptyAddressAtDistance(lastFemaleAddress.getArea().getCentriod(), moveDistance);
+                    newAddress = geography.getNearestEmptyAddressAtDistance(lastFemaleAddress.getArea().getCentriod(), moveDistance);
                 }
 
-                System.out.println(GPSDistanceConverter.distance(lastMaleAddress.getArea().getCentriod(), lastFemaleAddress.getArea().getCentriod(), 'K'));
+                System.out.println("dist, " + GPSDistanceConverter.distance(lastMaleAddress.getArea().getCentriod(), lastFemaleAddress.getArea().getCentriod(), 'K'));
 
             }
         }
@@ -800,7 +800,7 @@ public class OBDModel {
             handleSeperationMoves(fatherLastParntership, father);
             handleAddressChanges(partnership);
         } else if(motherLastParntership == null) {
-            mother.setAddress(partnership.getPartnershipDate(), geography.getEmptyAddressAtDistance(father.getAddress(LocalDate.MAX).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance()));
+            mother.setAddress(partnership.getPartnershipDate(), geography.getNearestEmptyAddressAtDistance(father.getAddress(LocalDate.MAX).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance()));
         }
 
         for(IPerson child : partnership.getChildren()) {
@@ -838,7 +838,7 @@ public class OBDModel {
 
                 if (keepHouse) {
                     // ex moves
-                    Address exsNewAddress = geography.getEmptyAddressAtDistance(ex.getAddress(sepDate).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
+                    Address exsNewAddress = geography.getNearestEmptyAddressAtDistance(ex.getAddress(sepDate).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
                     ex.setAddress(sepDate, exsNewAddress);
 
                     // kids move to ex
@@ -850,7 +850,7 @@ public class OBDModel {
                     }
 
                 } else {
-                    Address newAddress = geography.getEmptyAddressAtDistance(rePartneringPartner.getAddress(sepDate).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
+                    Address newAddress = geography.getNearestEmptyAddressAtDistance(rePartneringPartner.getAddress(sepDate).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
                     rePartneringPartner.setAddress(sepDate, newAddress);
 
                     if (keepKids) {

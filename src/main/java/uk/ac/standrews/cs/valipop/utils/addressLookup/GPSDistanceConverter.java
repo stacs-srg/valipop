@@ -61,4 +61,14 @@ public class GPSDistanceConverter {
         );
     }
 
+    public static void main(String[] args) {
+
+        Coords origin = new Coords(55.52654705, -2.43492198501177);
+
+        for(int i = 0; i <= 360; i+=12) {
+            System.out.println(move(origin, 25, i).toString());
+        }
+
+    }
+
 }
