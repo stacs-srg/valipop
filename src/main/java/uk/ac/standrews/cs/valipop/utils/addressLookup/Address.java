@@ -14,20 +14,32 @@ public class Address {
 
     final long number;
     final Area area;
+    final Geography geography;
 
     ArrayList<IPerson> inhabitants = new ArrayList<>();
 
-    public Address(long number, Area area) {
+    public Address(long number, Area area, Geography geography) {
         this.number = number;
         this.area = area;
+        this.geography = geography;
     }
 
     public void addInhabitant(IPerson person) {
+        boolean wasInhabited = isInhabited();
+
         inhabitants.add(person);
+
+        if(!wasInhabited)
+            geography.updated(this);
     }
 
     public boolean removeInhabitant(IPerson person) {
-        return inhabitants.remove(person);
+        boolean ret = inhabitants.remove(person);
+
+        if(!isInhabited())
+            geography.updated(this);
+
+        return ret;
     }
 
     public List<IPerson> getInhabitants() {
@@ -46,8 +58,10 @@ public class Address {
 
         StringBuilder s = new StringBuilder();
 
+        s.append("\"");
         s.append(number + " ");
         s.append(area.toString());
+        s.append("\"");
 
         return s.toString();
 
@@ -56,6 +70,7 @@ public class Address {
     public String toShortForm() {
 
         StringBuilder s = new StringBuilder();
+        s.append("\"");
 
         int count = 2;
 
@@ -68,6 +83,7 @@ public class Address {
         if(area.getCounty() != null && count > 0)
             s.append(area.getCounty());
 
+        s.append("\"");
         return s.toString();
 
     }

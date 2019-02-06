@@ -22,9 +22,18 @@ public class Geography {
         this.residentialGeography = residentialGeography;
 
         for(Area area : this.residentialGeography.getAllAreas()) {
-            addToLookup(area);
+            if(!area.isFull())
+                addToLookup(area);
         }
 
+    }
+
+    public void updated(Address address) {
+        if(address.getArea().isFull()) {
+            removeFromLookup(address.getArea());
+        } else {
+            addToLookup(address.getArea());
+        }
     }
 
     public Address getRandomEmptyAddress() {
@@ -34,72 +43,74 @@ public class Geography {
         Address area = null;
 
         do {
-            area = allAreas.get(rand.nextInt(allAreas.size())).getFreeAddress();
+            area = allAreas.get(rand.nextInt(allAreas.size())).getFreeAddress(this);
         } while (area == null);
 
         return area;
 
     }
 
-    public Address getEmptyAddress(Coords coords) {
-        return getEmptyAddress(coords.lat, coords.lon);
-    }
+//    public Address getEmptyAddress(Coords coords) {
+//        return getEmptyAddress(coords.lat, coords.lon);
+//    }
 
-    public Address getEmptyAddress(double lat, double lon) {
+//    public Address getEmptyAddress(double lat, double lon) {
+//
+//        // check is coords in area lookup
+//        Map<Double, Area> index = areaLookup.get(round(lat));
+//        if(index != null) {
+//            Area area = index.get(round(lon));
+//            if(area != null)
+//                return area.getFreeAddress(this);
+//        }
+//
+//        Area area = residentialGeography.checkCache(lat, lon);
+//
+//        if(area == null) {
+//            return null;
+//        } else {
+//            addToLookup(area, lat, lon);
+//            return area.getFreeAddress(this);
+//        }
+//    }
 
-        // check is coords in area lookup
-        Map<Double, Area> index = areaLookup.get(round(lat));
-        if(index != null) {
-            Area area = index.get(round(lon));
-            if(area != null)
-                return area.getFreeAddress();
-        }
-
-        Area area = residentialGeography.checkCache(lat, lon);
-
-        if(area == null) {
-            return null;
-        } else {
-            addToLookup(area, lat, lon);
-            return area.getFreeAddress();
-        }
-    }
-
-    public Address getEmptyAddressAtDistance(Coords origin, double distance) {
-
-        // convert distance in to lat/long degrees
-
-        int stepBy = 6;
-
-        int angle = rand.nextInt(360);
-        int count = 0;
-
-        Address address = null;
-
-        do {
-            Coords candidateLocation = GPSDistanceConverter.move(origin, distance, angle);
-
-            address = getEmptyAddress(candidateLocation);
-
-            count++;
-
-            if((angle += stepBy) >= 360) {
-               angle -= 360;
-            }
-
-        } while (address == null && count < 360 / stepBy);
-
-        if(address == null) {
-            address = getNearestEmptyAddressAtDistance(origin, distance);
-        }
-
-        return address;
-    }
+//    public Address getEmptyAddressAtDistance(Coords origin, double distance) {
+//
+//        // convert distance in to lat/long degrees
+//
+//        int stepBy = 6;
+//
+//        int angle = rand.nextInt(360);
+//        int count = 0;
+//
+//        Address address = null;
+//
+//        do {
+//            Coords candidateLocation = GPSDistanceConverter.move(origin, distance, angle);
+//
+//            address = getEmptyAddress(candidateLocation);
+//
+//            count++;
+//
+//            if((angle += stepBy) >= 360) {
+//               angle -= 360;
+//            }
+//
+//        } while (address == null && count < 360 / stepBy);
+//
+//        if(address == null) {
+//            address = getNearestEmptyAddressAtDistance(origin, distance);
+//        }
+//
+//        return address;
+//    }
 
     public Address getNearestEmptyAddressAtDistance(Coords origin, double distance) {
 
         int angle = rand.nextInt(360);
         int count = 0;
+
+        int step = 6;
 
         Address address = null;
         double distanceDelta = Double.MAX_VALUE;
@@ -120,16 +131,18 @@ public class Geography {
 
             count++;
 
-            if(++angle >= 360) {
+            if((angle += step) >= 360) {
                 angle -= 360;
             }
 
-        } while (count < 360);
+        } while (count < 360 / step);
 
         if(address == null) {
             System.out.println("Something seems broke - cannot find the 'nearest' address to below location: ");
             System.out.println(origin.toString() + " @ distance " + distance);
         }
+
+        System.out.println("delta, " + distance + ", " + distanceDelta);
 
         return address;
 
@@ -216,23 +229,23 @@ public class Geography {
             Area area = areaEntry.getValue();
 
             Address address;
-            if(area.containsPoint(lat, lon) && (address = area.getFreeAddress()) != null) {
+            if(area.containsPoint(lat, lon) && (address = area.getFreeAddress(this)) != null) {
                 return address;
             }
 
             double distance = area.getDistanceTo(lat, lon);
 
-            if(distance < smallestDistance && (address = area.getFreeAddress()) != null) {
+            if(distance < smallestDistance && (address = area.getFreeAddress(this)) != null) {
                 smallestDistance = distance;
                 nearestAddress = address;
             }
 
         }
 
-//        if(nearestAddress == null) {
-//            System.out.println("Something seems broke - cannot find the 'nearest' address to below location: ");
-//            System.out.println(lat + ", " + lon);
-//        }
+        if(nearestAddress == null) {
+            System.out.println("Something seems broke - cannot find the 'nearest' address to below location: ");
+            System.out.println(lat + ", " + lon);
+        }
 
         return nearestAddress;
 
@@ -261,5 +274,17 @@ public class Geography {
                 .put(round(lon), area);
     }
 
+    private void removeFromLookup(Area area) {
+
+        Map<Double, Area> index = areaLookup.get(round(area.getCentriod().lat));
+        if(index != null) {
+            index.remove(round(area.getCentriod().lon), area);
+
+            if (index.size() == 0) {
+                areaLookup.remove(round(area.getCentriod().lat), index);
+            }
+        }
+
+    }
 
 }
