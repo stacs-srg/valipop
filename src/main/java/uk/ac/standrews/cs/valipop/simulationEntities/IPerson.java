@@ -110,6 +110,8 @@ public interface IPerson extends Comparable<IPerson> {
      */
     IPartnership getParents();
 
+    void setParents(IPartnership parents);
+
     boolean isIllegitimate();
 
     void recordPartnership(IPartnership partnership);
@@ -117,4 +119,12 @@ public interface IPerson extends Comparable<IPerson> {
     Address getAddress(LocalDate onDate);
 
     void setAddress(LocalDate onDate, Address address);
+
+    LocalDate getEmigrationDate();
+
+    void setEmigrationDate(LocalDate leavingDate);
+
+    LocalDate getImmigrationDate();
+
+    void setImmigrationDate(LocalDate arrivalDate);
 }

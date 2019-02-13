@@ -142,8 +142,6 @@ public class Geography {
             System.out.println(origin.toString() + " @ distance " + distance);
         }
 
-        System.out.println("delta, " + distance + ", " + distanceDelta);
-
         return address;
 
     }
