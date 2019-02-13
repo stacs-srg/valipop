@@ -49,8 +49,14 @@ public class Person implements IPerson {
     private String deathCause = "";
 
     private TreeMap<LocalDate, Address> addressHistory = new TreeMap<>();
+    private LocalDate emigrationDate = null;
+    private LocalDate immigrationDate = null;
 
     public Person(SexOption sex, LocalDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean illegitimate) {
+        this(sex, birthDate, parents, statistics, illegitimate, false);
+    }
+
+    public Person(SexOption sex, LocalDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean illegitimate, boolean immigrant) {
 
         id = getNewId();
 
@@ -59,10 +65,11 @@ public class Person implements IPerson {
         this.parents = parents;
         this.illegitimate = illegitimate;
 
-        firstName = getForename(statistics);
-        surname = getSurname(statistics);
+        firstName = getForename(statistics, immigrant);
+        surname = getSurname(statistics, immigrant);
 
         representation = firstName + " " + surname + " (" + id + ") " + birthDate;
+
     }
 
     public String toString() {
@@ -102,6 +109,13 @@ public class Person implements IPerson {
     @Override
     public IPartnership getParents() {
         return parents;
+    }
+
+    @Override
+    public void setParents(IPartnership parents) {
+        if(this.parents == null) {
+            this.parents = parents;
+        }
     }
 
     @Override
@@ -202,6 +216,26 @@ public class Person implements IPerson {
         addressHistory.put(onDate, address);
     }
 
+    @Override
+    public LocalDate getEmigrationDate() {
+        return emigrationDate;
+    }
+
+    @Override
+    public void setEmigrationDate(LocalDate leavingDate) {
+        emigrationDate = leavingDate;
+    }
+
+    @Override
+    public LocalDate getImmigrationDate() {
+        return immigrationDate;
+    }
+
+    @Override
+    public void setImmigrationDate(LocalDate arrivalDate) {
+        immigrationDate = arrivalDate;
+    }
+
     private static int getNewId() {
         return nextId++;
     }
@@ -210,18 +244,28 @@ public class Person implements IPerson {
         nextId = 0;
     }
 
-    private String getForename(PopulationStatistics statistics) {
+    private String getForename(PopulationStatistics statistics, boolean immigrant) {
 
-        return statistics.getForenameDistribution(Year.of(birthDate.getYear()), getSex()).getSample();
+        if(immigrant) {
+            // TODO add in distributions
+            return "Born";
+        } else {
+            return statistics.getForenameDistribution(Year.of(birthDate.getYear()), getSex()).getSample();
+        }
     }
 
-    private String getSurname(PopulationStatistics statistics) {
+    private String getSurname(PopulationStatistics statistics, boolean immigrant) {
 
         if (parents != null) {
             return parents.getMalePartner().getSurname();
         }
         else {
-            return statistics.getSurnameDistribution(Year.of(birthDate.getYear())).getSample();
+            if(immigrant) {
+                // TODO add in distributions
+                return "Abroad";
+            } else {
+                return statistics.getSurnameDistribution(Year.of(birthDate.getYear())).getSample();
+            }
         }
     }
 }

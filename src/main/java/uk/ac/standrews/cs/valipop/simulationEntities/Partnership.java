@@ -229,4 +229,5 @@ public class Partnership implements IPartnership {
     public void addChildren(Collection<IPerson> children) {
         this.children.addAll(children);
     }
+
 }

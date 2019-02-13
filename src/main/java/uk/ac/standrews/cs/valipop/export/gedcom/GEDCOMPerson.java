@@ -266,6 +266,11 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
+    public void setParents(IPartnership parents) {
+        parent_id = parents.getId();
+    }
+
+    @Override
     public boolean isIllegitimate() {
         return false;
     }
@@ -283,6 +288,26 @@ public class GEDCOMPerson implements IPerson {
     @Override
     public void setAddress(LocalDate onDate, Address address) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public LocalDate getEmigrationDate() {
+        return null;
+    }
+
+    @Override
+    public void setEmigrationDate(LocalDate leavingDate) {
+
+    }
+
+    @Override
+    public LocalDate getImmigrationDate() {
+        return null;
+    }
+
+    @Override
+    public void setImmigrationDate(LocalDate arrivalDate) {
+
     }
 
     @Override

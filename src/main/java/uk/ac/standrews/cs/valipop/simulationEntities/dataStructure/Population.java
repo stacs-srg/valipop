@@ -31,6 +31,8 @@ public class Population {
     private PeopleCollection livingPeople;
     private PeopleCollection deadPeople;
 
+    private PeopleCollection emigrants;
+
     private PopulationCounts populationCounts;
 
     public Population(final Config config) {
@@ -42,12 +44,14 @@ public class Population {
 
         deadPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep(), "dead");
 
+        emigrants = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep(), "emigrants");
+
         populationCounts = new PopulationCounts();
     }
 
     public PeopleCollection getPeople() {
 
-        return combine(livingPeople, deadPeople);
+        return combine(combine(livingPeople, deadPeople), emigrants);
     }
 
     public PeopleCollection getPeople(final LocalDate first, final LocalDate last, final Period maxAge) {
@@ -73,6 +77,10 @@ public class Population {
 
     public PeopleCollection getDeadPeople() {
         return deadPeople;
+    }
+
+    public PeopleCollection getEmigrants() {
+        return emigrants;
     }
 
     public PopulationCounts getPopulationCounts() {

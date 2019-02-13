@@ -274,6 +274,8 @@ public class OBDModel {
         deathCount += numberDying;
         logEntry.append(numberDying).append("\t");
 
+        performMigration();
+
         if (simulationStarted()) {
             population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
         }
@@ -282,6 +284,137 @@ public class OBDModel {
         recordPeopleCounts(logEntry);
 
         log.info(logEntry.toString());
+    }
+
+    private void performMigration() {
+
+        int numberToMigrate = Math.toIntExact(Math.round(population.getLivingPeople().getNumberOfPeople() * getMigationRate(currentTime)));
+        Collection<List<IPerson>> peopleToMigrate = new ArrayList<>();
+
+        List<IPerson> livingPeople = new ArrayList(population.getLivingPeople().getPeople());
+
+        // select people to move out of country
+        while(peopleToMigrate.size() < numberToMigrate) {
+
+            IPerson selected = livingPeople.get(randomNumberGenerator.nextInt(livingPeople.size()));
+
+            boolean withHousehold = randomNumberGenerator.nextBoolean();
+            LocalDate moveDate = currentTime.plus(randomNumberGenerator.nextInt(365), ChronoUnit.DAYS);
+
+            Address address = selected.getAddress(moveDate);
+
+            if(withHousehold) {
+                List<IPerson> house = address.getInhabitants();
+
+                while(!house.isEmpty()) {
+                    IPerson p = house.get(0);
+                    population.getLivingPeople().remove(p);
+                    population.getEmigrants().add(p);
+                    p.setEmigrationDate(moveDate);
+                    address.removeInhabitant(p);
+                }
+
+                peopleToMigrate.add(house);
+
+            } else {
+                population.getLivingPeople().remove(selected);
+                population.getEmigrants().add(selected);
+                selected.setEmigrationDate(moveDate);
+                peopleToMigrate.add(new ArrayList<IPerson>(Collections.singleton(selected)));
+            }
+
+        }
+
+        // create immigrants by approximately mimicing the emigrants
+        for(List<IPerson> household : peopleToMigrate) {
+
+            if(household.size() == 1) {
+                IPerson toMimic = household.get(0);
+                IPerson mimic = mimicPerson(toMimic, null);
+                population.getLivingPeople().add(mimic);
+                mimic.setImmigrationDate(toMimic.getEmigrationDate());
+                mimic.setAddress(toMimic.getEmigrationDate(), geography.getRandomEmptyAddress());
+            } else {
+
+                Map<IPartnership, IPartnership> mimicLookup = new HashMap<>();
+                Map<IPerson, IPerson> mimicPersonLookup = new HashMap<>();
+
+                household.sort((o1, o2) -> o1.getBirthDate().isBefore(o2.getBirthDate()) ? -1 : 1);
+
+                Address newHouse = geography.getRandomEmptyAddress();
+
+                for(IPerson p : household) {
+
+                    IPerson mimic = mimicPersonLookup.get(p);
+
+                    if(mimic == null) {
+
+                        IPartnership mimicParents = mimicLookup.get(p.getParents());
+
+                        if (mimicParents == null) {
+                            mimic = mimicPerson(p, null);
+
+                            mimicLookup.put(p.getParents(), mimic.getParents());
+                            mimicPersonLookup.put(p.getParents().getMalePartner(), mimic.getParents().getMalePartner());
+                            mimicPersonLookup.put(p.getParents().getFemalePartner(), mimic.getParents().getFemalePartner());
+
+                        } else {
+                            mimic = mimicPerson(p, mimicParents);
+                        }
+
+                    } else {
+
+                        if(mimic.getParents() == null) {
+                            mimic.setParents(mimicParents(p));
+                        }
+
+                    }
+
+                    population.getLivingPeople().add(mimic);
+                    mimic.setImmigrationDate(p.getEmigrationDate());
+                    mimic.setAddress(p.getEmigrationDate(), newHouse);
+
+                }
+            }
+        }
+    }
+
+    private IPerson mimicPerson(IPerson person, IPartnership mimicedParents) {
+
+        boolean illegitimate = person.isIllegitimate();
+        LocalDate birthDate = randomDateInYear(person.getBirthDate());
+        IPartnership parents = mimicedParents;
+
+        if(parents == null) {
+            parents = mimicParents(person);
+        }
+
+        return makePerson(birthDate, parents, illegitimate, true);
+
+    }
+
+    private IPartnership mimicParents(IPerson person) {
+        IPartnership parents;
+        IPartnership parentsToMimic = person.getParents();
+        IPerson fatherToMimic = parentsToMimic.getMalePartner();
+        IPerson motherToMimic = parentsToMimic.getFemalePartner();
+
+        IPerson mimicedFather = makePerson(randomDateInYear(fatherToMimic.getBirthDate()), null, fatherToMimic.isIllegitimate(), true);
+        IPerson mimicedMother = makePerson(randomDateInYear(motherToMimic.getBirthDate()), null, motherToMimic.isIllegitimate(), true);
+
+        parents = new Partnership(mimicedFather, mimicedMother);
+        return parents;
+    }
+
+    private LocalDate randomDateInYear(LocalDate birthDate) {
+        int year = birthDate.getYear();
+        int day = randomNumberGenerator.nextInt(365);
+
+        return LocalDate.of(year, 1, 1).plus(day, ChronoUnit.DAYS);
+    }
+
+    private double getMigationRate(LocalDate currentTime) {
+        return 0.01;
     }
 
     private void cleanUpAfterUnsuccessfulAttempt() {
@@ -618,8 +751,6 @@ public class OBDModel {
                 } else {
                     newAddress = geography.getNearestEmptyAddressAtDistance(lastFemaleAddress.getArea().getCentriod(), moveDistance);
                 }
-
-                System.out.println("dist, " + GPSDistanceConverter.distance(lastMaleAddress.getArea().getCentriod(), lastFemaleAddress.getArea().getCentriod(), 'K'));
 
             }
         }
@@ -1014,9 +1145,13 @@ public class OBDModel {
     }
 
     private IPerson makePerson(final LocalDate birthDate, final IPartnership parents, final boolean illegitimate) {
+        return makePerson(birthDate, parents, illegitimate, false);
+    }
+
+    private IPerson makePerson(final LocalDate birthDate, final IPartnership parents, final boolean illegitimate, final boolean immigrant) {
 
         SexOption sex = getSex(population.getPopulationCounts(), desired, birthDate);
-        return new Person(sex, birthDate, parents, desired, illegitimate);
+        return new Person(sex, birthDate, parents, desired, illegitimate, immigrant);
     }
 
     private IPerson makePersonWithRandomBirthDate(final LocalDate currentDate, final IPartnership parents, final boolean illegitimate) {
