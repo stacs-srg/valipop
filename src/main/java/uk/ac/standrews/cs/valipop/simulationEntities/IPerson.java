@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -127,4 +128,12 @@ public interface IPerson extends Comparable<IPerson> {
     LocalDate getImmigrationDate();
 
     void setImmigrationDate(LocalDate arrivalDate);
+
+    LocalDate getLastMoveDate();
+
+    Collection<Address> getAllAddresses();
+
+    void rollbackLastMove();
+
+    LocalDate cancelLastMove();
 }

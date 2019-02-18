@@ -70,13 +70,13 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
             // for every person in population
             for (IPerson person : population.getPeople()) {
 
-                if (prevY.getYear() == y.getYear() && PopulationNavigation.aliveOnDate(person, prevDay)) {
+                if (prevY.getYear() == y.getYear() && PopulationNavigation.aliveOnDate(person, prevDay) && PopulationNavigation.presentOnDate(person, prevDay)) {
 
                     processPerson(person, y, SourceType.STAT);
                     processPerson(person, y, SourceType.SIM);
                 }
 
-                if (prevY.getYear() < y.getYear() && PopulationNavigation.aliveOnDate(person, prevDay)) {
+                if (prevY.getYear() < y.getYear() && PopulationNavigation.aliveOnDate(person, prevDay) && PopulationNavigation.presentOnDate(person, prevDay)) {
 
                     processPerson(person, y, SourceType.SIM);
                 }

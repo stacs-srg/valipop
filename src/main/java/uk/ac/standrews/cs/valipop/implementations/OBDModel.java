@@ -291,27 +291,44 @@ public class OBDModel {
         int numberToMigrate = Math.toIntExact(Math.round(population.getLivingPeople().getNumberOfPeople() * getMigationRate(currentTime)));
         Collection<List<IPerson>> peopleToMigrate = new ArrayList<>();
 
-        List<IPerson> livingPeople = new ArrayList(population.getLivingPeople().getPeople());
-
         // select people to move out of country
         while(peopleToMigrate.size() < numberToMigrate) {
 
+            List<IPerson> livingPeople = new ArrayList(population.getLivingPeople().getPeople());
+
             IPerson selected = livingPeople.get(randomNumberGenerator.nextInt(livingPeople.size()));
 
-            boolean withHousehold = randomNumberGenerator.nextBoolean();
-            LocalDate moveDate = currentTime.plus(randomNumberGenerator.nextInt(365), ChronoUnit.DAYS);
+            if(selected.getId() == 18273) {
+                System.out.println("18273 mig");
+            }
+
+            LocalDate moveDate;
+            LocalDate lastMoveDate = selected.getLastMoveDate();
+
+            if(lastMoveDate != null && lastMoveDate.isAfter(currentTime)) {
+                int excludedDays = currentTime.until(lastMoveDate).getDays();
+                moveDate = lastMoveDate.plus(randomNumberGenerator.nextInt(365 - excludedDays), ChronoUnit.DAYS);
+            } else {
+                moveDate = currentTime.plus(randomNumberGenerator.nextInt(365), ChronoUnit.DAYS);
+            }
 
             Address address = selected.getAddress(moveDate);
 
-            if(withHousehold) {
-                List<IPerson> house = address.getInhabitants();
+            boolean withHousehold = false;
+            if(address != null && address.getInhabitants().size() > 1) {
+                withHousehold = randomNumberGenerator.nextBoolean();
+            }
 
-                while(!house.isEmpty()) {
-                    IPerson p = house.get(0);
+            if(withHousehold) {
+                List<IPerson> house = new ArrayList<>();
+
+                while(!address.getInhabitants().isEmpty()) {
+                    IPerson p = address.getInhabitants().get(0);
                     population.getLivingPeople().remove(p);
                     population.getEmigrants().add(p);
-                    p.setEmigrationDate(moveDate);
+                    p.setEmigrationDate(moveDate.isBefore(p.getBirthDate()) ? p.getBirthDate() : moveDate);
                     address.removeInhabitant(p);
+                    house.add(p);
                 }
 
                 peopleToMigrate.add(house);
@@ -319,10 +336,38 @@ public class OBDModel {
             } else {
                 population.getLivingPeople().remove(selected);
                 population.getEmigrants().add(selected);
-                selected.setEmigrationDate(moveDate);
-                peopleToMigrate.add(new ArrayList<IPerson>(Collections.singleton(selected)));
+                selected.setEmigrationDate(moveDate.isBefore(selected.getBirthDate()) ? selected.getBirthDate() : moveDate);
+                if(address != null) address.removeInhabitant(selected);
+                List<IPerson> house = new ArrayList<>(Collections.singleton(selected));
+                peopleToMigrate.add(house);
             }
 
+            for(List<IPerson> household : peopleToMigrate) {
+                if(household.size() == 0) {
+                    System.out.println("Empty House? C");
+                }
+                for(IPerson p : household) {
+                    for(Address a : p .getAllAddresses()) {
+                        if(a.getInhabitants().contains(p)) {
+                            System.out.println("LEAVE HOME!");
+                        }
+                    }
+                }
+            }
+
+        }
+
+        for(List<IPerson> household : peopleToMigrate) {
+            if(household.size() == 0) {
+                System.out.println("Empty House? C");
+            }
+            for(IPerson p : household) {
+                for(Address a : p .getAllAddresses()) {
+                    if(a.getInhabitants().contains(p)) {
+                        System.out.println("LEAVE HOME!");
+                    }
+                }
+            }
         }
 
         // create immigrants by approximately mimicing the emigrants
@@ -355,8 +400,14 @@ public class OBDModel {
                             mimic = mimicPerson(p, null);
 
                             mimicLookup.put(p.getParents(), mimic.getParents());
-                            mimicPersonLookup.put(p.getParents().getMalePartner(), mimic.getParents().getMalePartner());
-                            mimicPersonLookup.put(p.getParents().getFemalePartner(), mimic.getParents().getFemalePartner());
+
+                            if(p.getParents() != null) {
+                                if(p.getParents().getMalePartner() != null)
+                                    mimicPersonLookup.put(p.getParents().getMalePartner(), mimic.getParents().getMalePartner());
+
+                                if(p.getParents().getFemalePartner() != null)
+                                    mimicPersonLookup.put(p.getParents().getFemalePartner(), mimic.getParents().getFemalePartner());
+                            }
 
                         } else {
                             mimic = mimicPerson(p, mimicParents);
@@ -371,8 +422,9 @@ public class OBDModel {
                     }
 
                     population.getLivingPeople().add(mimic);
-                    mimic.setImmigrationDate(p.getEmigrationDate());
-                    mimic.setAddress(p.getEmigrationDate(), newHouse);
+                    LocalDate arrivalDate = p.getEmigrationDate().isBefore(mimic.getBirthDate()) ? mimic.getBirthDate() : p.getEmigrationDate();
+                    mimic.setImmigrationDate(arrivalDate);
+                    mimic.setAddress(arrivalDate, newHouse);
 
                 }
             }
@@ -394,15 +446,19 @@ public class OBDModel {
     }
 
     private IPartnership mimicParents(IPerson person) {
-        IPartnership parents;
+        IPartnership parents = null;
         IPartnership parentsToMimic = person.getParents();
-        IPerson fatherToMimic = parentsToMimic.getMalePartner();
-        IPerson motherToMimic = parentsToMimic.getFemalePartner();
 
-        IPerson mimicedFather = makePerson(randomDateInYear(fatherToMimic.getBirthDate()), null, fatherToMimic.isIllegitimate(), true);
-        IPerson mimicedMother = makePerson(randomDateInYear(motherToMimic.getBirthDate()), null, motherToMimic.isIllegitimate(), true);
+        if(parentsToMimic != null) {
+            IPerson fatherToMimic = parentsToMimic.getMalePartner();
+            IPerson motherToMimic = parentsToMimic.getFemalePartner();
 
-        parents = new Partnership(mimicedFather, mimicedMother);
+            IPerson mimicedFather = makePerson(randomDateInYear(fatherToMimic.getBirthDate()), null, fatherToMimic.isIllegitimate(), true);
+            IPerson mimicedMother = makePerson(randomDateInYear(motherToMimic.getBirthDate()), null, motherToMimic.isIllegitimate(), true);
+
+            parents = new Partnership(mimicedFather, mimicedMother);
+        }
+
         return parents;
     }
 
@@ -500,11 +556,13 @@ public class OBDModel {
 
         // TODO why is this a loop? Seems to try to remove n people n times...
         for (int i = 0; i < numberOfMalesToRemove; i++) {
-            population.getLivingPeople().getMales().removeNPersons(numberOfMalesToRemove, currentTime, timeStep, true);
+            population.getLivingPeople().removeMales(numberOfMalesToRemove, currentTime, timeStep, true);
+//            population.getLivingPeople().getMales().removeNPersons(numberOfMalesToRemove, currentTime, timeStep, true);
         }
 
         for (int i = 0; i < numberOfFemalesToRemove; i++) {
-            population.getLivingPeople().getFemales().removeNPersons(numberOfFemalesToRemove, currentTime, timeStep, true);
+            population.getLivingPeople().removeFemales(numberOfFemalesToRemove, currentTime, timeStep, true);
+//            population.getLivingPeople().getFemales().removeNPersons(numberOfFemalesToRemove, currentTime, timeStep, true);
         }
     }
 
@@ -931,7 +989,10 @@ public class OBDModel {
             handleSeperationMoves(fatherLastParntership, father);
             handleAddressChanges(partnership);
         } else if(motherLastParntership == null) {
-            mother.setAddress(partnership.getPartnershipDate(), geography.getNearestEmptyAddressAtDistance(father.getAddress(LocalDate.MAX).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance()));
+            if(father.getAddress(LocalDate.MAX) != null)
+                mother.setAddress(partnership.getPartnershipDate(), geography.getNearestEmptyAddressAtDistance(father.getAddress(LocalDate.MAX).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance()));
+            else
+                mother.setAddress(partnership.getPartnershipDate(), geography.getRandomEmptyAddress());
         }
 
         for(IPerson child : partnership.getChildren()) {
