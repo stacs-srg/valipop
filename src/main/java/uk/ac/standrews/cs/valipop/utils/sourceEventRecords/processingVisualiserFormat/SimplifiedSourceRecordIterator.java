@@ -37,6 +37,7 @@ public class SimplifiedSourceRecordIterator {
 
         return () -> {
 
+
             Iterator<IPerson> person_iterator = population.getPeople().iterator();
 
             Mapper<IPerson, SimplifiedBirthSourceRecord> person_to_birth_record_mapper = person -> new SimplifiedBirthSourceRecord(person, population);

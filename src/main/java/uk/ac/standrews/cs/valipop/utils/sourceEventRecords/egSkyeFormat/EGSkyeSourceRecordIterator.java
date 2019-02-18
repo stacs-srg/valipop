@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.utilities.Mapper;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,9 +39,9 @@ public class EGSkyeSourceRecordIterator {
 
         return () -> {
 
-            Predicate<IPerson> check_in_sim_dates = person -> startDate.isBefore( person.getBirthDate());
+            Predicate<IPerson> check_present = person -> PopulationNavigation.presentOnDate(person, person.getBirthDate()) && startDate.isBefore( person.getBirthDate());
 
-            Iterator<IPerson> person_iterator = new FilteredIterator<>(population.getPeople().iterator(), check_in_sim_dates);
+            Iterator<IPerson> person_iterator = new FilteredIterator<>(population.getPeople().iterator(), check_present);
 
             Mapper<IPerson, EGSkyeBirthSourceRecord> person_to_birth_record_mapper = person -> new EGSkyeBirthSourceRecord(person, population);
 
@@ -52,9 +53,9 @@ public class EGSkyeSourceRecordIterator {
 
         return () -> {
 
-            Predicate<IPerson> check_dead_and_in_sim_dates = person -> person.getDeathDate() != null && startDate.isBefore( person.getDeathDate());
+            Predicate<IPerson> check_present = person -> PopulationNavigation.presentOnDate(person, person.getDeathDate()) && person.getDeathDate() != null && startDate.isBefore( person.getDeathDate());
 
-            Iterator<IPerson> dead_person_iterator = new FilteredIterator<>(population.getPeople().iterator(), check_dead_and_in_sim_dates);
+            Iterator<IPerson> dead_person_iterator = new FilteredIterator<>(population.getPeople().iterator(), check_present);
 
             Mapper<IPerson, EGSkyeDeathSourceRecord> person_to_death_record_mapper = person -> new EGSkyeDeathSourceRecord(person, population);
 
@@ -66,7 +67,9 @@ public class EGSkyeSourceRecordIterator {
 
         return () -> {
 
-            Iterator<IPartnership> partnership_iterator = population.getPartnerships().iterator();
+            Predicate<IPartnership> check_present = partnership -> PopulationNavigation.presentOnDate(partnership.getMalePartner(), partnership.getMarriageDate()) && PopulationNavigation.presentOnDate(partnership.getFemalePartner(), partnership.getMarriageDate()) && startDate.isBefore( partnership.getMarriageDate());
+
+            Iterator<IPartnership> partnership_iterator = new FilteredIterator<>(population.getPartnerships().iterator(), check_present);
 
             List<IPartnership> l = new ArrayList<>();
 

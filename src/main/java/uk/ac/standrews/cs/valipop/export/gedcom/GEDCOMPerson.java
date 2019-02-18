@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -308,6 +309,26 @@ public class GEDCOMPerson implements IPerson {
     @Override
     public void setImmigrationDate(LocalDate arrivalDate) {
 
+    }
+
+    @Override
+    public LocalDate getLastMoveDate() {
+        return null;
+    }
+
+    @Override
+    public Collection<Address> getAllAddresses() {
+        return null;
+    }
+
+    @Override
+    public void rollbackLastMove() {
+
+    }
+
+    @Override
+    public LocalDate cancelLastMove() {
+        return null;
     }
 
     @Override

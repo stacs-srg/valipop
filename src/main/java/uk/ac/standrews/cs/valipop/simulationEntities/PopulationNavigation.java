@@ -30,6 +30,19 @@ public class PopulationNavigation {
         return siblings;
     }
 
+    public static Collection<IPerson> imidiateFamilyOf(IPerson root) {
+
+        Collection<IPerson> family = new ArrayList<>();
+
+        family.addAll(siblingsOf(root));
+        family.addAll(siblingsOf(root));
+        family.addAll(getAllChildren(root));
+        family.addAll(ancestorsOf(root, 1));
+
+        return family;
+
+    }
+
     private static Collection<IPerson> siblingsOf(IPerson person, SexOption sex) {
 
         Collection<IPerson> siblings = siblingsOf(person);
@@ -343,5 +356,27 @@ public class PopulationNavigation {
         }
 
         return earliestDate;
+    }
+
+    public static boolean presentOnDate(IPerson person, LocalDate date) {
+
+        LocalDate immigrationDate = person.getImmigrationDate();
+        LocalDate emigrationDate = person.getEmigrationDate();
+
+        if(immigrationDate != null && immigrationDate.isAfter(date)) {
+            // date is before person arrived in country
+            return false;
+        } else {
+            // not immigrant or already arrived
+            if(emigrationDate != null && emigrationDate.isBefore(date)) {
+                // date is after person leaves country
+                // therefore not present on date
+                return false;
+            } else {
+                // never emigrates or not yet left
+                // therefore present on date
+                return true;
+            }
+        }
     }
 }

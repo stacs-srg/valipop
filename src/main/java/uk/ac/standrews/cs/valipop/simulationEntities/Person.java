@@ -16,16 +16,14 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities;
 
+import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -223,6 +221,9 @@ public class Person implements IPerson {
 
     @Override
     public void setEmigrationDate(LocalDate leavingDate) {
+        if(leavingDate == null)
+            System.out.print("");
+
         emigrationDate = leavingDate;
     }
 
@@ -234,6 +235,72 @@ public class Person implements IPerson {
     @Override
     public void setImmigrationDate(LocalDate arrivalDate) {
         immigrationDate = arrivalDate;
+    }
+
+    @Override
+    public LocalDate getLastMoveDate() {
+        try {
+            return addressHistory.lastKey();
+        } catch(NoSuchElementException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Collection<Address> getAllAddresses() {
+        return addressHistory.values();
+    }
+
+    @Override
+    public void rollbackLastMove() {
+
+        // remove from curent abode and remove from address history
+        cancelLastMove();
+
+        if(addressHistory.size() != 0) {
+            // check previous abode
+            Address previousAddress = addressHistory.lastEntry().getValue();
+
+            if (previousAddress.isInhabited()) {
+                // if by family
+                if (containsFamily(previousAddress, this)) {
+                    // move back in
+                    previousAddress.addInhabitant(this);
+                } else {
+                    // displace current residents at distance zero
+                    previousAddress.displaceInhabitants();
+                    previousAddress.addInhabitant(this);
+                }
+            } else {
+                // move back in
+                previousAddress.addInhabitant(this);
+            }
+        }
+
+    }
+
+    @Override
+    public LocalDate cancelLastMove() {
+
+        Map.Entry<LocalDate, Address> lastMove = addressHistory.lastEntry();
+
+        lastMove.getValue().removeInhabitant(this);
+        addressHistory.remove(addressHistory.lastKey());
+
+        return lastMove.getKey();
+    }
+
+    private boolean containsFamily(Address address, Person person) {
+
+        Collection<IPerson> family = PopulationNavigation.imidiateFamilyOf(person);
+
+        for(IPerson inhabitant : address.getInhabitants()) {
+            if(family.contains(inhabitant)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static int getNewId() {

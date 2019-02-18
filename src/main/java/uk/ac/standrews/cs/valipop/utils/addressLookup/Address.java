@@ -4,6 +4,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.Person;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class Address {
     }
 
     public void addInhabitant(IPerson person) {
+
         boolean wasInhabited = isInhabited();
 
         inhabitants.add(person);
@@ -85,6 +87,25 @@ public class Address {
 
         s.append("\"");
         return s.toString();
+
+    }
+
+    public void displaceInhabitants() {
+
+        Address moveTo;
+
+        // find new empty address
+        if(!area.isFull()) {
+            moveTo = area.getFreeAddress(geography);
+        } else {
+            moveTo = geography.getNearestEmptyAddress(area.getCentriod());
+        }
+
+        while(inhabitants.size() > 0) {
+            IPerson evictee = inhabitants.get(0);
+            LocalDate moveDate = evictee.cancelLastMove();
+            evictee.setAddress(moveDate, moveTo);
+        }
 
     }
 }
