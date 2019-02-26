@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 
@@ -232,7 +233,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
             if(parents.getChildren().size() == 0) {
                 cancelPartnership(parents);
 
-                parents.getFemalePartner().rollbackLastMove();
+
+                IPartnership mothersLastPartnership = PopulationNavigation.getLastPartnership(mother);
+
+                if(mothersLastPartnership == null || !mothersLastPartnership.isFinalised())
+                    parents.getFemalePartner().rollbackLastMove();
 
                 if(!person.isIllegitimate())
                     parents.getMalePartner().rollbackLastMove();
