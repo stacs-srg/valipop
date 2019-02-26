@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -148,7 +149,12 @@ public class MarriageSourceRecord extends SourceRecord {
         setGroomSurname(groom.getSurname());
         setGroomOccupation(groom.getOccupation());
         setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate(), marriage_date)));
-        setGroomAddress(groom.getAddress(marriage_date.minus(1, ChronoUnit.DAYS)).toString());
+
+        Address a = groom.getAddress(marriage_date.minus(1, ChronoUnit.DAYS));
+        if(a != null)
+            setGroomAddress(a.toString());
+        else
+            System.out.println();
 
         setBrideForename(bride.getFirstName());
         setBrideSurname(bride.getSurname());

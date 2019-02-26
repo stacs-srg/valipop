@@ -13,9 +13,12 @@ import java.util.List;
  */
 public class Address {
 
-    final long number;
-    final Area area;
-    final Geography geography;
+    long number;
+    Area area = null;
+    Geography geography;
+
+    boolean country = false;
+    String name = "";
 
     ArrayList<IPerson> inhabitants = new ArrayList<>();
 
@@ -25,23 +28,31 @@ public class Address {
         this.geography = geography;
     }
 
+    public Address(String country) {
+        this.country = true;
+        name = country;
+    }
+
     public void addInhabitant(IPerson person) {
 
         boolean wasInhabited = isInhabited();
 
         inhabitants.add(person);
 
-        if(!wasInhabited)
+        if (!wasInhabited && !country)
             geography.updated(this);
+
     }
 
     public boolean removeInhabitant(IPerson person) {
+
         boolean ret = inhabitants.remove(person);
 
-        if(!isInhabited())
+        if (!isInhabited() && !country)
             geography.updated(this);
 
         return ret;
+
     }
 
     public List<IPerson> getInhabitants() {
@@ -58,35 +69,45 @@ public class Address {
 
     public String toString() {
 
-        StringBuilder s = new StringBuilder();
+        if(!country) {
+            StringBuilder s = new StringBuilder();
 
-        s.append("\"");
-        s.append(number + " ");
-        s.append(area.toString());
-        s.append("\"");
+            s.append("\"");
+            s.append(number + " ");
+            s.append(area.toString());
+            s.append("\"");
 
-        return s.toString();
+            return s.toString();
+        } else {
+            return name;
+        }
 
     }
 
     public String toShortForm() {
 
-        StringBuilder s = new StringBuilder();
-        s.append("\"");
+        if(!country) {
 
-        int count = 2;
+            StringBuilder s = new StringBuilder();
+            s.append("\"");
 
-        if(area.getSuburb() != null && count-- > 0)
-            s.append(area.getSuburb() + " ");
+            int count = 2;
 
-        if(area.getTown() != null && count-- > 0)
-            s.append(area.getTown() + " ");
+            if (area.getSuburb() != null && count-- > 0)
+                s.append(area.getSuburb() + " ");
 
-        if(area.getCounty() != null && count > 0)
-            s.append(area.getCounty());
+            if (area.getTown() != null && count-- > 0)
+                s.append(area.getTown() + " ");
 
-        s.append("\"");
-        return s.toString();
+            if (area.getCounty() != null && count > 0)
+                s.append(area.getCounty());
+
+            s.append("\"");
+            return s.toString();
+
+        } else {
+            return name;
+        }
 
     }
 

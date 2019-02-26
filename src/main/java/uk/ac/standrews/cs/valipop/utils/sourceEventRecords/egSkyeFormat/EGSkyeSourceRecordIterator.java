@@ -53,7 +53,7 @@ public class EGSkyeSourceRecordIterator {
 
         return () -> {
 
-            Predicate<IPerson> check_present = person -> PopulationNavigation.presentOnDate(person, person.getDeathDate()) && person.getDeathDate() != null && startDate.isBefore( person.getDeathDate());
+            Predicate<IPerson> check_present = person -> person.getDeathDate() != null && PopulationNavigation.presentOnDate(person, person.getDeathDate()) && person.getDeathDate() != null && startDate.isBefore( person.getDeathDate());
 
             Iterator<IPerson> dead_person_iterator = new FilteredIterator<>(population.getPeople().iterator(), check_present);
 
@@ -67,7 +67,7 @@ public class EGSkyeSourceRecordIterator {
 
         return () -> {
 
-            Predicate<IPartnership> check_present = partnership -> PopulationNavigation.presentOnDate(partnership.getMalePartner(), partnership.getMarriageDate()) && PopulationNavigation.presentOnDate(partnership.getFemalePartner(), partnership.getMarriageDate()) && startDate.isBefore( partnership.getMarriageDate());
+            Predicate<IPartnership> check_present = partnership -> partnership.getMarriageDate() != null && PopulationNavigation.presentOnDate(partnership.getMalePartner(), partnership.getMarriageDate()) && PopulationNavigation.presentOnDate(partnership.getFemalePartner(), partnership.getMarriageDate()) && startDate.isBefore( partnership.getMarriageDate());
 
             Iterator<IPartnership> partnership_iterator = new FilteredIterator<>(population.getPartnerships().iterator(), check_present);
 
@@ -75,8 +75,7 @@ public class EGSkyeSourceRecordIterator {
 
             while(partnership_iterator.hasNext()) {
                 IPartnership p = partnership_iterator.next();
-                if(p.getMarriageDate() != null && startDate.isBefore( p.getMarriageDate()))
-                    l.add(p);
+                l.add(p);
             }
 
             Mapper<IPartnership, EGSkyeMarriageSourceRecord> person_to_marriage_record_mapper = partnership -> new EGSkyeMarriageSourceRecord(partnership, population);
