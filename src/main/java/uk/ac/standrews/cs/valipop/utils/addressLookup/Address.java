@@ -17,6 +17,10 @@ public class Address {
     Area area = null;
     Geography geography;
 
+    public boolean isCountry() {
+        return country;
+    }
+
     boolean country = false;
     String name = "";
 
@@ -72,10 +76,10 @@ public class Address {
         if(!country) {
             StringBuilder s = new StringBuilder();
 
-            s.append("\"");
+//            s.append("\"");
             s.append(number + " ");
             s.append(area.toString());
-            s.append("\"");
+//            s.append("\"");
 
             return s.toString();
         } else {
@@ -89,7 +93,7 @@ public class Address {
         if(!country) {
 
             StringBuilder s = new StringBuilder();
-            s.append("\"");
+//            s.append("\"");
 
             int count = 2;
 
@@ -102,7 +106,7 @@ public class Address {
             if (area.getCounty() != null && count > 0)
                 s.append(area.getCounty());
 
-            s.append("\"");
+//            s.append("\"");
             return s.toString();
 
         } else {
@@ -124,7 +128,7 @@ public class Address {
 
         while(inhabitants.size() > 0) {
             IPerson evictee = inhabitants.get(0);
-            LocalDate moveDate = evictee.cancelLastMove();
+            LocalDate moveDate = evictee.cancelLastMove(geography);
             evictee.setAddress(moveDate, moveTo);
         }
 

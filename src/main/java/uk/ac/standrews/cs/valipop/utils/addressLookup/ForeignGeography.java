@@ -1,7 +1,6 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 
 import java.util.ArrayList;
 
@@ -36,7 +35,7 @@ public class ForeignGeography {
             "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United States", "Uruguay", "Uzbekistan", "Vanuatu",
             "Vatican City", "Venezuela", "Vietnam", "Wales", "Yemen", "Zambia", "Zimbabwe"};
 
-    ArrayList<Address> forignAddresses;
+    ArrayList<Address> forignAddresses = new ArrayList<>();
     RandomGenerator randomNumberGenerator;
 
     public ForeignGeography(RandomGenerator randomNumberGenerator) {
@@ -49,7 +48,7 @@ public class ForeignGeography {
 
     }
 
-    public Address getCountry(IPerson person) {
+    public Address getCountry() {
         return forignAddresses.get(randomNumberGenerator.nextInt(forignAddresses.size()));
     }
 

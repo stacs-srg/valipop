@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -87,14 +88,14 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         partnershipIndex.put(partnership.getId(), partnership);
     }
 
-    public void removeMales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt) throws InsufficientNumberOfPeopleException {
+    public void removeMales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography) throws InsufficientNumberOfPeopleException {
 
-        removePeople(males, numberToRemove, firstDate, timePeriod, bestAttempt);
+        removePeople(males, numberToRemove, firstDate, timePeriod, bestAttempt, geography);
     }
 
-    public void removeFemales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt) throws InsufficientNumberOfPeopleException {
+    public void removeFemales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography) throws InsufficientNumberOfPeopleException {
 
-        removePeople(females, numberToRemove, firstDate, timePeriod, bestAttempt);
+        removePeople(females, numberToRemove, firstDate, timePeriod, bestAttempt, geography);
     }
 
     /*
@@ -206,11 +207,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         return description;
     }
 
-    private void removePeople(final PersonCollection collection, final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt) throws InsufficientNumberOfPeopleException {
+    private void removePeople(final PersonCollection collection, final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography) throws InsufficientNumberOfPeopleException {
 
         final Collection<IPerson> removed = collection.removeNPersons(numberToRemove, firstDate, timePeriod, true);
         for (IPerson person : removed) {
-            removeChildFromParentsPartnership(person);
+            removeChildFromParentsPartnership(person, geography);
 
             for(Address address : person.getAllAddresses()) {
                 address.removeInhabitant(person);
@@ -219,7 +220,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         }
     }
 
-    private void removeChildFromParentsPartnership(final IPerson person) {
+    private void removeChildFromParentsPartnership(final IPerson person, Geography geography) {
 
         final IPartnership parents = person.getParents();
 
@@ -228,7 +229,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
             remove(mother);
             parents.getChildren().remove(person);
 
-            person.cancelLastMove();
+            person.cancelLastMove(geography);
 
             if(parents.getChildren().size() == 0) {
                 cancelPartnership(parents);
@@ -237,10 +238,10 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
                 IPartnership mothersLastPartnership = PopulationNavigation.getLastPartnership(mother);
 
                 if(mothersLastPartnership == null || !mothersLastPartnership.isFinalised())
-                    parents.getFemalePartner().rollbackLastMove();
+                    parents.getFemalePartner().rollbackLastMove(geography);
 
                 if(!person.isIllegitimate())
-                    parents.getMalePartner().rollbackLastMove();
+                    parents.getMalePartner().rollbackLastMove(geography);
 
             }
 

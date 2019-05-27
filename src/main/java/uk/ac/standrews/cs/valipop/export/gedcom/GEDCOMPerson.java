@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -322,12 +323,22 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public void rollbackLastMove() {
+    public void rollbackLastMove(Geography geography) {
 
     }
 
     @Override
-    public LocalDate cancelLastMove() {
+    public LocalDate cancelLastMove(Geography geography) {
+        return null;
+    }
+
+    @Override
+    public boolean hasEmigrated() {
+        return false;
+    }
+
+    @Override
+    public IPartnership getLastPartnership() {
         return null;
     }
 

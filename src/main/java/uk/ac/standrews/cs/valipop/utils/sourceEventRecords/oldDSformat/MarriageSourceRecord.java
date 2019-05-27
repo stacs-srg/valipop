@@ -149,12 +149,7 @@ public class MarriageSourceRecord extends SourceRecord {
         setGroomSurname(groom.getSurname());
         setGroomOccupation(groom.getOccupation());
         setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate(), marriage_date)));
-
-        Address a = groom.getAddress(marriage_date.minus(1, ChronoUnit.DAYS));
-        if(a != null)
-            setGroomAddress(a.toString());
-        else
-            System.out.println();
+        setGroomAddress(groom.getAddress(marriage_date.minus(1, ChronoUnit.DAYS)).toString());
 
         setBrideForename(bride.getFirstName());
         setBrideSurname(bride.getSurname());

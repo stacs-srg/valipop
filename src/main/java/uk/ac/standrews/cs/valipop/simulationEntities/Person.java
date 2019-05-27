@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -57,6 +58,19 @@ public class Person implements IPerson {
     public Person(SexOption sex, LocalDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean illegitimate, boolean immigrant) {
 
         id = getNewId();
+
+//        if(id == 29142|| id == 32033) {
+//            System.out.println("");
+//        }
+
+        if(parents != null) {
+            IPerson f = parents.getFemalePartner();
+            IPerson m = parents.getMalePartner();
+
+            if ((f.hasEmigrated() && f.getEmigrationDate().isBefore(birthDate)) || (m.hasEmigrated() && m.getEmigrationDate().isBefore(birthDate))) {
+                System.out.print("");
+            }
+        }
 
         this.sex = sex;
         this.birthDate = birthDate;
@@ -252,16 +266,16 @@ public class Person implements IPerson {
     }
 
     @Override
-    public void rollbackLastMove() {
+    public void rollbackLastMove(Geography geography) {
 
         // remove from curent abode and remove from address history
-        cancelLastMove();
+        cancelLastMove(geography);
 
         if(addressHistory.size() != 0) {
             // check previous abode
             Address previousAddress = addressHistory.lastEntry().getValue();
 
-            if (previousAddress.isInhabited()) {
+            if (!previousAddress.isCountry() && previousAddress.isInhabited()) {
                 // if by family
                 if (containsFamily(previousAddress, this)) {
                     // move back in
@@ -271,6 +285,10 @@ public class Person implements IPerson {
                     previousAddress.displaceInhabitants();
                     previousAddress.addInhabitant(this);
                 }
+            } else if(previousAddress.isCountry()) {
+                // if cancelling last move results in the 'new last address' being forign country then we need to give the
+                // person (who is a  migrant) an address to live in from there emmigration date
+                setAddress(immigrationDate, geography.getRandomEmptyAddress());
             } else {
                 // move back in
                 previousAddress.addInhabitant(this);
@@ -280,14 +298,36 @@ public class Person implements IPerson {
     }
 
     @Override
-    public LocalDate cancelLastMove() {
+    public LocalDate cancelLastMove(Geography geography) {
 
         Map.Entry<LocalDate, Address> lastMove = addressHistory.lastEntry();
+        LocalDate moveDate = lastMove.getKey();
 
         lastMove.getValue().removeInhabitant(this);
         addressHistory.remove(addressHistory.lastKey());
 
-        return lastMove.getKey();
+//        if(addressHistory.lastEntry() != null && addressHistory.lastEntry().getValue().isCountry()) {
+//             if cancelling last move results in the 'new last address' being forign country then we need to give the
+//             person (who is a  migrant) an address to live in from there emmigration date
+//
+//            setAddress(immigrationDate, geography.getNearestEmptyAddress(lastMove.getValue().getArea().getCentriod()));
+//
+//        }
+
+        return moveDate;
+    }
+
+    @Override
+    public boolean hasEmigrated() {
+        return emigrationDate != null;
+    }
+
+    @Override
+    public IPartnership getLastPartnership() {
+        if(partnerships.size() != 0) {
+            return partnerships.get(partnerships.size() - 1);
+        }
+        return null;
     }
 
     private boolean containsFamily(Address address, Person person) {
@@ -314,8 +354,7 @@ public class Person implements IPerson {
     private String getForename(PopulationStatistics statistics, boolean immigrant) {
 
         if(immigrant) {
-            // TODO add in distributions
-            return "Born";
+            return statistics.getMigrantForenameDistribution(Year.of(birthDate.getYear()), getSex()).getSample();
         } else {
             return statistics.getForenameDistribution(Year.of(birthDate.getYear()), getSex()).getSample();
         }
@@ -328,8 +367,7 @@ public class Person implements IPerson {
         }
         else {
             if(immigrant) {
-                // TODO add in distributions
-                return "Abroad";
+                return statistics.getMigrantSurnameDistribution(Year.of(birthDate.getYear())).getSample();
             } else {
                 return statistics.getSurnameDistribution(Year.of(birthDate.getYear())).getSample();
             }
