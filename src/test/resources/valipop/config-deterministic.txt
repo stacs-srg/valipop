@@ -11,6 +11,7 @@ t0_pop_size = 50000
 set_up_br = 0.0133
 set_up_dr = 0.0122
 results_save_location = results
+geography_file_location = src/main/resources/valipop/geography-cache/scotland-residential-ways.ser
 min_birth_spacing = P147D
 birth_factor = 0.0
 death_factor = 0.0
