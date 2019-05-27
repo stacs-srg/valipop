@@ -11,6 +11,7 @@ t0_pop_size = 10000
 set_up_br = 0.0233
 set_up_dr = 0.0322
 results_save_location = src/main/resources/valipop/results
+geography_file_location = src/main/resources/valipop/geography-cache/scotland-residential-ways.ser
 output_record_format = NONE
 # these are things we'll be wanting to tune to minimise deviance
 min_birth_spacing = P147D

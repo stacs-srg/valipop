@@ -35,15 +35,17 @@ public class PersonTest {
         LocalDate y1 = LocalDate.of(1900, 1, 1);
         LocalDate y2 = LocalDate.of(1901, 1, 1);
         LocalDate y3 = LocalDate.of(1902, 1, 1);
+        LocalDate y4 = LocalDate.of(1901, 1, 2);
 
         LocalDate e = LocalDate.of(1901, 12, 31);
 
         assertEquals(0, ageOnDate(p1, y1));
 
         assertEquals(0, ageOnDate(p3, y2));
-        assertEquals(1, ageOnDate(p1, y2));
+        assertEquals(0, ageOnDate(p1, y2));
+        assertEquals(1, ageOnDate(p1, y4));
 
-        assertEquals(2, ageOnDate(p1, y3));
+        assertEquals(1, ageOnDate(p1, y3));
 
         Person p2 = new Person(SexOption.MALE, LocalDate.of(1900, 12, 31), null, ps, false);
 

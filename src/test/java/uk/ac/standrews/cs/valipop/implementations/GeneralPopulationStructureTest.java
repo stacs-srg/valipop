@@ -324,8 +324,8 @@ public abstract class GeneralPopulationStructureTest {
     }
 
     private static void assertDeathInfoConsistent(final IPerson person) {
-
         assertFalse(!deathDateIsDefined(person) && (deathPlaceIsDefined(person) || deathCauseIsDefined(person)));
+
     }
 
     private void assertAgeAtDeathNotTooHigh(final IPerson person) {

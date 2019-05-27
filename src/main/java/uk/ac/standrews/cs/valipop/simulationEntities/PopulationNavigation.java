@@ -242,7 +242,7 @@ public class PopulationNavigation {
 
         LocalDate birthDate = person.getBirthDate();
 
-        if (birthDate.getDayOfMonth() == 1 && birthDate.getMonthValue() == 1) {
+        if (birthDate.getDayOfMonth() == 1 && birthDate.getMonthValue() == 1 && currentDate.getDayOfMonth() == 1 && currentDate.getMonthValue() == 1) {
             int age = Period.between(person.getBirthDate(), currentDate).getYears() - 1;
             return age == -1 ? 0 : age;
         } else {

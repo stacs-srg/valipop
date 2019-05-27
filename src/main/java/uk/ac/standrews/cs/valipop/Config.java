@@ -95,6 +95,8 @@ public class Config {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS");
     private static Level logLevel = DEFAULT_LOG_LEVEL;
     private static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
+    private static final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
+
 
     private Path varPath;
     private Path varOrderedBirthPaths;
@@ -140,6 +142,7 @@ public class Config {
     private Period inputWidth = DEFAULT_INPUT_WIDTH;
 
     private Path resultsSavePath = DEFAULT_RESULTS_SAVE_PATH;
+    private Path geographyFilePath = DEFAULT_GEOGRAPHY_FILE_PATH;
 
     private int seed = DEFAULT_SEED;
 
@@ -529,6 +532,7 @@ public class Config {
 
         processors.put("var_data_files", value -> varPath = Paths.get(value));
         processors.put("results_save_location", value -> resultsSavePath = Paths.get(value));
+        processors.put("geography_file_location", value -> geographyFilePath = Paths.get(value));
 
         processors.put("simulation_time_step", value -> simulationTimeStep = Period.parse(value));
         processors.put("input_width", value -> inputWidth = Period.parse(value));
@@ -631,6 +635,14 @@ public class Config {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Path getGeographyFilePath() {
+        return geographyFilePath;
+    }
+
+    public void setGeographyFilePath(Path geographyFilePath) {
+        this.geographyFilePath = geographyFilePath;
     }
 
     private interface Processor {
