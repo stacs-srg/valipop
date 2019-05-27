@@ -103,6 +103,7 @@ public class FactorSearch {
                                         for (int n = 0; n < numberOfRunsPerSim; n++) {
 
                                             Config config = new Config(tS, t0, tE, size, dataFiles);
+                                            config.setGeographyFilePath(Paths.get("src/main/resources/valipop/geography-cache/scotland-residential-ways.ser"));
 
                                             config.setRunPurpose(runPurpose);
                                             config.setSetupBirthRate(set_up_br);
