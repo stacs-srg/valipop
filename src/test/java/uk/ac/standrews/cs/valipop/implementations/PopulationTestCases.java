@@ -59,6 +59,8 @@ class PopulationTestCases {
 
         Config config = new Config(tS, t0, tE, t0PopulationSize, varPath).setRunPurpose(runPurpose).setDeterministic(true);
 
+        config.setGeographyFilePath(Paths.get("src/main/resources/valipop/geography-cache/scotland-residential-ways.ser"));
+
         OBDModel model = new OBDModel(config);
         model.runSimulation();
 
