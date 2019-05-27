@@ -129,7 +129,11 @@ public interface EventRateTables {
 
     EnumeratedDistribution getForenameDistribution(Year year, SexOption sex);
 
+    EnumeratedDistribution getMigrantForenameDistribution(Year year, SexOption sex);
+
     EnumeratedDistribution getSurnameDistribution(Year year);
+
+    EnumeratedDistribution getMigrantSurnameDistribution(Year year);
 
     double getMaleProportionOfBirths(Year year);
 }

@@ -37,7 +37,7 @@ public class BalancedMigrationModel {
         foreignGeography = new ForeignGeography(randomNumberGenerator);
     }
 
-    public void performMigration(LocalDate currentTime) {
+    public void performMigration(LocalDate currentTime, OBDModel model) {
 
         int numberToMigrate = Math.toIntExact(Math.round(population.getLivingPeople().getNumberOfPeople() * getMigationRate(currentTime)));
         Collection<List<IPerson>> peopleToMigrate = new ArrayList<>();
@@ -48,7 +48,7 @@ public class BalancedMigrationModel {
             List<IPerson> livingPeople = new ArrayList(population.getLivingPeople().getPeople());
             IPerson selected = livingPeople.get(randomNumberGenerator.nextInt(livingPeople.size()));
 
-            LocalDate moveDate = getmoveDate(currentTime, selected);
+            LocalDate moveDate = getMoveDate(currentTime, selected);
             Address currentAbode = selected.getAddress(moveDate);
             boolean withHousehold = migrateWithHousehold(currentTime, selected, currentAbode);
 
@@ -58,19 +58,17 @@ public class BalancedMigrationModel {
                 Address emigrateTo = null;
 
                 while(!currentAbode.getInhabitants().isEmpty()) {
-                    emigrateTo = emigratePerson(moveDate, currentAbode, household, currentAbode.getInhabitants().get(0), emigrateTo);
+                    emigrateTo = emigratePerson(moveDate, currentAbode, household, currentAbode.getInhabitants().get(0), emigrateTo, model);
                 }
 
                 peopleToMigrate.add(household);
 
             } else {
-                emigratePerson(moveDate, currentAbode, household, selected);
+                emigratePerson(moveDate, currentAbode, household, selected, model);
                 peopleToMigrate.add(household);
             }
 
         }
-
-        // TODO add in emmigrate from address!
 
         // create immigrants by approximately mimicing the emigrants
         for(List<IPerson> household : peopleToMigrate) {
@@ -78,9 +76,9 @@ public class BalancedMigrationModel {
             if(household.size() == 1) {
                 IPerson toMimic = household.get(0);
                 IPerson mimic = mimicPerson(toMimic, null);
-                population.getLivingPeople().add(mimic);
-                mimic.setImmigrationDate(toMimic.getEmigrationDate());
-                mimic.setAddress(toMimic.getEmigrationDate(), geography.getRandomEmptyAddress());
+
+                immigratePerson(mimic, toMimic);
+
             } else {
 
                 Map<IPartnership, IPartnership> mimicLookup = new HashMap<>();
@@ -89,6 +87,7 @@ public class BalancedMigrationModel {
                 household.sort((o1, o2) -> o1.getBirthDate().isBefore(o2.getBirthDate()) ? -1 : 1);
 
                 Address newHouse = geography.getRandomEmptyAddress();
+                Address oldCountry = foreignGeography.getCountry();
 
                 for(IPerson p : household) {
 
@@ -126,6 +125,11 @@ public class BalancedMigrationModel {
                     population.getLivingPeople().add(mimic);
                     LocalDate arrivalDate = p.getEmigrationDate().isBefore(mimic.getBirthDate()) ? mimic.getBirthDate() : p.getEmigrationDate();
                     mimic.setImmigrationDate(arrivalDate);
+
+                    if(arrivalDate.isAfter(mimic.getBirthDate())) {
+                        mimic.setAddress(mimic.getBirthDate(), oldCountry);
+                    }
+
                     mimic.setAddress(arrivalDate, newHouse);
 
                 }
@@ -133,11 +137,25 @@ public class BalancedMigrationModel {
         }
     }
 
-    private Address emigratePerson(LocalDate moveDate, Address currentAbode, List<IPerson> emigratingGroup, IPerson person) {
-        return emigratePerson(moveDate, currentAbode, emigratingGroup, person, null);
+    private void immigratePerson(IPerson person, IPerson toMimic) {
+        population.getLivingPeople().add(person);
+        LocalDate arrivalDate = toMimic.getEmigrationDate().isBefore(person.getBirthDate()) ? person.getBirthDate() : toMimic.getEmigrationDate();
+        person.setImmigrationDate(arrivalDate);
+
+        if(arrivalDate.isAfter(person.getBirthDate())) {
+            person.setAddress(person.getBirthDate(), foreignGeography.getCountry());
+        }
+
+        person.setAddress(arrivalDate, geography.getRandomEmptyAddress());
+
     }
 
-    private Address emigratePerson(LocalDate moveDate, Address currentAbode, List<IPerson> emigratingGroup, IPerson person, Address emigrateTo) {
+    private Address emigratePerson(LocalDate moveDate, Address currentAbode, List<IPerson> emigratingGroup, IPerson person, OBDModel model) {
+        return emigratePerson(moveDate, currentAbode, emigratingGroup, person, null, model);
+    }
+
+    private Address emigratePerson(LocalDate moveDate, Address currentAbode, List<IPerson> emigratingGroup, IPerson person, Address emigrateTo, OBDModel model) {
+
         population.getLivingPeople().remove(person);
         population.getEmigrants().add(person);
         person.setEmigrationDate(moveDate.isBefore(person.getBirthDate()) ? person.getBirthDate() : moveDate);
@@ -145,13 +163,15 @@ public class BalancedMigrationModel {
         emigratingGroup.add(person);
 
         Address newCountry = emigrateTo;
-        if(newCountry == null) newCountry = foreignGeography.getCountry(person);
+        if(newCountry == null) newCountry = foreignGeography.getCountry();
 
         person.setAddress(moveDate, newCountry);
+//        model.handleSeperationMoves(person.getLastPartnership(), person);
+
         return newCountry;
     }
 
-    private LocalDate getmoveDate(LocalDate currentDate, IPerson person) {
+    private LocalDate getMoveDate(LocalDate currentDate, IPerson person) {
         LocalDate moveDate;
         LocalDate lastMoveDate = person.getLastMoveDate();
 
@@ -203,7 +223,7 @@ public class BalancedMigrationModel {
     }
 
     private double getMigationRate(LocalDate currentTime) {
-        return 0.01;
+        return 0.001;
     }
 
     private boolean migrateWithHousehold(LocalDate currentDate, IPerson person, Address address) {

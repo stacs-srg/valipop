@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities;
 
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -133,7 +134,11 @@ public interface IPerson extends Comparable<IPerson> {
 
     Collection<Address> getAllAddresses();
 
-    void rollbackLastMove();
+    void rollbackLastMove(Geography geography);
 
-    LocalDate cancelLastMove();
+    LocalDate cancelLastMove(Geography geography);
+
+    boolean hasEmigrated();
+
+    IPartnership getLastPartnership();
 }

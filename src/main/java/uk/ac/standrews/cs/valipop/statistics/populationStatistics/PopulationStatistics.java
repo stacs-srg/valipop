@@ -67,6 +67,10 @@ public class PopulationStatistics implements EventRateTables {
     private Map<Year, ValiPopEnumeratedDistribution> femaleForenames;
     private Map<Year, ValiPopEnumeratedDistribution> surnames;
 
+    private Map<Year, ValiPopEnumeratedDistribution> migrantMaleForenames;
+    private Map<Year, ValiPopEnumeratedDistribution> migrantFemaleForenames;
+    private Map<Year, ValiPopEnumeratedDistribution> migrantSurnames;
+
     private Map<Year, AgeDependantEnumeratedDistribution> maleDeathCauses;
     private Map<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses;
 
@@ -99,9 +103,12 @@ public class PopulationStatistics implements EventRateTables {
             Map<Year, ValiPopEnumeratedDistribution> maleForename = readInNamesDataFiles(config.getVarMaleForenamePath(), config);
             Map<Year, ValiPopEnumeratedDistribution> femaleForename = readInNamesDataFiles(config.getVarFemaleForenamePath(), config);
             Map<Year, ValiPopEnumeratedDistribution> surname = readInNamesDataFiles(config.getVarSurnamePath(), config);
+            Map<Year, ValiPopEnumeratedDistribution> migrantMaleForename = readInNamesDataFiles(config.getVarMigrantMaleForenamePath(), config);
+            Map<Year, ValiPopEnumeratedDistribution> migrantFemaleForename = readInNamesDataFiles(config.getVarMigrantFemaleForenamePath(), config);
+            Map<Year, ValiPopEnumeratedDistribution> migrantSurname = readInNamesDataFiles(config.getVarMigrantSurnamePath(), config);
 
             init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth,
-                    marriage, separation, sexRatioBirth, maleForename, femaleForename, surname, config.getMinBirthSpacing(),
+                    marriage, separation, sexRatioBirth, maleForename, femaleForename, surname, migrantMaleForename, migrantFemaleForename, migrantSurname, config.getMinBirthSpacing(),
                     config.getMinGestationPeriod());
 
         } catch (IOException | InvalidInputFileException | InconsistentWeightException e) {
@@ -127,19 +134,25 @@ public class PopulationStatistics implements EventRateTables {
                                 Map<Year, ValiPopEnumeratedDistribution> maleForenames,
                                 Map<Year, ValiPopEnumeratedDistribution> femaleForenames,
                                 Map<Year, ValiPopEnumeratedDistribution> surnames,
+                                Map<Year, ValiPopEnumeratedDistribution> migrantMaleForename,
+                                Map<Year, ValiPopEnumeratedDistribution> migrantFemaleForename,
+                                Map<Year, ValiPopEnumeratedDistribution> migrantSurname,
                                 Period minBirthSpacing,
                                 Period minGestationPeriod,
                                 RandomGenerator randomGenerator) {
 
         this.randomGenerator = randomGenerator;
-        init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth, marriage, separation, sexRatioBirths, maleForenames, femaleForenames, surnames, minBirthSpacing, minGestationPeriod);
+        init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth,
+                illegitimateBirth, marriage, separation, sexRatioBirths, maleForenames, femaleForenames, surnames,
+                migrantMaleForename, migrantFemaleForename, migrantSurname, minBirthSpacing, minGestationPeriod);
     }
 
     private void init(Map<Year, SelfCorrectingOneDimensionDataDistribution> maleDeath, Map<Year, AgeDependantEnumeratedDistribution> maleDeathCauses, Map<Year, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
                       Map<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses, Map<Year, SelfCorrectingProportionalDistribution> partnering, Map<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                       Map<Year, ProportionalDistribution> multipleBirth, Map<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth, Map<Year, SelfCorrectingOneDimensionDataDistribution> marriage,
                       Map<Year, SelfCorrectingTwoDimensionDataDistribution> separation, Map<Year, Double> sexRatioBirths, Map<Year, ValiPopEnumeratedDistribution> maleForename, Map<Year, ValiPopEnumeratedDistribution> femaleForename,
-                      Map<Year, ValiPopEnumeratedDistribution> surname, Period minBirthSpacing, Period minGestationPeriod) {
+                      Map<Year, ValiPopEnumeratedDistribution> surname, Map<Year, ValiPopEnumeratedDistribution> migrantMaleForenames,
+                      Map<Year, ValiPopEnumeratedDistribution> migrantFemaleForenames, Map<Year, ValiPopEnumeratedDistribution> migrantSurname, Period minBirthSpacing, Period minGestationPeriod) {
 
         this.maleDeath = maleDeath;
         this.maleDeathCauses = maleDeathCauses;
@@ -156,6 +169,10 @@ public class PopulationStatistics implements EventRateTables {
         this.maleForenames = maleForename;
         this.femaleForenames = femaleForename;
         this.surnames = surname;
+
+        this.migrantMaleForenames = migrantMaleForenames;
+        this.migrantFemaleForenames = migrantFemaleForenames;
+        this.migrantSurnames = migrantSurname;
 
         this.minBirthSpacing = minBirthSpacing;
         this.minGestationPeriod = minGestationPeriod;
@@ -313,8 +330,23 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
+    public EnumeratedDistribution getMigrantForenameDistribution(Year year, SexOption sex) {
+
+        if (sex == SexOption.MALE) {
+            return migrantMaleForenames.get(getNearestYearInMap(year, migrantMaleForenames));
+        } else {
+            return migrantFemaleForenames.get(getNearestYearInMap(year, migrantFemaleForenames));
+        }
+    }
+
+    @Override
     public EnumeratedDistribution getSurnameDistribution(Year year) {
         return surnames.get(getNearestYearInMap(year, surnames));
+    }
+
+    @Override
+    public EnumeratedDistribution getMigrantSurnameDistribution(Year year) {
+        return migrantSurnames.get(getNearestYearInMap(year, migrantSurnames));
     }
 
     @Override

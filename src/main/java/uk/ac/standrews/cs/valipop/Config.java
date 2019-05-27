@@ -86,6 +86,9 @@ public class Config {
     private static final String annotationsSubFile = "annotations";
     private static final String maleForenameSubFile = "male_forename";
     private static final String femaleForenameSubFile = "female_forename";
+    private static final String maleMigrantForenameSubFile = "migration/male_forename";
+    private static final String femaleMigrantForenameSubFile = "migration/female_forename";
+    private static final String migrantSurnameSubFile = "migration/surname";
     private static final String surnameSubFile = "surname";
 
     private static final Logger log = Logger.getLogger(Config.class.getName());
@@ -106,6 +109,9 @@ public class Config {
     private Path varBirthRatioPaths;
     private Path varMaleForenamePaths;
     private Path varFemaleForenamePaths;
+    private Path varMigrantMaleForenamePaths;
+    private Path varMigrantFemaleForenamePaths;
+    private Path varMigrantSurnamePaths;
     private Path varSurnamePaths;
     private Path varMarriagePaths;
 
@@ -259,8 +265,16 @@ public class Config {
         return getDirectories(varFemaleForenamePaths);
     }
 
+    public DirectoryStream<Path> getVarMigrantMaleForenamePath() { return getDirectories(varMigrantMaleForenamePaths); }
+
+    public DirectoryStream<Path> getVarMigrantFemaleForenamePath() { return getDirectories(varMigrantFemaleForenamePaths); }
+
     public DirectoryStream<Path> getVarSurnamePath() {
         return getDirectories(varSurnamePaths);
+    }
+
+    public DirectoryStream<Path> getVarMigrantSurnamePath() {
+        return getDirectories(varMigrantSurnamePaths);
     }
 
     public LocalDate getTS() {
@@ -452,7 +466,13 @@ public class Config {
         Path annotationsPath = varPath.resolve(annotationsSubFile);
         varMaleForenamePaths = annotationsPath.resolve(maleForenameSubFile);
         varFemaleForenamePaths = annotationsPath.resolve(femaleForenameSubFile);
+
+        varMigrantMaleForenamePaths = annotationsPath.resolve(maleMigrantForenameSubFile);
+        varMigrantFemaleForenamePaths = annotationsPath.resolve(femaleMigrantForenameSubFile);
+
         varSurnamePaths = annotationsPath.resolve(surnameSubFile);
+        varMigrantSurnamePaths = annotationsPath.resolve(migrantSurnameSubFile);
+
     }
 
     public static void mkBlankFile(Path blankFilePath) {

@@ -50,61 +50,6 @@ public class Geography {
 
     }
 
-//    public Address getEmptyAddress(Coords coords) {
-//        return getEmptyAddress(coords.lat, coords.lon);
-//    }
-
-//    public Address getEmptyAddress(double lat, double lon) {
-//
-//        // check is coords in area lookup
-//        Map<Double, Area> index = areaLookup.get(round(lat));
-//        if(index != null) {
-//            Area area = index.get(round(lon));
-//            if(area != null)
-//                return area.getFreeAddress(this);
-//        }
-//
-//        Area area = residentialGeography.checkCache(lat, lon);
-//
-//        if(area == null) {
-//            return null;
-//        } else {
-//            addToLookup(area, lat, lon);
-//            return area.getFreeAddress(this);
-//        }
-//    }
-
-//    public Address getEmptyAddressAtDistance(Coords origin, double distance) {
-//
-//        // convert distance in to lat/long degrees
-//
-//        int stepBy = 6;
-//
-//        int angle = rand.nextInt(360);
-//        int count = 0;
-//
-//        Address address = null;
-//
-//        do {
-//            Coords candidateLocation = GPSDistanceConverter.move(origin, distance, angle);
-//
-//            address = getEmptyAddress(candidateLocation);
-//
-//            count++;
-//
-//            if((angle += stepBy) >= 360) {
-//               angle -= 360;
-//            }
-//
-//        } while (address == null && count < 360 / stepBy);
-//
-//        if(address == null) {
-//            address = getNearestEmptyAddressAtDistance(origin, distance);
-//        }
-//
-//        return address;
-//    }
-
     public Address getNearestEmptyAddressAtDistance(Coords origin, double distance) {
 
         int angle = rand.nextInt(360);

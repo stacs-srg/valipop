@@ -151,7 +151,7 @@ public class Area implements Serializable {
 
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append("\"");
+//        s.append("\"");
 
         if(!isErroneous()) {
 
@@ -179,7 +179,7 @@ public class Area implements Serializable {
             s.append("ERRONEOUS AREA - " + error);
         }
 
-        s.append("\"");
+//        s.append("\"");
         return s.toString();
     }
 
