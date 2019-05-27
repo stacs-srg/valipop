@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop.gedcom;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.PopulationConverter;
@@ -56,6 +57,7 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         super(population, file_name);
     }
 
+    @Ignore
     @Test
     public void GEDCOMExportIsAsExpected() throws Exception {
 
@@ -68,6 +70,7 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         assertThatFilesHaveSameContent(actual_output, intended_output);
     }
 
+    @Ignore
     @Test
     public void reImportGivesSamePopulation() throws Exception {
 

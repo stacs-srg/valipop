@@ -147,12 +147,14 @@ public class Person implements IPerson {
 
     @Override
     public String getBirthPlace() {
-        return getAddress(birthDate).toString();
+        Address a =  getAddress(birthDate);
+        return a == null ? "" : a.toString();
     }
 
     @Override
     public String getDeathPlace() {
-        return getAddress(deathDate).toString();
+        Address a =  getAddress(deathDate);
+        return a == null ? "" : a.toString();
     }
 
     // TODO Implement occupation assignment
@@ -198,6 +200,9 @@ public class Person implements IPerson {
 
     @Override
     public Address getAddress(LocalDate onDate) {
+        if(onDate == null)
+            return null;
+
         Map.Entry<LocalDate, Address> entry = addressHistory.floorEntry(onDate);
         if(entry != null)
             return entry.getValue();

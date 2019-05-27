@@ -1,5 +1,7 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import java.util.*;
 
 /**
@@ -14,12 +16,12 @@ public class Geography {
     private final int HISTORY_PRECISION = 4;
     private final double PRECISION_ADJUSTMENT = Math.pow(10, HISTORY_PRECISION);
 
-    // TODO extract to config random
-    private Random rand = new Random();
+    private RandomGenerator rand;
 
 
-    public Geography(Cache residentialGeography) {
+    public Geography(Cache residentialGeography, RandomGenerator random) {
         this.residentialGeography = residentialGeography;
+        this.rand = random;
 
         for(Area area : this.residentialGeography.getAllAreas()) {
             if(!area.isFull())

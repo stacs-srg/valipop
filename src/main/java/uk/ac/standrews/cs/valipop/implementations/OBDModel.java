@@ -73,16 +73,16 @@ public class OBDModel {
     }
 
     // TODO do this in a graceful way...
-    String pathToCache = "src/main/resources/valipop/geography-cache/scotland-residential-ways.ser";
-    Geography geography;
+//    String pathToCache = "src/main/resources/valipop/geography-cache/scotland-residential-ways.ser";
+    private final Geography geography;
 
-    {
-        try {
-            geography = new Geography(Cache.readFromFile(pathToCache));
-        } catch (IOException | ClassNotFoundException e) {
-            System.exit(1);
-        }
-    }
+//    {
+//        try {
+//            geography = new Geography(Cache.readFromFile(pathToCache));
+//        } catch (IOException | ClassNotFoundException e) {
+//            System.exit(1);
+//        }
+//    }
 
     // TODO ends
 
@@ -124,6 +124,12 @@ public class OBDModel {
             partnersToSeparate = new HashSet<>();
             population = new Population(config);
             desired = new PopulationStatistics(config);
+
+            try {
+                geography = new Geography(Cache.readFromFile(config.getGeographyFilePath().toString()), desired.getRandomGenerator());
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Error initialising geography", e);
+            }
 
             birthOrders = new PrintWriter(config.getBirthOrdersPath().toFile());
             randomNumberGenerator = desired.getRandomGenerator();
