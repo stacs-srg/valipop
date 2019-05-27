@@ -28,6 +28,8 @@ public class MinimaSearchTest {
                 0,
                 Paths.get("src/test/resources/valipop/test-pop")).setDeterministic( true);
 
+        config.setGeographyFilePath(Paths.get("src/main/resources/valipop/geography-cache/scotland-residential-ways.ser"));
+
         model = new OBDModel(config);
     }
 
