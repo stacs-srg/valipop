@@ -38,7 +38,7 @@ public class DistributionGenerator {
         Path outToDir = Paths.get(args[3]);
 
         String filterOn = args[4];
-        String filterValue= args[5];
+        String filterValue = args[5];
         String groupY = args[6];
         String groupX = args[7];
 
