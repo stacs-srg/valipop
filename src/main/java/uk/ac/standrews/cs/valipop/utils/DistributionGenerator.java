@@ -22,7 +22,16 @@ public class DistributionGenerator {
 
     public static void main(String[] args) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
-        int forYear = Integer.valueOf(args[0]);
+        for(String s: args)
+            System.out.println(s);
+
+        int forYear;
+        try {
+            forYear = Integer.valueOf(args[0]);
+        } catch (NumberFormatException e) {
+
+            throw new RuntimeException(args[0], e);
+        }
         String sourcePopulation = args[1];
         String sourceOrganisation = args[2];
 
@@ -35,8 +44,13 @@ public class DistributionGenerator {
         LinkedList<String> lines = new LinkedList<>();
         String labels = "";
 
-        for(int x = 7; x < args.length; x++) {
-            ArrayList<String> fileLines = new ArrayList<>(InputFileReader.getAllLines(Paths.get(args[x])));
+        String[] files = {"src/main/resources/valipop/inputs/icem-scot-1861/icem-scot-1861-counties-A-D.csv",
+                "src/main/resources/valipop/inputs/icem-scot-1861/icem-scot-1861-counties-R-W.csv",
+                "src/main/resources/valipop/inputs/icem-scot-1861/icem-scot-1861-counties-E-K.csv",
+                "src/main/resources/valipop/inputs/icem-scot-1861/icem-scot-1861-counties-L-P.csv"};
+
+        for(String file : files) {
+            ArrayList<String> fileLines = new ArrayList<>(InputFileReader.getAllLines(Paths.get(file)));
 
             if (lines.isEmpty()) {
                 labels = fileLines.get(0);
