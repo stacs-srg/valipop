@@ -11,6 +11,7 @@ import uk.ac.standrews.cs.valipop.utils.addressLookup.ForeignGeography;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -39,7 +40,8 @@ public class BalancedMigrationModel {
 
     public void performMigration(LocalDate currentTime, OBDModel model) {
 
-        int numberToMigrate = Math.toIntExact(Math.round(population.getLivingPeople().getNumberOfPeople() * getMigationRate(currentTime)));
+        int numberToMigrate = Math.toIntExact(Math.round(population.getLivingPeople().getNumberOfPeople()
+                * model.getDesiredPopulationStatistics().getMigrationRateDistribution(Year.of(currentTime.getYear())).getRate(0)));
         Collection<List<IPerson>> peopleToMigrate = new ArrayList<>();
 
         // select people to move out of country
@@ -220,10 +222,6 @@ public class BalancedMigrationModel {
         int day = randomNumberGenerator.nextInt(365);
 
         return LocalDate.of(year, 1, 1).plus(day, ChronoUnit.DAYS);
-    }
-
-    private double getMigationRate(LocalDate currentTime) {
-        return 0.001;
     }
 
     private boolean migrateWithHousehold(LocalDate currentDate, IPerson person, Address address) {
