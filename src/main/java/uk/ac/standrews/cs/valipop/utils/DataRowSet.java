@@ -27,7 +27,7 @@ public class DataRowSet {
             if(dr.getValue(filterOn).equals(filterValue)) {
                 if(!dr.getValue("Age").equals(".")) {
                     if (Double.valueOf(dr.getValue("Age")) < 1.0) {
-                        dr.setValue("Age", "0");
+                        dr.setValue("Age", String.valueOf(Double.valueOf(Math.floor(Double.valueOf(dr.getValue("Age")))).intValue()));
                     }
                     dataset.add(dr);
                 }
