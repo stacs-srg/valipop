@@ -30,4 +30,7 @@ public class DataRow {
         return values.keySet();
     }
 
+    public void setValue(String label, String value) {
+        values.put(label, value);
+    }
 }
