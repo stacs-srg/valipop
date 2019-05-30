@@ -20,10 +20,12 @@ public class DataRowSet {
         dataset.add(initialRow);
     }
 
-    public DataRowSet(String labels, List<String> lines) throws InvalidInputFileException {
+    public DataRowSet(String labels, List<String> lines, String filterOn, String filterValue) throws InvalidInputFileException {
 
         for(String line : lines) {
-            dataset.add(new DataRow(labels, line));
+            DataRow dr = new DataRow(labels, line);
+            if(dr.getValue(filterOn).equals(filterValue))
+                dataset.add(dr);
         }
 
         this.labels = dataset.iterator().next().getLabels();
