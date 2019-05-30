@@ -25,10 +25,12 @@ public class DataRowSet {
         for(String line : lines) {
             DataRow dr = new DataRow(labels, line);
             if(dr.getValue(filterOn).equals(filterValue)) {
-                if(Double.valueOf(dr.getValue("Age")) < 1.0) {
-                    dr.setValue("Age", "0");
+                if(!dr.getValue("Age").equals(".")) {
+                    if (Double.valueOf(dr.getValue("Age")) < 1.0) {
+                        dr.setValue("Age", "0");
+                    }
+                    dataset.add(dr);
                 }
-                dataset.add(dr);
             }
         }
 
