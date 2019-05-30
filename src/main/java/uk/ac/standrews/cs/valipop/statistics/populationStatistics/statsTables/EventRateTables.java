@@ -135,5 +135,7 @@ public interface EventRateTables {
 
     EnumeratedDistribution getMigrantSurnameDistribution(Year year);
 
+    SelfCorrectingOneDimensionDataDistribution getMigrationRateDistribution(Year year);
+
     double getMaleProportionOfBirths(Year year);
 }

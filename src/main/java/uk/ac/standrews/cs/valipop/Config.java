@@ -89,6 +89,7 @@ public class Config {
     private static final String maleMigrantForenameSubFile = "migration/male_forename";
     private static final String femaleMigrantForenameSubFile = "migration/female_forename";
     private static final String migrantSurnameSubFile = "migration/surname";
+    private static final String migrationRateSubFile = "migration/rate";
     private static final String surnameSubFile = "surname";
 
     private static final Logger log = Logger.getLogger(Config.class.getName());
@@ -114,6 +115,7 @@ public class Config {
     private Path varMigrantMaleForenamePaths;
     private Path varMigrantFemaleForenamePaths;
     private Path varMigrantSurnamePaths;
+    private Path varMigrationRatePaths;
     private Path varSurnamePaths;
     private Path varMarriagePaths;
 
@@ -278,6 +280,10 @@ public class Config {
 
     public DirectoryStream<Path> getVarMigrantSurnamePath() {
         return getDirectories(varMigrantSurnamePaths);
+    }
+
+    public DirectoryStream<Path> getVarMigrationRatePath() {
+        return getDirectories(varMigrationRatePaths);
     }
 
     public LocalDate getTS() {
@@ -475,6 +481,10 @@ public class Config {
 
         varSurnamePaths = annotationsPath.resolve(surnameSubFile);
         varMigrantSurnamePaths = annotationsPath.resolve(migrantSurnameSubFile);
+
+        varMigrationRatePaths = annotationsPath.resolve(migrationRateSubFile);
+
+
 
     }
 

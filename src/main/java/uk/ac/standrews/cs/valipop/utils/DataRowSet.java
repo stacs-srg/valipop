@@ -34,7 +34,7 @@ public class DataRowSet {
         return labels.contains(label);
     }
 
-    public Collection<DataRowSet> splitOn(String splitOn) {
+    public Map<String, DataRowSet> splitOn(String splitOn) {
 
         Map<String, DataRowSet> tables = new HashMap<>();
 
@@ -47,7 +47,7 @@ public class DataRowSet {
             }
         }
 
-        return tables.values();
+        return tables;
     }
 
     public Map<IntegerRange, LabelledValueSet<String, Double>> to2DTableOfProportions(String xLabelOfInt, String yLabelOfString) {

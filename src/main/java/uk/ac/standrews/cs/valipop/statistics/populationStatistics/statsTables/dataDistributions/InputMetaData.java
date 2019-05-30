@@ -57,4 +57,5 @@ public interface InputMetaData<Label> {
     Collection<Label> getLabels();
 
 //    boolean outputToFile(Path directory);
+
 }
