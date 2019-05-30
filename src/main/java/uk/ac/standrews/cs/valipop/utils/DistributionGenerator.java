@@ -38,8 +38,9 @@ public class DistributionGenerator {
         Path outToDir = Paths.get(args[3]);
 
         String filterOn = args[4];
-        String groupY = args[5];
-        String groupX = args[6];
+        String filterValue= args[5];
+        String groupY = args[6];
+        String groupX = args[7];
 
         LinkedList<String> lines = new LinkedList<>();
         String labels = "";
@@ -62,21 +63,21 @@ public class DistributionGenerator {
             }
         }
 
-        DataRowSet dataset = new DataRowSet(labels, lines);
+        DataRowSet dataset = new DataRowSet(labels, lines, filterOn, filterValue);
 
         if(dataset.hasLabel(filterOn) && dataset.hasLabel(groupY) && dataset.hasLabel(groupX)) {
 
-            Map<String, DataRowSet> tables = dataset.splitOn(filterOn);
+//            Map<String, DataRowSet> tables = dataset.splitOn(filterOn);
 
-            for(String splitOn : tables.keySet()) {
+//            for(String splitOn : tables.keySet()) {
 
-                DataRowSet table = tables.get(splitOn);
+//                DataRowSet table = tables.get(splitOn);
 
-                Map<IntegerRange, LabelledValueSet<String, Double>> dist = table.to2DTableOfProportions(groupX, groupY);
+                Map<IntegerRange, LabelledValueSet<String, Double>> dist = dataset.to2DTableOfProportions(groupX, groupY);
 
-                PrintStream ps = FileUtil.createPrintStreamToFile(Paths.get(outToDir.toString(), splitOn, ".txt").toString());
+                PrintStream ps = FileUtil.createPrintStreamToFile(Paths.get(outToDir.toString(), filterValue, ".txt").toString());
 
-                boolean first = false;
+                boolean first = true;
 
                 for(IntegerRange iR: dist.keySet()) {
 
@@ -105,9 +106,9 @@ public class DistributionGenerator {
             }
 
 
-        } else {
-            throw new InvalidInputFileException("group or/and filter variables do not appear in file labels");
-        }
+//        } else {
+//            throw new InvalidInputFileException("group or/and filter variables do not appear in file labels");
+//        }
 
 
 
