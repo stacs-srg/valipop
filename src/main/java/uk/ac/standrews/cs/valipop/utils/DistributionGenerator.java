@@ -50,6 +50,8 @@ public class DistributionGenerator {
                 "src/main/resources/valipop/inputs/icem-scot-1861/icem-scot-1861-counties-E-K.csv",
                 "src/main/resources/valipop/inputs/icem-scot-1861/icem-scot-1861-counties-L-P.csv"};
 
+//        String[] files = {"src/main/resources/valipop/inputs/icem-scot-1861/test.csv"};
+
         for(String file : files) {
             ArrayList<String> fileLines = new ArrayList<>(InputFileReader.getAllLines(Paths.get(file)));
 
@@ -73,34 +75,40 @@ public class DistributionGenerator {
 
 //                DataRowSet table = tables.get(splitOn);
 
-                Map<IntegerRange, LabelledValueSet<String, Double>> dist = dataset.to2DTableOfProportions(groupX, groupY);
+                TreeMap<IntegerRange, LabelledValueSet<String, Double>> dist = dataset.to2DTableOfProportions(groupX, groupY);
 
-                PrintStream ps = FileUtil.createPrintStreamToFile(Paths.get(outToDir.toString(), filterValue, ".txt").toString());
+                PrintStream ps = FileUtil.createPrintStreamToFile(Paths.get(outToDir.toString(), filterValue + ".txt").toString());
 
                 boolean first = true;
+
+                ps.println("YEAR\t" + forYear);
+                ps.println("POPULATION\t" + sourcePopulation);
+                ps.println("SOURCE\t" + sourceOrganisation);
+                ps.println("VAR\tOCCUPATION");
+                ps.println("FORM\tPROPORTION");
+                ps.println("SEX\t" + filterValue);
 
                 for(IntegerRange iR: dist.keySet()) {
 
                     LabelledValueSet<String, Double> row = dist.get(iR);
 
                     if(first) {
+                        ps.print("LABELS\t");
                         for(String s : row.getLabels())
                             ps.print(s + "\t");
                         ps.println();
+                        ps.println("DATA");
                         first = false;
                     }
-
                     ps.print(iR + " \t");
 
                     for(String s : row.getLabels())
-                        ps.print(row.getValue(labels) + "\t");
+                        ps.print(row.getValue(s) + "\t");
 
                     ps.println();
                 }
 
-                //TODO need male/female in here
-                AgeDependantEnumeratedDistribution aDEDist = new AgeDependantEnumeratedDistribution(Year.of(forYear), sourcePopulation, sourceOrganisation, dist, new JDKRandomGenerator());
-            //    aDEDist.outputToFile(outToDir);
+
 
 
             }

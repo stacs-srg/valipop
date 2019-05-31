@@ -56,27 +56,27 @@ public class DataRowSet {
         return tables;
     }
 
-    public Map<IntegerRange, LabelledValueSet<String, Double>> to2DTableOfProportions(String xLabelOfInt, String yLabelOfString) {
+    public TreeMap<IntegerRange, LabelledValueSet<String, Double>> to2DTableOfProportions(String xLabelOfInt, String yLabelOfString) {
 
-        Map<IntegerRange, Map<String, Integer>> counts = new HashMap<>();
-        Map<IntegerRange, Integer> totalCountsUnderX = new HashMap<>();
+        Map<String, Map<String, Integer>> counts = new HashMap<>();
+        Map<String, Integer> totalCountsUnderX = new HashMap<>();
 
         for(DataRow row : dataset) {
 
-            IntegerRange iR = new IntegerRange(row.getValue(xLabelOfInt));
+            String iR = new IntegerRange(row.getValue(xLabelOfInt)).toString();
 
             if(totalCountsUnderX.containsKey(iR)) {
                 Map<String, Integer> map = counts.get(iR);
 
-                if(map.containsKey(yLabelOfString)) {
-                    map.put(yLabelOfString, map.get(yLabelOfString) + 1);
+                if(map.containsKey(row.getValue(yLabelOfString))) {
+                    map.put(row.getValue(yLabelOfString), map.get(row.getValue(yLabelOfString)) + 1);
                 } else {
-                    map.put(yLabelOfString, 1);
+                    map.put(row.getValue(yLabelOfString), 1);
                 }
 
             } else {
                 Map<String, Integer> map = new HashMap<>();
-                map.put(yLabelOfString, 1);
+                map.put(row.getValue(yLabelOfString), 1);
                 counts.put(iR, map);
             }
 
@@ -87,9 +87,10 @@ public class DataRowSet {
 
         }
 
-        Map<IntegerRange, LabelledValueSet<String, Double>> proportions = new HashMap<>();
+        TreeMap<IntegerRange, LabelledValueSet<String, Double>> proportions = new TreeMap<>();
+        Set<String> labels = new TreeSet<>();
 
-        for(IntegerRange iR : counts.keySet()) {
+        for(String iR : counts.keySet()) {
             int totalCount = totalCountsUnderX.get(iR);
             Map<String, Integer> countMap = counts.get(iR);
 
@@ -97,11 +98,23 @@ public class DataRowSet {
 
             for(String label : countMap.keySet()) {
                 proportionMap.add(label, countMap.get(label) / (double) totalCount);
+                labels.add(label);
             }
 
-            proportions.put(iR, proportionMap);
+            proportions.put(new IntegerRange(iR), proportionMap);
         }
 
+        for(IntegerRange iR : proportions.keySet()) {
+
+            LabelledValueSet<String, Double> proportionMap = proportions.get(iR);
+
+            for(String label : labels) {
+                if(!proportionMap.getLabels().contains(label)) {
+                    proportionMap.add(label, 0.0);
+                }
+            }
+
+        }
         return proportions;
 
     }
