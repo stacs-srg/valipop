@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
@@ -23,9 +24,9 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.Stat
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface SelfCorrection<Type, Raw> {
+public interface SelfCorrection<Type, Raw, X, Y> {
 
-    DeterminedCount determineCount(StatsKey key, Config config);
+    DeterminedCount determineCount(StatsKey<X, Y> key, Config config, RandomGenerator random);
 
-    void returnAchievedCount(DeterminedCount<Type, Raw> achievedCount);
+    void returnAchievedCount(DeterminedCount<Type, Raw, X, Y> achievedCount, RandomGenerator random);
 }

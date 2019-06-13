@@ -16,9 +16,11 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
@@ -53,13 +55,15 @@ public class PopulationStatisticsTest {
         int numberOfChildren = determinedCount.getDeterminedCount();
 
         MultipleBirthStatsKey keyM = new MultipleBirthStatsKey(age, numberOfChildren, consideredTimePeriod, currentDate);
-        MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps.getDeterminedCount(keyM, null);
+        MultipleDeterminedCountByIR mDC = (MultipleDeterminedCountByIR) ps.getDeterminedCount(keyM, null);
 
         mDC.getDeterminedCount().getSumOfValues();
     }
 
     @Test
     public void testB() {
+
+        RandomGenerator random = new JDKRandomGenerator();
 
         Config config = new Config(Paths.get("src/test/resources/valipop/config-ps.txt"));
         PopulationStatistics ps = new PopulationStatistics(config);
@@ -74,13 +78,13 @@ public class PopulationStatisticsTest {
 
         double numberOfChildren = sDC.getRawUncorrectedCount();
 
-        MultipleDeterminedCount mDc = (MultipleDeterminedCount) ps.getDeterminedCount(new MultipleBirthStatsKey(age, numberOfChildren, consideredTimePeriod, currentDate), null);
+        MultipleDeterminedCountByIR mDc = (MultipleDeterminedCountByIR) ps.getDeterminedCount(new MultipleBirthStatsKey(age, numberOfChildren, consideredTimePeriod, currentDate), null);
 
         double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
 
-        MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps.getDeterminedCount(new MultipleBirthStatsKey(age, numberOfMothers, Period.ofYears(1), currentDate), null);
+        MultipleDeterminedCountByIR mDC = (MultipleDeterminedCountByIR) ps.getDeterminedCount(new MultipleBirthStatsKey(age, numberOfMothers, Period.ofYears(1), currentDate), null);
 
-        new IntegerRangeToDoubleSet(mDC.getRawUncorrectedCount()).productOfLabelsAndValues().getSumOfValues();
+        new IntegerRangeToDoubleSet(mDC.getRawUncorrectedCount(), random).productOfLabelsAndValues().getSumOfValues();
 
         mDC.getRawUncorrectedCount();
     }

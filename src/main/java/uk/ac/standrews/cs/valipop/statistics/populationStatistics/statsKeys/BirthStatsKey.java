@@ -23,7 +23,7 @@ import java.time.Year;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class BirthStatsKey extends StatsKey {
+public class BirthStatsKey extends StatsKey<Integer, Integer> {
 
     public BirthStatsKey(Integer age, Integer order, double forNPeople, Period consideredTimePeriod, LocalDate currentDate) {
         super(order, age, forNPeople, consideredTimePeriod, Year.of(currentDate.getYear()));

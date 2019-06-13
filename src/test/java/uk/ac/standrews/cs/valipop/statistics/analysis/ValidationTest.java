@@ -31,7 +31,7 @@ public class ValidationTest {
 
         OBDModel model = new OBDModel( config);
         model.runSimulation();
-        model.analyseAndOutputPopulation(false);
+        model.analyseAndOutputPopulation(false, 5);
 
         int value = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
 

@@ -16,6 +16,9 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 
+import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
+
 import java.util.*;
 
 /**
@@ -24,20 +27,20 @@ import java.util.*;
 public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<IntegerRange, Integer>
         implements OperableLabelledValueSet<IntegerRange, Integer>, Cloneable {
 
-    public IntegerRangeToIntegerSet(List<IntegerRange> labels, List<Integer> values) {
-        super(labels, values);
+    public IntegerRangeToIntegerSet(List<IntegerRange> labels, List<Integer> values, RandomGenerator random) {
+        super(labels, values, random);
     }
 
-    public IntegerRangeToIntegerSet(Set<IntegerRange> labels, Integer initValue) {
-        super(labels, initValue);
+    public IntegerRangeToIntegerSet(Set<IntegerRange> labels, Integer initValue, RandomGenerator random) {
+        super(labels, initValue, random);
     }
 
-    public IntegerRangeToIntegerSet(LabelledValueSet<IntegerRange, Integer> lvs) {
-        super(lvs.getMap());
+    public IntegerRangeToIntegerSet(LabelledValueSet<IntegerRange, Integer> lvs, RandomGenerator random) {
+        super(lvs.getMap(), random);
     }
 
-    public IntegerRangeToIntegerSet() {
-        super();
+    public IntegerRangeToIntegerSet(RandomGenerator random) {
+        super(random);
     }
 
     @Override
@@ -47,7 +50,7 @@ public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<In
 
     @Override
     public LabelledValueSet<IntegerRange, Integer> constructSelf(List<IntegerRange> labels, List<Integer> values) {
-        return new IntegerRangeToIntegerSet(labels, values);
+        return new IntegerRangeToIntegerSet(labels, values, random);
     }
 
     @Override
@@ -57,7 +60,7 @@ public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<In
 
     @Override
     public LabelledValueSet<IntegerRange, Double> constructDoubleEquivalent(List<IntegerRange> labels, List<Double> values) {
-        return new IntegerRangeToDoubleSet(labels, values);
+        return new IntegerRangeToDoubleSet(labels, values, random);
     }
 
     @Override
@@ -77,12 +80,12 @@ public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<In
 
     @Override
     public OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSum() {
-        return new IntegerRangeToIntegerSet(clone());
+        return new IntegerRangeToIntegerSet(clone(), random);
     }
 
     @Override
     public OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues() {
-        return new IntegerRangeToIntegerSet(clone());
+        return new IntegerRangeToIntegerSet(clone(), random);
     }
 
     @Override
@@ -96,7 +99,7 @@ public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<In
             products.add(range.getValue() * getValue(range));
         }
 
-        return new IntegerRangeToIntegerSet(labels, products);
+        return new IntegerRangeToIntegerSet(labels, products, random);
     }
 
     @Override
@@ -110,7 +113,7 @@ public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<In
             products.add(getValue(range) / (double) range.getValue());
         }
 
-        return new IntegerRangeToDoubleSet(labels, products);
+        return new IntegerRangeToDoubleSet(labels, products, random);
     }
 
     @Override
@@ -196,6 +199,20 @@ public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<In
         return largestLabel;
     }
 
+    @Override
+    public IntegerRange getRandomLabelOfNonZeroValue() {
+
+        ArrayList<IntegerRange> keys = new ArrayList<>(map.keySet());
+        CollectionUtils.shuffle(keys, random);
+
+        for (IntegerRange range : keys) {
+            if (get(range) != 0)
+                return range;
+        }
+
+        throw new NoSuchElementException("No non zero values in set - set size: " + getLabels().size());
+    }
+
     @SuppressWarnings("Duplicates")
     @Override
     public IntegerRange smallestLabel() {
@@ -228,6 +245,6 @@ public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<In
             }
         }
 
-        return new IntegerRangeToDoubleSet(labels, newValues);
+        return new IntegerRangeToDoubleSet(labels, newValues, random);
     }
 }

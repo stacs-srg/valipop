@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.*;
 
@@ -59,10 +60,6 @@ public class Person implements IPerson {
 
         id = getNewId();
 
-//        if(id == 29142|| id == 32033) {
-//            System.out.println("");
-//        }
-
         if(parents != null) {
             IPerson f = parents.getFemalePartner();
             IPerson m = parents.getMalePartner();
@@ -81,6 +78,8 @@ public class Person implements IPerson {
         surname = getSurname(statistics, immigrant);
 
         representation = firstName + " " + surname + " (" + id + ") " + birthDate;
+
+        setOccupation(birthDate, statistics.getOccupation(Year.of(birthDate.getYear()), sex).getDistributionForAge(0).getSample());
 
     }
 
@@ -157,13 +156,18 @@ public class Person implements IPerson {
         return a == null ? "" : a.toString();
     }
 
-    // TODO Implement occupation assignment
+    private TreeMap<LocalDate, String> occupationHistory = new TreeMap<>();
+
     @Override
-    public String getOccupation() {
-        return null;
+    public String getOccupation(LocalDate onDate) {
+        return occupationHistory.floorEntry(onDate).getValue();
     }
 
-    // TODO Implement death causes - does occupation, date, gender, location, etc. influence this?
+    @Override
+    public void setOccupation(LocalDate onDate, String occupation) {
+        occupationHistory.put(onDate, occupation);
+    }
+
     @Override
     public String getDeathCause() {
         return deathCause;
@@ -240,9 +244,6 @@ public class Person implements IPerson {
 
     @Override
     public void setEmigrationDate(LocalDate leavingDate) {
-        if(leavingDate == null)
-            System.out.print("");
-
         emigrationDate = leavingDate;
     }
 
@@ -333,6 +334,11 @@ public class Person implements IPerson {
             return partnerships.get(partnerships.size() - 1);
         }
         return null;
+    }
+
+    @Override
+    public String getLastOccupation() {
+        return getOccupation(LocalDate.MAX);
     }
 
     private boolean containsFamily(Address address, Person person) {

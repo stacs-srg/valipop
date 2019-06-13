@@ -1,5 +1,11 @@
 package uk.ac.standrews.cs.valipop.utils;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,11 +32,55 @@ public class DataRow {
         return values.get(label);
     }
 
+    public LocalDate getLocalDate(String label) throws InvalidInputFileException {
+        try {
+            return LocalDate.parse(getValue(label));
+        } catch(DateTimeParseException e) {
+            throw new InvalidInputFileException("Date incorrectly formatted");
+        }
+    }
+
+    public int getInt(String label) throws InvalidInputFileException {
+        try {
+            return Integer.valueOf(getValue(label));
+        } catch (NumberFormatException e) {
+            throw new InvalidInputFileException("Integer not an integer");
+        }
+    }
+
+    public Path getPath(String label) throws InvalidInputFileException {
+        try {
+            return Paths.get(getValue(label));
+        } catch (InvalidPathException e) {
+            throw new InvalidInputFileException("Path not a Path");
+        }
+    }
+
     public Set<String> getLabels() {
         return values.keySet();
     }
 
     public void setValue(String label, String value) {
         values.put(label, value);
+    }
+
+    public double getDouble(String label) throws InvalidInputFileException {
+        try {
+            return Double.valueOf(getValue(label));
+        } catch (NumberFormatException e) {
+            throw new InvalidInputFileException("Double not a Double");
+        }
+    }
+
+    public Period getPeriod(String label) throws InvalidInputFileException {
+        try {
+            return Period.parse(getValue(label));
+        } catch (DateTimeParseException e) {
+            throw new InvalidInputFileException("Period not a Period");
+        }
+    }
+
+    public boolean getBoolean(String label) {
+        return Boolean.valueOf(getValue(label));
     }
 }

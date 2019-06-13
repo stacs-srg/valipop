@@ -27,7 +27,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MarriageStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
@@ -72,20 +72,7 @@ public class OBDModel {
         log.setLevel(Level.INFO);
     }
 
-    // TODO do this in a graceful way...
-//    String pathToCache = "src/main/resources/valipop/geography-cache/scotland-residential-ways.ser";
     private final Geography geography;
-
-//    {
-//        try {
-//            geography = new Geography(Cache.readFromFile(pathToCache));
-//        } catch (IOException | ClassNotFoundException e) {
-//            System.exit(1);
-//        }
-//    }
-
-    // TODO ends
-
     private static final int BIRTH_ADJUSTMENT_BOUND = 1000000;
 
     private final Config config;
@@ -113,6 +100,7 @@ public class OBDModel {
 
     private final PersonFactory personFactory;
     private final BalancedMigrationModel migrationModel;
+    private final OccupationChangeModel occupationChangeModel;
 
     public OBDModel(final Config config) {
 
@@ -142,6 +130,7 @@ public class OBDModel {
 
             personFactory = new PersonFactory(population, desired, config.getSimulationTimeStep(), randomNumberGenerator);
             migrationModel = new BalancedMigrationModel(population, randomNumberGenerator, geography, personFactory, desired);
+            occupationChangeModel = new OccupationChangeModel(population, desired, config);
 
             log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
@@ -178,11 +167,11 @@ public class OBDModel {
         return summary;
     }
 
-    public void analyseAndOutputPopulation(final boolean outputSummaryRow) {
+    public void analyseAndOutputPopulation(final boolean outputSummaryRow, final int stepBack) {
 
         if (config.getOutputTables()) {
             // the 5 year step back is to combat the kick in the early stages of the CTtables for STAT - run in RStudio with no cleaning to see - potential bug in CTtree?
-            ContingencyTableFactory.generateContingencyTables(population.getPeople(), desired, config, summary, 5);
+            ContingencyTableFactory.generateContingencyTables(population.getPeople(), desired, config, summary);
         }
 
         final ProgramTimer recordTimer = new ProgramTimer();
@@ -237,7 +226,7 @@ public class OBDModel {
         logResults();
         recordSummary();
 
-        birthOrders.close(); // TODO why closed here when might be used in another simulation attempt? - TD: Sepertate file should be produced for each simulation
+        birthOrders.close(); // QUESTION why closed here when might be used in another simulation attempt? - TD: Sepertate file should be produced for each simulation
     }
 
     private void finalisePartnerships() {
@@ -285,6 +274,7 @@ public class OBDModel {
         logEntry.append(numberDying).append("\t");
 
         migrationModel.performMigration(currentTime, this);
+        occupationChangeModel.performOccupationChange(currentTime);
 
         if (simulationStarted()) {
             population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
@@ -544,11 +534,11 @@ public class OBDModel {
 
         final PartneringStatsKey key = new PartneringStatsKey(age, mothersNeedingPartners.size(), config.getSimulationTimeStep(), currentTime);
 
-        final MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desired.getDeterminedCount(key, config);
+        final MultipleDeterminedCountByIR determinedCounts = (MultipleDeterminedCountByIR) desired.getDeterminedCount(key, config);
 
-        final OperableLabelledValueSet<IntegerRange, Integer> partnerCounts = new IntegerRangeToIntegerSet(determinedCounts.getDeterminedCount());
-        final LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
-        final LabelledValueSet<IntegerRange, Integer> availableMen = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
+        final OperableLabelledValueSet<IntegerRange, Integer> partnerCounts = new IntegerRangeToIntegerSet(determinedCounts.getDeterminedCount(), randomNumberGenerator);
+        final LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0, randomNumberGenerator);
+        final LabelledValueSet<IntegerRange, Integer> availableMen = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0, randomNumberGenerator);
 
         final Map<IntegerRange, LinkedList<IPerson>> menMap = getAllMen(partnerCounts, availableMen);
         final OperableLabelledValueSet<IntegerRange, Integer> redistributedPartnerCounts = redistributePartnerCounts(partnerCounts, availableMen);
@@ -566,9 +556,9 @@ public class OBDModel {
         return cancelledChildren;
     }
 
-    private Map<Integer, List<IPerson>> getPartneredFemalesByChildren(final MultipleDeterminedCount determinedCounts, final List<ProposedPartnership> proposedPartnerships) {
+    private Map<Integer, List<IPerson>> getPartneredFemalesByChildren(final MultipleDeterminedCountByIR determinedCounts, final List<ProposedPartnership> proposedPartnerships) {
 
-        final LabelledValueSet<IntegerRange, Integer> returnPartnerCounts = determinedCounts.getZeroedCountsTemplate();
+        final LabelledValueSet<IntegerRange, Integer> returnPartnerCounts = determinedCounts.getZeroedCountsTemplate(randomNumberGenerator);
         final Map<Integer, List<IPerson>> partneredFemalesByChildren = new HashMap<>();
 
         for (final ProposedPartnership partnership : proposedPartnerships) {
@@ -757,7 +747,7 @@ public class OBDModel {
 
         // this section redistributes the determined partner counts based on the number of available men in each age range
         do {
-            shortfallCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesSubtractValues(availableMen));
+            shortfallCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesSubtractValues(availableMen), randomNumberGenerator);
 
             final LabelledValueSet<IntegerRange, Double> zeroedNegShortfalls = shortfallCounts.zeroNegativeValues();
             final int numberOfRangesWithSpareMen = shortfallCounts.countNegativeValues();
@@ -765,7 +755,7 @@ public class OBDModel {
             final double shortfallToShare = totalShortfall / (double) numberOfRangesWithSpareMen;
 
             partnerCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesAddNWhereCorrespondingLabelNegativeInLVS(shortfallToShare, shortfallCounts)
-                    .valuesSubtractValues(zeroedNegShortfalls)).controlledRoundingMaintainingSum();
+                    .valuesSubtractValues(zeroedNegShortfalls), randomNumberGenerator).controlledRoundingMaintainingSum();
 
         } while (shortfallCounts.countPositiveValues() != 0);
 
@@ -1062,9 +1052,9 @@ public class OBDModel {
 
         final int ageOfMothers = ageOnDate(females.get(0), currentTime);
 
-        final MultipleDeterminedCount requiredBirths = calcNumberOfPregnanciesOfMultipleBirth(ageOfMothers, numberOfChildren);
-        final LabelledValueSet<IntegerRange, Integer> motherCountsByMaternities = new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0);
-        final OperableLabelledValueSet<IntegerRange, Integer> remainingMothersToFind = new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().clone());
+        final MultipleDeterminedCountByIR requiredBirths = calcNumberOfPregnanciesOfMultipleBirth(ageOfMothers, numberOfChildren);
+        final LabelledValueSet<IntegerRange, Integer> motherCountsByMaternities = new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0, randomNumberGenerator);
+        final OperableLabelledValueSet<IntegerRange, Integer> remainingMothersToFind = new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().clone(), randomNumberGenerator);
 
         try {
             return getMothersNeedingPartners(females, numberOfChildren, requiredBirths, motherCountsByMaternities, remainingMothersToFind);
@@ -1074,7 +1064,7 @@ public class OBDModel {
         }
     }
 
-    private MothersNeedingPartners getMothersNeedingPartners(final List<IPerson> females, final int numberOfChildren, final MultipleDeterminedCount requiredBirths,
+    private MothersNeedingPartners getMothersNeedingPartners(final List<IPerson> females, final int numberOfChildren, final MultipleDeterminedCountByIR requiredBirths,
                                                              final LabelledValueSet<IntegerRange, Integer> motherCountsByMaternities, final OperableLabelledValueSet<IntegerRange, Integer> remainingMothersToFind) {
 
         CollectionUtils.shuffle(females, desired.getRandomGenerator());
@@ -1141,10 +1131,10 @@ public class OBDModel {
         }
     }
 
-    private MultipleDeterminedCount calcNumberOfPregnanciesOfMultipleBirth(final int ageOfMothers, final int numberOfChildren) {
+    private MultipleDeterminedCountByIR calcNumberOfPregnanciesOfMultipleBirth(final int ageOfMothers, final int numberOfChildren) {
 
         final MultipleBirthStatsKey key = new MultipleBirthStatsKey(ageOfMothers, numberOfChildren, config.getSimulationTimeStep(), currentTime);
-        return (MultipleDeterminedCount) desired.getDeterminedCount(key, config);
+        return (MultipleDeterminedCountByIR) desired.getDeterminedCount(key, config);
     }
 
     private boolean eligible(final IPerson potentialMother) {
@@ -1439,6 +1429,18 @@ public class OBDModel {
 
         partnersToSeparate.add(partnership.getFemalePartner());
         partnersToSeparate.add(partnership.getMalePartner());
+    }
+
+    public void recordOutOfMemorySummary() {
+        summary.setCompleted(false);
+        summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());
+        summary.setEligibilityChecks(population.getPopulationCounts().getEligibilityChecks());
+        summary.setFailedEligibilityChecks(population.getPopulationCounts().getFailedEligibilityChecks());
+        summary.setTotalPop(population.getPeople(config.getT0(), config.getTE(), MAX_AGE).getNumberOfPeople());
+        summary.setSimRunTime(simTimer.getRunTimeSeconds());
+        summary.setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
+        MemoryUsageAnalysis.reset();
+
     }
 
     private void recordSummary() {

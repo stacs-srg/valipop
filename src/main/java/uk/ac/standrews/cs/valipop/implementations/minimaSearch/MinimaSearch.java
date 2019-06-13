@@ -113,7 +113,7 @@ public class MinimaSearch {
 
                     try {
                         model.runSimulation();
-                        model.analyseAndOutputPopulation(false);
+                        model.analyseAndOutputPopulation(false, 5);
 
                         int maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
                         double v = getV(minimiseFor, maxBirthingAge, controlBy, config);

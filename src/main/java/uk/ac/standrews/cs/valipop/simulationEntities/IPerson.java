@@ -88,7 +88,7 @@ public interface IPerson extends Comparable<IPerson> {
      * Gets the person's occupation, or null if not recorded.
      * @return the person's occupation
      */
-    String getOccupation();
+    String getOccupation(LocalDate onDate);
 
     /**
      * Gets the cause of the person's death, or null if not recorded.
@@ -141,4 +141,8 @@ public interface IPerson extends Comparable<IPerson> {
     boolean hasEmigrated();
 
     IPartnership getLastPartnership();
+
+    String getLastOccupation();
+
+    void setOccupation(LocalDate onDate, String occupation);
 }

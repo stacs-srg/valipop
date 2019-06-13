@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.*;
 
@@ -62,6 +63,8 @@ public class Config {
     private static final Period DEFAULT_MIN_GESTATION_PERIOD = Period.ofDays(147);
 
     private static final int DEFAULT_SEED = 56854687;
+    private static final int DEFAULT_CT_TREE_STEPBACK = 5;
+    private static final double DEFAULT_CT_TREE_PRECISION = 1E-66;
 
     private static final RecordFormat DEFAULT_OUTPUT_RECORD_FORMAT = RecordFormat.NONE;
     private static final String DEFAULT_RUN_PURPOSE = "default";
@@ -91,6 +94,13 @@ public class Config {
     private static final String migrantSurnameSubFile = "migration/surname";
     private static final String migrationRateSubFile = "migration/rate";
     private static final String surnameSubFile = "surname";
+    private static final String geographySubFile = "geography";
+
+    private static final String maleOccupationSubFile = "occupation/male";
+    private static final String femaleOccupationSubFile = "occupation/female";
+
+    private static final String maleOccupationChangeSubFile = "occupation/change/male";
+    private static final String femaleOccupationChangeSubFile = "occupation/change/female";
 
     private static final Logger log = Logger.getLogger(Config.class.getName());
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS");
@@ -118,6 +128,13 @@ public class Config {
     private Path varMigrationRatePaths;
     private Path varSurnamePaths;
     private Path varMarriagePaths;
+    private Path varGeographyPaths;
+
+    private Path varMaleOccupationPaths;
+    private Path varFemaleOccupationPaths;
+
+    private Path varMaleOccupationChangePaths;
+    private Path varFemaleOccupationChangePaths;
 
     private Path globalSummaryPath;
     private Path resultsSummaryPath;
@@ -148,6 +165,13 @@ public class Config {
 
     private int seed = DEFAULT_SEED;
 
+    public int getCtTreeStepback() {
+        return ctTreeStepback;
+    }
+
+    private int ctTreeStepback = DEFAULT_CT_TREE_STEPBACK;
+    private double ctTreePrecision = DEFAULT_CT_TREE_STEPBACK;
+
     private String runPurpose = DEFAULT_RUN_PURPOSE;
     private RecordFormat outputRecordFormat = DEFAULT_OUTPUT_RECORD_FORMAT;
 
@@ -175,6 +199,7 @@ public class Config {
         setUpFileStructure();
         configureLogging();
         initialiseVarPaths();
+        setGeographyPath();
     }
 
     public Config(Path pathToConfigFile) {
@@ -184,6 +209,15 @@ public class Config {
         setUpFileStructure();
         configureLogging();
         initialiseVarPaths();
+        setGeographyPath();
+    }
+
+    private void setGeographyPath() {
+        Iterator<Path> it = getVarGeographyPaths().iterator();
+        setGeographyFilePath(it.next());
+
+        if(it.hasNext())
+            throw new UnsupportedOperationException("Only one geography file is supported for each simulation - please remove surplus files from input dat structure or write more code...");
     }
 
     public Path getDetailedResultsPath() {
@@ -230,6 +264,22 @@ public class Config {
         return getDirectories(varMaleDeathCausesPaths);
     }
 
+    public DirectoryStream<Path> getVarMaleOccupationPaths() {
+        return getDirectories(varMaleOccupationPaths);
+    }
+
+    public DirectoryStream<Path> getVarMaleOccupationChangePaths() {
+        return getDirectories(varMaleOccupationChangePaths);
+    }
+
+    public DirectoryStream<Path> getVarFemaleOccupationPaths() {
+        return getDirectories(varFemaleOccupationPaths);
+    }
+
+    public DirectoryStream<Path> getVarFemaleOccupationChangePaths() {
+        return getDirectories(varFemaleOccupationChangePaths);
+    }
+
     public DirectoryStream<Path> getVarFemaleLifetablePaths() {
         return getDirectories(varFemaleLifetablePaths);
     }
@@ -248,6 +298,10 @@ public class Config {
 
     public DirectoryStream<Path> getVarMarriagePaths() {
         return getDirectories(varMarriagePaths);
+    }
+
+    public DirectoryStream<Path> getVarGeographyPaths() {
+        return getDirectories(varGeographyPaths);
     }
 
     public DirectoryStream<Path> getVarPartneringPaths() {
@@ -426,6 +480,12 @@ public class Config {
         return this;
     }
 
+    public Config setMinGestationPeriod(Period minBirthSpacing) {
+
+        this.minGestationPeriod = minGestationPeriod;
+        return this;
+    }
+
     public Config setBirthFactor(double birthFactor) {
 
         this.birthFactor = birthFactor;
@@ -482,9 +542,15 @@ public class Config {
         varSurnamePaths = annotationsPath.resolve(surnameSubFile);
         varMigrantSurnamePaths = annotationsPath.resolve(migrantSurnameSubFile);
 
+        varGeographyPaths = annotationsPath.resolve(geographySubFile);
+
         varMigrationRatePaths = annotationsPath.resolve(migrationRateSubFile);
 
+        varMaleOccupationPaths = annotationsPath.resolve(maleOccupationSubFile);
+        varFemaleOccupationPaths = annotationsPath.resolve(femaleOccupationSubFile);
 
+        varMaleOccupationChangePaths = annotationsPath.resolve(maleOccupationChangeSubFile);
+        varFemaleOccupationChangePaths = annotationsPath.resolve(femaleOccupationChangeSubFile);
 
     }
 
@@ -542,7 +608,7 @@ public class Config {
 
         processors.put("var_data_files", value -> varPath = Paths.get(value));
         processors.put("results_save_location", value -> resultsSavePath = Paths.get(value));
-        processors.put("geography_file_location", value -> geographyFilePath = Paths.get(value));
+//        processors.put("geography_file_location", value -> geographyFilePath = Paths.get(value));
 
         processors.put("simulation_time_step", value -> simulationTimeStep = Period.parse(value));
         processors.put("input_width", value -> inputWidth = Period.parse(value));
@@ -555,6 +621,8 @@ public class Config {
 
         processors.put("t0_pop_size", value -> t0PopulationSize = Integer.parseInt(value));
         processors.put("seed", value -> seed = Integer.parseInt(value));
+        processors.put("ct_tree_stepback", value -> ctTreeStepback = Integer.parseInt(value));
+        processors.put("ct_tree_precision", value -> ctTreePrecision = Double.parseDouble(value));
 
         processors.put("set_up_br", value -> setUpBR = Double.parseDouble(value));
         processors.put("set_up_dr", value -> setUpDR = Double.parseDouble(value));
@@ -653,6 +721,34 @@ public class Config {
 
     public void setGeographyFilePath(Path geographyFilePath) {
         this.geographyFilePath = geographyFilePath;
+    }
+
+    public void setOutputRecordFormat(RecordFormat output_record_format) {
+        this.outputRecordFormat = output_record_format;
+    }
+
+    public void setSeed(int seed) {
+        this.seed = seed;
+    }
+
+    public void setTimestep(Period timestep) {
+        this.simulationTimeStep = timestep;
+    }
+
+    public void setBinomialSampling(boolean binomial_sampling) {
+        this.binomialSampling = binomial_sampling;
+    }
+
+    public void setCTtreeStepBack(int ct_tree_stepback) {
+        this.ctTreeStepback = ct_tree_stepback;
+    }
+
+    public double getCtTreePrecision() {
+        return ctTreePrecision;
+    }
+
+    public void setCTtreePrecision(double precision) {
+        this.ctTreePrecision = precision;
     }
 
     private interface Processor {

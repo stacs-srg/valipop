@@ -25,7 +25,7 @@ public class InvalidInputFileException extends Exception {
         super(message, cause);
     }
 
-    InvalidInputFileException(String message) {
+    public InvalidInputFileException(String message) {
         super(message);
     }
 }

@@ -53,8 +53,9 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
     private SourceNodeInt simNode;
     private SourceNodeDouble statNode = null;
 
-    public CTtree(PeopleCollection population, PopulationStatistics expected, LocalDate startDate, LocalDate zeroDate, LocalDate endDate, int startStepBack) {
+    public CTtree(PeopleCollection population, PopulationStatistics expected, LocalDate startDate, LocalDate zeroDate, LocalDate endDate, int startStepBack, double precision) {
 
+        this.NODE_MIN_COUNT = precision;
         this.expected = expected;
         this.startDate = startDate;
         this.endDate = endDate.minus(2, ChronoUnit.YEARS);

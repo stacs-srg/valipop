@@ -90,7 +90,7 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public String getOccupation() {
+    public String getOccupation(LocalDate date) {
         return occupation;
     }
 
@@ -340,6 +340,16 @@ public class GEDCOMPerson implements IPerson {
     @Override
     public IPartnership getLastPartnership() {
         return null;
+    }
+
+    @Override
+    public String getLastOccupation() {
+        return occupation;
+    }
+
+    @Override
+    public void setOccupation(LocalDate onDate, String occupation) {
+        this.occupation = occupation;
     }
 
     @Override

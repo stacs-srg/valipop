@@ -106,7 +106,7 @@ public class DeathSourceRecord extends IndividualSourceRecord {
         setSex(String.valueOf(person.getSex()));
         setForename(person.getFirstName());
         setSurname(person.getSurname());
-        setOccupation(person.getOccupation());
+        setOccupation(person.getOccupation(person.getDeathDate()));
         setDeathCauseA(person.getDeathCause());
 
         LocalDate birth_date = person.getBirthDate();

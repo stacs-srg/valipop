@@ -9,7 +9,7 @@ import java.time.Year;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class MarriageStatsKey extends StatsKey {
+public class MarriageStatsKey extends StatsKey<Integer, Integer> {
 
     public MarriageStatsKey(Integer age, double forNPeople, Period consideredTimePeriod, LocalDate currentDate) {
         super(age, forNPeople, consideredTimePeriod, Year.of(currentDate.getYear()));

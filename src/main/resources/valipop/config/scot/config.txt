@@ -24,4 +24,4 @@ output_tables = true
 deterministic = false
 #seed = 11111
 binomial_sampling = true
-run_purpose = mig-stats
+run_purpose = sep-stats

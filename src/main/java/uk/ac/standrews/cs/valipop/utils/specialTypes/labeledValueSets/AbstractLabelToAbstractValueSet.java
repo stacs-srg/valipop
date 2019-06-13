@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import java.util.*;
 
 /**
@@ -24,8 +26,10 @@ import java.util.*;
 public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> implements LabelledValueSet<AL, AV>, Cloneable {
 
     protected Map<AL, AV> map = new TreeMap<>();
+    protected final RandomGenerator random;
 
-    public AbstractLabelToAbstractValueSet(final List<AL> labels, final List<AV> values) {
+    public AbstractLabelToAbstractValueSet(final List<AL> labels, final List<AV> values, RandomGenerator random) {
+        this(random);
 
         if (labels.size() != values.size()) {
             throw new LabeledValueSetInitException("Labels and values lists of differing sizes", labels, values);
@@ -38,18 +42,21 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
         }
     }
 
-    public AbstractLabelToAbstractValueSet(final Set<AL> labels, final AV initValue) {
+    public AbstractLabelToAbstractValueSet(final Set<AL> labels, final AV initValue, RandomGenerator random) {
+        this(random);
 
         for (AL iR : labels) {
             map.put(iR, initValue);
         }
     }
 
-    public AbstractLabelToAbstractValueSet(final Map<AL, AV> map) {
+    public AbstractLabelToAbstractValueSet(final Map<AL, AV> map, RandomGenerator random) {
+        this(random);
         init(map);
     }
 
-    public AbstractLabelToAbstractValueSet() {
+    public AbstractLabelToAbstractValueSet(RandomGenerator random) {
+        this.random = random;
     }
 
     public abstract Class getValueClass();

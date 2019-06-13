@@ -12,7 +12,7 @@ calcP <- function(x) {
 file <- commandArgs(TRUE)[1]
 
 
-file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/results/testing-stats/20180613-133510:959/tables/sep-CT.csv"
+file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/results/mig-stats/2019-05-25T14-10-58-667/tables/sep-CT.csv"
 data = read.csv(file, sep = ',', header = T)
 data$freq <- round(data$freq)
 data <- data[which(data$freq != 0), ]

@@ -38,7 +38,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
         if (person.getParents() != null) {
 
             IPerson mother = person.getParents().getFemalePartner();
-            mothersOccupation = mother.getOccupation();
+            mothersOccupation = mother.getOccupation(deathDate);
 
             IPerson father = person.getParents().getMalePartner();
             if (!PopulationNavigation.aliveOnDate(father, person.getDeathDate())) {
@@ -108,7 +108,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
             IPerson spouse = partnership.getPartnerOf(deceased);
 
             String spousesName = spouse.getFirstName() + " " + spouse.getSurname();
-            String spousesOccupation = spouse.getOccupation();
+            String spousesOccupation = spouse.getOccupation(deceased.getDeathDate());
 
             if (names.length() == 0) {
                 names.append(spousesName);

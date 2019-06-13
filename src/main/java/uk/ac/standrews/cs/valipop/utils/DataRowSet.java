@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.valipop.utils;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
@@ -10,13 +11,13 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DataRowSet {
+public class DataRowSet implements Iterable<DataRow> {
 
-    Set<String> labels;
+    List<String> labels;
     Set<DataRow> dataset = new HashSet<>();
 
     public DataRowSet(DataRow initialRow) {
-        labels = initialRow.getLabels();
+        setLabels(initialRow.getLabels());
         dataset.add(initialRow);
     }
 
@@ -32,7 +33,19 @@ public class DataRowSet {
             }
         }
 
-        this.labels = dataset.iterator().next().getLabels();
+        setLabels(dataset.iterator().next().getLabels());
+    }
+
+    private void setLabels(Set<String> labels) {
+        this.labels = new ArrayList<>(labels);
+    }
+
+    public DataRowSet(String labels, Set<String> lines) throws InvalidInputFileException {
+
+        for(String line : lines)
+            dataset.add(new DataRow(labels, line));
+
+        setLabels(dataset.iterator().next().getLabels());
     }
 
 
@@ -56,7 +69,7 @@ public class DataRowSet {
         return tables;
     }
 
-    public TreeMap<IntegerRange, LabelledValueSet<String, Double>> to2DTableOfProportions(String xLabelOfInt, String yLabelOfString) {
+    public TreeMap<IntegerRange, LabelledValueSet<String, Double>> to2DTableOfProportions(String xLabelOfInt, String yLabelOfString, RandomGenerator random) {
 
         Map<String, Map<String, Integer>> counts = new HashMap<>();
         Map<String, Integer> totalCountsUnderX = new HashMap<>();
@@ -94,7 +107,7 @@ public class DataRowSet {
             int totalCount = totalCountsUnderX.get(iR);
             Map<String, Integer> countMap = counts.get(iR);
 
-            LabelledValueSet<String, Double> proportionMap = new StringToDoubleSet();
+            LabelledValueSet<String, Double> proportionMap = new StringToDoubleSet(random);
 
             for(String label : countMap.keySet()) {
                 proportionMap.add(label, countMap.get(label) / (double) totalCount);
@@ -119,7 +132,37 @@ public class DataRowSet {
 
     }
 
-    private void add(DataRow row) {
+    public void add(DataRow row) {
+
         dataset.add(row);
+    }
+
+
+
+    public void remove(DataRow row) {
+        dataset.remove(row);
+    }
+
+    @Override
+    public Iterator<DataRow> iterator() {
+        return dataset.iterator();
+    }
+
+    public String toString(List<String> order) {
+        StringBuilder sb = new StringBuilder();
+
+        for(int s = 0; s < order.size() - 1; s++) {
+            sb.append(order.get(s) + ",");
+        }
+        sb.append(order.get(order.size() - 1) + "\n");
+
+        for(DataRow dr : dataset) {
+            for(int s = 0; s < order.size() - 1; s++) {
+                sb.append(dr.getValue(order.get(s)) + ",");
+            }
+            sb.append(dr.getValue(order.get(order.size() - 1)) + "\n");
+        }
+
+        return sb.toString();
     }
 }

@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
@@ -33,7 +34,7 @@ import java.util.Set;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData, SelfCorrection<Integer, Double> {
+public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData, SelfCorrection<Integer, Double, Integer, Integer> {
 
     // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
     private Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data;
@@ -50,17 +51,17 @@ public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData
         this.data = tableData;
     }
 
-    public SingleDeterminedCount determineCount(StatsKey key, Config config) {
+    public SingleDeterminedCount determineCount(StatsKey<Integer, Integer> key, Config config, RandomGenerator random) {
         try {
-            return getData(key.getXLabel()).determineCount(key, config);
+            return getData(key.getXLabel()).determineCount(key, config, random);
         } catch (InvalidRangeException e) {
             return new SingleDeterminedCount(key, 0, 0, 0);
         }
     }
 
-    public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
+    public void returnAchievedCount(DeterminedCount<Integer, Double, Integer, Integer> achievedCount, RandomGenerator random) {
         try {
-            getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
+            getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount, random);
         } catch (InvalidRangeException e) {
             if (achievedCount.getDeterminedCount() != 0) throw e;
         }

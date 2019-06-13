@@ -91,7 +91,6 @@ public class FactorSearch {
         final int[] t0_pop_sizes = new int[]{size0};
 
         for (double precision : precisions) {
-            CTtree.NODE_MIN_COUNT = precision;
 
             for (int size : t0_pop_sizes) {
                 for (double recovery_factor : recovery_factors) {
@@ -105,6 +104,7 @@ public class FactorSearch {
                                             Config config = new Config(tS, t0, tE, size, dataFiles);
                                             config.setGeographyFilePath(Paths.get("src/main/resources/valipop/geography-cache/scotland-residential-ways.ser"));
 
+                                            config.setCTtreePrecision(precision);
                                             config.setRunPurpose(runPurpose);
                                             config.setSetupBirthRate(set_up_br);
                                             config.setSetupDeathRate(set_up_dr);
@@ -119,7 +119,7 @@ public class FactorSearch {
                                             OBDModel model = new OBDModel(config);
                                             try {
                                                 model.runSimulation();
-                                                model.analyseAndOutputPopulation(false);
+                                                model.analyseAndOutputPopulation(false, 5);
 
                                             } catch (PreEmptiveOutOfMemoryWarning e) {
                                                 model.getSummaryRow().outputSummaryRowToFile();

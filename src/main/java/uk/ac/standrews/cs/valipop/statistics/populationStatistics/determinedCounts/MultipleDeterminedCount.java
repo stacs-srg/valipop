@@ -16,60 +16,59 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts;
 
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class MultipleDeterminedCount implements DeterminedCount<LabelledValueSet<IntegerRange, Integer>, LabelledValueSet<IntegerRange, Double>> {
+public abstract class MultipleDeterminedCount<Lookup, X, Y> implements DeterminedCount<LabelledValueSet<Lookup, Integer>, LabelledValueSet<Lookup, Double>, X, Y> {
 
-    private StatsKey key;
+    private StatsKey<X, Y> key;
 
-    private LabelledValueSet<IntegerRange, Integer> determinedCount;
-    private LabelledValueSet<IntegerRange, Integer> fulfilledCount;
+    protected LabelledValueSet<Lookup, Integer> determinedCount;
+    private LabelledValueSet<Lookup, Integer> fulfilledCount;
 
-    private LabelledValueSet<IntegerRange, Double> rawCorrectedCount;
-    private LabelledValueSet<IntegerRange, Double> rawUncorrectedCount;
+    private LabelledValueSet<Lookup, Double> rawCorrectedCount;
+    private LabelledValueSet<Lookup, Double> rawUncorrectedCount;
 
-    public MultipleDeterminedCount(StatsKey key, LabelledValueSet<IntegerRange, Integer> determinedCount,
-                                   LabelledValueSet<IntegerRange, Double> rawCorrectedCount,
-                                   LabelledValueSet<IntegerRange, Double> rawUncorrectedCount) {
+    public MultipleDeterminedCount(StatsKey<X, Y> key, LabelledValueSet<Lookup, Integer> determinedCount,
+                                       LabelledValueSet<Lookup, Double> rawCorrectedCount,
+                                       LabelledValueSet<Lookup, Double> rawUncorrectedCount) {
         this.key = key;
         this.determinedCount = determinedCount;
         this.rawCorrectedCount = rawCorrectedCount;
         this.rawUncorrectedCount = rawUncorrectedCount;
     }
 
-    public LabelledValueSet<IntegerRange, Integer> getDeterminedCount() {
+    public LabelledValueSet<Lookup, Integer> getDeterminedCount() {
         return determinedCount;
     }
 
-    public StatsKey getKey() {
+    public StatsKey<X, Y> getKey() {
         return key;
     }
 
-    public LabelledValueSet<IntegerRange, Integer> getFulfilledCount() {
+    public LabelledValueSet<Lookup, Integer> getFulfilledCount() {
         return fulfilledCount;
     }
 
     @Override
-    public LabelledValueSet<IntegerRange, Double> getRawCorrectedCount() {
+    public LabelledValueSet<Lookup, Double> getRawCorrectedCount() {
         return rawCorrectedCount;
     }
 
     @Override
-    public LabelledValueSet<IntegerRange, Double> getRawUncorrectedCount() {
+    public LabelledValueSet<Lookup, Double> getRawUncorrectedCount() {
         return rawUncorrectedCount;
     }
 
-    public void setFulfilledCount(LabelledValueSet<IntegerRange, Integer> fulfilledCount) {
+    @Override
+    public void setFulfilledCount(LabelledValueSet<Lookup, Integer> fulfilledCount) {
         this.fulfilledCount = fulfilledCount;
     }
 
-    public LabelledValueSet<IntegerRange, Integer> getZeroedCountsTemplate() {
-        return new IntegerRangeToIntegerSet(determinedCount.getLabels(), 0);
-    }
+    public abstract LabelledValueSet<Lookup, Integer> getZeroedCountsTemplate(RandomGenerator random);
+
 }
