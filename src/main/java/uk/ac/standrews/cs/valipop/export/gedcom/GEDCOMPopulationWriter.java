@@ -253,7 +253,7 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
 
     private void writeOccupation(final IPerson person) {
 
-        writeOccupation(person.getOccupation());
+        writeOccupation(person.getOccupation(LocalDate.MAX));
     }
 
     private void writePartnerships(final IPerson person) {

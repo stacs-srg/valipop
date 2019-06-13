@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
@@ -139,7 +139,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
 
             LocalDate currentDate = getDateAtAge(yob, age);
 
-            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(), Period.ofYears(1), currentDate), null);
+            MultipleDeterminedCountByIR mDC = (MultipleDeterminedCountByIR) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(), Period.ofYears(1), currentDate), null);
 
             LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 

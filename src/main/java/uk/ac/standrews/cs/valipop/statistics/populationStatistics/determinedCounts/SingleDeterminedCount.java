@@ -21,16 +21,16 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.Stat
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SingleDeterminedCount implements DeterminedCount<Integer, Double> {
+public class SingleDeterminedCount implements DeterminedCount<Integer, Double, Integer, Integer> {
 
-    private StatsKey key;
+    private StatsKey<Integer, Integer> key;
     private int determinedCount;
     private int fulfilledCount;
 
     private double rawUncorrectedCount;
     private double rawCorrectedCount;
 
-    public SingleDeterminedCount(StatsKey key, int determinedCount, double rawCorrectedCount, double rawUncorrectedCount) {
+    public SingleDeterminedCount(StatsKey<Integer, Integer> key, int determinedCount, double rawCorrectedCount, double rawUncorrectedCount) {
         this.key = key;
         this.determinedCount = determinedCount;
         this.rawCorrectedCount = rawCorrectedCount;
@@ -41,7 +41,7 @@ public class SingleDeterminedCount implements DeterminedCount<Integer, Double> {
         return determinedCount;
     }
 
-    public StatsKey getKey() {
+    public StatsKey<Integer, Integer> getKey() {
         return key;
     }
 

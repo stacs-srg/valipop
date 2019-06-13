@@ -48,6 +48,8 @@ public class SummaryRow {
 
     private int simLength;
 
+    private int seed;
+
     private double birthFactor;
     private double deathFactor;
     private double recoveryFactor;
@@ -66,10 +68,13 @@ public class SummaryRow {
     private int endPop;
     private int peakPop;
 
+    private int ctTreeStepback;
+    private double ctTreePrecision;
+
     private int eligibilityChecks;
     private int failedEligibilityChecks;
 
-    private boolean completed;
+    private boolean completed = false;
 
     private double simRunTime;
     private double ctRunTime;
@@ -104,6 +109,9 @@ public class SummaryRow {
         this.minBirthSpacing = config.getMinBirthSpacing();
         this.outputRecordFormat = config.getOutputRecordFormat();
         this.seedPop = config.getT0PopulationSize();
+        this.seed = config.getSeed();
+        this.ctTreeStepback = config.getCtTreeStepback();
+        this.ctTreePrecision = config.getCtTreePrecision();
     }
 
     public void setStartPop(int startPop) {
@@ -162,7 +170,7 @@ public class SummaryRow {
                 ctRunTime, recordsRunTime, resultsDirectory, birthFactor,
                 deathFactor, recoveryFactor, proportionalRecoveryFactor, binomialSampling,
                 minBirthSpacing, (maxMemoryUsage / 1e6), outputRecordFormat.toString(),
-                v.toString(), statsRunTime, eligibilityChecks, failedEligibilityChecks) + "\n";
+                v.toString(), statsRunTime, eligibilityChecks, failedEligibilityChecks, seed, ctTreeStepback, ctTreePrecision) + "\n";
     }
 
     private static String makeRow(Object... values) {
@@ -190,7 +198,7 @@ public class SummaryRow {
                  "Results Directory", "Birth Factor", "Death Factor", "Recovery Factor" ,
                  "Proportional Recovery Factor", "binomial Sampling", "Min Birth Spacing" ,
                  "Peak Memory Usage (MB)", "Output Record Format", "v/M", "Stats Run Time" ,
-                 "Eligibility Checks", "Failed Eligibility Checks");
+                 "Eligibility Checks", "Failed Eligibility Checks", "Seed", "CT Tree Stepback", "CT Tree Precision");
     }
 
     public void outputSummaryRowToFile() {

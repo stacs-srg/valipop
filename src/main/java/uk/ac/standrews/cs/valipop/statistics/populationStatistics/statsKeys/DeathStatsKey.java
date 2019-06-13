@@ -25,7 +25,7 @@ import java.time.Year;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DeathStatsKey extends StatsKey {
+public class DeathStatsKey extends StatsKey<Integer, Integer> {
 
     private final SexOption sex;
 

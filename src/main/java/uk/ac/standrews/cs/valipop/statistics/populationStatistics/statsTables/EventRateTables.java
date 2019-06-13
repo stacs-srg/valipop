@@ -18,10 +18,12 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables;
 
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.distributions.EnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.SelfCorrecting2DEnumeratedProportionalDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrecting2DIntegerRangeProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 
 import java.time.Year;
@@ -70,7 +72,9 @@ public interface EventRateTables {
      * @param year the year
      * @return the marriage rates
      */
-    SelfCorrectingProportionalDistribution getPartneringRates(Year year);
+    SelfCorrecting2DIntegerRangeProportionalDistribution getPartneringProportions(Year year);
+
+    SelfCorrecting2DEnumeratedProportionalDistribution getOccupationChangeProportions(Year year, SexOption sex);
 
     /**
      * Gets birth rates by order for births in the given year defined by the age and number of previous children born to
@@ -109,7 +113,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    ProportionalDistribution getMultipleBirthRates(Year year);
+    SelfCorrectingProportionalDistribution getMultipleBirthRates(Year year);
 
     /**
      * Gets the rate of separation after having a given number of children as a couple. The rate is considered in respect
@@ -134,6 +138,8 @@ public interface EventRateTables {
     EnumeratedDistribution getSurnameDistribution(Year year);
 
     EnumeratedDistribution getMigrantSurnameDistribution(Year year);
+
+    AgeDependantEnumeratedDistribution getOccupation(Year year, SexOption sex);
 
     SelfCorrectingOneDimensionDataDistribution getMigrationRateDistribution(Year year);
 

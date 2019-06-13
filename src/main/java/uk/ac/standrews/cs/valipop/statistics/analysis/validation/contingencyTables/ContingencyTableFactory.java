@@ -24,17 +24,17 @@ public class ContingencyTableFactory {
     public static final Logger log = Logger.getLogger(ContingencyTableFactory.class.getName());
 
     public static void generateContingencyTables(PeopleCollection population, PopulationStatistics desired,
-                                                 Config config, SummaryRow summary, int startStepBack)  {
+                                                 Config config, SummaryRow summary)  {
 
         ProgramTimer tableTimer = new ProgramTimer();
 
         // TODO revert back to T0?
-        CTtree fullTree = new CTtree(population, desired, config.getTS(), config.getT0(), config.getTE(), startStepBack);
+        CTtree fullTree = new CTtree(population, desired, config.getTS(), config.getT0(), config.getTE(), config.getCtTreeStepback(), config.getCtTreePrecision());
 
         MemoryUsageAnalysis.log();
 
         try {
-            log.info("OBDModel --- Extracting and Outputting CTables to files");
+            log.info("OBDModel --- Extracting and Outputting CTtables to files");
 
             CTtableOB obTable = new CTtableOB(fullTree);
             outputToFile(obTable, "ob-CT.csv", config);

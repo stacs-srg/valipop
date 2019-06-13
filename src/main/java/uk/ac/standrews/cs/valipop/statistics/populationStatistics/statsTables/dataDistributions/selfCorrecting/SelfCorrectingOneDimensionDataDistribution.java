@@ -34,7 +34,7 @@ import java.util.Map;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution implements SelfCorrection<Integer, Double> {
+public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution implements SelfCorrection<Integer, Double, Integer, Integer> {
 
     private boolean binomialSampling;
     private RandomGenerator rng;
@@ -58,7 +58,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         rng = randomGenerator;
     }
 
-    public SingleDeterminedCount determineCount(StatsKey key, Config config) {
+    public SingleDeterminedCount determineCount(StatsKey<Integer, Integer> key, Config config, RandomGenerator random) {
 
         IntegerRange age = resolveRowValue(key.getYLabel());
 
@@ -113,9 +113,9 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         return resolveRateToCount(key, rateToApply, uncorrectedRate);
     }
 
-    public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
+    public void returnAchievedCount(DeterminedCount<Integer, Double, Integer, Integer> achievedCount, RandomGenerator random) {
 
-        StatsKey key = achievedCount.getKey();
+        StatsKey<Integer, Integer> key = achievedCount.getKey();
 
         int count = achievedCount.getFulfilledCount();
         double achievedRate = 0;

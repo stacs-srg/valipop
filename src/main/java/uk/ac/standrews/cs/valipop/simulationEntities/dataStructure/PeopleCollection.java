@@ -259,4 +259,5 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         partnershipIndex.remove(partnership.getId());
 
     }
+
 }

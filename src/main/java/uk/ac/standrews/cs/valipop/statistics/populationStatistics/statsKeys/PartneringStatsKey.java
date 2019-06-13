@@ -23,7 +23,7 @@ import java.time.Year;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PartneringStatsKey extends StatsKey {
+public class PartneringStatsKey extends StatsKey<Integer, Integer> {
 
     public PartneringStatsKey(int age, double forNumberOfFemales, Period consideredTimePeriod, LocalDate currentDate) {
         super(age, forNumberOfFemales, consideredTimePeriod, Year.of(currentDate.getYear()));

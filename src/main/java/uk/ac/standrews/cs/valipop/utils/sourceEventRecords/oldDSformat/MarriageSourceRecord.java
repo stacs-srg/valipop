@@ -147,13 +147,13 @@ public class MarriageSourceRecord extends SourceRecord {
 
         setGroomForename(groom.getFirstName());
         setGroomSurname(groom.getSurname());
-        setGroomOccupation(groom.getOccupation());
+        setGroomOccupation(groom.getOccupation(marriage_date));
         setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate(), marriage_date)));
         setGroomAddress(groom.getAddress(marriage_date.minus(1, ChronoUnit.DAYS)).toString());
 
         setBrideForename(bride.getFirstName());
         setBrideSurname(bride.getSurname());
-        setBrideOccupation(bride.getOccupation());
+        setBrideOccupation(bride.getOccupation(marriage_date));
         setBrideAgeOrDateOfBirth(String.valueOf(fullYearsBetween(bride.getBirthDate(), marriage_date)));
         setBrideAddress(bride.getAddress(marriage_date.minus(1, ChronoUnit.DAYS)).toString());
 
@@ -165,7 +165,7 @@ public class MarriageSourceRecord extends SourceRecord {
 
             setGroomFathersForename(groom_father.getFirstName());
             setGroomFathersSurname(getRecordedParentsSurname(groom_father.getSurname(), groom.getSurname()));
-            setGroomFathersOccupation(groom_father.getOccupation());
+            setGroomFathersOccupation(groom_father.getOccupation(marriage_date));
 
             setGroomMothersForename(groom_mother.getFirstName());
             setGroomMothersMaidenSurname(getMaidenSurname(population, groom_mother));
@@ -179,7 +179,7 @@ public class MarriageSourceRecord extends SourceRecord {
 
             setBrideFathersForename(bride_father.getFirstName());
             setBrideFathersSurname(getRecordedParentsSurname(bride_father.getSurname(), bride.getSurname()));
-            setBrideFatherOccupation(bride_father.getOccupation());
+            setBrideFatherOccupation(bride_father.getOccupation(marriage_date));
 
             setBrideMothersForename(bride_mother.getFirstName());
             setBrideMothersMaidenSurname(getMaidenSurname(population, bride_mother));

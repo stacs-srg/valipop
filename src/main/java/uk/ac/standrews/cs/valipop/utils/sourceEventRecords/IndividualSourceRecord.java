@@ -58,7 +58,7 @@ public abstract class IndividualSourceRecord extends SourceRecord {
         setFathersId(String.valueOf(father.getId()));
         setFathersForename(father.getFirstName());
         setFathersSurname(getRecordedParentsSurname(father.getSurname(), person.getSurname()));
-        setFathersOccupation(father.getOccupation());
+        setFathersOccupation(father.getOccupation(person.getBirthDate()));
     }
 
     public String getSurname() {

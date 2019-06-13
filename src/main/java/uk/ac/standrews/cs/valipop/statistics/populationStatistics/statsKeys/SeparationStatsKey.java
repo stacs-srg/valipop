@@ -23,7 +23,7 @@ import java.time.Year;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SeparationStatsKey extends StatsKey {
+public class SeparationStatsKey extends StatsKey<Integer, Integer> {
 
     public SeparationStatsKey(int numberOfChildren, Integer mothersAge, double forNPeople, Period consideredTimePeriod, LocalDate currentDate) {
         super(numberOfChildren, mothersAge, forNPeople, consideredTimePeriod, Year.of(currentDate.getYear()));

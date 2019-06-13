@@ -22,15 +22,15 @@ import java.time.Year;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class StatsKey {
+public class StatsKey<X, Y> {
 
-    private final int yLabel;
-    private final int xLabel;
+    private final Y yLabel;
+    private final X xLabel;
     private final double forNPeople;
     private final Period consideredTimePeriod;
     private final Year year;
 
-    public StatsKey(int yLabel, int xLabel, double forNPeople, Period consideredTimePeriod, Year year) {
+    public StatsKey(Y yLabel, X xLabel, double forNPeople, Period consideredTimePeriod, Year year) {
 
         this.yLabel = yLabel;
         this.xLabel = xLabel;
@@ -39,20 +39,20 @@ public class StatsKey {
         this.year = year;
     }
 
-    public StatsKey(int yLabel, double forNPeople, Period consideredTimePeriod, Year year) {
+    public StatsKey(Y yLabel, double forNPeople, Period consideredTimePeriod, Year year) {
 
-        this(yLabel, 0, forNPeople, consideredTimePeriod, year);
+        this(yLabel, null, forNPeople, consideredTimePeriod, year);
     }
 
     public double getForNPeople() {
         return forNPeople;
     }
 
-    public Integer getXLabel() {
+    public X getXLabel() {
         return xLabel;
     }
 
-    public Integer getYLabel() {
+    public Y getYLabel() {
         return yLabel;
     }
 

@@ -75,7 +75,7 @@ public class DistributionGenerator {
 
 //                DataRowSet table = tables.get(splitOn);
 
-                TreeMap<IntegerRange, LabelledValueSet<String, Double>> dist = dataset.to2DTableOfProportions(groupX, groupY);
+                TreeMap<IntegerRange, LabelledValueSet<String, Double>> dist = dataset.to2DTableOfProportions(groupX, groupY, new JDKRandomGenerator());
 
                 PrintStream ps = FileUtil.createPrintStreamToFile(Paths.get(outToDir.toString(), filterValue + ".txt").toString());
 

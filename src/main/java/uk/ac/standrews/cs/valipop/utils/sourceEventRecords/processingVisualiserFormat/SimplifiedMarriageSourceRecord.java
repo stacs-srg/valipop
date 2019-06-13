@@ -95,13 +95,13 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
         setGroomId(String.valueOf(groom.getId()));
         setGroomForename(groom.getFirstName());
         setGroomSurname(groom.getSurname());
-        setGroomOccupation(groom.getOccupation());
+        setGroomOccupation(groom.getOccupation(marriage_date));
         setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate(), marriage_date)));
 
         setBrideId(String.valueOf(bride.getId()));
         setBrideForename(bride.getFirstName());
         setBrideSurname(bride.getSurname());
-        setBrideOccupation(bride.getOccupation());
+        setBrideOccupation(bride.getOccupation(marriage_date));
         setBrideAgeOrDateOfBirth(String.valueOf(fullYearsBetween(bride.getBirthDate(), marriage_date)));
 
         IPartnership groom_parents_partnership = groom.getParents();
@@ -113,7 +113,7 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
             setGroomFatherId(String.valueOf(groom_father.getId()));
             setGroomFathersForename(groom_father.getFirstName());
             setGroomFathersSurname(getRecordedParentsSurname(groom_father.getSurname(), groom.getSurname()));
-            setGroomFathersOccupation(groom_father.getOccupation());
+            setGroomFathersOccupation(groom_father.getOccupation(marriage_date));
 
             setGroomMotherId(String.valueOf(groom_mother.getId()));
             setGroomMothersForename(groom_mother.getFirstName());
@@ -129,7 +129,7 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
             setBrideFatherId(String.valueOf(bride_father.getId()));
             setBrideFathersForename(bride_father.getFirstName());
             setBrideFathersSurname(getRecordedParentsSurname(bride_father.getSurname(), bride.getSurname()));
-            setBrideFatherOccupation(bride_father.getOccupation());
+            setBrideFatherOccupation(bride_father.getOccupation(marriage_date));
 
             setBrideMotherId(String.valueOf(bride_mother.getId()));
             setBrideMothersForename(bride_mother.getFirstName());

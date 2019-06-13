@@ -31,7 +31,7 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
         birthDate = person.getBirthDate();
 
         if (parents_partnership_id != -1) {
-            mothersOccupation = person.getParents().getFemalePartner().getOccupation();
+            mothersOccupation = person.getParents().getFemalePartner().getOccupation(birthDate);
             fathers_surname = person.getParents().getMalePartner().getSurname();
         }
 

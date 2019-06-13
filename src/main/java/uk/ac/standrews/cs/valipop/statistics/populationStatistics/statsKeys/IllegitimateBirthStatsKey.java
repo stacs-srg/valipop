@@ -7,7 +7,7 @@ import java.time.Year;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class IllegitimateBirthStatsKey extends StatsKey {
+public class IllegitimateBirthStatsKey extends StatsKey<Integer, Integer> {
 
     public IllegitimateBirthStatsKey(Integer age, double forNPeople, Period consideredTimePeriod, LocalDate currentDate) {
         super(age, forNPeople, consideredTimePeriod, Year.of(currentDate.getYear()));

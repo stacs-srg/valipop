@@ -21,9 +21,9 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.Stat
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface DeterminedCount<T, Raw> {
+public interface DeterminedCount<T, Raw, X, Y> {
 
-    StatsKey getKey();
+    StatsKey<X, Y> getKey();
 
     T getDeterminedCount();
 

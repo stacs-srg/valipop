@@ -68,7 +68,7 @@ public class SimplifiedDeathSourceRecord extends IndividualSourceRecord {
         setSex(String.valueOf(person.getSex()));
         setForename(person.getFirstName());
         setSurname(person.getSurname());
-        setOccupation(person.getOccupation());
+        setOccupation(person.getOccupation(death_date));
         setDeathCauseA(person.getDeathCause());
 
         List<IPartnership> partnerships = person.getPartnerships();

@@ -19,13 +19,10 @@ package uk.ac.standrews.cs.valipop.utils;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightException;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.*;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.MotherChildAdapter;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrecting2DIntegerRangeProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
 
@@ -48,9 +45,9 @@ public class InputFileReader {
     private static final String COMMENT_INDICATOR = "#";
     public static Logger log = Logger.getLogger(InputFileReader.class.getName());
 
-    public static Collection<String> getAllLines(Path path) throws IOException {
+    public static List<String> getAllLines(Path path) throws IOException {
 
-        Collection<String> lines = new ArrayList<>();
+        List<String> lines = new ArrayList<>();
 
         // Reads in all lines to a collection of Strings
         try (BufferedReader reader = Files.newBufferedReader(path)) {
@@ -259,7 +256,7 @@ public class InputFileReader {
                     columnLabels = readInStringLabels(split);
                     break;
                 case "data":
-                    data = readIn2DDataTable(i, lines, path, columnLabels, StringToDoubleSet.class);
+                    data = readIn2DDataTable(i, lines, path, columnLabels, StringToDoubleSet.class, IntegerRange.class, randomGenerator);
                     break;
             }
         }
@@ -327,7 +324,7 @@ public class InputFileReader {
                 d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData(), config.getBinomialSampling(), randomGenerator);
     }
 
-    public static SelfCorrectingProportionalDistribution readInAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {
+    public static SelfCorrecting2DIntegerRangeProportionalDistribution readInAgeAndProportionalStatsInput(Path path, RandomGenerator random) throws IOException, InvalidInputFileException {
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 
@@ -361,16 +358,59 @@ public class InputFileReader {
                     columnLabels = readInLabels(split, path);
                     break;
                 case "data":
-                    data = readIn2DDataTable(i, lines, path, columnLabels, IntegerRangeToDoubleSet.class);
+                    data = readIn2DDataTable(i, lines, path, columnLabels, IntegerRangeToDoubleSet.class, IntegerRange.class, random);
                     break;
                 default:
                     break;
             }
         }
-        return new SelfCorrectingProportionalDistribution(year, sourcePopulation, sourceOrganisation, data);
+        return new SelfCorrecting2DIntegerRangeProportionalDistribution(year, sourcePopulation, sourceOrganisation, data, random);
     }
 
-    public static ProportionalDistribution readInAndAdaptAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {
+    public static SelfCorrecting2DEnumeratedProportionalDistribution readInStringAndProportionalStatsInput(Path path, RandomGenerator random) throws IOException, InvalidInputFileException {
+
+        List<String> lines = new ArrayList<>(getAllLines(path));
+
+        Year year = null;
+        String sourcePopulation = null;
+        String sourceOrganisation = null;
+
+        List<String> columnLabels = new ArrayList<>();
+        Map<String, LabelledValueSet<String, Double>> data = new TreeMap<>();
+
+        for (int i = 0; i < lines.size(); i++) {
+
+            String s = lines.get(i);
+            String[] split = s.split(TAB, 2);
+
+            switch (split[0].toLowerCase()) {
+                case "year":
+                    try {
+                        year = Year.parse(split[1]);
+                    } catch (NumberFormatException e) {
+                        throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
+                    }
+                    break;
+                case "population":
+                    sourcePopulation = split[1];
+                    break;
+                case "source":
+                    sourceOrganisation = split[1];
+                    break;
+                case "labels":
+                    columnLabels = readInStringLabels(split);
+                    break;
+                case "data":
+                    data = readIn2DDataTable(i, lines, path, columnLabels, StringToDoubleSet.class, String.class, random);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return new SelfCorrecting2DEnumeratedProportionalDistribution(year, sourcePopulation, sourceOrganisation, data, random);
+    }
+
+    public static SelfCorrectingProportionalDistribution readInAndAdaptAgeAndProportionalStatsInput(Path path, RandomGenerator random) throws IOException, InvalidInputFileException {
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 
@@ -404,13 +444,13 @@ public class InputFileReader {
                     columnLabels = readInLabels(split, path);
                     break;
                 case "data":
-                    data = readIn2DDataTable(i, lines, path, columnLabels, IntegerRangeToDoubleSet.class);
+                    data = readIn2DDataTable(i, lines, path, columnLabels, IntegerRangeToDoubleSet.class, IntegerRange.class, random);
                     break;
                 default:
                     break;
             }
         }
-        return new MotherChildAdapter(year, sourcePopulation, sourceOrganisation, data);
+        return new MotherChildAdapter(year, sourcePopulation, sourceOrganisation, data, random);
     }
 
     private static List<IntegerRange> readInLabels(String[] split, Path path) throws InvalidInputFileException {
@@ -443,11 +483,11 @@ public class InputFileReader {
         return columnLabels;
     }
 
-    private static <L, V extends Number> Map<IntegerRange, LabelledValueSet<L, V>> readIn2DDataTable(
-            int i, List<String> lines, Path path, List<L> columnLabels, Class<? extends AbstractLabelToAbstractValueSet<L, V>> setType) throws InvalidInputFileException {
+    private static <R, L, V extends Number> Map<R, LabelledValueSet<L, V>> readIn2DDataTable(
+            int i, List<String> lines, Path path, List<L> columnLabels, Class<? extends AbstractLabelToAbstractValueSet<L, V>> setType, Class<R> rowType, RandomGenerator random) throws InvalidInputFileException {
 
         try {
-            Map<IntegerRange, LabelledValueSet<L, V>> data = new TreeMap<>();
+            Map<R, LabelledValueSet<L, V>> data = new TreeMap<>();
 
             i++; // go to next line for data rows
             for (; i < lines.size(); i++) {
@@ -458,9 +498,9 @@ public class InputFileReader {
                     throw new InvalidInputFileException("One or more data rows do not have the correct number of values in the file: " + path.toString());
                 }
 
-                IntegerRange rowLabel;
+                R rowLabel;
                 try {
-                    rowLabel = new IntegerRange(split[0]);
+                    rowLabel = rowType.getConstructor(String.class).newInstance(split[0]);
                 } catch (NumberFormatException e) {
                     throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
                 } catch (InvalidRangeException e) {
@@ -469,7 +509,7 @@ public class InputFileReader {
 
                 Map<L, V> rowMap = new TreeMap<>();
 
-                Class<V> clazz = setType.newInstance().getValueClass();
+                Class<V> clazz = setType.getConstructor(RandomGenerator.class).newInstance(random).getValueClass();
                 Constructor<V> constructor = clazz.getConstructor(String.class);
 
                 for (int j = 1; j < split.length; j++) {
@@ -481,11 +521,12 @@ public class InputFileReader {
                     }
                 }
 
-                data.put(rowLabel, setType.newInstance().init(rowMap));
+                data.put(rowLabel, setType.getConstructor(RandomGenerator.class).newInstance(random).init(rowMap));
             }
             return data;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
+
         }
     }
 }

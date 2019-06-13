@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ControlSelfNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
@@ -109,7 +109,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<Boolean, Integer> imple
 
         double numberOfChildren = sDC.getRawUncorrectedCount();
 
-        MultipleDeterminedCount mDc = (MultipleDeterminedCount) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, numberOfChildren, timePeriod, currentDate), null);
+        MultipleDeterminedCountByIR mDc = (MultipleDeterminedCountByIR) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, numberOfChildren, timePeriod, currentDate), null);
 
         double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
 
@@ -159,7 +159,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<Boolean, Integer> imple
 
             LocalDate currentDate = getDateAtAge(yob, age);
 
-            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, getCount(), Period.ofYears(1), currentDate), null);
+            MultipleDeterminedCountByIR mDC = (MultipleDeterminedCountByIR) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, getCount(), Period.ofYears(1), currentDate), null);
 
             LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 

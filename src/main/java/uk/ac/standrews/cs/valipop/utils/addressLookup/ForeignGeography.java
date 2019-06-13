@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class ForeignGeography {
 
-    String[] countries = {"Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina",
+    private String[] countries = {"Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina",
             "Armenia", "Australia", "Austria", "Azerbaijan", "The Bahamas", "Bahrain", "Bangladesh", "Barbados",
             "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana",
             "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon", "Canada",
@@ -35,8 +35,8 @@ public class ForeignGeography {
             "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United States", "Uruguay", "Uzbekistan", "Vanuatu",
             "Vatican City", "Venezuela", "Vietnam", "Wales", "Yemen", "Zambia", "Zimbabwe"};
 
-    ArrayList<Address> forignAddresses = new ArrayList<>();
-    RandomGenerator randomNumberGenerator;
+    private ArrayList<Address> forignAddresses = new ArrayList<>();
+    private RandomGenerator randomNumberGenerator;
 
     public ForeignGeography(RandomGenerator randomNumberGenerator) {
 

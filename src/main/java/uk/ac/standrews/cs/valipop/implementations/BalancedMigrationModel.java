@@ -6,6 +6,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.ForeignGeography;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
@@ -41,7 +42,10 @@ public class BalancedMigrationModel {
     public void performMigration(LocalDate currentTime, OBDModel model) {
 
         int numberToMigrate = Math.toIntExact(Math.round(population.getLivingPeople().getNumberOfPeople()
-                * model.getDesiredPopulationStatistics().getMigrationRateDistribution(Year.of(currentTime.getYear())).getRate(0)));
+                * model.getDesiredPopulationStatistics()
+                .getMigrationRateDistribution(Year.of(currentTime.getYear()))
+                .getRate(0)));
+
         Collection<List<IPerson>> peopleToMigrate = new ArrayList<>();
 
         // select people to move out of country

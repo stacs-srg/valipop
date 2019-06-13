@@ -1,5 +1,7 @@
 package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 
+import java.util.Random;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -18,6 +20,8 @@ public interface OperableLabelledValueSet<L,V> extends LabelledValueSet<L,V> {
     L getLargestLabelOfNonZeroValueAndLabelPreferablyLessOrEqualTo(L n);
 
     L getLargestLabelOfNonZeroValue();
+
+    L getRandomLabelOfNonZeroValue();
 
     L smallestLabel();
 
