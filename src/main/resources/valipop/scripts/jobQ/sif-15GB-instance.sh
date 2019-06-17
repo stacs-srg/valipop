@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd population-model
-nohup sh src/main/resources/valipop/scripts/start-job-q-instance.sh src/main/resources/valipop/scripts/jobQ/status-sif.txt src/main/resources/valipop/scripts/jobQ/job-q-clusters.csv 15 1 0.5 > job-run-"$1"-`hostname`.txt
+nohup sh src/main/resources/valipop/scripts/start-job-q-instance.sh src/main/resources/valipop/scripts/jobQ/status-sif.txt src/main/resources/valipop/scripts/jobQ/job-q-clusters.csv 15 1 0.5 > runs/job-run-`hostname`.txt
