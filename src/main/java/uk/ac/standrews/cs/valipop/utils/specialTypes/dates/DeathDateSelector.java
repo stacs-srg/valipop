@@ -46,16 +46,23 @@ public class DeathDateSelector extends DateSelector {
             if (person.getSex() == SexOption.MALE) {
 
                 // If a male with a child then the man cannot die more than the minimum gestation period before the birth date
-                LocalDate earliestPossibleDate = birthDateOfLastChild.minus(statistics.getMinGestationPeriod());
+                LocalDate lastConceptionDate = birthDateOfLastChild.minus(statistics.getMinGestationPeriod());
+                LocalDate lastMoveDate = person.getLastMoveDate() == null ? LocalDate.MIN : person.getLastMoveDate();
+
+                LocalDate earliestPossibleDate = lastMoveDate.isBefore(lastConceptionDate) ? lastConceptionDate : lastMoveDate;
                 return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, earliestPossibleDate);
 
             } else {
                 // If a female with a child then they cannot die before birth of child
-                return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, birthDateOfLastChild);
+                LocalDate lastMoveDate = person.getLastMoveDate() == null ? LocalDate.MIN : person.getLastMoveDate();
+
+                LocalDate earliestPossibleDate = lastMoveDate.isBefore(birthDateOfLastChild) ? birthDateOfLastChild : lastMoveDate;
+                return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, earliestPossibleDate);
             }
 
         } else {
-            return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, person.getBirthDate());
+            LocalDate lastMoveDate = person.getLastMoveDate() == null ? person.getBirthDate() : person.getLastMoveDate();
+            return selectDateRestrictedByEarliestPossibleDate(currentDate, consideredTimePeriod, lastMoveDate);
         }
     }
 

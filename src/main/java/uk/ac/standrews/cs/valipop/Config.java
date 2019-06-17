@@ -727,8 +727,9 @@ public class Config {
         this.outputRecordFormat = output_record_format;
     }
 
-    public void setSeed(int seed) {
+    public Config setSeed(int seed) {
         this.seed = seed;
+        return this;
     }
 
     public void setTimestep(Period timestep) {

@@ -1,0 +1,5 @@
+priority,code version,reason,n,seed size,rf,prf,iw,input dir,results dir,required memory,output record format,deterministic,seed,setup br,setup dr,bf,df,tS,t0,tE,timestep,binomial sampling,min birth spacing,min ges period,ct tree stepback
+3,a,test,2,1000,0,0.3,P10Y,src/main/resources/valipop/inputs/scotland_test_population,/cs/tmp/tsd4/results/,2,EG_SKYE,FALSE,-,0.0233,0.0322,0,0,1687-01-01,1855-01-01,2015-01-01,P1Y,TRUE,P147D,P147D,5
+2,b,test,2,1000,0,0.3,P10Y,src/main/resources/valipop/inputs/scotland_test_population,/cs/tmp/tsd4/results/,3,EG_SKYE,FALSE,-,0.0233,0.0322,0,0,1687-01-01,1855-01-01,2015-01-01,P1Y,TRUE,P147D,P147D,5
+1,c,test,1,1000,0,0.3,P10Y,src/main/resources/valipop/inputs/scotland_test_population,/cs/tmp/tsd4/results/,2,EG_SKYE,FALSE,-,0.0233,0.0322,0,0,1687-01-01,1855-01-01,2015-01-01,P1Y,TRUE,P147D,P147D,5
+4,d,test,5,1000,0,0.3,P10Y,src/main/resources/valipop/inputs/scotland_test_population,/cs/tmp/tsd4/results/,2,EG_SKYE,FALSE,-,0.0233,0.0322,0,0,1687-01-01,1855-01-01,2015-01-01,P1Y,TRUE,P147D,P147D,5

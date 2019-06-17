@@ -21,7 +21,7 @@ import java.util.*;
 public class JobQueueRunner {
 
     private static int THREAD_LIMIT = 2;
-    public static int threadCount = 0;
+    public static int threadCount = 1;
 
     private static double appropriateUsageThreshold = 0.5;
     private static double memoryIncreaseOnMemoryException = 1.2;
@@ -42,54 +42,71 @@ public class JobQueueRunner {
 
         THREAD_LIMIT = Integer.valueOf(args[3]);
 
+        double threshold = Double.parseDouble(args[4]);
+
         while(getStatus(statusPath)) {
 
-            try {
-                DataRow chosenJob = getJob(jobQPath, assignedMemory);
+            if(nodeIdle(threshold) && !checkPause(statusPath)) {
 
-                if (chosenJob != null) {
+                try {
+                    DataRow chosenJob = getJob(jobQPath, assignedMemory);
 
-                    try {
-                        Config config = convertJobToConfig(chosenJob);
+                    if (chosenJob != null) {
+                        System.out.println("JOB TAKEN - " + chosenJob.toString(order));
 
+                        try {
+                            Config config = convertJobToConfig(chosenJob);
 
-                        System.out.println("JOB FOUND");
+                            OBDModel model = new OBDModel(config);
+                            try {
+                                model.runSimulation();
+                                model.analyseAndOutputPopulation(false, 5);
+
+                                while (threadCount >= THREAD_LIMIT)
+                                    Thread.sleep(10000);
+
+                                new AnalysisThread(model, config, threadCount).start();
+
+                            } catch (PreEmptiveOutOfMemoryWarning e) {
+                                model.recordOutOfMemorySummary();
+                                model.getSummaryRow().outputSummaryRowToFile();
+
+                                // put job back in queue with higher memory requirement
+                                returnJobToQueue(jobQPath, chosenJob, (int) Math.ceil(assignedMemory * memoryIncreaseOnMemoryException), chosenJob.getInt("priority"), true);
+                            }
+
+                        } catch (InvalidInputFileException e) {
+                            System.out.println("JOB RETURNED - " + chosenJob.toString(order));
+                            returnJobToQueue(jobQPath, chosenJob, chosenJob.getInt("required memory"), 99, true);
+                        }
+                    } else {
+                        System.out.println("NO SUITABLE JOB FOUND");
                         Thread.sleep(10000);
-
-//                        OBDModel model = new OBDModel(config);
-//                        try {
-//                            model.runSimulation();
-//                            model.analyseAndOutputPopulation(false, 5);
-//
-//                            while (threadCount >= THREAD_LIMIT)
-//                                Thread.sleep(10000);
-//
-//                            new AnalysisThread(model, config).start();
-//
-//                        } catch (PreEmptiveOutOfMemoryWarning e) {
-//                            model.recordOutOfMemorySummary();
-//                            model.getSummaryRow().outputSummaryRowToFile();
-//
-//                            // put job back in queue with higher memory requirement
-//                            returnJobToQueue(jobQPath, chosenJob, (int) Math.ceil(assignedMemory * memoryIncreaseOnMemoryException), chosenJob.getInt("priority"), true);
-//                        }
-
-                    } catch (InvalidInputFileException e) {
-                        returnJobToQueue(jobQPath, chosenJob, chosenJob.getInt("required memory"), 99, true);
                     }
-                } else {
-                    System.out.println("NO JOB FOUND");
-                    Thread.sleep(10000);
+                } catch (InvalidInputFileException e) {
+                    System.out.println("Either the job file doesn't have any jobs or it's malformed - I'm going to keep looping and wait for you to fix that...");
+                    Thread.sleep(60000);
                 }
-            } catch (InvalidInputFileException e) {
-                // The input file itself is structually invalid - therefore I'm going to sit here looping and wait for you to fix it...
-                System.out.println("Either the job file doesn't have any jobs or it's malformed - I'm going to keep looping and wait for you to fix that...");
-                Thread.sleep(60000);
             }
+
         }
 
         System.out.println("Closing due to status");
 
+    }
+
+    // checks recent load average - if over threshold then does not run next sim until load average has dropped
+    private static boolean nodeIdle(double threshold) throws IOException {
+        String result = execCmd("uptime");
+        String[] split = result.split(" ");
+        double load = Double.parseDouble(split[split.length - 3]);
+
+        return load < threshold;
+    }
+
+    public static String execCmd(String cmd) throws java.io.IOException {
+        java.util.Scanner s = new java.util.Scanner(Runtime.getRuntime().exec(cmd).getInputStream()).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 
     private static boolean getStatus(Path statusPath) throws IOException {
@@ -104,6 +121,16 @@ public class JobQueueRunner {
         }
 
         return true;
+    }
+
+    private static boolean checkPause(Path statusPath) throws IOException {
+        // read in file
+        ArrayList<String> lines = new ArrayList<>(InputFileReader.getAllLines(statusPath));
+
+        if(!lines.isEmpty())
+            return  lines.get(0).equals("pause");
+
+        return false;
     }
 
     public static DataRow getJob(Path jobFile, int availiableMemory) throws IOException, InterruptedException, InvalidInputFileException {
