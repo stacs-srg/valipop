@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class JobQueueRunner {
 
-    private static int THREAD_LIMIT = 2;
+    private static int THREAD_LIMIT = 1;
     public static int threadCount = 1;
 
     private static double appropriateUsageThreshold = 0.5;
@@ -62,10 +62,14 @@ public class JobQueueRunner {
                                 model.runSimulation();
                                 model.analyseAndOutputPopulation(false, 5);
 
-                                while (threadCount >= THREAD_LIMIT)
-                                    Thread.sleep(10000);
+                                if(THREAD_LIMIT == 1) {
+                                    new AnalysisThread(model, config, threadCount).run(); // this runs it in the main thread
+                                } else {
+                                    while (threadCount >= THREAD_LIMIT)
+                                        Thread.sleep(10000);
 
-                                new AnalysisThread(model, config, threadCount).start();
+                                    new AnalysisThread(model, config, threadCount).start(); // this runs it in a new thread
+                                }
 
                             } catch (PreEmptiveOutOfMemoryWarning e) {
                                 model.recordOutOfMemorySummary();
@@ -98,8 +102,8 @@ public class JobQueueRunner {
     // checks recent load average - if over threshold then does not run next sim until load average has dropped
     private static boolean nodeIdle(double threshold) throws IOException {
         String result = execCmd("uptime");
-        String[] split = result.split(" ");
-        double load = Double.parseDouble(split[split.length - 3]);
+        String[] split = result.split(", ");
+        double load = Double.parseDouble(split[split.length - 3].split(",")[0]);
 
         return load < threshold;
     }
