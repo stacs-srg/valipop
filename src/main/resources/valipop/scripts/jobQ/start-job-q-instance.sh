@@ -23,4 +23,4 @@ then
     echo Setting heap size: $3GB
 fi
 
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.valipop.implementations.minimaSearch.JobQueueRunner" -e -Dexec.args="$1 $2 $3 $4 $5"
+mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.valipop.implementations.JobQueueRunner" -e -Dexec.args="$1 $2 $3 $4 $5"
