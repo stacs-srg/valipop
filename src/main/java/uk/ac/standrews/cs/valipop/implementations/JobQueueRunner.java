@@ -104,7 +104,7 @@ public class JobQueueRunner {
         String result = execCmd("uptime");
         String[] split = result.split(" ");
         double load = Double.parseDouble(split[split.length - 3].split(",")[0]);
-
+        System.out.println(load);
         return load < threshold;
     }
 
