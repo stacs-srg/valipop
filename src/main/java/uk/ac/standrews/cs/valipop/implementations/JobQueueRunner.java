@@ -102,7 +102,7 @@ public class JobQueueRunner {
     // checks recent load average - if over threshold then does not run next sim until load average has dropped
     private static boolean nodeIdle(double threshold) throws IOException {
         String result = execCmd("uptime");
-        String[] split = result.split(", ");
+        String[] split = result.split(" ");
         double load = Double.parseDouble(split[split.length - 3].split(",")[0]);
 
         return load < threshold;
