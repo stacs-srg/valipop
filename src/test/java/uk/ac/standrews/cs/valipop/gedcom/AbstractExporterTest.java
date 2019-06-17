@@ -89,8 +89,6 @@ public abstract class AbstractExporterTest {
 
         config.setRunPurpose(purpose).setDeterministic(true);
 
-        config.setGeographyFilePath(Paths.get("src/main/resources/valipop/geography-cache/scotland-residential-ways.ser"));
-
         OBDModel sim = new OBDModel(config);
         sim.runSimulation();
 

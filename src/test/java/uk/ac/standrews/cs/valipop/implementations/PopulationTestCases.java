@@ -57,9 +57,7 @@ class PopulationTestCases {
         Path varPath = Paths.get("src/test/resources/valipop/test-pop");
         String runPurpose = "general-structure-testing";
 
-        Config config = new Config(tS, t0, tE, t0PopulationSize, varPath).setRunPurpose(runPurpose).setDeterministic(true);
-
-        config.setGeographyFilePath(Paths.get("src/main/resources/valipop/geography-cache/scotland-residential-ways.ser"));
+        Config config = new Config(tS, t0, tE, t0PopulationSize, varPath).setRunPurpose(runPurpose).setDeterministic(true).setSeed(seed);
 
         OBDModel model = new OBDModel(config);
         model.runSimulation();

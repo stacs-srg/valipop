@@ -62,7 +62,7 @@ public class OBDModel {
     private static final String CODE_VERSION = "dev-bf";
     private static final int MINIMUM_POPULATION_SIZE = 100;
     private static final int EARLIEST_AGE_OF_MARRIAGE = 16;
-    private static final int MAX_ATTEMPTS = 10;
+    private static final int MAX_ATTEMPTS = 1;
     public static final Period MAX_AGE = Period.ofYears(110);
 
     private static final Logger log;
@@ -274,6 +274,7 @@ public class OBDModel {
         logEntry.append(numberDying).append("\t");
 
         migrationModel.performMigration(currentTime, this);
+
         occupationChangeModel.performOccupationChange(currentTime);
 
         if (simulationStarted()) {

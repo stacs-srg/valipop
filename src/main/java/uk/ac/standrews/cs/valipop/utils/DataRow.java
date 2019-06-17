@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -82,5 +83,18 @@ public class DataRow {
 
     public boolean getBoolean(String label) {
         return Boolean.valueOf(getValue(label));
+    }
+
+    public String toString(List<String> order) {
+        StringBuilder sb = new StringBuilder();
+
+        for(String label : order) {
+            sb.append(label);
+            sb.append(": ");
+            sb.append(values.get(label));
+            sb.append(" ");
+        }
+
+        return sb.toString();
     }
 }

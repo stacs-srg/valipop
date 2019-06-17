@@ -20,12 +20,14 @@ public class AnalysisThread extends Thread {
 
     private int maxBirthingAge;
     private SummaryRow summaryRow;
+    private int threadCount;
 
     private final Config config;
 
-    public AnalysisThread(OBDModel model, Config config) {
+    public AnalysisThread(OBDModel model, Config config, int threadCount) {
 
         this.config = config;
+        this.threadCount = threadCount;
 
         maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
         summaryRow = model.getSummaryRow();
@@ -34,7 +36,7 @@ public class AnalysisThread extends Thread {
     @Override
     public void run() {
 
-        FactorSearch.threadCount++;
+        threadCount++;
 
         ProgramTimer statsTimer = new ProgramTimer();
 
@@ -53,6 +55,6 @@ public class AnalysisThread extends Thread {
 
         summaryRow.outputSummaryRowToFile();
 
-        FactorSearch.threadCount--;
+        threadCount--;
     }
 }

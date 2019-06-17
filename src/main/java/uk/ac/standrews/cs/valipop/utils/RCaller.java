@@ -87,7 +87,7 @@ public class RCaller {
         }
     }
 
-    private static String waitOnReturn(Process process) throws IOException {
+    public static String waitOnReturn(Process process) throws IOException {
 
 
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
