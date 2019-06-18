@@ -100,11 +100,14 @@ public class JobQueueRunner {
     }
 
     // checks recent load average - if over threshold then does not run next sim until load average has dropped
-    private static boolean nodeIdle(double threshold) throws IOException {
+    private static boolean nodeIdle(double threshold) throws IOException, InterruptedException {
         String result = execCmd("uptime");
         String[] split = result.split(" ");
         double load = Double.parseDouble(split[split.length - 3].split(",")[0]);
-        System.out.println(load);
+
+        if(load > threshold)
+            Thread.sleep(60000);
+
         return load < threshold;
     }
 
@@ -253,7 +256,6 @@ public class JobQueueRunner {
                 chosenJob.getPath("results dir"),
                 chosenJob.getValue("reason"));
 
-        config.setRunPurpose(chosenJob.getValue("reason"));
         config.setSetupBirthRate(chosenJob.getDouble("setup br"));
         config.setSetupDeathRate(chosenJob.getDouble("setup dr"));
         config.setRecoveryFactor(chosenJob.getDouble("rf"));
