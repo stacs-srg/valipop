@@ -102,7 +102,7 @@ public class MinimaSearch {
 
                 for (; n < repeatRuns; n++) {
 
-                    Config config = new Config(tS, t0, tE, populationSize, dataFiles).setRunPurpose( runPurpose);
+                    Config config = new Config(tS, t0, tE, populationSize, dataFiles, Config.DEFAULT_RESULTS_SAVE_PATH, runPurpose);
 
                     config.setRecoveryFactor(recoveryFactor);
                     config.setProportionalRecoveryFactor(proportionalRecoveryFactor);
