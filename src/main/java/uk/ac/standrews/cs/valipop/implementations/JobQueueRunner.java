@@ -249,7 +249,9 @@ public class JobQueueRunner {
                 chosenJob.getLocalDate("t0"),
                 chosenJob.getLocalDate("tE"),
                 chosenJob.getInt("seed size"),
-                chosenJob.getPath("input dir"));
+                chosenJob.getPath("input dir"),
+                chosenJob.getPath("results dir"),
+                chosenJob.getValue("reason"));
 
         config.setRunPurpose(chosenJob.getValue("reason"));
         config.setSetupBirthRate(chosenJob.getDouble("setup br"));
@@ -261,7 +263,6 @@ public class JobQueueRunner {
         config.setMinGestationPeriod(chosenJob.getPeriod("min ges period"));
         config.setBirthFactor(chosenJob.getDouble("bf"));
         config.setDeathFactor(chosenJob.getDouble("df"));
-        config.setResultsSavePath(chosenJob.getPath("results dir"));
 
         try {
             config.setOutputRecordFormat(Enum.valueOf(RecordFormat.class, chosenJob.getValue("output record format")));

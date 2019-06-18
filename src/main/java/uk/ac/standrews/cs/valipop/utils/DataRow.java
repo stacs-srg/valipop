@@ -25,7 +25,7 @@ public class DataRow {
         if(labels.length != row.length) throw new InvalidInputFileException("Differing number of rows to labels");
 
         for(int c = 0; c < labels.length; c++) {
-            values.put(labels[c], row[c]);
+            values.put(labels[c].trim(), row[c].trim());
         }
     }
 

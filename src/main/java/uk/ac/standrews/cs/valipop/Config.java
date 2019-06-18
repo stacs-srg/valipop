@@ -48,7 +48,7 @@ public class Config {
 
     private static final boolean DEFAULT_BINOMIAL_SAMPLING_FLAG = true;
     private static final boolean DEFAULT_DETERMINISTIC_FLAG = false;
-    private static final boolean DEFAULT_OUTPUT_TABLES_FLAG = false;
+    private static final boolean DEFAULT_OUTPUT_TABLES_FLAG = true;
 
     private static final double DEFAULT_SETUP_BR = 0.0133;
     private static final double DEFAULT_SETUP_DR = 0.0122;
@@ -105,7 +105,7 @@ public class Config {
     private static final Logger log = Logger.getLogger(Config.class.getName());
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS");
     private static Level logLevel = DEFAULT_LOG_LEVEL;
-    private static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
+    public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
     private static final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
 
 
@@ -170,7 +170,7 @@ public class Config {
     }
 
     private int ctTreeStepback = DEFAULT_CT_TREE_STEPBACK;
-    private double ctTreePrecision = DEFAULT_CT_TREE_STEPBACK;
+    private double ctTreePrecision = DEFAULT_CT_TREE_PRECISION;
 
     private String runPurpose = DEFAULT_RUN_PURPOSE;
     private RecordFormat outputRecordFormat = DEFAULT_OUTPUT_RECORD_FORMAT;
@@ -188,13 +188,15 @@ public class Config {
         return startTime.format(FORMATTER);
     }
 
-    public Config(LocalDate tS, LocalDate t0, LocalDate tE, int t0PopulationSize, Path varPath) {
+    public Config(LocalDate tS, LocalDate t0, LocalDate tE, int t0PopulationSize, Path varPath, Path resultsDir, String runPurpose) {
 
         this.tS = tS;
         this.t0 = t0;
         this.tE = tE;
         this.t0PopulationSize = t0PopulationSize;
         this.varPath = varPath;
+        this.resultsSavePath = resultsDir;
+        this.runPurpose = runPurpose;
 
         setUpFileStructure();
         configureLogging();

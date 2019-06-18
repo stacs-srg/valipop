@@ -20,7 +20,8 @@ public class RCaller {
     public static Process generateAnalysisHTML(Path pathOfRunDir, int maxBirthingAge, String subTitle) throws StatsException {
 
         String pathToScript = "src/main/resources/valipop/analysis-r/geeglm/runPopulationAnalysis.R";
-        String[] params = {System.getProperty("user.dir") + "/" + pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
+        String[] params = {pathOfRunDir.toString(), String.valueOf(maxBirthingAge), subTitle};
+//        String[] params = {System.getProperty("user.dir") + "/" + pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
 
         try {
             return runRScript(pathToScript, params);

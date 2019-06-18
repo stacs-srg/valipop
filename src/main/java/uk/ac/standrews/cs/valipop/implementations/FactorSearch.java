@@ -101,7 +101,7 @@ public class FactorSearch {
                                     for (double death_factor : death_factors) {
                                         for (int n = 0; n < numberOfRunsPerSim; n++) {
 
-                                            Config config = new Config(tS, t0, tE, size, dataFiles);
+                                            Config config = new Config(tS, t0, tE, size, dataFiles, results_save_location, runPurpose);
 
                                             config.setCTtreePrecision(precision);
                                             config.setRunPurpose(runPurpose);
@@ -113,7 +113,6 @@ public class FactorSearch {
                                             config.setMinBirthSpacing(minBirthSpacing);
                                             config.setBirthFactor(birth_factor);
                                             config.setDeathFactor(death_factor);
-                                            config.setResultsSavePath(results_save_location);
 
                                             OBDModel model = new OBDModel(config);
                                             try {

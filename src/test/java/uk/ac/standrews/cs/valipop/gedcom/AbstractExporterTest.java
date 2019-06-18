@@ -85,9 +85,11 @@ public abstract class AbstractExporterTest {
                 LocalDate.of(1855, 1, 1),
                 LocalDate.of(2015, 1, 1),
                 population_size,
-                Paths.get("src/test/resources/valipop/test-pop"));
+                Paths.get("src/test/resources/valipop/test-pop"),
+                Config.DEFAULT_RESULTS_SAVE_PATH,
+                purpose);
 
-        config.setRunPurpose(purpose).setDeterministic(true);
+        config.setDeterministic(true);
 
         OBDModel sim = new OBDModel(config);
         sim.runSimulation();

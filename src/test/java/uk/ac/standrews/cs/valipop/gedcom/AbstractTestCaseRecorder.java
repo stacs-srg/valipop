@@ -41,9 +41,11 @@ public abstract class AbstractTestCaseRecorder {
                     LocalDate.of(1855, 1, 1),
                     LocalDate.of(2015, 1, 1),
                     AbstractExporterTest.TEST_CASE_POPULATION_SIZES[i],
-                    Paths.get("src/test/resources/valipop/test-pop"));
+                    Paths.get("src/test/resources/valipop/test-pop"),
+                    Config.DEFAULT_RESULTS_SAVE_PATH,
+                    "DETERMINISTIC-TESTING");
 
-            config.setRunPurpose("DETERMINISTIC-TESTING").setDeterministic(true);
+            config.setDeterministic(true);
 
             OBDModel sim = new OBDModel(config);
             sim.runSimulation();
