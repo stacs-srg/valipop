@@ -158,6 +158,8 @@ public class JobQueueRunner {
 
     public static DataRow getJob(Path jobFile, int availiableMemory) throws IOException, InterruptedException, InvalidInputFileException {
 
+        System.out.println("Locking job file @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        
         FileChannel fileChannel = getFileChannel(jobFile);
         DataRow chosenJob = null;
 
@@ -226,11 +228,11 @@ public class JobQueueRunner {
         } finally {
             // release job file
             fileChannel.close(); // also releases the lock
-            System.out.println("Closing the channel and releasing lock. A");
+            System.out.println("Releasing job file @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
 
         return chosenJob;
-
+        
     }
 
     private static DataRow chooseJob(Map<String, DataRowSet> jobsByMemory, int maxRequiredMemory, int maxPriorityLevel, DataRowSet jobs, FileChannel fileChannel) throws IOException, InvalidInputFileException {
@@ -313,6 +315,7 @@ public class JobQueueRunner {
         FileChannel fileChannel = getFileChannel(jobFile);
 
         try {
+            System.out.println("Locking job file (R) @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             fileChannel.lock(0, Long.MAX_VALUE, false);
 
             // read in file to data structure
@@ -352,7 +355,7 @@ public class JobQueueRunner {
             // release job file
             if(releaseLockOnExit) {
                 fileChannel.close(); // also releases the lock
-                System.out.println("Closing the channel and releasing lock. B");
+                System.out.println("Releasing job file (R) @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             }
         }
     }
