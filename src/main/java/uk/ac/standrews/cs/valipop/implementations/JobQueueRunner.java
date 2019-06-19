@@ -158,14 +158,15 @@ public class JobQueueRunner {
 
     public static DataRow getJob(Path jobFile, int availiableMemory) throws IOException, InterruptedException, InvalidInputFileException {
 
-        System.out.println("Locking job file @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         
         FileChannel fileChannel = getFileChannel(jobFile);
         DataRow chosenJob = null;
 
         try {
             // lock job file
+            System.out.println("Locking job file @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             fileChannel.lock(0, Long.MAX_VALUE, false);
+            System.out.println("Locked job file @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             DataRowSet jobs = readInJobFile(fileChannel);
 
             int maxRequiredMemory = 0;
@@ -317,6 +318,7 @@ public class JobQueueRunner {
         try {
             System.out.println("Locking job file (R) @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             fileChannel.lock(0, Long.MAX_VALUE, false);
+            System.out.println("Locked job file (R) @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
             // read in file to data structure
             DataRowSet jobs = readInJobFile(fileChannel);
