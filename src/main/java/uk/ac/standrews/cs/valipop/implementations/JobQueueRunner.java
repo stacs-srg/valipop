@@ -112,10 +112,12 @@ public class JobQueueRunner {
         String[] split = result.split(" ");
         double load = Double.parseDouble(split[split.length - 3].split(",")[0]);
 
-        System.out.println("Node busy (" + load + ") @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        System.out.println("Node check (" + load + ") @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         
-        if(load > threshold)
+        if(load > threshold) {
+            System.out.println("Node busy (" + load + ") @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             Thread.sleep(60000);
+        }
         
         return load < threshold;
     }
@@ -142,16 +144,16 @@ public class JobQueueRunner {
     private static boolean checkPause(Path statusPath) throws IOException, InterruptedException {
         // read in file
         ArrayList<String> lines = new ArrayList<>(InputFileReader.getAllLines(statusPath));
-
-        System.out.println("Status 'pause' @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         
         boolean pause = false;
         
         if(!lines.isEmpty())
             pause = lines.get(0).equals("pause");
 
-        if(pause)
+        if(pause) {
+            System.out.println("Status 'pause' @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             Thread.sleep(10000);
+        }
 
         return pause;
     }
