@@ -13,6 +13,8 @@ import java.nio.channels.FileLock;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -52,9 +54,13 @@ public class JobQueueRunner {
                     DataRow chosenJob = getJob(jobQPath, assignedMemory);
 
                     if (chosenJob != null) {
-                        System.out.println("JOB TAKEN - " + chosenJob.toString(order));
+                        System.out.println("JOB TAKEN @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " - " + chosenJob.toString(order));
 
                         try {
+
+                            // runs GC to ensure no object left in memory from previous sims that may skew memory usage logging
+                            System.gc();
+
                             Config config = convertJobToConfig(chosenJob);
 
                             OBDModel model = new OBDModel(config);
@@ -80,15 +86,16 @@ public class JobQueueRunner {
                             }
 
                         } catch (InvalidInputFileException e) {
-                            System.out.println("JOB RETURNED - " + chosenJob.toString(order));
+                            System.out.println("JOB RETURNED @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " - " + chosenJob.toString(order));
                             returnJobToQueue(jobQPath, chosenJob, chosenJob.getInt("required memory"), 99, true);
                         }
+
                     } else {
-                        System.out.println("NO SUITABLE JOB FOUND");
+                        System.out.println("NO SUITABLE JOB FOUND @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                         Thread.sleep(10000);
                     }
                 } catch (InvalidInputFileException e) {
-                    System.out.println("Either the job file doesn't have any jobs or it's malformed - I'm going to keep looping and wait for you to fix that...");
+                    System.out.println("Either the job file doesn't have any jobs or it's malformed - I'm going to keep looping and wait for you to fix that... @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                     Thread.sleep(60000);
                 }
             }
@@ -105,9 +112,11 @@ public class JobQueueRunner {
         String[] split = result.split(" ");
         double load = Double.parseDouble(split[split.length - 3].split(",")[0]);
 
+        System.out.println("Node busy (" + load + ") @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        
         if(load > threshold)
             Thread.sleep(60000);
-
+        
         return load < threshold;
     }
 
@@ -130,14 +139,21 @@ public class JobQueueRunner {
         return true;
     }
 
-    private static boolean checkPause(Path statusPath) throws IOException {
+    private static boolean checkPause(Path statusPath) throws IOException, InterruptedException {
         // read in file
         ArrayList<String> lines = new ArrayList<>(InputFileReader.getAllLines(statusPath));
 
+        System.out.println("Status 'pause' @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        
+        boolean pause = false;
+        
         if(!lines.isEmpty())
-            return  lines.get(0).equals("pause");
+            pause = lines.get(0).equals("pause");
 
-        return false;
+        if(pause)
+            Thread.sleep(10000);
+
+        return pause;
     }
 
     public static DataRow getJob(Path jobFile, int availiableMemory) throws IOException, InterruptedException, InvalidInputFileException {

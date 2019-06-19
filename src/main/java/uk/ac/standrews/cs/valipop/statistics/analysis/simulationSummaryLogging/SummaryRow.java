@@ -86,9 +86,11 @@ public class SummaryRow {
     private long maxMemoryUsage = -1L;
     private Double v = Double.NaN;
 
+    private String hostname;
+
     private Config config;
 
-    public SummaryRow(Config config, String codeVersion) {
+    public SummaryRow(Config config, String codeVersion, String hostname) {
 
         this.config = config;
         this.resultsDirectory = config.getResultsSavePath().resolve( config.getRunPurpose()).resolve( config.getStartTime().toString());
@@ -112,6 +114,7 @@ public class SummaryRow {
         this.seed = config.getSeed();
         this.ctTreeStepback = config.getCtTreeStepback();
         this.ctTreePrecision = config.getCtTreePrecision();
+        this.hostname = hostname;
     }
 
     public void setStartPop(int startPop) {
@@ -170,7 +173,8 @@ public class SummaryRow {
                 ctRunTime, recordsRunTime, resultsDirectory, birthFactor,
                 deathFactor, recoveryFactor, proportionalRecoveryFactor, binomialSampling,
                 minBirthSpacing, (maxMemoryUsage / 1e6), outputRecordFormat.toString(),
-                v.toString(), statsRunTime, eligibilityChecks, failedEligibilityChecks, seed, ctTreeStepback, ctTreePrecision) + "\n";
+                v.toString(), statsRunTime, eligibilityChecks, failedEligibilityChecks, seed,
+                ctTreeStepback, ctTreePrecision, hostname) + "\n";
     }
 
     private static String makeRow(Object... values) {
@@ -198,7 +202,8 @@ public class SummaryRow {
                  "Results Directory", "Birth Factor", "Death Factor", "Recovery Factor" ,
                  "Proportional Recovery Factor", "binomial Sampling", "Min Birth Spacing" ,
                  "Peak Memory Usage (MB)", "Output Record Format", "v/M", "Stats Run Time" ,
-                 "Eligibility Checks", "Failed Eligibility Checks", "Seed", "CT Tree Stepback", "CT Tree Precision");
+                 "Eligibility Checks", "Failed Eligibility Checks", "Seed", "CT Tree Stepback",
+                 "CT Tree Precision", "Hostname");
     }
 
     public void outputSummaryRowToFile() {
