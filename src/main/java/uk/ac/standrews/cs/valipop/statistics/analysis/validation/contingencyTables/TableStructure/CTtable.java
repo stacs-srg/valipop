@@ -34,6 +34,7 @@ public abstract class CTtable {
 
         for (CTRow row : table.values()) {
 
+            // TODO paramaterise this?
             if (row.countGreaterThan(0.1)) {
 
                 ps.print(row.toString(","));

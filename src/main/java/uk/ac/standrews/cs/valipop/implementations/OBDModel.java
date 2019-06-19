@@ -139,7 +139,7 @@ public class OBDModel {
 
             log.info("End of Initialisation Period set: " + endOfInitPeriod);
 
-            summary = new SummaryRow(config, CODE_VERSION);
+            summary = new SummaryRow(config, CODE_VERSION, JobQueueRunner.execCmd("hostname"));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
