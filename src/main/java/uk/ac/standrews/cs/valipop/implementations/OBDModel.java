@@ -132,6 +132,8 @@ public class OBDModel {
             migrationModel = new BalancedMigrationModel(population, randomNumberGenerator, geography, personFactory, desired);
             occupationChangeModel = new OccupationChangeModel(population, desired, config);
 
+            log.info("Random seed: " + config.getSeed());
+            log.info("Population seed size: " + config.getT0PopulationSize());
             log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
             Period timeStep = Period.ofYears(desired.getOrderedBirthRates(Year.of(currentTime.getYear())).getLargestLabel().getValue());
@@ -139,7 +141,7 @@ public class OBDModel {
 
             log.info("End of Initialisation Period set: " + endOfInitPeriod);
 
-            summary = new SummaryRow(config, CODE_VERSION, JobQueueRunner.execCmd("hostname"));
+            summary = new SummaryRow(config, CODE_VERSION, JobQueueRunner.execCmd("hostname").trim());
 
         } catch (IOException e) {
             throw new RuntimeException(e);
