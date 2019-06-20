@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
@@ -89,14 +90,14 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         partnershipIndex.put(partnership.getId(), partnership);
     }
 
-    public void removeMales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography, DistanceSelector moveDistanceSelector) throws InsufficientNumberOfPeopleException {
+    public void removeMales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography, DistanceSelector moveDistanceSelector, Config config) throws InsufficientNumberOfPeopleException {
 
-        removePeople(males, numberToRemove, firstDate, timePeriod, bestAttempt, geography, moveDistanceSelector);
+        removePeople(males, numberToRemove, firstDate, timePeriod, bestAttempt, geography, moveDistanceSelector, config);
     }
 
-    public void removeFemales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography, DistanceSelector moveDistanceSelector) throws InsufficientNumberOfPeopleException {
+    public void removeFemales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography, DistanceSelector moveDistanceSelector, Config config) throws InsufficientNumberOfPeopleException {
 
-        removePeople(females, numberToRemove, firstDate, timePeriod, bestAttempt, geography, moveDistanceSelector);
+        removePeople(females, numberToRemove, firstDate, timePeriod, bestAttempt, geography, moveDistanceSelector, config);
     }
 
     /*
@@ -208,11 +209,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         return description;
     }
 
-    private void removePeople(final PersonCollection collection, final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography, DistanceSelector moveDistanceSelector) throws InsufficientNumberOfPeopleException {
+    private void removePeople(final PersonCollection collection, final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography, DistanceSelector moveDistanceSelector, Config config) throws InsufficientNumberOfPeopleException {
 
         final Collection<IPerson> removed = collection.removeNPersons(numberToRemove, firstDate, timePeriod, true);
         for (IPerson person : removed) {
-            removeChildFromParentsPartnership(person, geography, moveDistanceSelector);
+            removeChildFromParentsPartnership(person, geography, moveDistanceSelector, config);
 
             for(Address address : person.getAllAddresses()) {
                 address.removeInhabitant(person);
@@ -221,7 +222,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         }
     }
 
-    private void removeChildFromParentsPartnership(final IPerson person, Geography geography, DistanceSelector moveDistanceSelector) {
+    private void removeChildFromParentsPartnership(final IPerson person, Geography geography, DistanceSelector moveDistanceSelector, Config config) {
 
         final IPartnership parents = person.getParents();
 
@@ -252,7 +253,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
                         IPerson illegitChild = mothersLastPartnership.getChildren().get(0);
 
                         // we should make it at a distance from the childs father
-                        Address newAddress = geography.getNearestEmptyAddressAtDistance(illegitChild.getParents().getMalePartner().getAddress(illegitChild.getBirthDate()).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
+                        Address newAddress = geography.getNearestEmptyAddressAtDistance(illegitChild.getParents().getMalePartner().getAddress(illegitChild.getBirthDate().minus(config.getMinGestationPeriod())).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
                         parents.getFemalePartner().setAddress(illegitChild.getBirthDate(), newAddress);
 
                         for(IPerson child : mothersLastPartnership.getChildren())
