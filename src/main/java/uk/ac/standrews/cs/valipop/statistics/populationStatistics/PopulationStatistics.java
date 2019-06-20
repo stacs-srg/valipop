@@ -87,6 +87,7 @@ public class PopulationStatistics implements EventRateTables {
     public PopulationStatistics(Config config) {
 
         try {
+            randomGenerator = new JDKRandomGenerator();
 
             if (!config.deterministic()) {
                 // sets a seed based on time so that such can be logged for recreation of simulation
