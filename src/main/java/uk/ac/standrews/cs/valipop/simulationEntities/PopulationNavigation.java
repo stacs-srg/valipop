@@ -379,4 +379,14 @@ public class PopulationNavigation {
             }
         }
     }
+
+    public static boolean childOf(IPerson parent, IPerson person) {
+
+        if(person.getParents() == null) return false;
+        if(person.getParents().getMalePartner() == parent) return true;
+        if(person.getParents().getFemalePartner() == parent) return true;
+
+        return false;
+
+    }
 }

@@ -374,12 +374,12 @@ public class OBDModel {
 
         // TODO why is this a loop? Seems to try to remove n people n times...
         for (int i = 0; i < numberOfMalesToRemove; i++) {
-            population.getLivingPeople().removeMales(numberOfMalesToRemove, currentTime, timeStep, true, geography);
+            population.getLivingPeople().removeMales(numberOfMalesToRemove, currentTime, timeStep, true, geography, moveDistanceSelector);
 //            population.getLivingPeople().getMales().removeNPersons(numberOfMalesToRemove, currentTime, timeStep, true);
         }
 
         for (int i = 0; i < numberOfFemalesToRemove; i++) {
-            population.getLivingPeople().removeFemales(numberOfFemalesToRemove, currentTime, timeStep, true, geography);
+            population.getLivingPeople().removeFemales(numberOfFemalesToRemove, currentTime, timeStep, true, geography, moveDistanceSelector);
 //            population.getLivingPeople().getFemales().removeNPersons(numberOfFemalesToRemove, currentTime, timeStep, true);
         }
     }
@@ -579,10 +579,6 @@ public class OBDModel {
 
         final IPerson mother = partnership.female;
         final IPerson father = partnership.male;
-
-        if(father.hasEmigrated()) {
-            System.out.println("");
-        }
 
         final int numChildrenInPartnership = partnership.numberOfChildren;
 

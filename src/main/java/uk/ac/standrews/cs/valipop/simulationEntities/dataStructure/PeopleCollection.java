@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
+import uk.ac.standrews.cs.valipop.utils.addressLookup.DistanceSelector;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 
 import java.time.LocalDate;
@@ -88,14 +89,14 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         partnershipIndex.put(partnership.getId(), partnership);
     }
 
-    public void removeMales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography) throws InsufficientNumberOfPeopleException {
+    public void removeMales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography, DistanceSelector moveDistanceSelector) throws InsufficientNumberOfPeopleException {
 
-        removePeople(males, numberToRemove, firstDate, timePeriod, bestAttempt, geography);
+        removePeople(males, numberToRemove, firstDate, timePeriod, bestAttempt, geography, moveDistanceSelector);
     }
 
-    public void removeFemales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography) throws InsufficientNumberOfPeopleException {
+    public void removeFemales(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography, DistanceSelector moveDistanceSelector) throws InsufficientNumberOfPeopleException {
 
-        removePeople(females, numberToRemove, firstDate, timePeriod, bestAttempt, geography);
+        removePeople(females, numberToRemove, firstDate, timePeriod, bestAttempt, geography, moveDistanceSelector);
     }
 
     /*
@@ -207,11 +208,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         return description;
     }
 
-    private void removePeople(final PersonCollection collection, final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography) throws InsufficientNumberOfPeopleException {
+    private void removePeople(final PersonCollection collection, final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography, DistanceSelector moveDistanceSelector) throws InsufficientNumberOfPeopleException {
 
         final Collection<IPerson> removed = collection.removeNPersons(numberToRemove, firstDate, timePeriod, true);
         for (IPerson person : removed) {
-            removeChildFromParentsPartnership(person, geography);
+            removeChildFromParentsPartnership(person, geography, moveDistanceSelector);
 
             for(Address address : person.getAllAddresses()) {
                 address.removeInhabitant(person);
@@ -220,12 +221,13 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         }
     }
 
-    private void removeChildFromParentsPartnership(final IPerson person, Geography geography) {
+    private void removeChildFromParentsPartnership(final IPerson person, Geography geography, DistanceSelector moveDistanceSelector) {
 
         final IPartnership parents = person.getParents();
 
         if (parents != null) {
             final IPerson mother = parents.getFemalePartner();
+
             remove(mother);
             parents.getChildren().remove(person);
 
@@ -237,12 +239,26 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
                 IPartnership mothersLastPartnership = PopulationNavigation.getLastPartnership(mother);
 
-                if(mothersLastPartnership == null || !mothersLastPartnership.isFinalised())
+                if(mothersLastPartnership == null) {//  || !mothersLastPartnership.isFinalised()
+                    parents.getFemalePartner().rollbackLastMove(geography);
+                } else if (!person.isIllegitimate()) {
+                    parents.getMalePartner().rollbackLastMove(geography);
                     parents.getFemalePartner().rollbackLastMove(geography);
 
-                if(!person.isIllegitimate())
-                    parents.getMalePartner().rollbackLastMove(geography);
+                    // if mother now has no address history (but has previous partnership)
+                    if(parents.getFemalePartner().getAllAddresses().isEmpty()) {
+                        // we need to provide an address for here and (illegitimate - only way this scenario can arise) child
 
+                        IPerson illegitChild = mothersLastPartnership.getChildren().get(0);
+
+                        // we should make it at a distance from the childs father
+                        Address newAddress = geography.getNearestEmptyAddressAtDistance(illegitChild.getParents().getMalePartner().getAddress(illegitChild.getBirthDate()).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
+                        parents.getFemalePartner().setAddress(illegitChild.getBirthDate(), newAddress);
+
+                        for(IPerson child : mothersLastPartnership.getChildren())
+                            child.setAddress(child.getBirthDate(), newAddress);
+                    }
+                }
             }
 
             add(mother);
