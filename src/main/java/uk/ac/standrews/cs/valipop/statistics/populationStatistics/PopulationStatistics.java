@@ -87,11 +87,13 @@ public class PopulationStatistics implements EventRateTables {
     public PopulationStatistics(Config config) {
 
         try {
-            randomGenerator = new JDKRandomGenerator();
 
-            if (config.deterministic()) {
-                randomGenerator.setSeed(config.getSeed());
+            if (!config.deterministic()) {
+                // sets a seed based on time so that such can be logged for recreation of simulation
+                config.setSeed((int) System.nanoTime());
             }
+
+            randomGenerator.setSeed(config.getSeed());
 
             Map<Year, SelfCorrectingOneDimensionDataDistribution> maleDeath = readInSC1DDataFiles(config.getVarMaleLifetablePaths(), config);
             Map<Year, AgeDependantEnumeratedDistribution> maleDeathCauses = readInAgeDependantEnumeratedDistributionDataFiles(config.getVarMaleDeathCausesPaths(), config);
