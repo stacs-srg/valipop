@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -46,6 +47,11 @@ public class Address {
         if (!wasInhabited && !country)
             geography.updated(this);
 
+    }
+
+    public void addInhabitants(Set<IPerson> people) {
+        for(IPerson p : people)
+            addInhabitant(p);
     }
 
     public boolean removeInhabitant(IPerson person) {

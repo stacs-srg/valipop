@@ -274,8 +274,13 @@ public class Person implements IPerson {
     @Override
     public void rollbackLastMove(Geography geography) {
 
+        Address cancelledAddress = addressHistory.lastEntry().getValue();
+        Set<IPerson> family = getChildrenOfAtAddress(this, cancelledAddress);
+        family.add(this);
+
         // remove from curent abode and remove from address history
-        cancelLastMove(geography);
+        for(IPerson person : family)
+            person.cancelLastMove(geography);
 
         if(addressHistory.size() != 0) {
             // check previous abode
@@ -285,11 +290,11 @@ public class Person implements IPerson {
                 // if by family
                 if (containsFamily(previousAddress, this)) {
                     // move back in
-                    previousAddress.addInhabitant(this);
+                    previousAddress.addInhabitants(family);
                 } else {
                     // displace current residents at distance zero
                     previousAddress.displaceInhabitants();
-                    previousAddress.addInhabitant(this);
+                    previousAddress.addInhabitants(family);
                 }
             } else if(previousAddress.isCountry()) {
                 // if cancelling last move results in the 'new last address' being forign country then we need to give the
@@ -297,10 +302,23 @@ public class Person implements IPerson {
                 setAddress(immigrationDate, geography.getRandomEmptyAddress());
             } else {
                 // move back in
-                previousAddress.addInhabitant(this);
+                previousAddress.addInhabitants(family);
             }
         }
 
+    }
+
+    private Set<IPerson> getChildrenOfAtAddress(IPerson parent, Address address) {
+
+        HashSet<IPerson> childrenAtAddress = new HashSet<>();
+
+        for(IPerson person : address.getInhabitants()) {
+            if(PopulationNavigation.childOf(parent, person)) {
+                childrenAtAddress.add(person);
+            }
+        }
+
+        return childrenAtAddress;
     }
 
     @Override
