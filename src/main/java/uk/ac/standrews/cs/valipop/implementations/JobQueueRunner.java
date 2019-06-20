@@ -63,30 +63,41 @@ public class JobQueueRunner {
 
                             Config config = convertJobToConfig(chosenJob);
 
+                            
                             OBDModel model = new OBDModel(config);
                             try {
+                                System.out.println("Sim commencing @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " with seed: " + config.getSeed());
                                 model.runSimulation();
+                                System.out.println("Sim concluded, beginning CT tables generation @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                 model.analyseAndOutputPopulation(false, 5);
+                                System.out.println("CT tables generation concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
                                 if(THREAD_LIMIT == 1) {
+                                    System.out.println("Beginning R Analysis in main thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                     new AnalysisThread(model, config, threadCount).run(); // this runs it in the main thread
                                 } else {
-                                    while (threadCount >= THREAD_LIMIT)
+                                    while (threadCount >= THREAD_LIMIT) {
+                                        System.out.println("Waiting on availiable thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                         Thread.sleep(10000);
+                                    }
 
+                                    System.out.println("Beginning R Analysis in new thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                     new AnalysisThread(model, config, threadCount).start(); // this runs it in a new thread
                                 }
+
+                                System.out.println("R Analysis concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
                             } catch (PreEmptiveOutOfMemoryWarning e) {
                                 model.recordOutOfMemorySummary();
                                 model.getSummaryRow().outputSummaryRowToFile();
 
+                                System.out.println("JOB RETURNED - Insufficient memory @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " - " + chosenJob.toString(order));
                                 // put job back in queue with higher memory requirement
                                 returnJobToQueue(jobQPath, chosenJob, (int) Math.ceil(assignedMemory * memoryIncreaseOnMemoryException), chosenJob.getInt("priority"), true);
                             }
 
                         } catch (InvalidInputFileException e) {
-                            System.out.println("JOB RETURNED @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " - " + chosenJob.toString(order));
+                            System.out.println("JOB RETURNED - Invalid input @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " - " + chosenJob.toString(order));
                             returnJobToQueue(jobQPath, chosenJob, chosenJob.getInt("required memory"), 99, true);
                         }
 
@@ -99,7 +110,6 @@ public class JobQueueRunner {
                     Thread.sleep(60000);
                 }
             }
-
         }
 
         System.out.println("Closing due to status");
@@ -185,9 +195,6 @@ public class JobQueueRunner {
                 int reqMemory = Integer.valueOf(memoryRequired);
 
                 if(availiableMemory >= reqMemory) {
-//                    for(DataRow dr : jobsByMemory.get(memoryRequired))
-//                        jobs.remove(dr);
-//                } else {
 
                     for(DataRow dr : jobsByMemory.get(memoryRequired)) {
                         // get priority
