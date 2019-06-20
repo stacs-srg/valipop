@@ -30,8 +30,6 @@ public class CL_OBDModel {
 
     public static void runOBDModel(Path pathToConfigFile) throws IOException, PreEmptiveOutOfMemoryWarning, StatsException {
 
-        System.out.println(Runtime.getRuntime().maxMemory());
-
         Config config = new Config(pathToConfigFile);
 
         OBDModel model = new OBDModel( config);
