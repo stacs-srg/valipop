@@ -216,18 +216,24 @@ public class Person implements IPerson {
 
     @Override
     public void setAddress(LocalDate onDate, Address address) {
+
         if(addressHistory.size() != 0) { // Pass this bit if no previous address
 
             if(getAddress(onDate) != null)
                 getAddress(onDate).removeInhabitant(this);
 
+            boolean removed = false;
             // if children get shuttled around before birth then remove old addresses
             if(addressHistory.get(onDate) != null) {
-                addressHistory.get(onDate).removeInhabitant(this);
+                removed = addressHistory.get(onDate).removeInhabitant(this);
                 addressHistory.remove(onDate);
-            } else if(addressHistory.ceilingEntry(onDate) != null) { // if theres a future move - from a forced illegitimacy move - we scratch that move
-                addressHistory.ceilingEntry(onDate).getValue().removeInhabitant(this);
-                addressHistory.remove(addressHistory.ceilingKey(onDate));
+            }
+
+            if(!removed) {
+                while(addressHistory.ceilingEntry(onDate) != null) { // if theres a future move - from a forced illegitimacy move - we scratch that move
+                    addressHistory.ceilingEntry(onDate).getValue().removeInhabitant(this);
+                    addressHistory.remove(addressHistory.ceilingKey(onDate));
+                }
             }
 
 
