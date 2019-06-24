@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Interface for person objects.
@@ -145,4 +146,8 @@ public interface IPerson extends Comparable<IPerson> {
     String getLastOccupation();
 
     void setOccupation(LocalDate onDate, String occupation);
+
+    TreeMap<LocalDate, Address> getAddressHistory();
+
+    void setIllegitimate(boolean illegitiamte);
 }

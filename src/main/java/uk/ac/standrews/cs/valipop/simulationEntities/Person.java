@@ -44,7 +44,7 @@ public class Person implements IPerson {
     private final String firstName;
     private final String surname;
     private final String representation;
-    private final boolean illegitimate;
+    private boolean illegitimate;
 
     private String deathCause = "";
 
@@ -169,6 +169,16 @@ public class Person implements IPerson {
     }
 
     @Override
+    public TreeMap<LocalDate, Address> getAddressHistory() {
+        return addressHistory;
+    }
+
+    @Override
+    public void setIllegitimate(boolean illegitiamte) {
+        this.illegitimate = illegitiamte;
+    }
+
+    @Override
     public String getDeathCause() {
         return deathCause;
     }
@@ -219,13 +229,15 @@ public class Person implements IPerson {
 
         if(addressHistory.size() != 0) { // Pass this bit if no previous address
 
-            if(getAddress(onDate) != null)
-                getAddress(onDate).removeInhabitant(this);
-
             boolean removed = false;
+
+            if(getAddress(onDate) != null)
+                removed = getAddress(onDate).removeInhabitant(this);
+
+
             // if children get shuttled around before birth then remove old addresses
-            if(addressHistory.get(onDate) != null) {
-                removed = addressHistory.get(onDate).removeInhabitant(this);
+            if(addressHistory.get(onDate) != null) { // this is different to the above if as it looks for values at the exact key rather than taking the value at the floor of the key!
+//                removed = addressHistory.get(onDate).removeInhabitant(this);
                 addressHistory.remove(onDate);
             }
 
@@ -296,11 +308,11 @@ public class Person implements IPerson {
                 // if by family
                 if (containsFamily(previousAddress, this)) {
                     // move back in
-                    previousAddress.addInhabitants(family);
+                    returnFamilyToHouse(family, previousAddress);
                 } else {
                     // displace current residents at distance zero
                     previousAddress.displaceInhabitants();
-                    previousAddress.addInhabitants(family);
+                    returnFamilyToHouse(family, previousAddress);
                 }
             } else if(previousAddress.isCountry()) {
                 // if cancelling last move results in the 'new last address' being forign country then we need to give the
@@ -308,10 +320,43 @@ public class Person implements IPerson {
                 setAddress(immigrationDate, geography.getRandomEmptyAddress());
             } else {
                 // move back in
-                previousAddress.addInhabitants(family);
+                returnFamilyToHouse(family, previousAddress);
             }
         }
 
+    }
+
+    private void returnFamilyToHouse(Collection<IPerson> family, Address previousAddress) {
+
+        LocalDate parentsMoveInDate = null;
+
+        for(Map.Entry<LocalDate, Address> entry : addressHistory.entrySet()) {
+            if(entry.getValue().equals(previousAddress)) {
+                parentsMoveInDate = entry.getKey();
+                break;
+            }
+        }
+
+        if(parentsMoveInDate == null) {
+            throw new Error("Address unexpectedly not found");
+        }
+
+        // for each person
+        for(IPerson p : family) {
+            // check if place is in history of person (checking in case of child address overwrites followed by cancelations)
+            if(!p.getAllAddresses().contains(previousAddress)) {
+                // work out move in date
+                LocalDate moveDate = parentsMoveInDate.isBefore(p.getBirthDate()) ? p.getBirthDate() : parentsMoveInDate;
+
+                if(p.getAddressHistory().ceilingEntry(moveDate) != null)
+                    throw new Error("Unexpected addresss ordering");
+
+                p.getAddressHistory().put(moveDate, previousAddress);
+            }
+
+            // for all add person into house
+            previousAddress.addInhabitant(p);
+        }
     }
 
     private Set<IPerson> getChildrenOfAtAddress(IPerson parent, Address address) {

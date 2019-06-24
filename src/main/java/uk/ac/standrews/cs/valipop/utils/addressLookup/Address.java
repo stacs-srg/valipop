@@ -49,10 +49,10 @@ public class Address {
 
     }
 
-    public void addInhabitants(Set<IPerson> people) {
-        for(IPerson p : people)
-            addInhabitant(p);
-    }
+//    public void addInhabitants(Set<IPerson> people) {
+//        for(IPerson p : people)
+//            addInhabitant(p);
+//    }
 
     public boolean removeInhabitant(IPerson person) {
 
