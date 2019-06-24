@@ -254,7 +254,26 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
                         if(illegitChild.getParents().getMalePartner().getPartnerships().size() > 1) {
                             // we should make it at a distance from the childs father
-                            Address newAddress = geography.getNearestEmptyAddressAtDistance(illegitChild.getParents().getMalePartner().getAddress(illegitChild.getBirthDate().minus(config.getMinGestationPeriod())).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
+
+                            Address newAddress;
+
+                            if(illegitChild.getParents().getMalePartner().getAddress(illegitChild.getBirthDate().minus(config.getMinGestationPeriod())) == null) {
+                                // in this case the nature of assigning N birth events to a time period means it appears the father did not have an address at the time of birth
+                                // however as he produces ligitmiate children later in the year the earlier part of the simulation will have taken the address at that point
+                                // as the origin address for choosing the address for the illegitimate child and mother - we will do that again in this case
+                                newAddress = geography.getNearestEmptyAddressAtDistance(
+                                        illegitChild.getParents().getMalePartner().getAddressHistory()
+                                                .ceilingEntry(illegitChild.getBirthDate().minus(config.getMinGestationPeriod())).getValue()
+                                                .getArea().getCentriod()
+                                        , moveDistanceSelector.selectRandomDistance());
+                            } else {
+                                // in this case the father is where he is supposed to be!
+                                newAddress = geography.getNearestEmptyAddressAtDistance(
+                                        illegitChild.getParents().getMalePartner()
+                                                .getAddress(illegitChild.getBirthDate().minus(config.getMinGestationPeriod()))
+                                                .getArea().getCentriod(),
+                                        moveDistanceSelector.selectRandomDistance());
+                            }
                             parents.getFemalePartner().setAddress(illegitChild.getBirthDate(), newAddress);
 
                             for (IPerson child : mothersLastPartnership.getChildren())
