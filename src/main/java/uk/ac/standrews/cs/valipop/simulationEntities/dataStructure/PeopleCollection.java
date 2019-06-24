@@ -248,16 +248,33 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
                     // if mother now has no address history (but has previous partnership)
                     if(parents.getFemalePartner().getAllAddresses().isEmpty()) {
-                        // we need to provide an address for here and (illegitimate - only way this scenario can arise) child
+                        // we need to provide an address for her and (illegitimate - only way this scenario can arise) child
 
                         IPerson illegitChild = mothersLastPartnership.getChildren().get(0);
 
-                        // we should make it at a distance from the childs father
-                        Address newAddress = geography.getNearestEmptyAddressAtDistance(illegitChild.getParents().getMalePartner().getAddress(illegitChild.getBirthDate().minus(config.getMinGestationPeriod())).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
-                        parents.getFemalePartner().setAddress(illegitChild.getBirthDate(), newAddress);
+                        if(illegitChild.getParents().getMalePartner().getPartnerships().size() > 1) {
+                            // we should make it at a distance from the childs father
+                            Address newAddress = geography.getNearestEmptyAddressAtDistance(illegitChild.getParents().getMalePartner().getAddress(illegitChild.getBirthDate().minus(config.getMinGestationPeriod())).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
+                            parents.getFemalePartner().setAddress(illegitChild.getBirthDate(), newAddress);
 
-                        for(IPerson child : mothersLastPartnership.getChildren())
-                            child.setAddress(child.getBirthDate(), newAddress);
+                            for (IPerson child : mothersLastPartnership.getChildren())
+                                child.setAddress(child.getBirthDate(), newAddress);
+                        } else {
+                            // In this case the mother in currently having her just created ligitmate partnership rolled back
+                            // this leaves here with just a previous illegitimate child
+                            // however the father of the illegitimate child has also had his legitiamate partnership (i.e the one which makes this child to be illegitate)
+                            // rolled back
+                            // Thus... the only partnerships the mother and father have are the one producing the illegitamate child
+                            // Thus making it legitimate, so we're going to make the child legitimate and put them all in a house together
+                            // Also this only happens early in the sim (i.e. pre T0) so we can just set move in date based on childs birth date
+
+                            illegitChild.setIllegitimate(false);
+
+                            Address newAddress = geography.getRandomEmptyAddress();
+                            illegitChild.setAddress(illegitChild.getBirthDate(), newAddress);
+                            illegitChild.getParents().getMalePartner().setAddress(illegitChild.getBirthDate(), newAddress);
+                            illegitChild.getParents().getFemalePartner().setAddress(illegitChild.getBirthDate(), newAddress);
+                        }
                     }
                 }
             }

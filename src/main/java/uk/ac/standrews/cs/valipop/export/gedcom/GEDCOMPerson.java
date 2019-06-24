@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Person implementation for a population represented in a GEDCOM file.
@@ -350,6 +351,18 @@ public class GEDCOMPerson implements IPerson {
     @Override
     public void setOccupation(LocalDate onDate, String occupation) {
         this.occupation = occupation;
+    }
+
+    @Override
+    public TreeMap<LocalDate, Address> getAddressHistory() {
+        TreeMap<LocalDate, Address> tm = new TreeMap<>();
+        tm.put(birth_date, getAddress(birth_date));
+        return tm;
+    }
+
+    @Override
+    public void setIllegitimate(boolean illegitiamte) {
+
     }
 
     @Override
