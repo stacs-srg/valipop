@@ -250,14 +250,14 @@ public class JobQueueRunner {
 
     static String multipleJobs = "[0-1]\\.[0-9]+-[0-1]\\.[0-9]+@[0-1]\\.[0-9]+";
 
-    private static DataRowSet explodeRegexJobs(DataRowSet jobs) {
+    private static DataRowSet explodeRegexJobs(DataRowSet jobs) throws InvalidInputFileException {
 
         DataRowSet explodedJobs = null;
         DataRowSet toRemoveJobs = null;
 
         for(DataRow job : jobs) {
 
-            if(job.getValue("prf").matches(multipleJobs) || job.getValue("rf").matches(multipleJobs)) {
+            if(job.getInt("priority") != 99 && (job.getValue("prf").matches(multipleJobs) || job.getValue("rf").matches(multipleJobs))) {
 
                 try {
                     for(double prf : toValueSet(job.getValue("prf"))) {
