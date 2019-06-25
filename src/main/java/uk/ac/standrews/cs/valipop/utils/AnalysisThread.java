@@ -24,6 +24,8 @@ public class AnalysisThread extends Thread {
 
     private final Config config;
 
+    private final OBDModel model;
+
     public AnalysisThread(OBDModel model, Config config, int threadCount) {
 
         this.config = config;
@@ -31,6 +33,7 @@ public class AnalysisThread extends Thread {
 
         maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
         summaryRow = model.getSummaryRow();
+        this.model = model;
     }
 
     @Override
@@ -49,6 +52,8 @@ public class AnalysisThread extends Thread {
             System.err.println(e.getMessage());
             e.printStackTrace();
         }
+
+        v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
 
         summaryRow.setV(v);
         summaryRow.setStatsRunTime(statsTimer.getRunTimeSeconds());

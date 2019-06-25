@@ -1,18 +1,18 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import com.google.common.collect.Sets;
-import uk.ac.standrews.cs.nds.util.FileUtil;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.*;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -180,6 +180,7 @@ public class JobQueueRunner {
             fileChannel.lock(0, Long.MAX_VALUE, false);
             System.out.println("Locked job file @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             DataRowSet jobs = readInJobFile(fileChannel);
+            jobs = explodeRegexJobs(jobs);
 
             int maxRequiredMemory = 0;
             int maxPriorityLevel = 99;
@@ -245,8 +246,116 @@ public class JobQueueRunner {
         
     }
 
+    static String multipleJobs = "[0-1]\\.[0-9]+-[0-1]\\.[0-9]+@[0-1]\\.[0-9]+";
+
+    private static DataRowSet explodeRegexJobs(DataRowSet jobs) {
+
+        DataRowSet explodedJobs = null;
+        DataRowSet toRemoveJobs = null;
+
+        for(DataRow job : jobs) {
+
+            if(job.getValue("prf").matches(multipleJobs) || job.getValue("rf").matches(multipleJobs)) {
+
+                try {
+                    for(double prf : toValueSet(job.getValue("prf"))) {
+                        for(double rf : toValueSet(job.getValue("rf"))) {
+
+                            DataRow copy = job.clone();
+                            copy.setValue("rf", String.valueOf(rf));
+                            copy.setValue("prf", String.valueOf(prf));
+
+                            if(explodedJobs == null) {
+                                explodedJobs = new DataRowSet(copy);
+                            } else {
+                                explodedJobs.add(copy);
+                            }
+
+                        }
+                    }
+
+                    if(toRemoveJobs == null) {
+                        toRemoveJobs = new DataRowSet(job);
+                    } else {
+                        toRemoveJobs.add(job);
+                    }
+
+                } catch (InvalidInputFileException e) {
+                    job.setValue("priority", "99");
+                }
+            }
+        }
+
+        if(toRemoveJobs != null)
+            for(DataRow toRemove : toRemoveJobs)
+                jobs.remove(toRemove);
+
+        if(explodedJobs != null)
+            for(DataRow toAdd : explodedJobs)
+                jobs.add(toAdd);
+
+        return jobs;
+
+    }
+
+    private static Set<Double> toValueSet(String rfExpression) throws InvalidInputFileException {
+
+        if(rfExpression.matches(multipleJobs)) {
+            Set<Double> set = new HashSet<>();
+
+            String[] splitA = rfExpression.split("-");
+            if(splitA.length != 2) throw new InvalidInputFileException("Multi job expresion incorrect");
+
+            String[] splitB = splitA[1].split("@");
+            if(splitB.length != 2) throw new InvalidInputFileException("Multi job expresion incorrect");
+
+            double a = Double.valueOf(splitA[0]);
+            double b = Double.valueOf(splitB[0]);
+            double inc = Double.valueOf(splitB[1]);
+
+            if(a > b) {
+                double temp = a;
+                a = b;
+                b = temp;
+            }
+
+            for(double d = a; clean(d, a, inc) <= b; d+=inc) {
+                set.add(clean(d, a, inc));
+            }
+
+            return set;
+
+        } else {
+            return Collections.singleton(Double.valueOf(rfExpression));
+        }
+
+    }
+
+    private static double clean(double d, double a, double inc) {
+        int roundTo = Math.max(postPointDigits(a), postPointDigits(inc));
+        DecimalFormat df = new DecimalFormat(generatePattern(roundTo));
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        return Double.valueOf(df.format(d));
+    }
+
+    private static String generatePattern(int roundTo) {
+        StringBuilder sb = new StringBuilder("#.");
+
+        for(int i = 0; i < roundTo; i ++) {
+            sb.append("#");
+        }
+
+        return sb.toString();
+    }
+
+    private static int postPointDigits(double d) {
+        String[] split = String.valueOf(d).split("\\.");
+        return split.length == 1 ? 1 : split[1].length();
+    }
+
     private static DataRow chooseJob(Map<String, DataRowSet> jobsByMemory, int maxRequiredMemory, int maxPriorityLevel, DataRowSet jobs, FileChannel fileChannel) throws IOException, InvalidInputFileException {
 
+        // set of jobs that can be done iwth this host's resources
         DataRowSet chosenJobSet = jobsByMemory.get(String.valueOf(maxRequiredMemory)).splitOn("priority").get(String.valueOf(maxPriorityLevel));
 
         // take job at head of remaning jobQueue
