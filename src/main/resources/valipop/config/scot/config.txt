@@ -21,6 +21,6 @@ recovery_factor = 0.0
 proportional_recovery_factor = 0.0
 output_tables = true
 deterministic = true
-seed = -871966755
+seed = 1415624662
 binomial_sampling = true
 run_purpose = sep-stats

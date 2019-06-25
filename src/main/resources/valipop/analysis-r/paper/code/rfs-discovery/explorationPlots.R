@@ -51,7 +51,7 @@ plot3D <- function(seed, summaryDF, rf.min = NA, rf.max = NA, prf.min = NA, prf.
       scene = list(
         xaxis = list(title = "prf"),
         yaxis = list(title = "rf"),
-        zaxis = list(title = "v")
+        zaxis = list(title = "pass rate")
       ))
 }
   

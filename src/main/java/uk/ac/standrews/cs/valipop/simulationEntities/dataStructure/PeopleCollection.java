@@ -268,6 +268,10 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
                                         , moveDistanceSelector.selectRandomDistance());
                             } else {
                                 // in this case the father is where he is supposed to be!
+                                if(illegitChild.getId() == 150300) {
+                                    System.out.println("TEST");
+                                }
+
                                 newAddress = geography.getNearestEmptyAddressAtDistance(
                                         illegitChild.getParents().getMalePartner()
                                                 .getAddress(illegitChild.getBirthDate().minus(config.getMinGestationPeriod()))
@@ -279,7 +283,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
                             for (IPerson child : mothersLastPartnership.getChildren())
                                 child.setAddress(child.getBirthDate(), newAddress);
                         } else {
-                            // In this case the mother in currently having her just created ligitmate partnership rolled back
+                            // In this case the mother in currently having her just created ligitimate partnership rolled back
                             // this leaves here with just a previous illegitimate child
                             // however the father of the illegitimate child has also had his legitiamate partnership (i.e the one which makes this child to be illegitate)
                             // rolled back

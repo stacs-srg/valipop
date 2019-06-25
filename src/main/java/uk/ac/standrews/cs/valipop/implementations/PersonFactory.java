@@ -13,6 +13,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.Year;
+import java.time.temporal.ChronoUnit;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -43,8 +44,18 @@ public class PersonFactory {
 
     public IPerson makePersonWithRandomBirthDate(final LocalDate currentDate, final IPartnership parents, final boolean illegitimate) {
 
-        final LocalDate birthDate = birthDateSelector.selectRandomDate(currentDate, simulationTimeStep);
-        return makePerson(birthDate, parents, illegitimate);
+        LocalDate immigrationDateFather = parents == null ? null : parents.getMalePartner().getImmigrationDate();
+
+        if(immigrationDateFather != null) {
+            if(immigrationDateFather.plus(desired.getMinGestationPeriod()).isAfter(currentDate))
+                return makePerson(
+                        birthDateSelector.selectRandomDate(
+                            immigrationDateFather.plus(desired.getMinGestationPeriod()),
+                            currentDate.plus(1, ChronoUnit.YEARS)).minus(1, ChronoUnit.DAYS),
+                        parents, illegitimate);
+        }
+
+        return makePerson(birthDateSelector.selectRandomDate(currentDate, simulationTimeStep), parents, illegitimate);
     }
 
     private SexOption getSex(final PopulationCounts counts, final PopulationStatistics statistics, final LocalDate currentDate) {
