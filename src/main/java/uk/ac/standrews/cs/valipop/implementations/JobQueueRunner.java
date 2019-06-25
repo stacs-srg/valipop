@@ -180,7 +180,9 @@ public class JobQueueRunner {
             fileChannel.lock(0, Long.MAX_VALUE, false);
             System.out.println("Locked job file @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             DataRowSet jobs = readInJobFile(fileChannel);
+
             jobs = explodeRegexJobs(jobs);
+            writeToJobFile(fileChannel, jobs);
 
             int maxRequiredMemory = 0;
             int maxPriorityLevel = 99;

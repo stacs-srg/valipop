@@ -165,4 +165,8 @@ public class DataRowSet implements Iterable<DataRow> {
 
         return sb.toString();
     }
+
+    public int size() {
+        return dataset.size();
+    }
 }
