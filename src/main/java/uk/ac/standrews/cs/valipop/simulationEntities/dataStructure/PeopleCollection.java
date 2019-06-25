@@ -268,9 +268,6 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
                                         , moveDistanceSelector.selectRandomDistance());
                             } else {
                                 // in this case the father is where he is supposed to be!
-                                if(illegitChild.getId() == 150300) {
-                                    System.out.println("TEST");
-                                }
 
                                 newAddress = geography.getNearestEmptyAddressAtDistance(
                                         illegitChild.getParents().getMalePartner()
