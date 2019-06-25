@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class DataRow {
 
-    private Map<String, String> values = new HashMap<>();
+    private HashMap<String, String> values = new HashMap<>();
 
     public DataRow(String labelsRow, String csvRow) throws InvalidInputFileException {
         String[] labels = labelsRow.split(",");
@@ -27,6 +27,10 @@ public class DataRow {
         for(int c = 0; c < labels.length; c++) {
             values.put(labels[c].trim(), row[c].trim());
         }
+    }
+
+    public DataRow(HashMap<String, String> values) {
+        this.values = values;
     }
 
     public String getValue(String label) {
@@ -96,5 +100,10 @@ public class DataRow {
         }
 
         return sb.toString();
+    }
+
+    public DataRow clone() {
+        return new DataRow((HashMap<String, String>) values.clone());
+
     }
 }
