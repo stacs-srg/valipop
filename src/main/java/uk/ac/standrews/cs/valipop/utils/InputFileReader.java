@@ -59,6 +59,7 @@ public class InputFileReader {
                     lines.add(line);
                 }
             }
+
         }
 
         return lines;

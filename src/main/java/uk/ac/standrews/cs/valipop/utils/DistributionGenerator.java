@@ -108,7 +108,7 @@ public class DistributionGenerator {
                     ps.println();
                 }
 
-
+                ps.close();
 
 
             }
