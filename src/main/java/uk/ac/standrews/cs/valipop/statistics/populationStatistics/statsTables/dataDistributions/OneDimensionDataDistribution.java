@@ -146,6 +146,7 @@ public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
         }
 
         out.println();
+        out.close();
     }
 
     public Set<IntegerRange> getLabels() {
