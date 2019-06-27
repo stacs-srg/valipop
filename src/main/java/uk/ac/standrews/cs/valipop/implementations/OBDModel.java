@@ -47,8 +47,7 @@ import java.time.Period;
 import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.*;
 
@@ -65,11 +64,24 @@ public class OBDModel {
     private static final int MAX_ATTEMPTS = 1;
     public static final Period MAX_AGE = Period.ofYears(110);
 
-    private static final Logger log;
+    private static Logger log;
 
     static {
+//        int limit = 1000 * 1000; // 1 Mb
+//        int numLogFiles = 2;
+//        FileHandler fh = null;
+//        try {
+//            fh = new FileHandler("trace.txt", limit, numLogFiles);
+//        } catch (IOException e) {
+//            throw new RuntimeException("Logger failed to initialise");
+//        }
+
         log = Logger.getLogger(OBDModel.class.getName());
+//        log.addHandler(fh);
         log.setLevel(Level.INFO);
+
+
+
     }
 
     private final Geography geography;
@@ -228,7 +240,18 @@ public class OBDModel {
         logResults();
         recordSummary();
 
+        closeLogFile();
         birthOrders.close(); // QUESTION why closed here when might be used in another simulation attempt? - TD: Sepertate file should be produced for each simulation
+    }
+
+    private void closeLogFile() {
+        for(Handler h : log.getHandlers()) {
+            h.close();
+        }
+        LogManager.getLogManager().reset();
+
+        log = Logger.getLogger(OBDModel.class.getName());
+        log.setLevel(Level.INFO);
     }
 
     private void finalisePartnerships() {
@@ -299,6 +322,9 @@ public class OBDModel {
 
         summary.setEndPop(population.getLivingPeople().getNumberOfPeople());
         summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());
+
+        closeLogFile();
+        birthOrders.close();
     }
 
     private int calculateStartingPopulationSize() {

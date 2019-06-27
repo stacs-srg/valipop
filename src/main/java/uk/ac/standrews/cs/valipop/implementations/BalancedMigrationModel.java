@@ -67,11 +67,12 @@ public class BalancedMigrationModel {
 
                 while(!currentAbode.getInhabitants().isEmpty()) {
                     IPerson person = currentAbode.getInhabitants().get(0);
+
                     IPerson lastChild = PopulationNavigation.getLastChild(person);
 
                     LocalDate personalMoveDate = moveDate;
 
-                    if(lastChild != null && !household.contains(lastChild) && !currentAbode.getInhabitants().contains(lastChild) && lastChild.getDeathDate() != null) {
+                    if(lastChild != null && !household.contains(lastChild) && !currentAbode.getInhabitants().contains(lastChild) && lastChild.getDeathDate() == null) {
                         // if emigrating persons last child exists and is not emigrating in this group and is not dead
                         // we need to make sure that this last child was not conceived after the father left
                         LocalDate conception = lastChild.getBirthDate().minus(desired.getMinGestationPeriod());

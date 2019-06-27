@@ -59,7 +59,7 @@ public class InputFileReader {
                     lines.add(line);
                 }
             }
-
+            reader.close();
         }
 
         return lines;
