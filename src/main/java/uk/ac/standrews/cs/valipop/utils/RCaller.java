@@ -38,6 +38,8 @@ public class RCaller {
         Process proc = runRScript(pathOfScript, params);
         String[] res = waitOnReturn(proc).split(" ");
 
+        proc.destroy();
+
         if (res.length != 2) {
             throw new StatsException("Too many values returned from RScript for given script");
         }
@@ -53,6 +55,8 @@ public class RCaller {
         Process proc = runRScript(pathOfScript, params);
         String[] res = waitOnReturn(proc).split(" ");
 
+        proc.destroy();
+
         if (res.length != 2) {
             throw new StatsException("Too many values returned from RScript for given script");
         }
@@ -66,11 +70,15 @@ public class RCaller {
             Process p = generateAnalysisHTML(pathOfRunDir, maxBirthingAge, title);
             waitOnReturn(p);
 
+            p.destroy();
+
             String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh";
             String[] params = {pathOfRunDir + "/analysis.html", pathOfRunDir + "/failtures.txt"};
 
             Process proc = runProcess("/bin/sh", pathOfScript, params);
             String[] res = waitOnReturn(proc).split(" ");
+
+            proc.destroy();
 
             if (res.length != 1) {
                 throw new StatsException("Too many values returned from sh for given script");
@@ -81,6 +89,8 @@ public class RCaller {
             String[] checkParams = {pathOfRunDir + "/analysis.html", Config.formatTimeStamp(startTime)};
             Process checkProc = runProcess("/bin/sh", checkScript, checkParams);
             String checkRes = waitOnReturn(checkProc);
+
+            checkProc.destroy();
 
             if (checkRes.equals("CORRECT\n")) {
                 return Double.parseDouble(res[0]);
