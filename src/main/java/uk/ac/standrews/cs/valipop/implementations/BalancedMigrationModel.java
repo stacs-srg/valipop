@@ -92,7 +92,7 @@ public class BalancedMigrationModel {
 
                 LocalDate personalMoveDate = moveDate;
 
-                if(lastChild != null && lastChild.getDeathDate() != null) {
+                if(lastChild != null && lastChild.getDeathDate() == null) {
                     // if emigrating persons last child exists and is not dead
                     // we need to make sure that this last child was not conceived after the father left
                     LocalDate conception = lastChild.getBirthDate().minus(desired.getMinGestationPeriod());
