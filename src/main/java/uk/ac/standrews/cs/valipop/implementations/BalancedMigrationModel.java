@@ -123,7 +123,7 @@ public class BalancedMigrationModel {
                 Map<IPartnership, IPartnership> mimicLookup = new HashMap<>();
                 Map<IPerson, IPerson> mimicPersonLookup = new HashMap<>();
 
-                household.sort((o1, o2) -> o1.getBirthDate().isBefore(o2.getBirthDate()) ? -1 : 1);
+                household.sort((o1, o2) -> o1.getBirthDate().isBefore(o2.getBirthDate()) ? 1 : -1);
 
                 Address newHouse = geography.getRandomEmptyAddress();
                 Address oldCountry = foreignGeography.getCountry();

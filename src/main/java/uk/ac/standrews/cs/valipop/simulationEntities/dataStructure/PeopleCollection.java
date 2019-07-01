@@ -229,7 +229,10 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
         if (parents != null) {
             final IPerson mother = parents.getFemalePartner();
 
-            remove(mother);
+            if(!nonImmigratingMotherOfImmigrantPerson(mother, person)) {
+                remove(mother);
+            }
+
             parents.getChildren().remove(person);
 
             person.cancelLastMove(geography);
@@ -301,6 +304,14 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
             add(mother);
         }
+    }
+
+    private boolean nonImmigratingMotherOfImmigrantPerson(IPerson mother, IPerson person) {
+
+        if(person.getImmigrationDate() == null) {
+            return false;
+        } else return mother.getImmigrationDate() == null;
+
     }
 
     private void cancelPartnership(IPartnership partnership) {
