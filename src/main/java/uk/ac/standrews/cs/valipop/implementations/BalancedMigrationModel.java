@@ -7,6 +7,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.Population;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
@@ -256,8 +257,8 @@ public class BalancedMigrationModel {
             IPerson fatherToMimic = parentsToMimic.getMalePartner();
             IPerson motherToMimic = parentsToMimic.getFemalePartner();
 
-            IPerson mimicedFather = mimicPersonLookup.keySet().contains(fatherToMimic) ? mimicPersonLookup.get(fatherToMimic) : personFactory.makePerson(randomDateInYear(fatherToMimic.getBirthDate()), null, fatherToMimic.isIllegitimate(), true);
-            IPerson mimicedMother = mimicPersonLookup.keySet().contains(motherToMimic) ? mimicPersonLookup.get(motherToMimic) : personFactory.makePerson(randomDateInYear(motherToMimic.getBirthDate()), null, motherToMimic.isIllegitimate(), true);
+            IPerson mimicedFather = mimicPersonLookup.keySet().contains(fatherToMimic) ? mimicPersonLookup.get(fatherToMimic) : personFactory.makePerson(randomDateInYear(fatherToMimic.getBirthDate()), null, fatherToMimic.isIllegitimate(), true, SexOption.MALE);
+            IPerson mimicedMother = mimicPersonLookup.keySet().contains(motherToMimic) ? mimicPersonLookup.get(motherToMimic) : personFactory.makePerson(randomDateInYear(motherToMimic.getBirthDate()), null, motherToMimic.isIllegitimate(), true, SexOption.FEMALE);
 
             parents = new Partnership(mimicedFather, mimicedMother);
         }

@@ -108,7 +108,11 @@ summaryDfToFinalDF <- function(summaryDF, minN = NA) {
       t.s <- t.s[which(t.s$count >= minN), ]
     }
     
-    r <- t.s[which.max(t.s$pass.rate),]
+    if(max(t.s$pass.rate) == 0) {
+      r <- t.s[which.min(t.s$min),]
+    } else {
+      r <- t.s[which.max(t.s$pass.rate),]
+    }
     finalDF[nrow(finalDF)+1,] <- c(r$seed, r$prf, r$rf, r$mean, r$median, r$min, r$pass.rate, r$max, r$count)
   }
   

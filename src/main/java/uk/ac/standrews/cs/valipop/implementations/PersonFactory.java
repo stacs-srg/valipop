@@ -42,6 +42,16 @@ public class PersonFactory {
         return new Person(sex, birthDate, parents, desired, illegitimate, immigrant);
     }
 
+    public IPerson makePerson(final LocalDate birthDate, final IPartnership parents, final boolean illegitimate, final boolean immigrant, SexOption sex) {
+
+        if(sex == SexOption.MALE)
+            population.getPopulationCounts().newMale();
+        else
+            population.getPopulationCounts().newFemale();
+
+        return new Person(sex, birthDate, parents, desired, illegitimate, immigrant);
+    }
+
     public IPerson makePersonWithRandomBirthDate(final LocalDate currentDate, final IPartnership parents, final boolean illegitimate) {
 
         LocalDate immigrationDateFather = parents == null ? null : parents.getMalePartner().getImmigrationDate();
