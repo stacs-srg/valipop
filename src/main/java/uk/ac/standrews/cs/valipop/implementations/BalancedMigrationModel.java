@@ -77,9 +77,9 @@ public class BalancedMigrationModel {
                         // we need to make sure that this last child was not conceived after the father left
                         LocalDate conception = lastChild.getBirthDate().minus(desired.getMinGestationPeriod());
                         if(moveDate.isBefore(conception)) {
-                            int excludedDays = (int) conception.until(currentTime.plus(1, ChronoUnit.YEARS), ChronoUnit.DAYS) - 1;
+                            int windowInDays = (int) conception.until(currentTime.plus(1, ChronoUnit.YEARS), ChronoUnit.DAYS) - 1;
 
-                            personalMoveDate = currentTime.plus(randomNumberGenerator.nextInt(365 - excludedDays), ChronoUnit.DAYS);
+                            personalMoveDate = conception.plus(randomNumberGenerator.nextInt(windowInDays), ChronoUnit.DAYS);
                         }
                     }
                     emigrateTo = emigratePerson(personalMoveDate, currentAbode, household, person, emigrateTo, model);
