@@ -76,12 +76,7 @@ public class BalancedMigrationModel {
                     if(lastChild != null && !household.contains(lastChild) && !currentAbode.getInhabitants().contains(lastChild) && lastChild.getDeathDate() == null) {
                         // if emigrating persons last child exists and is not emigrating in this group and is not dead
                         // we need to make sure that this last child was not conceived after the father left
-                        LocalDate conception = lastChild.getBirthDate().minus(desired.getMinGestationPeriod());
-                        if(moveDate.isBefore(conception)) {
-                            int windowInDays = (int) conception.until(currentTime.plus(1, ChronoUnit.YEARS), ChronoUnit.DAYS) - 1;
-
-                            personalMoveDate = conception.plus(randomNumberGenerator.nextInt(windowInDays), ChronoUnit.DAYS);
-                        }
+                        personalMoveDate = checkConceptionBeforeMove(currentTime, moveDate, lastChild, personalMoveDate);
                     }
                     emigrateTo = emigratePerson(personalMoveDate, currentAbode, household, person, emigrateTo, model);
                 }
@@ -96,12 +91,7 @@ public class BalancedMigrationModel {
                 if(lastChild != null && lastChild.getDeathDate() == null) {
                     // if emigrating persons last child exists and is not dead
                     // we need to make sure that this last child was not conceived after the father left
-                    LocalDate conception = lastChild.getBirthDate().minus(desired.getMinGestationPeriod());
-                    if(moveDate.isBefore(conception)) {
-                        int excludedDays = (int) conception.until(currentTime.plus(1, ChronoUnit.YEARS), ChronoUnit.DAYS) - 1;
-
-                        personalMoveDate = currentTime.plus(randomNumberGenerator.nextInt(365 - excludedDays), ChronoUnit.DAYS);
-                    }
+                    personalMoveDate = checkConceptionBeforeMove(currentTime, moveDate, lastChild, personalMoveDate);
                 }
 
                 emigratePerson(personalMoveDate, currentAbode, household, selected, model);
@@ -181,6 +171,16 @@ public class BalancedMigrationModel {
 
             }
         }
+    }
+
+    private LocalDate checkConceptionBeforeMove(LocalDate currentTime, LocalDate moveDate, IPerson lastChild, LocalDate personalMoveDate) {
+        LocalDate conception = lastChild.getBirthDate().minus(desired.getMinGestationPeriod());
+        if (moveDate.isBefore(conception)) {
+            int windowInDays = (int) conception.until(currentTime.plus(1, ChronoUnit.YEARS), ChronoUnit.DAYS) - 1;
+
+            personalMoveDate = conception.plus(randomNumberGenerator.nextInt(windowInDays), ChronoUnit.DAYS);
+        }
+        return personalMoveDate;
     }
 
     private void immigratePerson(IPerson person, IPerson toMimic) {

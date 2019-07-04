@@ -66,9 +66,6 @@ public class Partnership implements IPartnership {
         this.male = male;
         this.female = female;
 
-        if(this.male.getSex() != SexOption.MALE)
-            System.out.println("TEST");
-
     }
 
     public String toString() {
