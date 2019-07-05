@@ -105,44 +105,44 @@ public class Config {
     private static final Logger log = Logger.getLogger(Config.class.getName());
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS");
     private static Level logLevel = DEFAULT_LOG_LEVEL;
-    public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
-    private static final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
+    public final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
+    private final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
 
 
-    private static Path varPath;
-    private static Path varOrderedBirthPaths;
-    private static Path varMaleLifetablePaths;
-    private static Path varMaleDeathCausesPaths;
-    private static Path varFemaleLifetablePaths;
-    private static Path varFemaleDeathCausesPaths;
-    private static Path varMultipleBirthPaths;
-    private static Path varIllegitimateBirthPaths;
-    private static Path varPartneringPaths;
-    private static Path varSeparationPaths;
-    private static Path varBirthRatioPaths;
-    private static Path varMaleForenamePaths;
-    private static Path varFemaleForenamePaths;
-    private static Path varMigrantMaleForenamePaths;
-    private static Path varMigrantFemaleForenamePaths;
-    private static Path varMigrantSurnamePaths;
-    private static Path varMigrationRatePaths;
-    private static Path varSurnamePaths;
-    private static Path varMarriagePaths;
-    private static Path varGeographyPaths;
+    private Path varPath;
+    private Path varOrderedBirthPaths;
+    private Path varMaleLifetablePaths;
+    private Path varMaleDeathCausesPaths;
+    private Path varFemaleLifetablePaths;
+    private Path varFemaleDeathCausesPaths;
+    private Path varMultipleBirthPaths;
+    private Path varIllegitimateBirthPaths;
+    private Path varPartneringPaths;
+    private Path varSeparationPaths;
+    private Path varBirthRatioPaths;
+    private Path varMaleForenamePaths;
+    private Path varFemaleForenamePaths;
+    private Path varMigrantMaleForenamePaths;
+    private Path varMigrantFemaleForenamePaths;
+    private Path varMigrantSurnamePaths;
+    private Path varMigrationRatePaths;
+    private Path varSurnamePaths;
+    private Path varMarriagePaths;
+    private Path varGeographyPaths;
 
-    private static Path varMaleOccupationPaths;
-    private static Path varFemaleOccupationPaths;
+    private Path varMaleOccupationPaths;
+    private Path varFemaleOccupationPaths;
 
-    private static Path varMaleOccupationChangePaths;
-    private static Path varFemaleOccupationChangePaths;
+    private Path varMaleOccupationChangePaths;
+    private Path varFemaleOccupationChangePaths;
 
-    private static Path globalSummaryPath;
-    private static Path resultsSummaryPath;
-    private static Path detailedResultsPath;
-    private static Path birthOrdersPath;
-    private static Path recordsPath;
-    private static Path contingencyTablesPath;
-    private static Path runPath;
+    private Path globalSummaryPath;
+    private Path resultsSummaryPath;
+    private Path detailedResultsPath;
+    private Path birthOrdersPath;
+    private Path recordsPath;
+    private Path contingencyTablesPath;
+    private Path runPath;
 
     private double setUpBR = DEFAULT_SETUP_BR;
     private double setUpDR = DEFAULT_SETUP_DR;
@@ -160,8 +160,8 @@ public class Config {
     private Period minGestationPeriod = DEFAULT_MIN_GESTATION_PERIOD;
     private Period inputWidth = DEFAULT_INPUT_WIDTH;
 
-    private static Path resultsSavePath = DEFAULT_RESULTS_SAVE_PATH;
-    private static Path geographyFilePath = DEFAULT_GEOGRAPHY_FILE_PATH;
+    private Path resultsSavePath = DEFAULT_RESULTS_SAVE_PATH;
+    private Path geographyFilePath = DEFAULT_GEOGRAPHY_FILE_PATH;
 
     private int seed = DEFAULT_SEED;
 
