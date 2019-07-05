@@ -105,7 +105,7 @@ public class Config {
     private static final Logger log = Logger.getLogger(Config.class.getName());
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS");
     private static Level logLevel = DEFAULT_LOG_LEVEL;
-    public final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
+    public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
     private final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
 
 
