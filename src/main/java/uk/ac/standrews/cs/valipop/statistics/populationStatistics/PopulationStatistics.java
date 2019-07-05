@@ -476,6 +476,8 @@ public class PopulationStatistics implements EventRateTables {
             data.put(Year.of(1600), 0.5);
         }
 
+        paths.close();
+
         return data;
     }
 
@@ -488,6 +490,9 @@ public class PopulationStatistics implements EventRateTables {
             SelfCorrectingOneDimensionDataDistribution tempData = InputFileReader.readInSC1DDataFile(path, config, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
+
+        paths.close();
+
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
@@ -500,6 +505,7 @@ public class PopulationStatistics implements EventRateTables {
             ValiPopEnumeratedDistribution tempData = InputFileReader.readInNameDataFile(path, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
+        paths.close();
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
@@ -512,6 +518,8 @@ public class PopulationStatistics implements EventRateTables {
             AgeDependantEnumeratedDistribution tempData = InputFileReader.readInDeathCauseDataFile(path, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
+
+        paths.close();
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
@@ -524,6 +532,9 @@ public class PopulationStatistics implements EventRateTables {
             SelfCorrectingTwoDimensionDataDistribution tempData = InputFileReader.readInSC2DDataFile(path, config, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
+
+        paths.close();
+
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
@@ -536,6 +547,7 @@ public class PopulationStatistics implements EventRateTables {
             SelfCorrecting2DIntegerRangeProportionalDistribution tempData = InputFileReader.readInAgeAndProportionalStatsInput(path, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
+        paths.close();
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
@@ -548,6 +560,7 @@ public class PopulationStatistics implements EventRateTables {
             SelfCorrecting2DEnumeratedProportionalDistribution tempData = InputFileReader.readInStringAndProportionalStatsInput(path, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
+        paths.close();
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
@@ -560,6 +573,7 @@ public class PopulationStatistics implements EventRateTables {
             SelfCorrectingProportionalDistribution tempData = InputFileReader.readInAndAdaptAgeAndProportionalStatsInput(path, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
+        paths.close();
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
