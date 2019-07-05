@@ -1298,6 +1298,12 @@ public class OBDModel {
 
     private boolean maleAvailable(final IPerson man, final int childrenInPregnancy) {
 
+        if(man.getImmigrationDate() != null) {
+            // if the man has immigrated this year, was he present early enough in the year to be involved with a conception event?
+            if(man.getImmigrationDate().plus(desired.getMinGestationPeriod()).isAfter(currentTime.plus(1, ChronoUnit.YEARS).minus(1, ChronoUnit.DAYS)))
+                return false;
+        }
+
         // in the init period any partnering is allowed
         // TODO shouldn't be hard wired
         if (inInitPeriod(currentTime)) {
