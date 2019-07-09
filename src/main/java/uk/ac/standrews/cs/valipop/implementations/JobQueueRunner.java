@@ -248,7 +248,7 @@ public class JobQueueRunner {
         
     }
 
-    static String multipleJobs = "[0-1]\\.[0-9]+-[0-1]\\.[0-9]+@[0-1]\\.[0-9]+";
+    static String multipleJobs = "-*[0-4]\\.[0-9]+->[0-4]\\.[0-9]+@[0-4]\\.[0-9]+";
 
     private static DataRowSet explodeRegexJobs(DataRowSet jobs) throws InvalidInputFileException {
 
@@ -257,20 +257,26 @@ public class JobQueueRunner {
 
         for(DataRow job : jobs) {
 
-            if(job.getInt("priority") != 99 && (job.getValue("prf").matches(multipleJobs) || job.getValue("rf").matches(multipleJobs))) {
+            if(job.getInt("priority") != 99 && (job.getValue("prf").matches(multipleJobs) || job.getValue("rf").matches(multipleJobs)) || job.getValue("bf").matches(multipleJobs) || job.getValue("df").matches(multipleJobs)) {
 
                 try {
                     for(double prf : toValueSet(job.getValue("prf"))) {
                         for(double rf : toValueSet(job.getValue("rf"))) {
+                            for (double bf : toValueSet(job.getValue("bf"))) {
+                                for (double df : toValueSet(job.getValue("df"))) {
 
-                            DataRow copy = job.clone();
-                            copy.setValue("rf", String.valueOf(rf));
-                            copy.setValue("prf", String.valueOf(prf));
+                                    DataRow copy = job.clone();
+                                    copy.setValue("rf", String.valueOf(rf));
+                                    copy.setValue("prf", String.valueOf(prf));
+                                    copy.setValue("bf", String.valueOf(bf));
+                                    copy.setValue("df", String.valueOf(df));
 
-                            if(explodedJobs == null) {
-                                explodedJobs = new DataRowSet(copy);
-                            } else {
-                                explodedJobs.add(copy);
+                                    if (explodedJobs == null) {
+                                        explodedJobs = new DataRowSet(copy);
+                                    } else {
+                                        explodedJobs.add(copy);
+                                    }
+                                }
                             }
 
                         }
@@ -305,7 +311,7 @@ public class JobQueueRunner {
         if(rfExpression.matches(multipleJobs)) {
             Set<Double> set = new HashSet<>();
 
-            String[] splitA = rfExpression.split("-");
+            String[] splitA = rfExpression.split("->");
             if(splitA.length != 2) throw new InvalidInputFileException("Multi job expresion incorrect");
 
             String[] splitB = splitA[1].split("@");

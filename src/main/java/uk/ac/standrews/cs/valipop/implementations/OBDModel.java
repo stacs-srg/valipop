@@ -491,8 +491,6 @@ public class OBDModel {
             final double birthFactor = config.getBirthFactor();
             final int adjuster = (int) Math.ceil(birthFactor);
 
-            // TODO If birthFactor is zero, as it in several configurations, next line yields NaN.
-
             if (desired.getRandomGenerator().nextInt(BIRTH_ADJUSTMENT_BOUND) < Math.abs(birthFactor / adjuster) * BIRTH_ADJUSTMENT_BOUND) {
                 return (birthFactor < 0) ? adjuster : -adjuster;
             }
