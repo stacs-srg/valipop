@@ -1,0 +1,8 @@
+YEAR	1855
+POPULATION	SCOTLAND
+SOURCE	GUESS
+VAR	ILLEGITIMATE_BIRTH
+FORM	RATE
+# Age range | Proportion of illegitimate births
+DATA
+0+	0.04
