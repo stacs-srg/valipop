@@ -58,6 +58,8 @@ dfToSummaryDF <- function(inDF, seed = NA) {
   df <- data.frame(seed=integer(),
                    prf=integer(),
                    rf=integer(),
+                   bf=integer(),
+                   df=integer(),
                    mean=double(),
                    median=double(),
                    min=double(),
@@ -72,13 +74,20 @@ dfToSummaryDF <- function(inDF, seed = NA) {
       t.p <- t.s[which(t.s$Proportional.Recovery.Factor == p), ]
       for(r in unique(t.p$Recovery.Factor)) {
         t.p.r <- t.p[which(t.p$Recovery.Factor == r), ]
-        mean <- mean(t.p.r$v.M)
-        median <- median(t.p.r$v.M)
-        min <- min(t.p.r$v.M)
-        pass.rate <- round(length(which(t.p.r$v.M == 0)) / length(which(t.p.r$v.M >= 0)), digits = 3)
-        max <- max(t.p.r$v.M)
-        count <- length(which(t.p.r$v.M >= 0))
-        df[nrow(df)+1,] <- c(s, p, r, mean, median, min, pass.rate, max, count)
+        for(bf in unique(t.p$Birth.Factor)) {
+          t.p.r.bf <- t.p.r[which(t.p.r$Birth.Factor == bf), ]
+          for(df in unique(t.p$Death.Factor)) {
+            t.p.r.bf.df <- t.p.r.bf[which(t.p.r.bf$Death.Factor == df), ]
+      
+              mean <- mean(t.p.r.bf.df$v.M)
+              median <- median(t.p.r.bf.df$v.M)
+              min <- min(t.p.r.bf.df$v.M)
+              pass.rate <- round(length(which(t.p.r.bf.df$v.M == 0)) / length(which(t.p.r.bf.df$v.M >= 0)), digits = 3)
+              max <- max(t.p.r.bf.df$v.M)
+              count <- length(which(t.p.r.bf.df$v.M >= 0))
+              df[nrow(df)+1,] <- c(s, p, r, bf, df, mean, median, min, pass.rate, max, count)
+          }
+        }
       }
     }
   }
