@@ -386,7 +386,7 @@ public class OBDModel {
             createOrphanChildren(shortFallInBirths);
         } else {
             // REMOVED BY TOM - CHECKING THIS - but think this should rather be later handled by self correction mechanisms
-            removePeople(-shortFallInBirths);
+//            removePeople(-shortFallInBirths);
         }
 
     }
