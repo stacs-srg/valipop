@@ -76,8 +76,8 @@ dfToSummaryDF <- function(inDF, seed = NA) {
         t.p.r <- t.p[which(t.p$Recovery.Factor == r), ]
         for(bf in unique(t.p$Birth.Factor)) {
           t.p.r.bf <- t.p.r[which(t.p.r$Birth.Factor == bf), ]
-          for(df in unique(t.p$Death.Factor)) {
-            t.p.r.bf.df <- t.p.r.bf[which(t.p.r.bf$Death.Factor == df), ]
+          for(dF in unique(t.p$Death.Factor)) {
+            t.p.r.bf.df <- t.p.r.bf[which(t.p.r.bf$Death.Factor == dF), ]
       
               mean <- mean(t.p.r.bf.df$v.M)
               median <- median(t.p.r.bf.df$v.M)
@@ -85,7 +85,7 @@ dfToSummaryDF <- function(inDF, seed = NA) {
               pass.rate <- round(length(which(t.p.r.bf.df$v.M == 0)) / length(which(t.p.r.bf.df$v.M >= 0)), digits = 3)
               max <- max(t.p.r.bf.df$v.M)
               count <- length(which(t.p.r.bf.df$v.M >= 0))
-              df[nrow(df)+1,] <- c(s, p, r, bf, df, mean, median, min, pass.rate, max, count)
+              df[nrow(df)+1,] <- c(s, p, r, bf, dF, mean, median, min, pass.rate, max, count)
           }
         }
       }
@@ -102,6 +102,8 @@ summaryDfToFinalDF <- function(summaryDF, minN = NA) {
   finalDF <- data.frame(seed=integer(),
                    prf=integer(),
                    rf=integer(),
+                   bf=integer(),
+                   df=integer(),
                    mean=double(),
                    median=double(),
                    min=double(),
@@ -122,7 +124,7 @@ summaryDfToFinalDF <- function(summaryDF, minN = NA) {
     } else {
       r <- t.s[which.max(t.s$pass.rate),]
     }
-    finalDF[nrow(finalDF)+1,] <- c(r$seed, r$prf, r$rf, r$mean, r$median, r$min, r$pass.rate, r$max, r$count)
+    finalDF[nrow(finalDF)+1,] <- c(r$seed, r$prf, r$rf, r$bf, r$df, r$mean, r$median, r$min, r$pass.rate, r$max, r$count)
   }
   
   return(finalDF)
