@@ -67,21 +67,8 @@ public class OBDModel {
     private static Logger log;
 
     static {
-//        int limit = 1000 * 1000; // 1 Mb
-//        int numLogFiles = 2;
-//        FileHandler fh = null;
-//        try {
-//            fh = new FileHandler("trace.txt", limit, numLogFiles);
-//        } catch (IOException e) {
-//            throw new RuntimeException("Logger failed to initialise");
-//        }
-
         log = Logger.getLogger(OBDModel.class.getName());
-//        log.addHandler(fh);
         log.setLevel(Level.INFO);
-
-
-
     }
 
     private final Geography geography;
