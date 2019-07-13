@@ -53,7 +53,7 @@ public class AnalysisThread extends Thread {
             e.printStackTrace();
         }
 
-        v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
+//        v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
 
         summaryRow.setV(v);
         summaryRow.setStatsRunTime(statsTimer.getRunTimeSeconds());

@@ -74,9 +74,9 @@ dfToSummaryDF <- function(inDF, seed = NA) {
       t.p <- t.s[which(t.s$Proportional.Recovery.Factor == p), ]
       for(r in unique(t.p$Recovery.Factor)) {
         t.p.r <- t.p[which(t.p$Recovery.Factor == r), ]
-        for(bf in unique(t.p$Birth.Factor)) {
+        for(bf in unique(t.p.r$Birth.Factor)) {
           t.p.r.bf <- t.p.r[which(t.p.r$Birth.Factor == bf), ]
-          for(dF in unique(t.p$Death.Factor)) {
+          for(dF in unique(t.p.r.bf$Death.Factor)) {
             t.p.r.bf.df <- t.p.r.bf[which(t.p.r.bf$Death.Factor == dF), ]
       
               mean <- mean(t.p.r.bf.df$v.M)

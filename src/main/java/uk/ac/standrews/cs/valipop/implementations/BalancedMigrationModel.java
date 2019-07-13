@@ -1,6 +1,7 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.Partnership;
@@ -156,7 +157,7 @@ public class BalancedMigrationModel {
                     LocalDate arrivalDate = p.getEmigrationDate().isBefore(mimic.getBirthDate()) ? mimic.getBirthDate() : p.getEmigrationDate();
 
                     if(mimic.getDeathDate() != null && arrivalDate.isAfter(mimic.getDeathDate())) {
-                        System.out.println("FIX - IMMIGRATION DEATG ORDERING");
+                        System.out.println("FIX - IMMIGRATION DEATH ORDERING");
                     }
 
                     mimic.setImmigrationDate(arrivalDate);
@@ -210,6 +211,10 @@ public class BalancedMigrationModel {
         population.getEmigrants().add(person);
         person.setEmigrationDate(moveDate.isBefore(person.getBirthDate()) ? person.getBirthDate() : moveDate);
 
+        if(person.getDeathDate() != null && person.getEmigrationDate().isAfter(person.getDeathDate())) {
+            System.out.println("FIX - EMIGRATION DEATH ORDERING - DEAD BEFORE LEFT");
+        }
+
         if(currentAbode != null) currentAbode.removeInhabitant(person);
         emigratingGroup.add(person);
 
@@ -227,7 +232,7 @@ public class BalancedMigrationModel {
         LocalDate lastMoveDate = person.getLastMoveDate();
 
         if(lastMoveDate != null && lastMoveDate.isAfter(currentDate)) {
-            int excludedDays = currentDate.until(lastMoveDate).getDays();
+            int excludedDays = (int) ChronoUnit.DAYS.between(currentDate, lastMoveDate);
             moveDate = lastMoveDate.plus(randomNumberGenerator.nextInt(365 - excludedDays), ChronoUnit.DAYS);
         } else {
             moveDate = currentDate.plus(randomNumberGenerator.nextInt(365), ChronoUnit.DAYS);
@@ -245,7 +250,11 @@ public class BalancedMigrationModel {
             parents = mimicParents(person, mimicPersonLookup);
         }
 
-        return personFactory.makePerson(birthDate, parents, illegitimate, true);
+        IPerson p = personFactory.makePerson(birthDate, parents, illegitimate, true);
+
+//        System.out.println(ChronoUnit.DAYS.between(p.getBirthDate(), person.getBirthDate()));
+
+        return p;
 
     }
 
