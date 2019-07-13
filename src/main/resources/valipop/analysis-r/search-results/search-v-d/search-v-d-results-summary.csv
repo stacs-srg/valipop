@@ -1,3 +1,0 @@
-Start Time,Reason,Code Version,Inputs Directory,Total Pop,Completed,Sim Length,Timestep,Input Width,Start Pop,End Pop,Peak Pop,Start Date,End Date,Sim Run time,CT Run time,Records Run time,Results Directory,Birth Factor
-20170810-102415:208,search-v-d,dev-bf,src/main/resources/scotland_test_population,8405235,true,58804,1y,10y,1436540,1387666,1436235,1/1/1855,1/1/2016,770.109596253,1426.183113248,180.162686971,results/search-v-d/20170810-102415:208,4.5E-5
-20170810-110351:664,search-v-d,dev-bf,src/main/resources/scotland_test_population,8385719,true,58804,1y,10y,1436664,1387789,1436348,1/1/1855,1/1/2016,595.964137636,934.576657115,139.48048599,results/search-v-d/20170810-110351:664,5.0E-5
