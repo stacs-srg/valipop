@@ -64,7 +64,7 @@ public class OBDModel {
     private static final int MAX_ATTEMPTS = 1;
     public static final Period MAX_AGE = Period.ofYears(110);
 
-    private static Logger log;
+    public static Logger log;
 
     static {
         log = Logger.getLogger(OBDModel.class.getName());
