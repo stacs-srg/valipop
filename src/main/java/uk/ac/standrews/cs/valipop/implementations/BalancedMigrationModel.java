@@ -232,10 +232,10 @@ public class BalancedMigrationModel {
         LocalDate lastMoveDate = person.getLastMoveDate();
 
         if(lastMoveDate != null && lastMoveDate.isAfter(currentDate)) {
-            int excludedDays = (int) ChronoUnit.DAYS.between(currentDate, lastMoveDate);
-//            int excludedDays2 = currentDate.until(lastMoveDate).getDays();
+//            int excludedDays = (int) ChronoUnit.DAYS.between(currentDate, lastMoveDate);
+            int excludedDays = currentDate.until(lastMoveDate).getDays();
 
-            moveDate = lastMoveDate.plus(randomNumberGenerator.nextInt(366 - excludedDays), ChronoUnit.DAYS);
+            moveDate = lastMoveDate.plus(randomNumberGenerator.nextInt(365 - excludedDays), ChronoUnit.DAYS);
         } else {
             moveDate = currentDate.plus(randomNumberGenerator.nextInt(365), ChronoUnit.DAYS);
         }
