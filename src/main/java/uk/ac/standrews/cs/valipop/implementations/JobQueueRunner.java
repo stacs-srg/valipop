@@ -16,6 +16,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -66,14 +67,14 @@ public class JobQueueRunner {
                             
                             OBDModel model = new OBDModel(config);
                             try {
-                                System.out.println("Sim commencing @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " with seed: " + config.getSeed());
+                                doubleLog(model.log, "Sim commencing @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " with seed: " + config.getSeed());
                                 model.runSimulation();
-                                System.out.println("Sim concluded, beginning CT tables generation @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                doubleLog(model.log, "Sim concluded, beginning CT tables generation @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                 model.analyseAndOutputPopulation(false, 5);
-                                System.out.println("CT tables generation concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                doubleLog(model.log, "CT tables generation concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
                                 if(THREAD_LIMIT == 1) {
-                                    System.out.println("Beginning R Analysis in main thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                    doubleLog(model.log, "Beginning R Analysis in main thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                     new AnalysisThread(model, config, threadCount).run(); // this runs it in the main thread
                                 } else {
                                     while (threadCount >= THREAD_LIMIT) {
@@ -81,11 +82,11 @@ public class JobQueueRunner {
                                         Thread.sleep(10000);
                                     }
 
-                                    System.out.println("Beginning R Analysis in new thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                    doubleLog(model.log, "Beginning R Analysis in new thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                     new AnalysisThread(model, config, threadCount).start(); // this runs it in a new thread
                                 }
 
-                                System.out.println("R Analysis concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                doubleLog(model.log, "R Analysis concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
                             } catch (PreEmptiveOutOfMemoryWarning e) {
                                 model.recordOutOfMemorySummary();
@@ -114,6 +115,11 @@ public class JobQueueRunner {
 
         System.out.println("Closing due to status");
 
+    }
+
+    private static void doubleLog(Logger l, String s) {
+        System.out.println(s);
+        l.info(s);
     }
 
     // checks recent load average - if over threshold then does not run next sim until load average has dropped
