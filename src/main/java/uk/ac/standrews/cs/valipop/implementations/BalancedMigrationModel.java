@@ -232,8 +232,8 @@ public class BalancedMigrationModel {
         LocalDate lastMoveDate = person.getLastMoveDate();
 
         if(lastMoveDate != null && lastMoveDate.isAfter(currentDate)) {
-//            int excludedDays = (int) ChronoUnit.DAYS.between(currentDate, lastMoveDate);
-            int excludedDays = currentDate.until(lastMoveDate).getDays();
+            int excludedDays = (int) ChronoUnit.DAYS.between(currentDate, lastMoveDate);
+//            int excludedDays = currentDate.until(lastMoveDate).getDays();
 
             moveDate = lastMoveDate.plus(randomNumberGenerator.nextInt(365 - excludedDays), ChronoUnit.DAYS);
         } else {
@@ -252,7 +252,10 @@ public class BalancedMigrationModel {
             parents = mimicParents(person, mimicPersonLookup);
         }
 
-        IPerson p = personFactory.makePerson(birthDate, parents, illegitimate, true);
+        IPerson p = personFactory.makePerson(birthDate, parents, illegitimate, true, person.getSex());
+
+        if(parents != null)
+            parents.addChildren(Collections.singleton(p));
 
 //        System.out.println(ChronoUnit.DAYS.between(p.getBirthDate(), person.getBirthDate()));
 
@@ -272,6 +275,9 @@ public class BalancedMigrationModel {
             IPerson mimicedMother = mimicPersonLookup.keySet().contains(motherToMimic) ? mimicPersonLookup.get(motherToMimic) : personFactory.makePerson(randomDateInYear(motherToMimic.getBirthDate()), null, motherToMimic.isIllegitimate(), true, SexOption.FEMALE);
 
             parents = new Partnership(mimicedFather, mimicedMother);
+
+            mimicedFather.recordPartnership(parents);
+            mimicedMother.recordPartnership(parents);
         }
 
         return parents;
