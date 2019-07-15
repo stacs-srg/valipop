@@ -5,13 +5,13 @@ simulation_time_step = P1Y
 input_width = P10Y
 tS = 1687-01-01
 t0 = 1855-01-01
-tE = 2015-01-01
-t0_pop_size = 7812
+tE = 1973-01-01
+t0_pop_size = 15625
 # this is defined by the birth rate and death rates for the years data to be used in the set up period
 set_up_br = 0.0233
 set_up_dr = 0.0322
 results_save_location = /cs/tmp/tsd4/results/
-output_record_format = NONE
+output_record_format = EG_SKYE
 # these are things we'll be wanting to tune to minimise deviance
 min_birth_spacing = P147D
 min_gestation_period = P147D
@@ -20,7 +20,7 @@ death_factor = 0.0
 recovery_factor = 1.0
 proportional_recovery_factor = 1.0
 output_tables = true
-deterministic = false
-seed = -690500718
+deterministic = true
+seed = 432932371
 binomial_sampling = true
-run_purpose = table-precision
+run_purpose = re-run
