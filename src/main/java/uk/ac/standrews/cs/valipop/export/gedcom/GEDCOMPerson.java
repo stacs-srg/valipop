@@ -366,6 +366,16 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
+    public void setPhantom(boolean isPhantom) {
+
+    }
+
+    @Override
+    public boolean isPhantom() {
+        return false;
+    }
+
+    @Override
     public int compareTo(IPerson o) {
         return Integer.compare(id, o.getId());
     }
