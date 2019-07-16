@@ -178,6 +178,18 @@ public class Person implements IPerson {
         this.illegitimate = illegitiamte;
     }
 
+    private boolean phantom = false;
+
+    @Override
+    public void setPhantom(boolean isPhantom) {
+        this.phantom = isPhantom;
+    }
+
+    @Override
+    public boolean isPhantom() {
+        return phantom;
+    }
+
     @Override
     public String getDeathCause() {
         return deathCause;

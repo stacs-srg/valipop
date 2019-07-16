@@ -150,4 +150,8 @@ public interface IPerson extends Comparable<IPerson> {
     TreeMap<LocalDate, Address> getAddressHistory();
 
     void setIllegitimate(boolean illegitiamte);
+
+    void setPhantom(boolean isPhantom);
+
+    boolean isPhantom();
 }

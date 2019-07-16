@@ -853,24 +853,26 @@ public class OBDModel {
 
 
                     // flip coin for who gets the house
-                    boolean keepHouse = randomNumberGenerator.nextBoolean();
+                    boolean keepHouse = ex.isPhantom() ? true : randomNumberGenerator.nextBoolean();
 
                     // flip coin for who gets the kids
-                    boolean keepKids = randomNumberGenerator.nextBoolean();
+                    boolean keepKids = ex.isPhantom() ? true : randomNumberGenerator.nextBoolean();
 
                     Address oldFamilyAddress = rePartneringPartner.getAddress(sepDate);
 
                     if (keepHouse) {
                         // ex moves
-
-                        Address exsNewAddress = geography.getNearestEmptyAddressAtDistance(ex.getAddress(sepDate).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
-                        ex.setAddress(sepDate, exsNewAddress);
+                        Address exsNewAddress = null;
+                        if(!ex.isPhantom()) {
+                            exsNewAddress = geography.getNearestEmptyAddressAtDistance(ex.getAddress(sepDate).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
+                            ex.setAddress(sepDate, exsNewAddress);
+                        }
 
                         if (!keepKids) {
                             // kids move to ex
                             for (IPerson c : lastPartnership.getChildren()) {
                                 if (oldFamilyAddress.getInhabitants().contains(c))
-                                    c.setAddress(sepDate, exsNewAddress);
+                                    c.setAddress(sepDate, exsNewAddress); // never get to here if ex is a phaton and thus exsNewAddress is still null (because ex can never get the kids if they're a phantom)
                             }
                         }
 

@@ -170,6 +170,13 @@ public class BalancedMigrationModel {
 
                 }
 
+                for(IPerson p : mimicPersonLookup.values()) {
+
+                    if(!newHouse.getInhabitants().contains(p))
+                        p.setPhantom(true);
+
+                }
+
             }
         }
     }
@@ -235,7 +242,7 @@ public class BalancedMigrationModel {
             int excludedDays = (int) ChronoUnit.DAYS.between(currentDate, lastMoveDate);
 //            int excludedDays = currentDate.until(lastMoveDate).getDays();
 
-            moveDate = lastMoveDate.plus(randomNumberGenerator.nextInt(365 - excludedDays), ChronoUnit.DAYS);
+            moveDate = lastMoveDate.plus(randomNumberGenerator.nextInt(366 - excludedDays), ChronoUnit.DAYS);
         } else {
             moveDate = currentDate.plus(randomNumberGenerator.nextInt(365), ChronoUnit.DAYS);
         }
@@ -275,6 +282,8 @@ public class BalancedMigrationModel {
             IPerson mimicedMother = mimicPersonLookup.keySet().contains(motherToMimic) ? mimicPersonLookup.get(motherToMimic) : personFactory.makePerson(randomDateInYear(motherToMimic.getBirthDate()), null, motherToMimic.isIllegitimate(), true, SexOption.FEMALE);
 
             parents = new Partnership(mimicedFather, mimicedMother);
+            parents.setPartnershipDate(parentsToMimic.getPartnershipDate());
+            parents.setMarriageDate(parentsToMimic.getMarriageDate());
 
             mimicedFather.recordPartnership(parents);
             mimicedMother.recordPartnership(parents);
