@@ -156,10 +156,6 @@ public class BalancedMigrationModel {
                     population.getLivingPeople().add(mimic);
                     LocalDate arrivalDate = p.getEmigrationDate().isBefore(mimic.getBirthDate()) ? mimic.getBirthDate() : p.getEmigrationDate();
 
-                    if(mimic.getDeathDate() != null && arrivalDate.isAfter(mimic.getDeathDate())) {
-                        System.out.println("FIX - IMMIGRATION DEATH ORDERING");
-                    }
-
                     mimic.setImmigrationDate(arrivalDate);
 
                     if(arrivalDate.isAfter(mimic.getBirthDate())) {
@@ -218,10 +214,6 @@ public class BalancedMigrationModel {
         population.getEmigrants().add(person);
         person.setEmigrationDate(moveDate.isBefore(person.getBirthDate()) ? person.getBirthDate() : moveDate);
 
-        if(person.getDeathDate() != null && person.getEmigrationDate().isAfter(person.getDeathDate())) {
-            System.out.println("FIX - EMIGRATION DEATH ORDERING - DEAD BEFORE LEFT");
-        }
-
         if(currentAbode != null) currentAbode.removeInhabitant(person);
         emigratingGroup.add(person);
 
@@ -240,7 +232,6 @@ public class BalancedMigrationModel {
 
         if(lastMoveDate != null && lastMoveDate.isAfter(currentDate)) {
             int excludedDays = (int) ChronoUnit.DAYS.between(currentDate, lastMoveDate);
-//            int excludedDays = currentDate.until(lastMoveDate).getDays();
 
             moveDate = lastMoveDate.plus(randomNumberGenerator.nextInt(366 - excludedDays), ChronoUnit.DAYS);
         } else {
@@ -263,8 +254,6 @@ public class BalancedMigrationModel {
 
         if(parents != null)
             parents.addChildren(Collections.singleton(p));
-
-//        System.out.println(ChronoUnit.DAYS.between(p.getBirthDate(), person.getBirthDate()));
 
         return p;
 
