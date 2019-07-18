@@ -211,7 +211,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
     private void removePeople(final PersonCollection collection, final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt, Geography geography, DistanceSelector moveDistanceSelector, Config config) throws InsufficientNumberOfPeopleException {
 
-        final Collection<IPerson> removed = collection.removeNPersons(numberToRemove, firstDate, timePeriod, true);
+        final TreeSet<IPerson> removed = collection.removeNPersons(numberToRemove, firstDate, timePeriod, true);
         for (IPerson person : removed) {
             removeChildFromParentsPartnership(person, geography, moveDistanceSelector, config);
 

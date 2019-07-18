@@ -134,7 +134,7 @@ public abstract class PersonCollection implements Iterable<IPerson> {
      * @return the random Collection of people who have been removed
      * @throws InsufficientNumberOfPeopleException If there are less people alive for the given year of birth than
      */
-    public Collection<IPerson> removeNPersons(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt) throws InsufficientNumberOfPeopleException {
+    public TreeSet<IPerson> removeNPersons(final int numberToRemove, final LocalDate firstDate, final Period timePeriod, final boolean bestAttempt) throws InsufficientNumberOfPeopleException {
 
         final int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(divisionSize, timePeriod);
 
@@ -142,7 +142,7 @@ public abstract class PersonCollection implements Iterable<IPerson> {
             throw new MisalignedTimeDivisionException();
         }
 
-        final List<IPerson> people = new ArrayList<>();
+        final TreeSet<IPerson> people = new TreeSet<>();
         LocalDate divisionDate = firstDate;
 
         final LinkedList<LocalDate> reusableDivisions = new LinkedList<>();
@@ -214,7 +214,7 @@ public abstract class PersonCollection implements Iterable<IPerson> {
      */
     public Collection<IPerson> getPeopleBornInTimePeriod(final LocalDate firstDate, final Period timePeriod) {
 
-        final Collection<IPerson> people = new ArrayList<>();
+        final TreeSet<IPerson> people = new TreeSet<>();
 
         final int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
 
@@ -240,13 +240,11 @@ public abstract class PersonCollection implements Iterable<IPerson> {
         return getPeople().iterator();
     }
 
-    void addPeople(final Collection<IPerson> people, final LocalDate divisionDate) {
+    void addPeople(final Collection<IPerson> people, final LocalDate divisionDate) {}
 
-    }
+    private TreeSet<IPerson> removeNPersonsFromDivision(final int numberToRemove, final LocalDate divisionDate) {
 
-    private Collection<IPerson> removeNPersonsFromDivision(final int numberToRemove, final LocalDate divisionDate) {
-
-        final Collection<IPerson> selectedPeople = new ArrayList<>();
+        final TreeSet<IPerson> selectedPeople = new TreeSet<>();
 
         if (numberToRemove == 0) {
             return selectedPeople;

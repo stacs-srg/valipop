@@ -65,9 +65,9 @@ public class InputFileReader {
         return lines;
     }
 
-    public static Map<Year, Double> readInSingleInputFile(Path path) throws IOException, InvalidInputFileException {
+    public static TreeMap<Year, Double> readInSingleInputFile(Path path) throws IOException, InvalidInputFileException {
 
-        Map<Year, Double> data = new TreeMap<>();
+        TreeMap<Year, Double> data = new TreeMap<>();
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 
