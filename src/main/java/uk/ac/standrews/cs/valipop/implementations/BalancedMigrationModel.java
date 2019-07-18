@@ -53,18 +53,18 @@ public class BalancedMigrationModel {
         Collection<List<IPerson>> peopleToMigrate = new ArrayList<>();
         List<IPerson> livingPeople = new ArrayList(population.getLivingPeople().getPeople());
 
-        HashSet<Integer> randoms = new HashSet<>();
+        HashSet<IPerson> theMigrated = new HashSet<>();
         // select people to move out of country
-        while(peopleToMigrate.size() < numberToMigrate) {
+        while(theMigrated.size() < numberToMigrate) {
 
-            int random;
 
+            IPerson selected;
             do {
-                random = randomNumberGenerator.nextInt(livingPeople.size());
-            } while(randoms.contains(random));
+                int random = randomNumberGenerator.nextInt(livingPeople.size());
+                selected = livingPeople.get(random);
+            } while(theMigrated.contains(selected));
 
-            randoms.add(random);
-            IPerson selected = livingPeople.get(random);
+            theMigrated.add(selected);
 
             LocalDate moveDate = getMoveDate(currentTime, selected);
             Address currentAbode = selected.getAddress(moveDate);
@@ -91,6 +91,7 @@ public class BalancedMigrationModel {
                 }
 
                 peopleToMigrate.add(household);
+                theMigrated.addAll(household);
 
             } else {
                 IPerson lastChild = PopulationNavigation.getLastChild(selected);
@@ -214,11 +215,8 @@ public class BalancedMigrationModel {
 
     private Address emigratePerson(LocalDate moveDate, Address currentAbode, List<IPerson> emigratingGroup, IPerson person, Address emigrateTo, OBDModel model) {
 
-        try {
-            population.getLivingPeople().remove(person);
-        } catch (PersonNotFoundException e) {
-            System.out.println();
-        }
+        population.getLivingPeople().remove(person);
+
         population.getEmigrants().add(person);
         person.setEmigrationDate(moveDate.isBefore(person.getBirthDate()) ? person.getBirthDate() : moveDate);
 
