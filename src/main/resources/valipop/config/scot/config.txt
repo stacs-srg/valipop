@@ -6,21 +6,21 @@ input_width = P10Y
 tS = 1687-01-01
 t0 = 1855-01-01
 tE = 1973-01-01
-t0_pop_size = 15625
+t0_pop_size = 125000
 # this is defined by the birth rate and death rates for the years data to be used in the set up period
 set_up_br = 0.0233
 set_up_dr = 0.0322
 results_save_location = /cs/tmp/tsd4/results/
-output_record_format = EG_SKYE
+output_record_format = NONE
 # these are things we'll be wanting to tune to minimise deviance
 min_birth_spacing = P147D
 min_gestation_period = P147D
 birth_factor = 0.0
 death_factor = 0.0
-recovery_factor = 0.8
-proportional_recovery_factor = 0.8
+recovery_factor = 1.0
+proportional_recovery_factor = 0.9
 output_tables = true
 deterministic = true
-seed = -1392208393
+seed = 1314372776
 binomial_sampling = true
-run_purpose = re-run
+run_purpose = profiling

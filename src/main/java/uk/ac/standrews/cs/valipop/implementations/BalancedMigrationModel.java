@@ -51,12 +51,20 @@ public class BalancedMigrationModel {
                 .getRate(0)));
 
         Collection<List<IPerson>> peopleToMigrate = new ArrayList<>();
+        List<IPerson> livingPeople = new ArrayList(population.getLivingPeople().getPeople());
 
+        HashSet<Integer> randoms = new HashSet<>();
         // select people to move out of country
         while(peopleToMigrate.size() < numberToMigrate) {
 
-            List<IPerson> livingPeople = new ArrayList(population.getLivingPeople().getPeople());
-            IPerson selected = livingPeople.get(randomNumberGenerator.nextInt(livingPeople.size()));
+            int random;
+
+            do {
+                random = randomNumberGenerator.nextInt(livingPeople.size());
+            } while(randoms.contains(random));
+
+            randoms.add(random);
+            IPerson selected = livingPeople.get(random);
 
             LocalDate moveDate = getMoveDate(currentTime, selected);
             Address currentAbode = selected.getAddress(moveDate);

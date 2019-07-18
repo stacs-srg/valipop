@@ -36,7 +36,7 @@ import java.util.*;
  */
 public class FemaleCollection extends PersonCollection {
 
-    private final Map<LocalDate, Map<Integer, Collection<IPerson>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
+    private final TreeMap<LocalDate, TreeMap<Integer, TreeSet<IPerson>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
 
     /**
      * Instantiates a new FemaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -61,7 +61,7 @@ public class FemaleCollection extends PersonCollection {
 
         final Collection<IPerson> people = new ArrayList<>();
 
-        for (Map<Integer, Collection<IPerson>> map : byBirthYearAndNumberOfChildren.values()) {
+        for (TreeMap<Integer, TreeSet<IPerson>> map : byBirthYearAndNumberOfChildren.values()) {
             for (Collection<IPerson> collection : map.values()) {
                 people.addAll(collection);
             }
@@ -86,12 +86,12 @@ public class FemaleCollection extends PersonCollection {
         final LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
         final int numberOfChildren = countChildren(person);
 
-        final List<IPerson> newList = new ArrayList<>();
+        final TreeSet<IPerson> newList = new TreeSet<>();
         newList.add(person);
 
         if (byBirthYearAndNumberOfChildren.containsKey(divisionDate)) {
 
-            final Map<Integer, Collection<IPerson>> map = byBirthYearAndNumberOfChildren.get(divisionDate);
+            final TreeMap<Integer, TreeSet<IPerson>> map = byBirthYearAndNumberOfChildren.get(divisionDate);
 
             if (map.containsKey(numberOfChildren)) {
                 map.get(numberOfChildren).add(person);
@@ -101,7 +101,7 @@ public class FemaleCollection extends PersonCollection {
             }
         } else {
 
-            Map<Integer, Collection<IPerson>> newMap = new TreeMap<>();
+            TreeMap<Integer, TreeSet<IPerson>> newMap = new TreeMap<>();
             newMap.put(numberOfChildren, newList);
             byBirthYearAndNumberOfChildren.put(divisionDate, newMap);
         }
@@ -113,7 +113,7 @@ public class FemaleCollection extends PersonCollection {
     public void remove(final IPerson person) {
 
         final LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
-        final Map<Integer, Collection<IPerson>> familySizeMap = byBirthYearAndNumberOfChildren.get(divisionDate);
+        final TreeMap<Integer, TreeSet<IPerson>> familySizeMap = byBirthYearAndNumberOfChildren.get(divisionDate);
         final Collection<IPerson> people = familySizeMap.get(countChildren(person));
 
         if (people == null || !people.remove(person)) {
@@ -171,7 +171,7 @@ public class FemaleCollection extends PersonCollection {
 
         for (int i = 0; i < divisionsInPeriod; i++) {
 
-            final Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
+            final TreeMap<Integer, TreeSet<IPerson>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
 
             if (temp != null && MapUtils.getMax(temp.keySet()) > highestBirthOrder) {
                 highestBirthOrder = MapUtils.getMax(temp.keySet());
@@ -220,7 +220,7 @@ public class FemaleCollection extends PersonCollection {
         return people;
     }
 
-    private Map<Integer, Collection<IPerson>> getAllPeopleFromDivision(final LocalDate divisionDate) {
+    private TreeMap<Integer, TreeSet<IPerson>> getAllPeopleFromDivision(final LocalDate divisionDate) {
 
         if (byBirthYearAndNumberOfChildren.containsKey(divisionDate)) {
             return byBirthYearAndNumberOfChildren.get(divisionDate);
@@ -228,7 +228,7 @@ public class FemaleCollection extends PersonCollection {
         } else {
             if (checkDateAlignmentToDivisions(divisionDate)) {
                 // Division date is reasonable but no people exist in it yet
-                return new HashMap<>();
+                return new TreeMap<>();
             } else {
                 throw new MisalignedTimeDivisionException("Date provided to underlying population structure does not align");
             }

@@ -54,17 +54,3 @@ plot3D <- function(seed, summaryDF, rf.min = NA, rf.max = NA, prf.min = NA, prf.
         zaxis = list(title = "pass rate")
       ))
 }
-  
-
-labelPlot2D(20000, summary)
-plot3D(20000, summary)
-labelPlot2D(15625, summary, rf.min = 0.3390, rf.max = 0.3396, prf.max = 0.005, detail = TRUE)
-
-plot3D(15625, summary, rf.min = 0.3390, rf.max = 0.3396, prf.max = 0.005)
-labelPlot2D(125000, summary)
-
-df.by.date <- df.all[which(df.all$Reason == "batch72-fs"),]
-df.by.date <- df.by.date[order(df.by.date$Start.Time.Date),]
-
-ggplot(df.by.date) +
-  geom_point(aes(Start.Time.Date, Peak.Memory.Usage..MB.))

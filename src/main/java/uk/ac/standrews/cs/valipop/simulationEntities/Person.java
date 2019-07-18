@@ -208,10 +208,14 @@ public class Person implements IPerson {
 
     @Override
     public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || getClass() != other.getClass()) return false;
-        Person person = (Person) other;
-        return id == person.id;
+        // fast way
+        return other != null && id == ((IPerson) other).getId();
+
+        // safe way - but too expensive
+//        if (this == other) return true;
+//        if (other == null || getClass() != other.getClass()) return false;
+//        Person person = (Person) other;
+//        return id == person.id;
     }
 
     @Override

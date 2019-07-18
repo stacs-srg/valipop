@@ -29,7 +29,7 @@ import java.util.*;
  */
 public class MaleCollection extends PersonCollection {
 
-    private final Map<LocalDate, Collection<IPerson>> byYear = new TreeMap<>();
+    private final TreeMap<LocalDate, TreeSet<IPerson>> byYear = new TreeMap<>();
 
     /**
      * Instantiates a new MaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -45,7 +45,7 @@ public class MaleCollection extends PersonCollection {
         super(start, end, divisionSize, description);
 
         for (LocalDate date = start; !date.isAfter(end); date = date.plus(divisionSize)) {
-            byYear.put(date, new ArrayList<>());
+            byYear.put(date, new TreeSet<>());
         }
     }
 
@@ -80,7 +80,7 @@ public class MaleCollection extends PersonCollection {
 
         } else {
 
-            final List<IPerson> newList = new ArrayList<>();
+            final TreeSet<IPerson> newList = new TreeSet<>();
             newList.add(person);
             byYear.put(divisionDate, newList);
         }
@@ -91,7 +91,7 @@ public class MaleCollection extends PersonCollection {
     @Override
     public void remove(IPerson person) {
 
-        Collection<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate()));
+        TreeSet<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate()));
 
         if (people == null || !people.remove(person)) {
             throw new PersonNotFoundException("Specified person not found in data structure");
