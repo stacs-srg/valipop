@@ -214,7 +214,7 @@ public abstract class PersonCollection implements Iterable<IPerson> {
      */
     public Collection<IPerson> getPeopleBornInTimePeriod(final LocalDate firstDate, final Period timePeriod) {
 
-        final TreeSet<IPerson> people = new TreeSet<>();
+        final Collection<IPerson> people = new ArrayList<>();
 
         final int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
 

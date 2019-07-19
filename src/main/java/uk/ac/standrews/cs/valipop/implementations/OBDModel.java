@@ -672,9 +672,14 @@ public class OBDModel {
 
             partnerSearchLoop:
             for (final IntegerRange range : partnerCounts.getLabels()) {
-                for (final IPerson man : menMap.get(range)) {
 
-                    if (eligible(man, newMother) && !inPartnerships(man, proposedPartnerships)) {
+                LinkedList<IPerson> menOfAge = menMap.get(range);
+                int number = menOfAge.size();
+
+                for(int i = 0 ; i < number * 2; i ++) {
+                    IPerson man = menOfAge.get(desired.getRandomGenerator().nextInt(number));
+
+                    if (!inPartnerships(man, proposedPartnerships) && eligible(man, newMother)) {
 
                         proposedPartnerships.add(new ProposedPartnership(man, newMother.newMother, newMother.numberOfChildrenInMaternity));
                         iterator.remove();
@@ -782,7 +787,7 @@ public class OBDModel {
 
             final LinkedList<IPerson> men = new LinkedList<>(population.getLivingPeople().getMales().getPeopleBornInTimePeriod(yobOfOlderEndOfIR, rangeLength));
 
-            CollectionUtils.shuffle(men, desired.getRandomGenerator());
+//            CollectionUtils.shuffle(men, desired.getRandomGenerator());
 
             allMen.put(range, men);
             availableMen.update(range, men.size());
