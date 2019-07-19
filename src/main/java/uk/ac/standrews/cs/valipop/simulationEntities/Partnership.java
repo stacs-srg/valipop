@@ -183,6 +183,10 @@ public class Partnership implements IPartnership {
 
     private void setSeparationDate(final RandomGenerator random) {
 
+        if(male.getId() == 1790767 && female.getId() == 1718622) {
+            System.out.println("DEBUG");
+        }
+
         final LocalDate maleMovedOnDate = getDateOfNextPostSeparationEvent(male, earliestPossibleSeparationDate);
         final LocalDate femaleMovedOnDate = getDateOfNextPostSeparationEvent(female, earliestPossibleSeparationDate);
 

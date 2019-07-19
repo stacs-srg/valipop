@@ -58,10 +58,12 @@ public class SelfCorrecting2DEnumeratedProportionalDistribution implements SelfC
         String occupationA = key.getYLabel();
 
         LabelledValueSet<String, Integer> achievedCountsForOccupation;
-        try {
+//        try {
             achievedCountsForOccupation = achievedCounts.get(resolveRowValue(occupationA));
 
-        } catch (InvalidRangeException e) {
+//        } catch (InvalidRangeException e) {
+
+        if(achievedCountsForOccupation == null) {
             // If no stats in distribution for the given key then return a zero count object
             return new MultipleDeterminedCountByString(key,
                     new StringToIntegerSet(Collections.singleton(""), 0, random),
@@ -107,11 +109,14 @@ public class SelfCorrecting2DEnumeratedProportionalDistribution implements SelfC
         String occupationA = achievedCount.getKey().getYLabel();
         LabelledValueSet<String, Integer> previousAchievedCountsForOccupation;
 
-        try {
+//        try {
             previousAchievedCountsForOccupation = achievedCounts.get(resolveRowValue(occupationA));
-        } catch (InvalidRangeException e) {
+//        } catch (InvalidRangeException e) {
+//            return;
+//        }
+
+        if(previousAchievedCountsForOccupation == null)
             return;
-        }
 
         LabelledValueSet<String, Integer> newAchievedCountsForOccupation = achievedCount.getFulfilledCount();
 
@@ -180,16 +185,15 @@ public class SelfCorrecting2DEnumeratedProportionalDistribution implements SelfC
 
     private String resolveRowValue(String rowValue) {
 
-//        for (String iR : targetProportions.keySet()) {
-//            if (iR.contains(rowValue)) {
-//                return iR;
-//            }
+
+        // the fast way
+        return rowValue;
+
+        // the very slow and graceful way
+//        if(targetProportions.containsKey(rowValue)) {
+//            return rowValue;
 //        }
-
-        if(targetProportions.containsKey(rowValue)) {
-            return rowValue;
-        }
-
-        throw new InvalidRangeException("Given value not covered by rows - value " + rowValue);
+//
+//        throw new InvalidRangeException("Given value not covered by rows - value " + rowValue);
     }
 }

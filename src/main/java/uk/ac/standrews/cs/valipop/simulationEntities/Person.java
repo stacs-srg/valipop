@@ -203,7 +203,8 @@ public class Person implements IPerson {
 
     @Override
     public int compareTo(IPerson other) {
-        return Integer.compare(id, other.getId());
+        int oID = other.getId();
+        return (id < oID) ? -1 : ((id == oID) ? 0 : 1);
     }
 
     @Override
