@@ -1408,9 +1408,6 @@ public class OBDModel {
 
         for (final IPerson person : people) {
 
-            if(person.getId() == 1116009)
-                System.out.println("DEBUG");
-
             // choose date of death
             final LocalDate deathDate = deathDateSelector.selectDate(person, desired, currentTime, config.getSimulationTimeStep());
 
