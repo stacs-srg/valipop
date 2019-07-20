@@ -69,9 +69,6 @@ class MarriageAnalytics {
 
                 final List<IPartnership> partnership_ids = person.getPartnerships();
 
-                if(partnership_ids.size() > 10 ) {
-                    System.out.println("DEBUG");
-                }
                 if (partnership_ids == null) {
                     count_marriages[0]++;
                 } else {
