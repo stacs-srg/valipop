@@ -60,6 +60,9 @@ public class Person implements IPerson {
 
         id = getNewId();
 
+        if(id == 1116009)
+            System.out.println("DEBUG");
+
         if(parents != null) {
             IPerson f = parents.getFemalePartner();
             IPerson m = parents.getMalePartner();

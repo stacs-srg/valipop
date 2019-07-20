@@ -91,6 +91,10 @@ public class MaleCollection extends PersonCollection {
     @Override
     public void remove(IPerson person) {
 
+        if(person.getId() == 1116009) {
+            System.out.println("DEBUG");
+        }
+
         TreeSet<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate()));
 
         if (people == null || !people.remove(person)) {
