@@ -858,17 +858,17 @@ public class OBDModel {
 
 
                     // flip coin for who gets the house
-                    boolean keepHouse = ex.isPhantom() ? true : randomNumberGenerator.nextBoolean();
+                    boolean keepHouse = ex.isPhantom() || ex.getDeathDate() != null ? true : randomNumberGenerator.nextBoolean();
 
                     // flip coin for who gets the kids
-                    boolean keepKids = ex.isPhantom() ? true : randomNumberGenerator.nextBoolean();
+                    boolean keepKids = ex.isPhantom() || ex.getDeathDate() != null ? true : randomNumberGenerator.nextBoolean();
 
                     Address oldFamilyAddress = rePartneringPartner.getAddress(sepDate);
 
                     if (keepHouse) {
                         // ex moves
                         Address exsNewAddress = null;
-                        if(!ex.isPhantom()) {
+                        if(!ex.isPhantom() && ex.getDeathDate() == null) {
                             exsNewAddress = geography.getNearestEmptyAddressAtDistance(ex.getAddress(sepDate).getArea().getCentriod(), moveDistanceSelector.selectRandomDistance());
                             ex.setAddress(sepDate, exsNewAddress);
                         }
@@ -1408,6 +1408,9 @@ public class OBDModel {
 
         for (final IPerson person : people) {
 
+            if(person.getId() == 1116009)
+                System.out.println("DEBUG");
+
             // choose date of death
             final LocalDate deathDate = deathDateSelector.selectDate(person, desired, currentTime, config.getSimulationTimeStep());
 
@@ -1418,7 +1421,7 @@ public class OBDModel {
             person.setDeathCause(deathCause);
 
             for(IPartnership partnership : person.getPartnerships()) {
-                handleSeperationMoves(partnership, person);
+                handleSeperationMoves(partnership, partnership.getPartnerOf(person));
             }
 
             Address lastAddress = person.getAddress(deathDate);

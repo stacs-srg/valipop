@@ -236,6 +236,13 @@ public class BalancedMigrationModel {
         LocalDate moveDate;
         LocalDate lastMoveDate = person.getLastMoveDate();
 
+        if(lastMoveDate != null && lastMoveDate.isAfter(currentDate.plus(1, ChronoUnit.YEARS))) {
+            // last move is projected signifcantly into future - occurs when last partner dies and no future events are sin surviving partners timeline
+            // therefore we rollback the future move and emmigrate as below
+            person.cancelLastMove(geography);
+            lastMoveDate = person.getLastMoveDate();
+        }
+
         if(lastMoveDate != null && lastMoveDate.isAfter(currentDate)) {
             int excludedDays = (int) ChronoUnit.DAYS.between(currentDate, lastMoveDate);
 
