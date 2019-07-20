@@ -32,7 +32,7 @@ import java.util.stream.IntStream;
  */
 class MarriageAnalytics {
 
-    private static final int MAX_MARRIAGES = 10;
+    private static final int MAX_MARRIAGES = 25;
     private static final int ONE_HUNDRED = 100;
 
     private final int[] count_marriages = new int[MAX_MARRIAGES];

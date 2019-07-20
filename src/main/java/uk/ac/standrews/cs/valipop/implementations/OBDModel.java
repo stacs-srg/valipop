@@ -860,7 +860,7 @@ public class OBDModel {
                     // flip coin for who gets the house
                     boolean keepHouse = ex.isPhantom() || ex.getDeathDate() != null ? true : randomNumberGenerator.nextBoolean();
 
-                    // flip coin for who gets the kids
+                    // flip coin forwho gets the kids
                     boolean keepKids = ex.isPhantom() || ex.getDeathDate() != null ? true : randomNumberGenerator.nextBoolean();
 
                     Address oldFamilyAddress = rePartneringPartner.getAddress(sepDate);
