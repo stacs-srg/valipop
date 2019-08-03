@@ -24,6 +24,12 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
         brideID = partnership.getFemalePartner().getId();
 
         marriageLocation = partnership.getMarriagePlace();
+
+        if(partnership.getFemalePartner().getParents() != null)
+            setBrideFathersSurname(partnership.getFemalePartner().getParents().getMalePartner().getSurname());
+
+        if(partnership.getMalePartner().getParents() != null)
+            setGroomFathersSurname(partnership.getMalePartner().getParents().getMalePartner().getSurname());
     }
 
     @Override
@@ -44,7 +50,7 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
                 getGroomMotherDeceased(), getBrideFathersForename(), getBrideFathersSurname(),
                 getBrideFatherOccupation(), getBrideFatherDeceased(), getBrideMothersForename(),
                 getBrideMothersMaidenSurname(), getBrideMotherDeceased(), "", "",
-                "", "", "", "", "", "", "", "", "",
+                "SYNTHETIC DATA PRODUCED USING VALIPOP", "", "", "", "", "", "", "", "",
                 "", "", "", groomID, brideID);
 
         return builder.toString();

@@ -58,7 +58,7 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
                 mothers_maiden_surname, "",
                 parents_marriage_date == null ? "" : parents_marriage_date.getDayOfMonth(),
                 parents_marriage_date == null ? "" : parents_marriage_date.getMonth(),
-                parents_marriage_date == null ? "" : parents_marriage_date.getYear(), "",
+                parents_marriage_date == null ? "" : parents_marriage_date.getYear(), parents_place_of_marriage,
                 "", "", "",
                 "", "", "", registrationDate.getDayOfMonth(),
                 registrationDate.getMonth(), registrationDate.getYear(), illegitimate, "SYNTHETIC DATA PRODUCED USING VALIPOP", "", "", "", "", deathID,

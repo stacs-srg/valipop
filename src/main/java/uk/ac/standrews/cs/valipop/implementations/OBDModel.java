@@ -58,7 +58,6 @@ public class OBDModel {
 
     // TODO use more informative class name
 
-    private static final String CODE_VERSION = "dev-bf";
     private static final int MINIMUM_POPULATION_SIZE = 100;
     private static final int EARLIEST_AGE_OF_MARRIAGE = 16;
     private static final int MAX_ATTEMPTS = 1;
@@ -140,7 +139,7 @@ public class OBDModel {
 
             log.info("End of Initialisation Period set: " + endOfInitPeriod);
 
-            summary = new SummaryRow(config, CODE_VERSION, JobQueueRunner.execCmd("hostname").trim());
+            summary =  new SummaryRow(config, JobQueueRunner.execCmd("git rev-parse HEAD"), JobQueueRunner.execCmd("hostname").trim());
 
         } catch (IOException e) {
             throw new RuntimeException(e);
