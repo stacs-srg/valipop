@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop;
 
 import uk.ac.standrews.cs.utilities.FileManipulation;
+import uk.ac.standrews.cs.valipop.implementations.JobQueueRunner;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.utils.InputFileReader;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
