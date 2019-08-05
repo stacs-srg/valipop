@@ -139,7 +139,7 @@ public class OBDModel {
 
             log.info("End of Initialisation Period set: " + endOfInitPeriod);
 
-            summary =  new SummaryRow(config, JobQueueRunner.execCmd("git rev-parse HEAD"), JobQueueRunner.execCmd("hostname").trim());
+            summary =  new SummaryRow(config, JobQueueRunner.execCmd("git rev-parse HEAD").trim(), JobQueueRunner.execCmd("hostname").trim());
 
         } catch (IOException e) {
             throw new RuntimeException(e);
