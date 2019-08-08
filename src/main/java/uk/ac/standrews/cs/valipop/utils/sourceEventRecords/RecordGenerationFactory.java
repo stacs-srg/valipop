@@ -5,6 +5,7 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat.EGSkyeSo
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecordGenerator;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat.RelationshipsTable;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat.SimplifiedSourceRecordGenerator;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.tdFormat.TDSourceRecordGenerator;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -25,6 +26,9 @@ public class RecordGenerationFactory {
                 break;
             case EG_SKYE:
                 extractEGSkyeRecords(population, recordsOutputDir, startDate);
+                break;
+            case TD:
+                extractTDRecords(population, recordsOutputDir, startDate);
                 break;
             case VIS_PROCESSING:
                 extractSimplifiedBMDRecords(population, recordsOutputDir);
@@ -68,6 +72,18 @@ public class RecordGenerationFactory {
 
         try {
             new EGSkyeSourceRecordGenerator(population, recordsDirPath).generateEventRecords(startDate);
+        } catch (Exception e) {
+            log.info("Record generation failed");
+            e.printStackTrace();
+            log.info(e.getMessage());
+        }
+    }
+
+    private static void extractTDRecords(PeopleCollection population, Path recordsDirPath, LocalDate startDate) {
+        log.info("OBDModel --- Outputting TD records");
+
+        try {
+            new TDSourceRecordGenerator(population, recordsDirPath).generateEventRecords(startDate);
         } catch (Exception e) {
             log.info("Record generation failed");
             e.printStackTrace();

@@ -311,6 +311,20 @@ public class PopulationNavigation {
         return partnership;
     }
 
+    public static IPartnership getLastPartnershipBeforeDate(IPerson person, LocalDate date) {
+
+        LocalDate latestPartnershipDate = LocalDate.MIN;
+        IPartnership partnership = null;
+
+        for (IPartnership p : person.getPartnerships()) {
+            if (p.getPartnershipDate().isBefore(date) && latestPartnershipDate.isBefore(p.getPartnershipDate())) {
+                latestPartnershipDate = p.getPartnershipDate();
+                partnership = p;
+            }
+        }
+        return partnership;
+    }
+
     public static Integer numberOfChildrenBirthedBeforeDate(IPerson person, LocalDate y) {
 
         int count = 0;

@@ -91,8 +91,6 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 
     public BirthSourceRecord(final IPerson person, IPopulation population) {
 
-
-
         // Attributes associated with individual
         setUid(String.valueOf(person.getId()));
         setSex(String.valueOf(person.getSex()));

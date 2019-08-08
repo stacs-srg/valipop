@@ -88,6 +88,8 @@ public class DeathSourceRecord extends IndividualSourceRecord {
 
     private String death_age;
     private String death_cause_a;
+    private String death_cause_b;
+    private String death_cause_c;
 
     private String birth_date;
     private String occupation = "";
@@ -142,8 +144,24 @@ public class DeathSourceRecord extends IndividualSourceRecord {
         return death_cause_a;
     }
 
-    private void setDeathCauseA(final String death_cause_a) {
+    protected String getDeathCauseB() {
+        return death_cause_b;
+    }
+
+    protected String getDeathCauseC() {
+        return death_cause_c;
+    }
+
+    protected void setDeathCauseA(final String death_cause_a) {
         this.death_cause_a = death_cause_a;
+    }
+
+    protected void setDeathCauseB(final String death_cause_b) {
+        this.death_cause_b = death_cause_b;
+    }
+
+    protected void setDeathCauseC(final String death_cause_c) {
+        this.death_cause_c = death_cause_c;
     }
 
     public String getBirthDate() {

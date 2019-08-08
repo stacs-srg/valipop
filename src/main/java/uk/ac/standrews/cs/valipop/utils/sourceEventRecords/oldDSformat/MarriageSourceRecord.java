@@ -105,7 +105,7 @@ public class MarriageSourceRecord extends SourceRecord {
     private String groom_address;
     private String groom_age_or_date_of_birth;
     private String groom_occupation;
-    private String groom_marital_status;
+    protected String groom_marital_status;
 
     private String groom_fathers_forename;
     private String groom_fathers_surname;
@@ -125,7 +125,7 @@ public class MarriageSourceRecord extends SourceRecord {
     private String bride_address;
     private String bride_age_or_date_of_birth;
     private String bride_occupation;
-    private String bride_marital_status;
+    protected String bride_marital_status;
 
     private String bride_fathers_forename;
     private String bride_fathers_surname;
