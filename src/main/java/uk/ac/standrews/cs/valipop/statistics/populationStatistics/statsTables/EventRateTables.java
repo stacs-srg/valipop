@@ -94,7 +94,7 @@ public interface EventRateTables {
      */
     SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(Year year);
 
-    SelfCorrectingOneDimensionDataDistribution getIllegitimateBirthRates(Year year);
+    SelfCorrectingOneDimensionDataDistribution getAdulterousBirthRates(Year year);
 
     SelfCorrectingOneDimensionDataDistribution getMarriageRates(Year year);
 

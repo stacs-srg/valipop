@@ -37,7 +37,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
 import java.time.Period;
 import java.time.Year;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -54,7 +53,7 @@ public class PopulationStatistics implements EventRateTables {
     private TreeMap<Year, SelfCorrecting2DIntegerRangeProportionalDistribution> partnering;
     private TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
     private TreeMap<Year, SelfCorrectingProportionalDistribution> multipleBirth;
-    private TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth;
+    private TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> adulterousBirth;
     private TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> marriage;
     private TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> separation;
 
@@ -103,7 +102,7 @@ public class PopulationStatistics implements EventRateTables {
             TreeMap<Year, SelfCorrecting2DIntegerRangeProportionalDistribution> partnering = readInAgeAndProportionalStatsInputFiles(config.getVarPartneringPaths(), config);
             TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths(), config);
             TreeMap<Year, SelfCorrectingProportionalDistribution> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
-            TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth = readInSC1DDataFiles(config.getVarIllegitimateBirthPaths(), config);
+            TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> adulterousBirth = readInSC1DDataFiles(config.getVarAdulterousBirthPaths(), config);
             TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> marriage = readInSC1DDataFiles(config.getVarMarriagePaths(), config);
             TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> separation = readInSC2DDataFiles(config.getVarSeparationPaths(), config);
             TreeMap<Year, Double> sexRatioBirth = readInSingleInputDataFile(config.getVarBirthRatioPath());
@@ -121,7 +120,7 @@ public class PopulationStatistics implements EventRateTables {
             TreeMap<Year, AgeDependantEnumeratedDistribution> femaleOccupation = readInAgeDependantEnumeratedDistributionDataFiles(config.getVarFemaleOccupationPaths(), config);
             TreeMap<Year, SelfCorrecting2DEnumeratedProportionalDistribution> femaleOccupationChange = readInStringAndProportionalStatsInputFiles(config.getVarFemaleOccupationChangePaths(), config);
 
-            init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth,
+            init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, adulterousBirth,
                     marriage, separation, sexRatioBirth, maleForename, femaleForename, surname,
                     migrantMaleForename, migrantFemaleForename, migrantSurname, migrationRate,
                     maleOccupation, femaleOccupation, maleOccupationChange, femaleOccupationChange,
@@ -143,7 +142,7 @@ public class PopulationStatistics implements EventRateTables {
                                 TreeMap<Year, SelfCorrecting2DIntegerRangeProportionalDistribution> partnering,
                                 TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                                 TreeMap<Year, SelfCorrectingProportionalDistribution> multipleBirth,
-                                TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth,
+                                TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> adulterousBirth,
                                 TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> marriage,
                                 TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> separation,
                                 TreeMap<Year, Double> sexRatioBirths,
@@ -164,14 +163,14 @@ public class PopulationStatistics implements EventRateTables {
 
         this.randomGenerator = randomGenerator;
         init(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth,
-                illegitimateBirth, marriage, separation, sexRatioBirths, maleForenames, femaleForenames, surnames,
+                adulterousBirth, marriage, separation, sexRatioBirths, maleForenames, femaleForenames, surnames,
                 migrantMaleForename, migrantFemaleForename, migrantSurname, migrationRate, maleOccupation, femaleOccupation,
                 maleOccupationChange, femaleOccupationChange, minBirthSpacing, minGestationPeriod);
     }
 
     private void init(TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> maleDeath, TreeMap<Year, AgeDependantEnumeratedDistribution> maleDeathCauses, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
                       TreeMap<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses, TreeMap<Year, SelfCorrecting2DIntegerRangeProportionalDistribution> partnering, TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
-                      TreeMap<Year, SelfCorrectingProportionalDistribution> multipleBirth, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> marriage,
+                      TreeMap<Year, SelfCorrectingProportionalDistribution> multipleBirth, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> adulterousBirth, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> marriage,
                       TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> separation, TreeMap<Year, Double> sexRatioBirths, TreeMap<Year, ValiPopEnumeratedDistribution> maleForename, TreeMap<Year, ValiPopEnumeratedDistribution> femaleForename,
                       TreeMap<Year, ValiPopEnumeratedDistribution> surname, TreeMap<Year, ValiPopEnumeratedDistribution> migrantMaleForenames,
                       TreeMap<Year, ValiPopEnumeratedDistribution> migrantFemaleForenames, TreeMap<Year, ValiPopEnumeratedDistribution> migrantSurname, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> migrationRate,
@@ -186,7 +185,7 @@ public class PopulationStatistics implements EventRateTables {
         this.partnering = partnering;
         this.orderedBirth = orderedBirth;
         this.multipleBirth = multipleBirth;
-        this.illegitimateBirth = illegitimateBirth;
+        this.adulterousBirth = adulterousBirth;
         this.marriage = marriage;
         this.separation = separation;
         this.sexRatioBirth = sexRatioBirths;
@@ -232,9 +231,9 @@ public class PopulationStatistics implements EventRateTables {
             return getMultipleBirthRates(k.getYear()).determineCount(k, config, randomGenerator);
         }
 
-        if (key instanceof IllegitimateBirthStatsKey) {
-            IllegitimateBirthStatsKey k = (IllegitimateBirthStatsKey) key;
-            return getIllegitimateBirthRates(k.getYear()).determineCount(k, config, randomGenerator);
+        if (key instanceof AdulterousBirthStatsKey) {
+            AdulterousBirthStatsKey k = (AdulterousBirthStatsKey) key;
+            return getAdulterousBirthRates(k.getYear()).determineCount(k, config, randomGenerator);
         }
 
         if (key instanceof MarriageStatsKey) {
@@ -280,9 +279,9 @@ public class PopulationStatistics implements EventRateTables {
             return;
         }
 
-        if (achievedCount.getKey() instanceof IllegitimateBirthStatsKey) {
-            IllegitimateBirthStatsKey k = (IllegitimateBirthStatsKey) achievedCount.getKey();
-            getIllegitimateBirthRates(k.getYear()).returnAchievedCount(achievedCount, randomGenerator);
+        if (achievedCount.getKey() instanceof AdulterousBirthStatsKey) {
+            AdulterousBirthStatsKey k = (AdulterousBirthStatsKey) achievedCount.getKey();
+            getAdulterousBirthRates(k.getYear()).returnAchievedCount(achievedCount, randomGenerator);
             return;
         }
 
@@ -349,8 +348,8 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
-    public SelfCorrectingOneDimensionDataDistribution getIllegitimateBirthRates(Year year) {
-        return illegitimateBirth.get(getNearestYearInMap(year, illegitimateBirth));
+    public SelfCorrectingOneDimensionDataDistribution getAdulterousBirthRates(Year year) {
+        return adulterousBirth.get(getNearestYearInMap(year, adulterousBirth));
     }
 
     @Override

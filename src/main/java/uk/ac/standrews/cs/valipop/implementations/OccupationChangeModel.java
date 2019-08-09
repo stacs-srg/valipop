@@ -23,6 +23,8 @@ public class OccupationChangeModel {
     private final Population population;
     private final Config config;
 
+    private final boolean useChangeTables = false;
+
     public OccupationChangeModel(Population population, PopulationStatistics desired, Config config) {
         this.population = population;
         this.desired = desired;
@@ -31,9 +33,14 @@ public class OccupationChangeModel {
 
     public void performOccupationChange(LocalDate onDate) {
 
-        // for each sex
-        occupationChangeFor(SexOption.MALE, onDate);
-        occupationChangeFor(SexOption.FEMALE, onDate);
+        if(useChangeTables) {
+            // for each sex
+            occupationChangeFor(SexOption.MALE, onDate);
+            occupationChangeFor(SexOption.FEMALE, onDate);
+        } else {
+            occupationResampleFor(SexOption.MALE, onDate);
+            occupationResampleFor(SexOption.FEMALE, onDate);
+        }
 
     }
 
@@ -76,6 +83,38 @@ public class OccupationChangeModel {
 
                 mDC.setFulfilledCount(mDC.getDeterminedCount());
                 desired.returnAchievedCount(mDC);
+            }
+        }
+    }
+
+    private void occupationResampleFor(SexOption sex, LocalDate onDate) {
+
+        PersonCollection people;
+
+        if(sex == SexOption.MALE)
+            people = population.getLivingPeople().getMales();
+        else
+            people = population.getLivingPeople().getFemales();
+
+        // This one at a time approach is inefficent (but linear) - searching each time so as to group by occupation makes in squared
+        // if we need optomisation then a faster linear way would be to store everone in the same job in a supporting data structure
+
+        // for all people of sex
+        for(IPerson person : people) {
+            // if persons age is divisible by 10
+            int age = PopulationNavigation.ageOnDate(person, onDate);
+            if(age % 10 == 0) {
+                // then get last occupation
+                String occupation = person.getLastOccupation();
+
+                // use to get new occuption
+                String newOccupation = desired.getOccupation(Year.of(onDate.getYear()), sex).getDistributionForAge(age).getSample();
+
+
+                if(!newOccupation.equals(occupation)) {
+                    person.setOccupation(onDate, newOccupation);
+                } // else do nothing - it's the same job, it doesn't need multiple entries in the occupation history
+
             }
         }
     }

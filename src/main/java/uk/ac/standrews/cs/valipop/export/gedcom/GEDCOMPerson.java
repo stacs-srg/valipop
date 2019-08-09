@@ -274,7 +274,7 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public boolean isIllegitimate() {
+    public boolean isAdulterousBirth() {
         return false;
     }
 
@@ -361,7 +361,7 @@ public class GEDCOMPerson implements IPerson {
     }
 
     @Override
-    public void setIllegitimate(boolean illegitiamte) {
+    public void setAdulterousBirth(boolean adulterousBirth) {
 
     }
 

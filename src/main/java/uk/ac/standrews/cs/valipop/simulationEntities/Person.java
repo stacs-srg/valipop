@@ -16,14 +16,12 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.*;
 
@@ -44,7 +42,7 @@ public class Person implements IPerson {
     private final String firstName;
     private final String surname;
     private final String representation;
-    private boolean illegitimate;
+    private boolean adulterousBirth;
 
     private String deathCause = "";
 
@@ -52,11 +50,11 @@ public class Person implements IPerson {
     private LocalDate emigrationDate = null;
     private LocalDate immigrationDate = null;
 
-    public Person(SexOption sex, LocalDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean illegitimate) {
-        this(sex, birthDate, parents, statistics, illegitimate, false);
+    public Person(SexOption sex, LocalDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean adulterousBirth) {
+        this(sex, birthDate, parents, statistics, adulterousBirth, false);
     }
 
-    public Person(SexOption sex, LocalDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean illegitimate, boolean immigrant) {
+    public Person(SexOption sex, LocalDate birthDate, IPartnership parents, PopulationStatistics statistics, boolean adulterousBirth, boolean immigrant) {
 
         id = getNewId();
 
@@ -72,7 +70,7 @@ public class Person implements IPerson {
         this.sex = sex;
         this.birthDate = birthDate;
         this.parents = parents;
-        this.illegitimate = illegitimate;
+        this.adulterousBirth = adulterousBirth;
 
         firstName = getForename(statistics, immigrant);
         surname = getSurname(statistics, immigrant);
@@ -130,8 +128,8 @@ public class Person implements IPerson {
     }
 
     @Override
-    public boolean isIllegitimate() {
-        return illegitimate;
+    public boolean isAdulterousBirth() {
+        return adulterousBirth;
     }
 
     @Override
@@ -174,8 +172,8 @@ public class Person implements IPerson {
     }
 
     @Override
-    public void setIllegitimate(boolean illegitiamte) {
-        this.illegitimate = illegitiamte;
+    public void setAdulterousBirth(boolean adulterousBirth) {
+        this.adulterousBirth = adulterousBirth;
     }
 
     private boolean phantom = false;
@@ -259,7 +257,7 @@ public class Person implements IPerson {
             }
 
             if(!removed) {
-                while(addressHistory.ceilingEntry(onDate) != null) { // if theres a future move - from a forced illegitimacy move - we scratch that move
+                while(addressHistory.ceilingEntry(onDate) != null) { // if theres a future move - from a forced adulterousBirth move - we scratch that move
                     addressHistory.ceilingEntry(onDate).getValue().removeInhabitant(this);
                     addressHistory.remove(addressHistory.ceilingKey(onDate));
                 }

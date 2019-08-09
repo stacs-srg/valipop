@@ -1,16 +1,13 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
-import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.ForeignGeography;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
@@ -255,7 +252,7 @@ public class BalancedMigrationModel {
 
     private IPerson mimicPerson(IPerson person, IPartnership mimicedParents, Map<IPerson, IPerson> mimicPersonLookup) {
 
-        boolean illegitimate = person.isIllegitimate();
+        boolean adulterousBirth = person.isAdulterousBirth();
         LocalDate birthDate = randomDateInYear(person.getBirthDate());
         IPartnership parents = mimicedParents;
 
@@ -263,7 +260,7 @@ public class BalancedMigrationModel {
             parents = mimicParents(person, mimicPersonLookup);
         }
 
-        IPerson p = personFactory.makePerson(birthDate, parents, illegitimate, true, person.getSex());
+        IPerson p = personFactory.makePerson(birthDate, parents, adulterousBirth, true, person.getSex());
 
         if(parents != null)
             parents.addChildren(Collections.singleton(p));
@@ -280,8 +277,8 @@ public class BalancedMigrationModel {
             IPerson fatherToMimic = parentsToMimic.getMalePartner();
             IPerson motherToMimic = parentsToMimic.getFemalePartner();
 
-            IPerson mimicedFather = mimicPersonLookup.keySet().contains(fatherToMimic) ? mimicPersonLookup.get(fatherToMimic) : personFactory.makePerson(randomDateInYear(fatherToMimic.getBirthDate()), null, fatherToMimic.isIllegitimate(), true, SexOption.MALE);
-            IPerson mimicedMother = mimicPersonLookup.keySet().contains(motherToMimic) ? mimicPersonLookup.get(motherToMimic) : personFactory.makePerson(randomDateInYear(motherToMimic.getBirthDate()), null, motherToMimic.isIllegitimate(), true, SexOption.FEMALE);
+            IPerson mimicedFather = mimicPersonLookup.keySet().contains(fatherToMimic) ? mimicPersonLookup.get(fatherToMimic) : personFactory.makePerson(randomDateInYear(fatherToMimic.getBirthDate()), null, fatherToMimic.isAdulterousBirth(), true, SexOption.MALE);
+            IPerson mimicedMother = mimicPersonLookup.keySet().contains(motherToMimic) ? mimicPersonLookup.get(motherToMimic) : personFactory.makePerson(randomDateInYear(motherToMimic.getBirthDate()), null, motherToMimic.isAdulterousBirth(), true, SexOption.FEMALE);
 
             parents = new Partnership(mimicedFather, mimicedMother);
             parents.setPartnershipDate(parentsToMimic.getPartnershipDate());

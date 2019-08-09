@@ -62,7 +62,7 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
         int registrationDay = rng.nextInt(43);
         registrationDate = birthDate.plus(registrationDay, ChronoUnit.DAYS);
 
-        illegitimate = person.isIllegitimate() ? "illegitimate" : "";
+        illegitimate = person.isAdulterousBirth() || (person.getParents() != null && person.getParents().getMarriageDate() == null) ? "illegitimate" : "";
 
         if (person.getDeathDate() != null) {
             deathID = String.valueOf(uid);

@@ -32,27 +32,27 @@ public class PersonFactory {
         birthDateSelector = new DateSelector(randomNumberGenerator);
     }
 
-    public IPerson makePerson(final LocalDate birthDate, final IPartnership parents, final boolean illegitimate) {
-        return makePerson(birthDate, parents, illegitimate, false);
+    public IPerson makePerson(final LocalDate birthDate, final IPartnership parents, final boolean adulterous) {
+        return makePerson(birthDate, parents, adulterous, false);
     }
 
-    public IPerson makePerson(final LocalDate birthDate, final IPartnership parents, final boolean illegitimate, final boolean immigrant) {
+    public IPerson makePerson(final LocalDate birthDate, final IPartnership parents, final boolean adulterous, final boolean immigrant) {
 
         SexOption sex = getSex(population.getPopulationCounts(), desired, birthDate);
-        return new Person(sex, birthDate, parents, desired, illegitimate, immigrant);
+        return new Person(sex, birthDate, parents, desired, adulterous, immigrant);
     }
 
-    public IPerson makePerson(final LocalDate birthDate, final IPartnership parents, final boolean illegitimate, final boolean immigrant, SexOption sex) {
+    public IPerson makePerson(final LocalDate birthDate, final IPartnership parents, final boolean adulterous, final boolean immigrant, SexOption sex) {
 
         if(sex == SexOption.MALE)
             population.getPopulationCounts().newMale();
         else
             population.getPopulationCounts().newFemale();
 
-        return new Person(sex, birthDate, parents, desired, illegitimate, immigrant);
+        return new Person(sex, birthDate, parents, desired, adulterous, immigrant);
     }
 
-    public IPerson makePersonWithRandomBirthDate(final LocalDate currentDate, final IPartnership parents, final boolean illegitimate) {
+    public IPerson makePersonWithRandomBirthDate(final LocalDate currentDate, final IPartnership parents, final boolean adulterous) {
 
         LocalDate immigrationDateFather = parents == null ? null : parents.getMalePartner().getImmigrationDate();
 
@@ -62,10 +62,10 @@ public class PersonFactory {
                         birthDateSelector.selectRandomDate(
                             immigrationDateFather.plus(desired.getMinGestationPeriod()),
                             currentDate.plus(1, ChronoUnit.YEARS)).minus(1, ChronoUnit.DAYS),
-                        parents, illegitimate);
+                        parents, adulterous);
         }
 
-        return makePerson(birthDateSelector.selectRandomDate(currentDate, simulationTimeStep), parents, illegitimate);
+        return makePerson(birthDateSelector.selectRandomDate(currentDate, simulationTimeStep), parents, adulterous);
     }
 
     private SexOption getSex(final PopulationCounts counts, final PopulationStatistics statistics, final LocalDate currentDate) {
