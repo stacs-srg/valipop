@@ -17,7 +17,6 @@
 package uk.ac.standrews.cs.valipop;
 
 import uk.ac.standrews.cs.utilities.FileManipulation;
-import uk.ac.standrews.cs.valipop.implementations.JobQueueRunner;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.utils.InputFileReader;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
@@ -73,7 +72,7 @@ public class Config {
     private static final String birthSubFile = "birth";
     private static final String orderedBirthSubFile = "ordered_birth";
     private static final String multipleBirthSubFile = "multiple_birth";
-    private static final String illegitimateBirthSubFile = "illegitimate_birth";
+    private static final String adulterousBirthSubFile = "adulterous_birth";
     private static final String birthRatioSubFile = "ratio_birth";
 
     private static final String relationshipsSubFile = "relationships";
@@ -117,7 +116,7 @@ public class Config {
     private Path varFemaleLifetablePaths;
     private Path varFemaleDeathCausesPaths;
     private Path varMultipleBirthPaths;
-    private Path varIllegitimateBirthPaths;
+    private Path varAdulterousBirthPaths;
     private Path varPartneringPaths;
     private Path varSeparationPaths;
     private Path varBirthRatioPaths;
@@ -295,8 +294,8 @@ public class Config {
         return getDirectories(varMultipleBirthPaths);
     }
 
-    public DirectoryStream<Path> getVarIllegitimateBirthPaths() {
-        return getDirectories(varIllegitimateBirthPaths);
+    public DirectoryStream<Path> getVarAdulterousBirthPaths() {
+        return getDirectories(varAdulterousBirthPaths);
     }
 
     public DirectoryStream<Path> getVarMarriagePaths() {
@@ -521,7 +520,7 @@ public class Config {
         Path birthPath = varPath.resolve(birthSubFile);
         varOrderedBirthPaths = birthPath.resolve(orderedBirthSubFile);
         varMultipleBirthPaths = birthPath.resolve(multipleBirthSubFile);
-        varIllegitimateBirthPaths = birthPath.resolve(illegitimateBirthSubFile);
+        varAdulterousBirthPaths = birthPath.resolve(adulterousBirthSubFile);
         varBirthRatioPaths = birthPath.resolve(birthRatioSubFile);
 
         Path deathPath = varPath.resolve(deathSubFile);

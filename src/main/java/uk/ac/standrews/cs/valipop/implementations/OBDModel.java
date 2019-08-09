@@ -791,15 +791,15 @@ public class OBDModel {
 
     // TODO rationalise next four methods
 
-    private IPartnership createNewPartnership(final int numberOfChildren, final IPerson father, final IPerson mother, final boolean illegitimate, final boolean marriedAtBirth) throws PersonNotFoundException {
+    private IPartnership createNewPartnership(final int numberOfChildren, final IPerson father, final IPerson mother, final boolean adulterousBirth, final boolean marriedAtBirth) throws PersonNotFoundException {
 
         population.getLivingPeople().remove(mother);
         population.getLivingPeople().remove(father);  // TODO why necessary to remove/add father, if only indexed by year of birth? TD: it probably isn't...
 
         final IPartnership partnership = new Partnership(father, mother);
-        makeChildren(partnership, numberOfChildren, illegitimate, marriedAtBirth);
+        makeChildren(partnership, numberOfChildren, adulterousBirth, marriedAtBirth);
 
-        if(illegitimate)
+        if(adulterousBirth)
             partnership.setFinalised(true);
 
         population.getLivingPeople().add(partnership);
@@ -813,7 +813,7 @@ public class OBDModel {
         // these need to happen post recording of new partnership
         handleSeperationMoves(motherLastParntership, mother);
 
-        if(!illegitimate) {
+        if(!adulterousBirth) {
             handleSeperationMoves(fatherLastParntership, father);
             handleAddressChanges(partnership);
         } else if(motherLastParntership == null) {
@@ -903,9 +903,9 @@ public class OBDModel {
         final IPerson mostRecentPreviousChild = PopulationNavigation.getLastChild(mother);
         final IPartnership mostRecentPartnership = mostRecentPreviousChild.getParents();
 
-        final LocalDate newChildBirthDate = addChildrenToPartnership(numberOfChildren, mostRecentPartnership, mostRecentPreviousChild.isIllegitimate());
+        final LocalDate newChildBirthDate = addChildrenToPartnership(numberOfChildren, mostRecentPartnership, mostRecentPreviousChild.isAdulterousBirth());
 
-        updateIllegitimateCounts(numberOfChildren, mostRecentPartnership, newChildBirthDate, mostRecentPreviousChild.isIllegitimate());
+        updateAdulterousCounts(numberOfChildren, mostRecentPartnership, newChildBirthDate, mostRecentPreviousChild.isAdulterousBirth());
         updateMarriageCounts(mother, numberOfChildren, mostRecentPreviousChild, mostRecentPartnership, newChildBirthDate);
 
         population.getLivingPeople().add(mother);
@@ -939,7 +939,7 @@ public class OBDModel {
         return birthDate;
     }
 
-    private void makeChildren(final IPartnership partnership, final int numberOfChildren, final boolean illegitimate, final boolean marriedAtBirth) {
+    private void makeChildren(final IPartnership partnership, final int numberOfChildren, final boolean adulterousBirth, final boolean marriedAtBirth) {
 
         final List<IPerson> children = new ArrayList<>();
 
@@ -950,8 +950,8 @@ public class OBDModel {
         for (int i = 0; i < numberOfChildren; i++) {
 
             final IPerson child = childrenBirthDate == null ?
-                    personFactory.makePersonWithRandomBirthDate(currentTime, partnership, illegitimate) :
-                    personFactory.makePerson(childrenBirthDate, partnership, illegitimate);
+                    personFactory.makePersonWithRandomBirthDate(currentTime, partnership, adulterousBirth) :
+                    personFactory.makePerson(childrenBirthDate, partnership, adulterousBirth);
 
             population.getLivingPeople().add(child);
             children.add(child);
@@ -1015,7 +1015,7 @@ public class OBDModel {
     private boolean hasLegitimateChildren(final IPartnership partnership) {
 
         for (IPerson child : partnership.getChildren()) {
-            if (!child.isIllegitimate()) return true;
+            if (!child.isAdulterousBirth()) return true;
         }
         return false;
     }
@@ -1186,19 +1186,19 @@ public class OBDModel {
         return eligible;
     }
 
-    private void updateIllegitimateCounts(final int numberOfChildren, final IPartnership partnership, final LocalDate birthDate, final boolean isIllegitimate) {
+    private void updateAdulterousCounts(final int numberOfChildren, final IPartnership partnership, final LocalDate birthDate, final boolean isAdulterous) {
 
         final IPerson man = partnership.getMalePartner();
 
-        final IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(ageOnDate(man, birthDate), numberOfChildren, config.getSimulationTimeStep(), birthDate);
-        final SingleDeterminedCount illegitimateCounts = (SingleDeterminedCount) desired.getDeterminedCount(illegitimateKey, config);
+        final AdulterousBirthStatsKey adulterousKey = new AdulterousBirthStatsKey(ageOnDate(man, birthDate), numberOfChildren, config.getSimulationTimeStep(), birthDate);
+        final SingleDeterminedCount adulterousCounts = (SingleDeterminedCount) desired.getDeterminedCount(adulterousKey, config);
 
-        if(isIllegitimate)
-            illegitimateCounts.setFulfilledCount(numberOfChildren);
+        if(isAdulterous)
+            adulterousCounts.setFulfilledCount(numberOfChildren);
         else
-            illegitimateCounts.setFulfilledCount(0);
+            adulterousCounts.setFulfilledCount(0);
 
-        desired.returnAchievedCount(illegitimateCounts);
+        desired.returnAchievedCount(adulterousCounts);
     }
 
     private void updateMarriageCounts(final IPerson mother, final int numberOfChildren, final IPerson mostRecentPreviousChild,
@@ -1296,22 +1296,22 @@ public class OBDModel {
             return true;
         }
 
-        // Get access to illegitimacy rates
-        final IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(ageOnDate(man, currentTime), childrenInPregnancy, config.getSimulationTimeStep(), currentTime);
-        final SingleDeterminedCount illegitimateCounts = (SingleDeterminedCount) desired.getDeterminedCount(illegitimateKey, config);
-        final int permitted = (int) Math.round(illegitimateCounts.getDeterminedCount() / (double) childrenInPregnancy);
+        // Get access to adulterousBirth rates
+        final AdulterousBirthStatsKey adulterousBirthKey = new AdulterousBirthStatsKey(ageOnDate(man, currentTime), childrenInPregnancy, config.getSimulationTimeStep(), currentTime);
+        final SingleDeterminedCount adulterousBirthCounts = (SingleDeterminedCount) desired.getDeterminedCount(adulterousBirthKey, config);
+        final int permitted = (int) Math.round(adulterousBirthCounts.getDeterminedCount() / (double) childrenInPregnancy);
 
         if (needsNewPartner(man, currentTime)) {
             // record the legitimate birth
-            illegitimateCounts.setFulfilledCount(0);
-            desired.returnAchievedCount(illegitimateCounts);
+            adulterousBirthCounts.setFulfilledCount(0);
+            desired.returnAchievedCount(adulterousBirthCounts);
             return true;
         }
 
         if (permitted == 1) {
-            // record the illegitimate birth
-            illegitimateCounts.setFulfilledCount(childrenInPregnancy);
-            desired.returnAchievedCount(illegitimateCounts);
+            // record the adulterousBirth birth
+            adulterousBirthCounts.setFulfilledCount(childrenInPregnancy);
+            desired.returnAchievedCount(adulterousBirthCounts);
             return true;
         }
 

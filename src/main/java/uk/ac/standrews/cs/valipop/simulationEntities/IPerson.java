@@ -115,7 +115,7 @@ public interface IPerson extends Comparable<IPerson> {
 
     void setParents(IPartnership parents);
 
-    boolean isIllegitimate();
+    boolean isAdulterousBirth();
 
     void recordPartnership(IPartnership partnership);
 
@@ -149,7 +149,7 @@ public interface IPerson extends Comparable<IPerson> {
 
     TreeMap<LocalDate, Address> getAddressHistory();
 
-    void setIllegitimate(boolean illegitiamte);
+    void setAdulterousBirth(boolean adulterousBirth);
 
     void setPhantom(boolean isPhantom);
 

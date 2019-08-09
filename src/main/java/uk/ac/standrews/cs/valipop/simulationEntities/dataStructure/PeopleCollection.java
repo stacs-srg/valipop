@@ -245,58 +245,59 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
                 if(mothersLastPartnership == null) {//  || !mothersLastPartnership.isFinalised()
                     parents.getFemalePartner().rollbackLastMove(geography);
-                } else if (!person.isIllegitimate()) {
+                } else if (!person.isAdulterousBirth()) {
                     parents.getMalePartner().rollbackLastMove(geography);
                     parents.getFemalePartner().rollbackLastMove(geography);
 
                     // if mother now has no address history (but has previous partnership)
                     if(parents.getFemalePartner().getAllAddresses().isEmpty()) {
-                        // we need to provide an address for her and (illegitimate - only way this scenario can arise) child
+                        // we need to provide an address for her and (adulterousBirth - only way this scenario can arise) child
 
-                        IPerson illegitChild = mothersLastPartnership.getChildren().get(0);
+                        IPerson adulterousBirth = mothersLastPartnership.getChildren().get(0);
 
-                        if(illegitChild.getParents().getMalePartner().getPartnerships().size() > 1) {
+                        if(adulterousBirth.getParents().getMalePartner().getPartnerships().size() > 1) {
                             // we should make it at a distance from the childs father
 
                             Address newAddress;
 
-                            if(illegitChild.getParents().getMalePartner().getAddress(illegitChild.getBirthDate().minus(config.getMinGestationPeriod())) == null) {
+                            if(adulterousBirth.getParents().getMalePartner().getAddress(adulterousBirth.getBirthDate().minus(config.getMinGestationPeriod())) == null) {
                                 // in this case the nature of assigning N birth events to a time period means it appears the father did not have an address at the time of birth
                                 // however as he produces ligitmiate children later in the year the earlier part of the simulation will have taken the address at that point
-                                // as the origin address for choosing the address for the illegitimate child and mother - we will do that again in this case
+                                // as the origin address for choosing the address for the adulterousBirth child and mother - we will do that again in this case
                                 newAddress = geography.getNearestEmptyAddressAtDistance(
-                                        illegitChild.getParents().getMalePartner().getAddressHistory()
-                                                .ceilingEntry(illegitChild.getBirthDate().minus(config.getMinGestationPeriod())).getValue()
+                                        adulterousBirth.getParents().getMalePartner().getAddressHistory()
+                                                .ceilingEntry(adulterousBirth.getBirthDate().minus(config.getMinGestationPeriod())).getValue()
                                                 .getArea().getCentriod()
                                         , moveDistanceSelector.selectRandomDistance());
                             } else {
                                 // in this case the father is where he is supposed to be!
 
                                 newAddress = geography.getNearestEmptyAddressAtDistance(
-                                        illegitChild.getParents().getMalePartner()
-                                                .getAddress(illegitChild.getBirthDate().minus(config.getMinGestationPeriod()))
+                                        adulterousBirth.getParents().getMalePartner()
+                                                .getAddress(adulterousBirth.getBirthDate().minus(config.getMinGestationPeriod()))
                                                 .getArea().getCentriod(),
                                         moveDistanceSelector.selectRandomDistance());
                             }
-                            parents.getFemalePartner().setAddress(illegitChild.getBirthDate(), newAddress);
+                            parents.getFemalePartner().setAddress(adulterousBirth.getBirthDate(), newAddress);
 
                             for (IPerson child : mothersLastPartnership.getChildren())
                                 child.setAddress(child.getBirthDate(), newAddress);
                         } else {
                             // In this case the mother in currently having her just created ligitimate partnership rolled back
-                            // this leaves here with just a previous illegitimate child
-                            // however the father of the illegitimate child has also had his legitiamate partnership (i.e the one which makes this child to be illegitate)
+                            // this leaves here with just a previous adulterousBirth child
+                            // however the father of the adulterousBirth child has also had his legitiamate partnership
+                            // (i.e the one which makes this child to be adulterousBirth)
                             // rolled back
-                            // Thus... the only partnerships the mother and father have are the one producing the illegitamate child
+                            // Thus... the only partnerships the mother and father have are the one producing the adulterousBirth child
                             // Thus making it legitimate, so we're going to make the child legitimate and put them all in a house together
                             // Also this only happens early in the sim (i.e. pre T0) so we can just set move in date based on childs birth date
 
-                            illegitChild.setIllegitimate(false);
+                            adulterousBirth.setAdulterousBirth(false);
 
                             Address newAddress = geography.getRandomEmptyAddress();
-                            illegitChild.setAddress(illegitChild.getBirthDate(), newAddress);
-                            illegitChild.getParents().getMalePartner().setAddress(illegitChild.getBirthDate(), newAddress);
-                            illegitChild.getParents().getFemalePartner().setAddress(illegitChild.getBirthDate(), newAddress);
+                            adulterousBirth.setAddress(adulterousBirth.getBirthDate(), newAddress);
+                            adulterousBirth.getParents().getMalePartner().setAddress(adulterousBirth.getBirthDate(), newAddress);
+                            adulterousBirth.getParents().getFemalePartner().setAddress(adulterousBirth.getBirthDate(), newAddress);
                         }
                     }
                 }

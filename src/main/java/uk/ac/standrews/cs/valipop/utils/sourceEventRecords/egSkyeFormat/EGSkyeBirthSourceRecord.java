@@ -38,7 +38,7 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
         int registrationDay = rng.nextInt(43);
         registrationDate = birthDate.plus(registrationDay, ChronoUnit.DAYS);
 
-        illegitimate = person.isIllegitimate() ? "illegitimate" : "";
+        illegitimate = person.isAdulterousBirth() ? "illegitimate" : "";
 
         if (person.getDeathDate() != null) {
             deathID = String.valueOf(uid);
