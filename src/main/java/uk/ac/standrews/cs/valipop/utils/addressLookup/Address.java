@@ -79,27 +79,27 @@ public class Address {
 
     public String toString() {
 
-        if(!country) {
-            StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder();
+        s.append("\"");
 
-            s.append("\"");
+        if(!country) {
             s.append(number + " ");
             s.append(area.toString());
-            s.append("\"");
-
-            return s.toString();
         } else {
-            return name;
+            s.append(name);
         }
+
+        s.append("\"");
+        return s.toString();
 
     }
 
     public String toShortForm() {
 
-        if(!country) {
+        StringBuilder s = new StringBuilder();
+        s.append("\"");
 
-            StringBuilder s = new StringBuilder();
-            s.append("\"");
+        if(!country) {
 
             int count = 2;
 
@@ -112,12 +112,12 @@ public class Address {
             if (area.getCounty() != null && count > 0)
                 s.append(area.getCounty());
 
-            s.append("\"");
-            return s.toString();
-
         } else {
-            return name;
+            s.append(name);
         }
+
+        s.append("\"");
+        return s.toString();
 
     }
 

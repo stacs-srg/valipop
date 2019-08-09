@@ -55,6 +55,12 @@ df.all <- filesToDF("/cs/tmp/tsd4/results/mani-paper-19/mani-paper-19-results-su
 df.all <- filesToDF("~/Desktop/mani-19.csv",
                     onlyGetStatErrors = FALSE)
 
+df.all <- filesToDF("/cs/tmp/tsd4/results/fx-1/fx-1-results-summary.csv", 
+                    "/cs/tmp/tsd4/results/fx-2/fx-2-results-summary.csv", 
+                    "/cs/tmp/tsd4/results/mani-2/mani-2-results-summary.csv", 
+                    "/cs/tmp/tsd4/results/fx-r/fx-r-results-summary.csv", 
+                    "/cs/tmp/tsd4/results/mani-r/mani-r-results-summary.csv", onlyGetStatErrors = FALSE)
+
 summary(df.all)
 
 

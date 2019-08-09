@@ -138,7 +138,7 @@ fileToSummaryDF <- function(path, filter = NA) {
 
 selectFromFullDF <- function(fullDF, selected) {
   
-  chosenDF <- data.frame(matrix(ncol = 33, nrow = 0))
+  chosenDF <- data.frame(matrix(ncol = 36, nrow = 0))
   colnames(chosenDF) <- colnames(fullDF)
   
   for(r in 1:nrow(selected)) {
