@@ -52,6 +52,10 @@ public class BoundingBox implements Serializable {
         return topRight;
     }
 
+    public boolean containsPoint(Coords coords) {
+        return containsPoint(coords.lat, coords.lon);
+    }
+
     public boolean containsPoint(double lat, double lon) {
         return (bottomLeft.lat <= lat && lat <= topRight.lat) && (bottomLeft.lon <= lon && lon <= topRight.lon);
     }
