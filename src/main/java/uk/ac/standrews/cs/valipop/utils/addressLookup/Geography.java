@@ -18,15 +18,36 @@ public class Geography {
 
     private RandomGenerator rand;
 
+    static final String[] SCOTLAND_COORDS = {"54.4","59.4","-7.9","-1.3"};
+    static BoundingBox geographicalLimits;
+
+    static {
+        try {
+            geographicalLimits = new BoundingBox(SCOTLAND_COORDS);
+        } catch (InvalidCoordSet invalidCoordSet) {
+            invalidCoordSet.printStackTrace();
+        }
+    }
+
 
     public Geography(Cache residentialGeography, RandomGenerator random) {
         this.residentialGeography = residentialGeography;
         this.rand = random;
 
+        ArrayList<Area> newAllAreasList = new ArrayList<>();
+
         for(Area area : this.residentialGeography.getAllAreas()) {
-            if(!area.isFull())
-                addToLookup(area);
+
+            if(geographicalLimits.containsPoint(area.getCentriod())) {
+                if (!area.isFull()) {
+                    addToLookup(area);
+                    newAllAreasList.add(area);
+                }
+
+            }
         }
+
+        residentialGeography.setAllAreas(newAllAreasList);
 
     }
 

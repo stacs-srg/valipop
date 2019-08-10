@@ -198,14 +198,15 @@ checkPlots(runs.c)
 
 avgRunTimesBySeed(runs.c)
 
-getBestNRuns(runs.c, 1, 250000)
+getBestNRuns(runs.c, 2, 500000)
 
 promisingCandidatesBySeed(runs.det, 5)
 promisingCandidatesPlot(runs.fs, 10)
 
 promisingCandidatesBySeed(runs.c, 5)
 
-promisingCandidatesPlot(runs.fs, 10, rf.min = 0.95, rf.max = 1.0, prf.min = 0.95, prf.max = 1.0, seeds = 62500)
+promisingCandidatesPlot(runs.fs, 10, rf.min = 0.95, rf.max = 1.0, prf.min = 0.975, prf.max = 1.0, seeds = 62500)
+promisingCandidatesPlot(runs.fs, 10, seeds = 62500)
 
 promisingCandidates(15625, dfToSummaryDF(runs.fs))[1:10,]
 

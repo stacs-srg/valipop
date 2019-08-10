@@ -172,5 +172,9 @@ public class Cache implements Serializable {
     public int size() {
         return areaDB.size();
     }
+
+    public void setAllAreas(ArrayList<Area> newAllAreasList) {
+        this.areaDB = newAllAreasList;
+    }
 }
 

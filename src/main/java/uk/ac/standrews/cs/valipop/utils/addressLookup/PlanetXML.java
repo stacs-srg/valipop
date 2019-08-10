@@ -47,7 +47,7 @@ public class PlanetXML {
 
         cache.writeToFile();
 
-        System.out.println("END OF SCOTLAND PLANET XML REACHED!!!");
+        System.out.println("END OF geographicalLimits PLANET XML REACHED!!!");
 
 
     }

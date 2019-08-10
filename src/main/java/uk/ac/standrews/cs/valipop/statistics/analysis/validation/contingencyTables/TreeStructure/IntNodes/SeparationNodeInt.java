@@ -94,21 +94,6 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
             // ranges from the stats tables
             int age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
 
-            // TODO clean up
-            if (age >= 50) {
-
-                System.out.println("Overage woman producing kids...");
-                System.out.println("BD: " + person.getBirthDate().toString());
-                System.out.println("PD: " + activePartnership.getPartnershipDate().toString());
-                if (activePartnership.getMarriageDate() == null) {
-                    System.out.println("MD: null");
-                } else {
-                    System.out.println("MD: " + activePartnership.getMarriageDate().toString());
-                }
-                System.out.println("CD: " + currentDate.toString());
-                System.out.println("END --- Overage woman producing kids...");
-            }
-
             double numberOfFemales = getCount();
             Period timePeriod = Period.ofYears(1);
 

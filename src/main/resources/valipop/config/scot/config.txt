@@ -1,23 +1,23 @@
 #Properties File - for model v3 - Tom, Graham, Al
 #4.3.16
-var_data_files = src/main/resources/valipop/inputs/scotland_test_population
+var_data_files = src/main/resources/valipop/inputs/synthetic-scotland
 tS = 1687-01-01
 t0 = 1855-01-01
 tE = 1973-01-01
-t0_pop_size = 100
-set_up_br = 0.0233
-set_up_dr = 0.0322
+t0_pop_size = 20000
+set_up_br = 0.03
+set_up_dr = 0.03
 min_birth_spacing = P147D
 min_gestation_period = P147D
 results_save_location = /cs/tmp/tsd4/results/
 output_record_format = TD
 input_width = P10Y
-recovery_factor = 0.85
-proportional_recovery_factor = 0.75
+recovery_factor = 0.0
+proportional_recovery_factor = 0.5
 deterministic = true
-seed = 1230597223
+seed = -1560388605
 binomial_sampling = true
-run_purpose = link-tiny
+run_purpose = synthetic-scotland-new
 output_tables = true
 birth_factor = 0.0
 death_factor = 0.0
