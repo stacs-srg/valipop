@@ -1,0 +1,8 @@
+YEAR	2000
+POPULATION	SCOTLAND
+SOURCE	WIKIPEDIA
+VAR	ADULTEROUS_BIRTH
+FORM	RATE
+# Age range | Proportion of illegitimate births
+DATA
+0+	0.02
