@@ -63,7 +63,7 @@ public class Config {
     private static final Period DEFAULT_MIN_GESTATION_PERIOD = Period.ofDays(147);
 
     private static final int DEFAULT_SEED = 56854687;
-    private static final int DEFAULT_CT_TREE_STEPBACK = 5;
+    private static final int DEFAULT_CT_TREE_STEPBACK = 1;
     private static final double DEFAULT_CT_TREE_PRECISION = 1E-66;
 
     private static final RecordFormat DEFAULT_OUTPUT_RECORD_FORMAT = RecordFormat.NONE;
