@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,7 +65,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
 
         log.info("CTree --- Populating tree with observed population");
 
-        for (LocalDate y = startDate; y.isBefore(endDate); y = y.plus(1, ChronoUnit.YEARS)) {
+        for (LocalDate y = startDate; y.isBefore(endDate.minus(1, ChronoUnit.YEARS)); y = y.plus(1, ChronoUnit.YEARS)) {
 
             LocalDate prevDay = LocalDate.of(y.getYear() - 1, 12, 31);
 

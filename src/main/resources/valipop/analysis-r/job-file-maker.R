@@ -351,12 +351,17 @@ searchNearPromisingJobs <- function(results, constantsSet, uptoN, resultsDir, cu
               # add job
               
               newJob <- jobProforma
-              newJob$rf <- nx
-              newJob$prf <- ny
+              newJob$Recovery.Factor <- nx
+              newJob$Proportional.Recovery.Factor <- ny
+              
+              #print(newJob)
               
               jobs <- rbind(jobs, 
                             convertResultSummaryToJob(newJob, priority, uptoN, 
                                                       FALSE, "-", constantsSet, resultsDir, recordFormat, reason, reqMemory))
+              
+              #print(jobs)
+              #return()
             }
           } else {
             count <- count + 1
@@ -384,12 +389,14 @@ searchNearPromisingJobs <- function(results, constantsSet, uptoN, resultsDir, cu
             nx <- o$x + cx
             
             newJob <- jobProforma
-            newJob$rf <- nx
-            newJob$prf <- ny
+            newJob$Recovery.Factor <- nx
+            newJob$Proportional.Recovery.Factor <- ny
             
             jobs <- rbind(jobs, 
                           convertResultSummaryToJob(newJob, priority, uptoN, 
                                                     FALSE, "-", constantsSet, resultsDir, recordFormat, reason, reqMemory))
+            
+            
             
           } else {
             count <- count + 1
@@ -455,14 +462,13 @@ ggplot(temp) +
 
 
 results <- runs.c[which(runs.c$Seed.Pop.Size == 62500), ]
-search <- searchNearPromisingJobs(results, scotTestCS, 10, clustersResultDir, 100, 0.01, 0.2)
-calc <- calcDeployProfile(search, runs.c, 22)
+search <- searchNearPromisingJobs(runs.ss, scotTestCS, 10, clustersResultDir, 10, 0.01, 0.1)
+calc <- calcDeployProfile(search, runs.ss, 22)
 outputJobs(search, "~/Desktop/gen-job-q.csv")
 
 
 table(search$seed.size)
 
 ggplot(search) +
-  geom_point(aes(rf, prf)) 
-#+
-  facet_wrap(~search$seed.size)
+  geom_point(aes(rf, prf)) +
+  facet_wrap(~search$`seed size`)
