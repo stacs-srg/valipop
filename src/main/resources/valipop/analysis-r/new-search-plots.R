@@ -175,10 +175,10 @@ promisingCandidatesPlot <- function(runs.fs, cutoff, rf.min = 0.0, rf.max = 1.0,
       scale_colour_manual(values=color_group) + scale_y_continuous(breaks = seq(0,1 ,0.1)) + scale_x_continuous(breaks = seq(0,1,0.1))
     
     if(nrow(pCMin) != 0)
-      p <- p + geom_label(aes(x= pCMin$rf, y= pCMin$prf, label = pCMin$min, colour = "min", size = 8, alpha = 0.99))
+      p <- p + geom_label(aes(x= pCMin$rf, y= pCMin$prf, label = pCMin$min, colour = "min", size = 16, alpha = 0.99))
     
     if(nrow(vPCPR) != 0)
-      p <- p + geom_label(aes(x= vPCPR$rf, y= vPCPR$prf, label = paste0(vPCPR$pass.rate*100,"%"), size = 4, colour = "pass rate", alpha = 0.99))
+      p <- p + geom_label(aes(x= vPCPR$rf, y= vPCPR$prf, label = paste0(vPCPR$pass.rate*100,"%"), size = 16, colour = "pass rate", alpha = 0.99))
     
     
     print(p)
@@ -194,14 +194,16 @@ runs.r <- filesToDF("/cs/tmp/tsd4/results/fx-r/fx-r-results-summary.csv", "/cs/t
 runs.c <- filesToDF("/cs/tmp/tsd4/results/fx-1/fx-1-results-summary.csv", "/cs/tmp/tsd4/results/fx-2/fx-2-results-summary.csv", "/cs/tmp/tsd4/results/mani-2/mani-2-results-summary.csv", "/cs/tmp/tsd4/results/fx-r/fx-r-results-summary.csv", "/cs/tmp/tsd4/results/mani-r/mani-r-results-summary.csv", onlyGetStatErrors = FALSE)
 runs.det <- filesToDF("/cs/tmp/tsd4/results/fx-det-check/fx-det-check-results-summary.csv", onlyGetStatErrors = FALSE)
 
-checkPlots(runs.c)
+runs.ss <- filesToDF("/cs/tmp/tsd4/results/ss-3/ss-3-results-summary.csv", onlyGetStatErrors = FALSE)
 
-avgRunTimesBySeed(runs.c)
+checkPlots(runs.ss)
 
-getBestNRuns(runs.c, 2, 500000)
+avgRunTimesBySeed(runs.ss)
 
-promisingCandidatesBySeed(runs.det, 5)
-promisingCandidatesPlot(runs.fs, 10)
+getBestNRuns(runs.ss, 1, 20000)
+
+promisingCandidatesBySeed(runs.ss, 5)
+promisingCandidatesPlot(runs.ss, 10)
 
 promisingCandidatesBySeed(runs.c, 5)
 
