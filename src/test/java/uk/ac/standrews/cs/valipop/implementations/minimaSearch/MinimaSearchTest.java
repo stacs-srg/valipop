@@ -1,6 +1,7 @@
 package uk.ac.standrews.cs.valipop.implementations.minimaSearch;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
@@ -18,6 +19,7 @@ public class MinimaSearchTest {
 
     OBDModel model;
 
+    @Ignore
     @Before
     public void setup() {
 
@@ -33,6 +35,7 @@ public class MinimaSearchTest {
         model = new OBDModel(config);
     }
 
+    @Ignore
     @Test
     public void nanTesting() throws SpaceExploredException {
 
