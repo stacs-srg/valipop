@@ -194,13 +194,13 @@ runs.r <- filesToDF("/cs/tmp/tsd4/results/fx-r/fx-r-results-summary.csv", "/cs/t
 runs.c <- filesToDF("/cs/tmp/tsd4/results/fx-1/fx-1-results-summary.csv", "/cs/tmp/tsd4/results/fx-2/fx-2-results-summary.csv", "/cs/tmp/tsd4/results/mani-2/mani-2-results-summary.csv", "/cs/tmp/tsd4/results/fx-r/fx-r-results-summary.csv", "/cs/tmp/tsd4/results/mani-r/mani-r-results-summary.csv", onlyGetStatErrors = FALSE)
 runs.det <- filesToDF("/cs/tmp/tsd4/results/fx-det-check/fx-det-check-results-summary.csv", onlyGetStatErrors = FALSE)
 
-runs.ss <- filesToDF("/cs/tmp/tsd4/results/ss-4/ss-4-results-summary.csv", onlyGetStatErrors = FALSE)
-
+runs.ss <- filesToDF("/cs/tmp/tsd4/results/ss-4/ss-4-results-summary.csv", "/cs/tmp/tsd4/results/ss-4b/ss-4-results-summary.csv", onlyGetStatErrors = FALSE)
+runs.ss <- filesToDF("/cs/tmp/tsd4/results/ss-4b/ss-4-results-summary.csv", onlyGetStatErrors = FALSE)
 checkPlots(runs.ss)
 
 avgRunTimesBySeed(runs.ss)
 
-getBestNRuns(runs.ss, 1, 20000)
+getBestNRuns(runs.ss, 2, 1000)
 
 promisingCandidatesBySeed(runs.ss, 5)
 promisingCandidatesPlot(runs.ss, 10)
@@ -229,3 +229,6 @@ summaryDfToFinalDF(dfToSummaryDF(runs.fs))
 labelPlot2D(15625, summary, rf.min = 0.3390, rf.max = 0.3396, prf.max = 0.005, detail = TRUE)
 
 plot3D(15625, summary, rf.min = 0.3390, rf.max = 0.3396, prf.max = 0.005)
+
+
+passingRuns <- runs.ss[which(runs.ss$v.M == 0), ]

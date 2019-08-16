@@ -29,7 +29,7 @@ public class JobQueueRunner {
     private static double appropriateUsageThreshold = 0.65;
     private static double memoryIncreaseOnMemoryException = 1.2;
 
-    private static final ArrayList<String> order = new ArrayList<>(Arrays.asList(new String[]{"priority","code version","reason","n","seed size","rf","prf","iw","input dir","results dir","required memory","output record format","deterministic","seed","setup br","setup dr","bf","df","tS","t0","tE","timestep","binomial sampling","min birth spacing","min ges period","ct tree stepback"}));
+    private static final ArrayList<String> order = new ArrayList<>(Arrays.asList(new String[]{"priority","code version","reason","n","seed size","rf","prf","iw","input dir","results dir","summary results dir","required memory","output record format","deterministic","seed","setup br","setup dr","bf","df","tS","t0","tE","timestep","binomial sampling","min birth spacing","min ges period","ct tree stepback"}));
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
