@@ -39,7 +39,7 @@ public abstract class AbstractExporterTest {
 
     static final String TEST_DIRECTORY_PATH_STRING = "src/test/resources/valipop/";
 
-    static final int[] TEST_CASE_POPULATION_SIZES = new int[]{100, 1000, 10000, 50000};
+    static final int[] TEST_CASE_POPULATION_SIZES = new int[]{100, 1000, 10000};
     static final String[] TEST_CASE_FILE_NAME_ROOTS = new String[TEST_CASE_POPULATION_SIZES.length];
 
     static {
