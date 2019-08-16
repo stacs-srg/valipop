@@ -25,7 +25,8 @@ public class PersonTest {
                 LocalDate.of(100, 1, 1),
                 LocalDate.of(200, 1, 1),
                 0,
-                Paths.get("src/test/resources/valipop/test-pop"), Config.DEFAULT_RESULTS_SAVE_PATH, "PERSON_TEST").setDeterministic(true);
+                Paths.get("src/test/resources/valipop/test-pop"), Config.DEFAULT_RESULTS_SAVE_PATH, "PERSON_TEST",
+                Config.DEFAULT_RESULTS_SAVE_PATH).setDeterministic(true);
 
         PopulationStatistics ps = new PopulationStatistics(config);
 

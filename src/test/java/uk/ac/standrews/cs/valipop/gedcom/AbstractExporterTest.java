@@ -87,7 +87,8 @@ public abstract class AbstractExporterTest {
                 population_size,
                 Paths.get("src/test/resources/valipop/test-pop"),
                 Config.DEFAULT_RESULTS_SAVE_PATH,
-                purpose);
+                purpose,
+                Config.DEFAULT_RESULTS_SAVE_PATH);
 
         config.setDeterministic(true);
 

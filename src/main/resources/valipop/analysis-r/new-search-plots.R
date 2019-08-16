@@ -194,7 +194,7 @@ runs.r <- filesToDF("/cs/tmp/tsd4/results/fx-r/fx-r-results-summary.csv", "/cs/t
 runs.c <- filesToDF("/cs/tmp/tsd4/results/fx-1/fx-1-results-summary.csv", "/cs/tmp/tsd4/results/fx-2/fx-2-results-summary.csv", "/cs/tmp/tsd4/results/mani-2/mani-2-results-summary.csv", "/cs/tmp/tsd4/results/fx-r/fx-r-results-summary.csv", "/cs/tmp/tsd4/results/mani-r/mani-r-results-summary.csv", onlyGetStatErrors = FALSE)
 runs.det <- filesToDF("/cs/tmp/tsd4/results/fx-det-check/fx-det-check-results-summary.csv", onlyGetStatErrors = FALSE)
 
-runs.ss <- filesToDF("/cs/tmp/tsd4/results/ss-3/ss-3-results-summary.csv", onlyGetStatErrors = FALSE)
+runs.ss <- filesToDF("/cs/tmp/tsd4/results/ss-4/ss-4-results-summary.csv", onlyGetStatErrors = FALSE)
 
 checkPlots(runs.ss)
 

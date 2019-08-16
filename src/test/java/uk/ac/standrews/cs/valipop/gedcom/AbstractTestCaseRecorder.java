@@ -43,7 +43,8 @@ public abstract class AbstractTestCaseRecorder {
                     AbstractExporterTest.TEST_CASE_POPULATION_SIZES[i],
                     Paths.get("src/test/resources/valipop/test-pop"),
                     Config.DEFAULT_RESULTS_SAVE_PATH,
-                    "DETERMINISTIC-TESTING");
+                    "DETERMINISTIC-TESTING",
+                    Config.DEFAULT_RESULTS_SAVE_PATH);
 
             config.setDeterministic(true);
 

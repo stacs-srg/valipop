@@ -160,6 +160,7 @@ public class Config {
     private Period minGestationPeriod = DEFAULT_MIN_GESTATION_PERIOD;
     private Period inputWidth = DEFAULT_INPUT_WIDTH;
 
+    private Path summaryResultsDirPath = DEFAULT_RESULTS_SAVE_PATH;
     private Path resultsSavePath = DEFAULT_RESULTS_SAVE_PATH;
     private Path geographyFilePath = DEFAULT_GEOGRAPHY_FILE_PATH;
 
@@ -188,7 +189,7 @@ public class Config {
         return startTime.format(FORMATTER);
     }
 
-    public Config(LocalDate tS, LocalDate t0, LocalDate tE, int t0PopulationSize, Path varPath, Path resultsDir, String runPurpose) {
+    public Config(LocalDate tS, LocalDate t0, LocalDate tE, int t0PopulationSize, Path varPath, Path resultsDir, String runPurpose, Path summaryResultsDir) {
 
         this.tS = tS;
         this.t0 = t0;
@@ -197,6 +198,7 @@ public class Config {
         this.varPath = varPath;
         this.resultsSavePath = resultsDir;
         this.runPurpose = runPurpose;
+        this.summaryResultsDirPath = summaryResultsDir;
 
         setUpFileStructure();
         configureLogging();
@@ -610,6 +612,7 @@ public class Config {
 
         processors.put("var_data_files", value -> varPath = Paths.get(value));
         processors.put("results_save_location", value -> resultsSavePath = Paths.get(value));
+        processors.put("summary_results_save_location", value -> summaryResultsDirPath = Paths.get(value));
 //        processors.put("geography_file_location", value -> geographyFilePath = Paths.get(value));
 
         processors.put("simulation_time_step", value -> simulationTimeStep = Period.parse(value));
@@ -666,9 +669,9 @@ public class Config {
 
     private void setUpFileStructure() {
 
-        globalSummaryPath = resultsSavePath.resolve( "global-results-summary.csv");
+        globalSummaryPath = summaryResultsDirPath.resolve( "global-results-summary.csv");
         Path purpose = resultsSavePath.resolve(runPurpose);
-        resultsSummaryPath = purpose.resolve( runPurpose + "-results-summary.csv");
+        resultsSummaryPath = summaryResultsDirPath.resolve(runPurpose).resolve( runPurpose + "-results-summary.csv");
         runPath = purpose.resolve(formatTimeStamp(startTime));
         detailedResultsPath = runPath.resolve("detailed-results-" + formatTimeStamp(startTime) + ".txt");
         Path dumpPath = runPath.resolve("dump");
