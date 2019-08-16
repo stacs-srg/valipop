@@ -74,7 +74,7 @@ public class OBDModel {
     private static final int BIRTH_ADJUSTMENT_BOUND = 1000000;
 
     private final Config config;
-    private final SummaryRow summary;
+    private SummaryRow summary;
     private final PopulationStatistics desired;
     private final Population population;
     private final RandomGenerator randomNumberGenerator;
@@ -139,7 +139,11 @@ public class OBDModel {
 
             log.info("End of Initialisation Period set: " + endOfInitPeriod);
 
-            summary =  new SummaryRow(config, JobQueueRunner.execCmd("git rev-parse HEAD").trim(), JobQueueRunner.execCmd("hostname").trim());
+            try {
+                summary = new SummaryRow(config, JobQueueRunner.execCmd("git rev-parse HEAD").trim(), JobQueueRunner.execCmd("hostname").trim());
+            } catch (IOException e) {
+                summary = new SummaryRow(config, "no git install to get version number from", JobQueueRunner.execCmd("hostname").trim());
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
