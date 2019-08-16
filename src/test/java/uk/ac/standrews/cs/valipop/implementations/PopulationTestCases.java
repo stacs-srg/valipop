@@ -35,10 +35,10 @@ class PopulationTestCases {
         testCases.add(new Object[]{fullPopulation(1000, 56854687), 1000});
         testCases.add(new Object[]{fullPopulation(10000, 56854687), 10000});
         testCases.add(new Object[]{fullPopulation(20000, 56854687), 20000});
-        testCases.add(new Object[]{fullPopulation(30000, 56854687), 30000});
+//        testCases.add(new Object[]{fullPopulation(30000, 56854687), 30000});
         testCases.add(new Object[]{fullPopulation(10000, 56854688), 10000});
         testCases.add(new Object[]{fullPopulation(20000, 56854688), 20000});
-        testCases.add(new Object[]{fullPopulation(30000, 56854688), 30000});
+//        testCases.add(new Object[]{fullPopulation(30000, 56854688), 30000});
 
         return testCases;
     }
