@@ -59,7 +59,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
         this.NODE_MIN_COUNT = precision;
         this.expected = expected;
         this.startDate = startDate;
-        this.endDate = endDate.minus(2, ChronoUnit.YEARS);
+        this.endDate = endDate.minus(1, ChronoUnit.YEARS);
 
         LocalDate prevY = zeroDate.minus(startStepBack, ChronoUnit.YEARS);
 

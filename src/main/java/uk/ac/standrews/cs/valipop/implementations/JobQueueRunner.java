@@ -405,7 +405,8 @@ public class JobQueueRunner {
                 chosenJob.getInt("seed size"),
                 chosenJob.getPath("input dir"),
                 chosenJob.getPath("results dir"),
-                chosenJob.getValue("reason"));
+                chosenJob.getValue("reason"),
+                chosenJob.getPath("summary results dir"));
 
         config.setSetupBirthRate(chosenJob.getDouble("setup br"));
         config.setSetupDeathRate(chosenJob.getDouble("setup dr"));

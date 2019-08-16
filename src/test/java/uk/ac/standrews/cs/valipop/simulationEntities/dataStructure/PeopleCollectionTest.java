@@ -52,7 +52,8 @@ public class PeopleCollectionTest {
                 LocalDate.of(200, 1, 1),
                 0,
                 Paths.get("src/test/resources/valipop/test-pop"),
-                Config.DEFAULT_RESULTS_SAVE_PATH, "PEOPLE_COLLECTION_TEST").setDeterministic(true);
+                Config.DEFAULT_RESULTS_SAVE_PATH, "PEOPLE_COLLECTION_TEST",
+                Config.DEFAULT_RESULTS_SAVE_PATH).setDeterministic(true);
 
         ps = new PopulationStatistics(config);
     }

@@ -41,9 +41,6 @@ class PopulationTestCases {
         testCases.add(new Object[]{fullPopulation(10000, 56854688), 10000});
         testCases.add(new Object[]{fullPopulation(20000, 56854688), 20000});
         testCases.add(new Object[]{fullPopulation(30000, 56854688), 30000});
-        testCases.add(new Object[]{fullPopulation(40000, 56854688), 40000});
-        testCases.add(new Object[]{fullPopulation(50000, 56854688), 50000});
-        testCases.add(new Object[]{fullPopulation(50000, 23425234), 50000});
 
         return testCases;
     }
@@ -57,7 +54,8 @@ class PopulationTestCases {
         Path varPath = Paths.get("src/test/resources/valipop/test-pop");
         String runPurpose = "general-structure-testing";
 
-        Config config = new Config(tS, t0, tE, t0PopulationSize, varPath, Config.DEFAULT_RESULTS_SAVE_PATH, runPurpose).setDeterministic(true).setSeed(seed);
+        Config config = new Config(tS, t0, tE, t0PopulationSize, varPath, Config.DEFAULT_RESULTS_SAVE_PATH, runPurpose,
+                Config.DEFAULT_RESULTS_SAVE_PATH).setDeterministic(true).setSeed(seed);
 
         OBDModel model = new OBDModel(config);
         model.runSimulation();

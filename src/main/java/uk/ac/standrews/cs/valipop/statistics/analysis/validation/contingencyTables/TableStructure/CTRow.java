@@ -80,14 +80,18 @@ public abstract class CTRow<count extends Number> {
         cells.add(new CTCell(variable, value));
     }
 
-    public void addDateVariable() {
+    public void addDateVariable(int offset) {
 
         Integer yob = Integer.valueOf(getVariable("YOB").getValue());
         Integer age = Integer.valueOf(getVariable("Age").getValue());
 
-        Integer date = yob + age;
+        Integer date = yob + age + offset;
 
         addVariable("Date", String.valueOf(date));
+    }
+
+    public void addDateVariable() {
+        addDateVariable(0);
     }
 
     public void deleteVariable(String variable) {

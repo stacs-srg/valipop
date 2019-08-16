@@ -101,7 +101,7 @@ public class FactorSearch {
                                     for (double death_factor : death_factors) {
                                         for (int n = 0; n < numberOfRunsPerSim; n++) {
 
-                                            Config config = new Config(tS, t0, tE, size, dataFiles, results_save_location, runPurpose);
+                                            Config config = new Config(tS, t0, tE, size, dataFiles, results_save_location, runPurpose, results_save_location);
 
                                             config.setCTtreePrecision(precision);
                                             config.setRunPurpose(runPurpose);

@@ -25,7 +25,7 @@ public class PlanetXML {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, InvalidCoordSet, InterruptedException {
 
-        String file = "src/main/resources/valipop/geography-cache/scotland-residential-ways.ser";
+        String file = "/home/tsd4/sweden-residential-ways.ser";
 
         Cache cache = new Cache();
         try {
@@ -43,11 +43,11 @@ public class PlanetXML {
 
         ReverseGeocodeLookup rgl = new ReverseGeocodeLookup(cache);
 
-        parseXML("src/main/resources/valipop/geography-cache/scotland-latest.osm", rgl);
+        parseXML("/home/tsd4/sweden-latest.osm", rgl);
 
         cache.writeToFile();
 
-        System.out.println("END OF geographicalLimits PLANET XML REACHED!!!");
+        System.out.println("END OF PLANET XML REACHED!!!");
 
 
     }

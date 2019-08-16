@@ -37,7 +37,10 @@ public class CTtableMB extends CTtable {
             if (leaf != null) {
 
                 try {
-                    leaf.addDateVariable();
+                    if(leaf.getVariable("Source").getValue().equals("SIM"))
+                        leaf.addDateVariable();
+                    else
+                        leaf.addDateVariable(-1);
 
                     if (Objects.equals(leaf.getVariable("Sex").getValue(), "F")) {
                         leaf.deleteVariable("Sex");
