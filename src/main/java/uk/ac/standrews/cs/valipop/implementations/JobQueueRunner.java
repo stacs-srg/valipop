@@ -490,7 +490,7 @@ public class JobQueueRunner {
             // release job file
             if(releaseLockOnExit) {
                 fileChannel.close(); // also releases the lock
-                System.out.println("Releasing job file (R) @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                System.out.println("Released job file (R) @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             }
         }
     }
@@ -551,7 +551,7 @@ public class JobQueueRunner {
 
             }
 
-            if(line != "") data.add(line);
+            if(!line.equals("")) data.add(line);
 
             buffer.clear();
             Thread.sleep(1000);

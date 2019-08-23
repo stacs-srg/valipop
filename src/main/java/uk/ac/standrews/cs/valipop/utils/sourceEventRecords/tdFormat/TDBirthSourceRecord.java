@@ -36,6 +36,10 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
     private String MARRIAGE_RECORD_IDENTITY3 = "";
     private String MARRIAGE_RECORD_IDENTITY4 = "";
     private String MARRIAGE_RECORD_IDENTITY5 = "";
+    private String MARRIAGE_RECORD_IDENTITY6 = "";
+    private String MARRIAGE_RECORD_IDENTITY7 = "";
+    private String MARRIAGE_RECORD_IDENTITY8 = "";
+
 
     public TDBirthSourceRecord(IPerson person, IPopulation population) {
 
@@ -78,20 +82,29 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
                 marriages.add(p);
         }
 
-        if(marriages.size() == 1)
+        if(marriages.size() >= 1)
             MARRIAGE_RECORD_IDENTITY1 = String.valueOf(marriages.get(0).getId());
 
-        if(marriages.size() == 2)
+        if(marriages.size() >= 2)
             MARRIAGE_RECORD_IDENTITY2 = String.valueOf(marriages.get(1).getId());
 
-        if(marriages.size() == 3)
+        if(marriages.size() >= 3)
             MARRIAGE_RECORD_IDENTITY3 = String.valueOf(marriages.get(2).getId());
 
-        if(marriages.size() == 4)
+        if(marriages.size() >= 4)
             MARRIAGE_RECORD_IDENTITY4 = String.valueOf(marriages.get(3).getId());
 
-        if(marriages.size() == 5)
+        if(marriages.size() >= 5)
             MARRIAGE_RECORD_IDENTITY5 = String.valueOf(marriages.get(4).getId());
+
+        if(marriages.size() >= 6)
+            MARRIAGE_RECORD_IDENTITY6 = String.valueOf(marriages.get(5).getId());
+
+        if(marriages.size() >= 7)
+            MARRIAGE_RECORD_IDENTITY7 = String.valueOf(marriages.get(6).getId());
+
+        if(marriages.size() >= 8)
+            MARRIAGE_RECORD_IDENTITY8 = String.valueOf(marriages.get(7).getId());
 
     }
 
@@ -112,7 +125,8 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
                 DEATH_RECORD_IDENTITY, PARENT_MARRIAGE_RECORD_IDENTITY,
                 FATHER_BIRTH_RECORD_IDENTITY, MOTHER_BIRTH_RECORD_IDENTITY,
                 MARRIAGE_RECORD_IDENTITY1, MARRIAGE_RECORD_IDENTITY2, MARRIAGE_RECORD_IDENTITY3,
-                MARRIAGE_RECORD_IDENTITY4, MARRIAGE_RECORD_IDENTITY5);
+                MARRIAGE_RECORD_IDENTITY4, MARRIAGE_RECORD_IDENTITY5, MARRIAGE_RECORD_IDENTITY6,
+                MARRIAGE_RECORD_IDENTITY7, MARRIAGE_RECORD_IDENTITY8);
 
         return builder.toString();
     }
@@ -131,7 +145,8 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
                 "DEATH_RECORD_IDENTITY", "PARENT_MARRIAGE_RECORD_IDENTITY",
                 "FATHER_BIRTH_RECORD_IDENTITY", "MOTHER_BIRTH_RECORD_IDENTITY",
                 "MARRIAGE_RECORD_IDENTITY1", "MARRIAGE_RECORD_IDENTITY2", "MARRIAGE_RECORD_IDENTITY3",
-                "MARRIAGE_RECORD_IDENTITY4", "MARRIAGE_RECORD_IDENTITY5");
+                "MARRIAGE_RECORD_IDENTITY4", "MARRIAGE_RECORD_IDENTITY5", "MARRIAGE_RECORD_IDENTITY6",
+                "MARRIAGE_RECORD_IDENTITY7", "MARRIAGE_RECORD_IDENTITY8");
 
         return builder.toString();
     }
