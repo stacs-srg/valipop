@@ -5,6 +5,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.MarriageSourceRecord;
 
@@ -17,6 +18,9 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class TDMarriageSourceRecord extends MarriageSourceRecord {
+
+    private String BRIDE_IMMIGRATION_GENERATION;
+    private String GROOM_IMMIGRATION_GENERATION;
 
     protected LocalDate marriageDate;
     protected int groomID;
@@ -77,6 +81,20 @@ public class TDMarriageSourceRecord extends MarriageSourceRecord {
         GROOM_BIRTH_RECORD_IDENTITY = String.valueOf(groomID);
         BRIDE_BIRTH_RECORD_IDENTITY = String.valueOf(brideID);
 
+        int brideImmigantGen = PersonCharacteristicsIdentifier.getImmigrantGeneration(partnership.getFemalePartner());
+
+        if(brideImmigantGen == -1)
+            BRIDE_IMMIGRATION_GENERATION = "NA";
+        else
+            BRIDE_IMMIGRATION_GENERATION = String.valueOf(brideImmigantGen);
+
+        int groomImmigantGen = PersonCharacteristicsIdentifier.getImmigrantGeneration(partnership.getMalePartner());
+
+        if(groomImmigantGen == -1)
+            GROOM_IMMIGRATION_GENERATION = "NA";
+        else
+            GROOM_IMMIGRATION_GENERATION = String.valueOf(brideImmigantGen);
+
     }
 
     public String identifyMaritalStatus(IPerson deceased) {
@@ -136,7 +154,7 @@ public class TDMarriageSourceRecord extends MarriageSourceRecord {
                 GROOM_MOTHER_IDENTITY, GROOM_FATHER_IDENTITY, BRIDE_MOTHER_IDENTITY, BRIDE_FATHER_IDENTITY,
                 GROOM_BIRTH_RECORD_IDENTITY, BRIDE_BIRTH_RECORD_IDENTITY, GROOM_FATHER_BIRTH_RECORD_IDENTITY,
                 GROOM_MOTHER_BIRTH_RECORD_IDENTITY, BRIDE_FATHER_BIRTH_RECORD_IDENTITY,
-                BRIDE_MOTHER_BIRTH_RECORD_IDENTITY );
+                BRIDE_MOTHER_BIRTH_RECORD_IDENTITY, BRIDE_IMMIGRATION_GENERATION, GROOM_IMMIGRATION_GENERATION);
 
         return builder.toString();
     }
@@ -160,7 +178,7 @@ public class TDMarriageSourceRecord extends MarriageSourceRecord {
                 "GROOM_FATHER_IDENTITY", "BRIDE_MOTHER_IDENTITY", "BRIDE_FATHER_IDENTITY",
                 "GROOM_BIRTH_RECORD_IDENTITY", "BRIDE_BIRTH_RECORD_IDENTITY", "GROOM_FATHER_BIRTH_RECORD_IDENTITY",
                 "GROOM_MOTHER_BIRTH_RECORD_IDENTITY", "BRIDE_FATHER_BIRTH_RECORD_IDENTITY",
-                "BRIDE_MOTHER_BIRTH_RECORD_IDENTITY");
+                "BRIDE_MOTHER_BIRTH_RECORD_IDENTITY", "BRIDE_IMMIGRANT_GENERATION", "GROOM_IMMIGRANT_GENERATION");
 
         return builder.toString();
     }

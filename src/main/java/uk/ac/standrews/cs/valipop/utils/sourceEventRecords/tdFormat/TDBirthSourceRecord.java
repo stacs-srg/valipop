@@ -3,6 +3,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.tdFormat;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
 
 import java.time.LocalDate;
@@ -39,6 +40,8 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
     private String MARRIAGE_RECORD_IDENTITY6 = "";
     private String MARRIAGE_RECORD_IDENTITY7 = "";
     private String MARRIAGE_RECORD_IDENTITY8 = "";
+
+    private String IMMIGRATION_GENERATION = "NA";
 
 
     public TDBirthSourceRecord(IPerson person, IPopulation population) {
@@ -106,6 +109,17 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
         if(marriages.size() >= 8)
             MARRIAGE_RECORD_IDENTITY8 = String.valueOf(marriages.get(7).getId());
 
+
+        int immigantGen = PersonCharacteristicsIdentifier.getImmigrantGeneration(person);
+
+        if(immigantGen == -1)
+            IMMIGRATION_GENERATION = "NA";
+        else
+            IMMIGRATION_GENERATION = String.valueOf(immigantGen);
+
+
+
+
     }
 
     @Override
@@ -126,7 +140,7 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
                 FATHER_BIRTH_RECORD_IDENTITY, MOTHER_BIRTH_RECORD_IDENTITY,
                 MARRIAGE_RECORD_IDENTITY1, MARRIAGE_RECORD_IDENTITY2, MARRIAGE_RECORD_IDENTITY3,
                 MARRIAGE_RECORD_IDENTITY4, MARRIAGE_RECORD_IDENTITY5, MARRIAGE_RECORD_IDENTITY6,
-                MARRIAGE_RECORD_IDENTITY7, MARRIAGE_RECORD_IDENTITY8);
+                MARRIAGE_RECORD_IDENTITY7, MARRIAGE_RECORD_IDENTITY8, IMMIGRATION_GENERATION);
 
         return builder.toString();
     }
@@ -146,7 +160,7 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
                 "FATHER_BIRTH_RECORD_IDENTITY", "MOTHER_BIRTH_RECORD_IDENTITY",
                 "MARRIAGE_RECORD_IDENTITY1", "MARRIAGE_RECORD_IDENTITY2", "MARRIAGE_RECORD_IDENTITY3",
                 "MARRIAGE_RECORD_IDENTITY4", "MARRIAGE_RECORD_IDENTITY5", "MARRIAGE_RECORD_IDENTITY6",
-                "MARRIAGE_RECORD_IDENTITY7", "MARRIAGE_RECORD_IDENTITY8");
+                "MARRIAGE_RECORD_IDENTITY7", "MARRIAGE_RECORD_IDENTITY8", "IMMIGRANT_GENERATION");
 
         return builder.toString();
     }

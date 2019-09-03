@@ -42,6 +42,38 @@ public class PersonCharacteristicsIdentifier {
         RANDOM_GENERATOR.setSeed(DETERMINISTIC_SEED);
     }
 
+    public static int getImmigrantGeneration(IPerson person) {
+
+        if(person.getImmigrationDate() != null) {
+            return 1;
+        } else {
+
+            if(person.getParents() == null) {
+                return -1;
+            } else {
+
+                int fathersIG = getImmigrantGeneration(person.getParents().getMalePartner());
+                int mothersIG = getImmigrantGeneration(person.getParents().getFemalePartner());
+
+                if(fathersIG == -1 && mothersIG == -1)
+                    return -1;
+
+                if(fathersIG == -1)
+                    return mothersIG + 1;
+
+                if(mothersIG == -1)
+                    return fathersIG + 1;
+
+                if(fathersIG < mothersIG)
+                    return fathersIG + 1;
+                else
+                    return mothersIG + 1;
+
+            }
+        }
+
+    }
+
     public static IPartnership getActivePartnership(final IPerson person, final LocalDate currentDate) {
 
         List<IPartnership> partnershipsInYear = new ArrayList<>(getPartnershipsActiveInYear(person, Year.of(currentDate.getYear())));
