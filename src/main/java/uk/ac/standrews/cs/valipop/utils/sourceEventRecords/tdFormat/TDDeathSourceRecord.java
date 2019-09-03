@@ -5,6 +5,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
 
@@ -21,6 +22,7 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
 public class TDDeathSourceRecord extends DeathSourceRecord {
 
     private static Random rng = new Random();
+    private String IMMIGRATION_GENERATION;
 
     protected LocalDate deathDate;
     protected LocalDate registrationDate;
@@ -116,6 +118,13 @@ public class TDDeathSourceRecord extends DeathSourceRecord {
             }
         }
 
+        int immigantGen = PersonCharacteristicsIdentifier.getImmigrantGeneration(person);
+
+        if(immigantGen == -1)
+            IMMIGRATION_GENERATION = "NA";
+        else
+            IMMIGRATION_GENERATION = String.valueOf(immigantGen);
+
     }
 
 
@@ -165,7 +174,7 @@ public class TDDeathSourceRecord extends DeathSourceRecord {
                 mothers_maiden_surname, "", getMotherDeceased(), getDeathCauseA(), getDeathCauseB(), getDeathCauseC(),
                 "SYNTHETIC DATA PRODUCED USING VALIPOP", uid, marriageIDs, DECEASED_IDENTITY, MOTHER_IDENTITY, FATHER_IDENTITY, SPOUSE_IDENTITY,
                 BIRTH_RECORD_IDENTITY, PARENT_MARRIAGE_RECORD_IDENTITY, FATHER_BIRTH_RECORD_IDENTITY,
-                MOTHER_BIRTH_RECORD_IDENTITY, SPOUSE_MARRIAGE_RECORD_IDENTITY, SPOUSE_BIRTH_RECORD_IDENTITY);
+                MOTHER_BIRTH_RECORD_IDENTITY, SPOUSE_MARRIAGE_RECORD_IDENTITY, SPOUSE_BIRTH_RECORD_IDENTITY, IMMIGRATION_GENERATION);
 
         return builder.toString();
     }
@@ -185,7 +194,7 @@ public class TDDeathSourceRecord extends DeathSourceRecord {
                 "mar", "DECEASED_IDENTITY",
                 "MOTHER_IDENTITY", "FATHER_IDENTITY", "SPOUSE_IDENTITY", "BIRTH_RECORD_IDENTITY",
                 "PARENT_MARRIAGE_RECORD_IDENTITY", "FATHER_BIRTH_RECORD_IDENTITY", "MOTHER_BIRTH_RECORD_IDENTITY",
-                "SPOUSE_MARRIAGE_RECORD_IDENTITY", "SPOUSE_BIRTH_RECORD_IDENTITY");
+                "SPOUSE_MARRIAGE_RECORD_IDENTITY", "SPOUSE_BIRTH_RECORD_IDENTITY", "IMMIGRANT_GENERATION");
 
         return builder.toString();
     }
