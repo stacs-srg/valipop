@@ -30,7 +30,7 @@ public class Geography {
     }
 
 
-    public Geography(Cache residentialGeography, RandomGenerator random) {
+    public Geography(Cache residentialGeography, RandomGenerator random, double overSizedGeographyFactor) {
         this.residentialGeography = residentialGeography;
         this.rand = random;
 
@@ -40,15 +40,18 @@ public class Geography {
 
             if(geographicalLimits.containsPoint(area.getCentriod())) {
                 if (!area.isFull()) {
+
+                    // scale street numbers by factor
+                    area.setNumberingOffset((int) Math.ceil(area.getNumberingOffset() * overSizedGeographyFactor));
+                    area.setMaximumNumberOfAbodes((int) Math.ceil(area.getMaximumNumberOfAbodes() * overSizedGeographyFactor));
+
                     addToLookup(area);
                     newAllAreasList.add(area);
                 }
 
             }
         }
-
         residentialGeography.setAllAreas(newAllAreasList);
-
     }
 
     public void updated(Address address) {
@@ -106,8 +109,13 @@ public class Geography {
         } while (count < 360 / step);
 
         if(address == null) {
-            System.out.println("Something seems broke - cannot find the 'nearest' address to below location: ");
+            System.out.println("Cannot find the 'nearest' address to below location: ");
             System.out.println(origin.toString() + " @ distance " + distance);
+            System.out.println("This likely means the population is too large for the provided residential geography");
+            System.out.println("Your options are:\n" +
+                    "1) If using a geographical limits bounding box increase its size (providing it does not already encompass the whole residentional geography)\n" +
+                    "2) Provide a larger residential geography\n" +
+                    "3) Increase the 'oversized_geography_factor' - this allows more houses to be created on each road");
         }
 
         return address;
