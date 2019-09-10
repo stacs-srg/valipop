@@ -49,6 +49,18 @@ public class Area implements Serializable {
 
     private Place details;
 
+    public long getNumberingOffset() {
+        return numberingOffset;
+    }
+
+    public void setNumberingOffset(long numberingOffset) {
+        this.numberingOffset = numberingOffset;
+    }
+
+    public void setMaximumNumberOfAbodes(long maximumNumberOfAbodes) {
+        this.maximumNumberOfAbodes = maximumNumberOfAbodes;
+    }
+
     // a street can be made up of many areas, the offset prevents each subpart having the same house numbers
     private long numberingOffset = 0;
     private long maximumNumberOfAbodes = 0;

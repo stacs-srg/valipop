@@ -112,7 +112,7 @@ public class OBDModel {
             desired = new PopulationStatistics(config);
 
             try {
-                geography = new Geography(Cache.readFromFile(config.getGeographyFilePath().toString()), desired.getRandomGenerator());
+                geography = new Geography(Cache.readFromFile(config.getGeographyFilePath().toString()), desired.getRandomGenerator(), config.getOverSizedGeographyFactor());
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("Error initialising geography", e);
             }

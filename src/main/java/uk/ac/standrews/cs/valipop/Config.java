@@ -28,6 +28,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -56,6 +57,7 @@ public class Config {
     private static final double DEFAULT_DEATH_FACTOR = 0;
     private static final double DEFAULT_RECOVERY_FACTOR = 1.0;
     private static final double DEFAULT_PROPORTIONAL_RECOVERY_FACTOR = 1.0;
+    private static final double DEFAULT_OVERSIZED_GEOGRAPHY_FACTOR = 1.0;
 
     private static final Period DEFAULT_SIMULATION_TIME_STEP = Period.ofYears(1);
     private static final Period DEFAULT_INPUT_WIDTH = Period.ofYears(1);
@@ -165,6 +167,7 @@ public class Config {
     private Path geographyFilePath = DEFAULT_GEOGRAPHY_FILE_PATH;
 
     private int seed = DEFAULT_SEED;
+    private double overSizedGeographyFactor = DEFAULT_OVERSIZED_GEOGRAPHY_FACTOR;
 
     public int getCtTreeStepback() {
         return ctTreeStepback;
@@ -635,6 +638,7 @@ public class Config {
         processors.put("death_factor", value -> deathFactor = Double.parseDouble(value));
         processors.put("recovery_factor", value -> recoveryFactor = Double.parseDouble(value));
         processors.put("proportional_recovery_factor", value -> proportionalRecoveryFactor = Double.parseDouble(value));
+        processors.put("over_sized_geography_factor", value -> overSizedGeographyFactor = setOversizedGeographyFactor(value));
 
         processors.put("binomial_sampling", value -> binomialSampling = value.toLowerCase().equals("true"));
         processors.put("output_tables", value -> outputTables = value.toLowerCase().equals("true"));
@@ -643,6 +647,16 @@ public class Config {
         processors.put("output_record_format", value -> outputRecordFormat = RecordFormat.valueOf(value));
         processors.put("log_level", value -> logLevel = Level.parse(value));
         processors.put("run_purpose", value -> runPurpose = value);
+    }
+
+    public double setOversizedGeographyFactor(String value) {
+        double v = Double.parseDouble(value);
+
+        if(v < 1) {
+            throw new InvalidParameterException("Oversized Geography Factor must be larger than 1");
+        }
+
+        return v;
     }
 
     private void readConfigFile(Path pathToConfigFile) {
@@ -755,6 +769,10 @@ public class Config {
 
     public void setCTtreePrecision(double precision) {
         this.ctTreePrecision = precision;
+    }
+
+    public double getOverSizedGeographyFactor() {
+        return overSizedGeographyFactor;
     }
 
     private interface Processor {

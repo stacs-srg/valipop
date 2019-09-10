@@ -54,6 +54,7 @@ public class SummaryRow {
     private double deathFactor;
     private double recoveryFactor;
     private double proportionalRecoveryFactor;
+    private double oversizedGeographyFactor;
     private Period minBirthSpacing;
 
     private RecordFormat outputRecordFormat;
@@ -115,6 +116,7 @@ public class SummaryRow {
         this.ctTreeStepback = config.getCtTreeStepback();
         this.ctTreePrecision = config.getCtTreePrecision();
         this.hostname = hostname;
+        this.oversizedGeographyFactor = config.getOverSizedGeographyFactor();
     }
 
     public void setStartPop(int startPop) {
@@ -174,7 +176,7 @@ public class SummaryRow {
                 deathFactor, recoveryFactor, proportionalRecoveryFactor, binomialSampling,
                 minBirthSpacing, (maxMemoryUsage / 1e6), outputRecordFormat.toString(),
                 v.toString(), statsRunTime, eligibilityChecks, failedEligibilityChecks, seed,
-                ctTreeStepback, ctTreePrecision, hostname) + "\n";
+                ctTreeStepback, ctTreePrecision, hostname, oversizedGeographyFactor) + "\n";
     }
 
     private static String makeRow(Object... values) {
@@ -203,7 +205,7 @@ public class SummaryRow {
                  "Proportional Recovery Factor", "binomial Sampling", "Min Birth Spacing" ,
                  "Peak Memory Usage (MB)", "Output Record Format", "v/M", "Stats Run Time" ,
                  "Eligibility Checks", "Failed Eligibility Checks", "Seed", "CT Tree Stepback",
-                 "CT Tree Precision", "Hostname");
+                 "CT Tree Precision", "Hostname", "Oversized Geography Factor");
     }
 
     public void outputSummaryRowToFile() {
