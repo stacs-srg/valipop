@@ -638,7 +638,7 @@ public class Config {
         processors.put("death_factor", value -> deathFactor = Double.parseDouble(value));
         processors.put("recovery_factor", value -> recoveryFactor = Double.parseDouble(value));
         processors.put("proportional_recovery_factor", value -> proportionalRecoveryFactor = Double.parseDouble(value));
-        processors.put("over_sized_geography_factor", value -> overSizedGeographyFactor = setOversizedGeographyFactor(value));
+        processors.put("over_sized_geography_factor", value -> overSizedGeographyFactor = parseOversizedGeographyFactor(value));
 
         processors.put("binomial_sampling", value -> binomialSampling = value.toLowerCase().equals("true"));
         processors.put("output_tables", value -> outputTables = value.toLowerCase().equals("true"));
@@ -649,7 +649,7 @@ public class Config {
         processors.put("run_purpose", value -> runPurpose = value);
     }
 
-    public double setOversizedGeographyFactor(String value) {
+    public double parseOversizedGeographyFactor(String value) {
         double v = Double.parseDouble(value);
 
         if(v < 1) {
@@ -657,6 +657,10 @@ public class Config {
         }
 
         return v;
+    }
+
+    public void setOverSizedGeographyFactor(String value) {
+        overSizedGeographyFactor = parseOversizedGeographyFactor(value);
     }
 
     private void readConfigFile(Path pathToConfigFile) {
