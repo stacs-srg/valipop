@@ -417,7 +417,7 @@ public class JobQueueRunner {
         config.setMinGestationPeriod(chosenJob.getPeriod("min ges period"));
         config.setBirthFactor(chosenJob.getDouble("bf"));
         config.setDeathFactor(chosenJob.getDouble("df"));
-        config.setOversizedGeographyFactor(chosenJob.getValue("oversized geography factor"));
+        config.setOverSizedGeographyFactor(chosenJob.getValue("oversized geography factor"));
 
         try {
             config.setOutputRecordFormat(Enum.valueOf(RecordFormat.class, chosenJob.getValue("output record format")));
