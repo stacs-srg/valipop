@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:METS xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dim="http://www.dspace.org/xmlns/dspace/dim" OBJEDIT="/admin/item?itemID=100" OBJID="/handle/10672/55" PROFILE="DSPACE METS SIP Profile 1.0" LABEL="DSpace Item" ID="hdl:10672/55">
+<mets:dmdSec GROUPID="group_dmd_0" ID="dmd_1">
+<mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="DIM">
+<mets:xmlData>
+<dim:dim dspaceType="ITEM">
+<dim:field element="contributor" language="" mdschema="dc">Blackwood, Carol</dim:field>
+<dim:field element="contributor" qualifier="other" language="en" mdschema="dc">EDINA</dim:field>
+<dim:field element="coverage" qualifier="spatial" language="en" mdschema="dc">northlimit=60.8599;eastlimit=-0.7051;southlimit=54.5133;westlimit=-8.0977;</dim:field>
+<dim:field element="date" qualifier="accessioned" language="" mdschema="dc">2010-07-29T15:19:10Z</dim:field>
+<dim:field element="date" qualifier="available" language="" mdschema="dc">2010-07-29T15:19:10Z</dim:field>
+<dim:field element="date" qualifier="issued" language="" mdschema="dc">2010-07-29</dim:field>
+<dim:field element="identifier" language="" mdschema="dc">http://www.sharegeo.ac.uk/bitstream/handle/10672/55/Scotland boundary.zip?sequence=1</dim:field>
+<dim:field element="identifier" qualifier="uri" language="" mdschema="dc">http://hdl.handle.net/10672/55</dim:field>
+<dim:field element="description" qualifier="abstract" language="en" mdschema="dc">Country boundary polygon for Scotland created from merging the Europen regions from OS Open Boundary Line data (May 2010)</dim:field>
+<dim:field element="format" language="en" mdschema="dc">ESRI Shapefile</dim:field>
+<dim:field element="language" qualifier="iso" language="en" mdschema="dc">en</dim:field>
+<dim:field element="rights" language="en" mdschema="dc">Creative Commons Attribution 3.0 / This data is made available under the Creative Commons Attribution 3.0 license whose full text can be found at http://creativecommons.org/licenses/by/3.0/legalcode</dim:field>
+<dim:field element="rights" qualifier="uri" language="en" mdschema="dc">Creative Commons Attribution 3.0 / This data is made available under the Creative Commons Attribution 3.0 license whose full text can be found at http://creativecommons.org/licenses/by/3.0/legalcode</dim:field>
+<dim:field element="subject" qualifier="classification" language="en" mdschema="dc">Boundaries</dim:field>
+<dim:field element="title" language="en" mdschema="dc">Scotland Country Boundary</dim:field>
+<dim:field element="type" language="en" mdschema="dc">GIS vector data</dim:field>
+</dim:dim>
+</mets:xmlData>
+</mets:mdWrap>
+</mets:dmdSec>
+<mets:fileSec>
+<mets:fileGrp USE="CONTENT">
+<mets:file CHECKSUMTYPE="MD5" GROUPID="group_file_145" ID="file_145" MIMETYPE="application/zip" SIZE="6803901" CHECKSUM="4fc42177804d4ae3e8886347be155f23">
+<mets:FLocat LOCTYPE="URL" xlink:title="Scotland boundary.zip" xlink:type="locator" xlink:href="/bitstream/handle/10672/55/Scotland%20boundary.zip?sequence=1"/>
+</mets:file>
+</mets:fileGrp>
+<mets:fileGrp USE="LICENSE">
+<mets:file CHECKSUMTYPE="MD5" GROUPID="group_file_146" ID="file_146" MIMETYPE="text/plain; charset=utf-8" SIZE="127" CHECKSUM="44d9ed4f6902860fbb92bf26df40fc3b">
+<mets:FLocat LOCTYPE="URL" xlink:title="license.txt" xlink:type="locator" xlink:href="/bitstream/handle/10672/55/license.txt?sequence=2"/>
+</mets:file>
+</mets:fileGrp>
+</mets:fileSec>
+<mets:structMap LABEL="DSpace" TYPE="LOGICAL">
+<mets:div DMDID="dmd_1" TYPE="DSpace Item">
+<mets:div ID="div_2" TYPE="DSpace Content Bitstream">
+<mets:fptr FILEID="file_145"/>
+</mets:div>
+</mets:div>
+</mets:structMap>
+</mets:METS>
