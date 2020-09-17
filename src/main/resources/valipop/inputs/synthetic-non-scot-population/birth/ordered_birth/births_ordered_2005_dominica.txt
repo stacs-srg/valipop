@@ -1,0 +1,30 @@
+YEAR	1985
+POPULATION	DOMINICA
+SOURCE	WORLD_BANK
+VAR	BIRTH
+FORM	RATE
+TYPE	ORDERED
+# USING THIS DATA - get the cohort count by age division (in row labels) = cc
+# multiply cc by the ASFR for a given order to give the number of children to
+# be born from this subset of women.
+# ---------------------------------------------------------------------------
+# The values are components of ASFR. The sum of a row gives the ASFR for the
+# given age range. The proportion of the ASFR speaks to how the value is
+# split up across mothers with different numbers of existing children. This
+# spread is simply treatable as a proportion.
+# ---------------------------------------------------------------------------
+# This could be described as a REACTIONARY STATISTIC - therefore we can have
+# 4+ as a value as we simply apply this rate to any females we see with 4 or
+# more children. This data has been adjusted to give a tapered lead in that
+# can be met at the first application of the data.
+LABELS	0+
+DATA
+0-14	0
+15-19	0.054
+20-24	0.166
+25-29	0.114
+30-34	0.117
+35-39	0.062
+40-49	0.019
+50-54	0
+55+	0

@@ -3,7 +3,8 @@ deathSatGEEGLM <- function(in.data) {
 }
 
 obSatGEEGLM <- function(in.data) {
-  return(runGEEGLM(freq ~ Date * Age * NPCIAP * CIY * Source, in.data))
+  return(runGEEGLM(freq ~ Date * Age * CIY * Source, in.data))
+#return(runGEEGLM(freq ~ Date * Age * NPCIAP * CIY * Source, in.data))
 }
 
 mbSatGEEGLM <- function(in.data) {

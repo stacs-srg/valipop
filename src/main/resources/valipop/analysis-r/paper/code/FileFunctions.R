@@ -12,13 +12,13 @@ addMissingColumns <- function(df) {
 }
 
 filesToDF <- function(path, ..., onlyGetStatErrors = FALSE) {
-  df <- read.table(path, sep = ",", header = TRUE)
+  df <- read.table(path, sep = ",", header = TRUE, encoding = "utf8")
   df <- addMissingColumns(df)
   
   files <- list(...)
   
   for(f in files) {
-    temp <- read.table(f, sep = ",", header = TRUE)
+    temp <- read.table(f, sep = ",", header = TRUE, encoding = "utf8")
     temp <- addMissingColumns(temp)
     
     df <- rbind(df, temp)

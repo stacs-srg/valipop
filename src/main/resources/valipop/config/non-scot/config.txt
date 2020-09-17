@@ -1,0 +1,26 @@
+#Properties File - for model v3 - Tom, Graham, Al
+#4.3.16
+var_data_files = src/main/resources/valipop/inputs/synthetic-non-scot-population
+tS = 1772-01-01
+t0 = 1940-01-01
+tE = 2020-01-01
+t0_pop_size = 1000
+set_up_br = 0.03
+set_up_dr = 0.03
+min_birth_spacing = P147D
+min_gestation_period = P147D
+#results_save_location = /Users/tsd4/Desktop
+results_save_location = /Users/tdalton/tom/phd/sns-populations
+output_record_format = NONE
+input_width = P10Y
+recovery_factor = 1.0
+proportional_recovery_factor = 0.1
+deterministic = false
+#seed = -253949472
+binomial_sampling = true
+run_purpose = initial-runs
+output_tables = true
+birth_factor = 0.0
+death_factor = 0.0
+simulation_time_step = P1Y
+over_sized_geography_factor=1.0
