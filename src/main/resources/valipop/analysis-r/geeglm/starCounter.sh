@@ -22,7 +22,7 @@ ONE=`expr $ONE - $THREE \* 3 - $TWO \* 2`
 # TOTAL=`expr $THREE \* 4 + $TWO \* 3 + $ONE \* 2 + $DOT`
 TOTAL=`expr $THREE \* 3 + $TWO \* 2 + $ONE`
 
-if [ "$ERRORS" -eq "0"]; then
+if [ "$ERRORS" -eq "0" ]; then
   echo $TOTAL
 else
   echo -1
