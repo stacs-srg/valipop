@@ -10,7 +10,7 @@ promisingCandidates <- function(seed, summaryDF, minN = NA) {
     t.s <- t.s[which(t.s$count >= minN), ]
   }
   
-  sorted <- t.s[order(-t.s$pass.rate, -t.s$count, t.s$min, t.s$mean),] 
+  sorted <- t.s[order(-t.s$pass.rate, t.s$min, -t.s$count, t.s$mean),] 
   
   return(sorted)
 }
