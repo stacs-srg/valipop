@@ -1,8 +1,12 @@
-setwd("~/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/analysis-r/")
+setwd("~/tom/phd/repos/population-model/src/main/resources/valipop/analysis-r/")
 
 source("parameter-search/function-code/new-search-plots.R")
 source("parameter-search/function-code/promising-candidates-functions.R")
 source("paper/code/rfs-discovery/explorationPlots.R")
+
+runs.ss <- filesToDF("~/sns-results/sns-cluster-adj-death-tk3/sns-cluster-adj-death-tk3-results-summary.csv", onlyGetStatErrors = FALSE)
+
+runs.ss <- filesToDF("~/tom/phd/repos/population-model/results/sns-populations/sns-cluster-adj-death-tk3-mini/sns-cluster-adj-death-tk3-mini-results-summary.csv", onlyGetStatErrors = FALSE)
 
 runs.ss <- filesToDF("/cs/tmp/tsd4/results/ss-6/ss-6-results-summary.csv", onlyGetStatErrors = FALSE)
 
@@ -29,8 +33,8 @@ runs<- getBestNRuns(runs.ss[which(runs.ss$Proportional.Recovery.Factor == 0.0 & 
 runs<- getBestNRuns(runs.ss[which(runs.ss$Proportional.Recovery.Factor == 0.50 & runs.ss$Recovery.Factor == 1.00),], 5, 1000)
 
 
-promisingCandidatesBySeed(runs.ss, 4)
-promisingCandidatesPlot(runs.ss, 1)
+promisingCandidatesBySeed(runs.ss, 10)
+promisingCandidatesPlot(runs.ss, 20)
 
 
 promisingCandidatesPlot(runs.ss, 10, rf.min = 0.95, rf.max = 1.0, prf.min = 0.975, prf.max = 1.0, seeds = 10000)
@@ -38,7 +42,7 @@ promisingCandidatesPlot(runs.ss, 10)
 
 promisingCandidates(15625, dfToSummaryDF(runs.fs))[1:10,]
 
-fs3Dbf(15625, dfToSummaryDF(runs.fs)[which(dfToSummaryDF(runs.fs)$min < 10),], type="scatter3d")
+fs3Dbf(15625, dfToSummaryDF(runs.ss)[which(dfToSummaryDF(runs.ss)$min < 10),], type="scatter3d")
 fs3Dbf(31250, dfToSummaryDF(runs.fs))
 
 fs3Dbf(31250, promisingCandidates(31250, dfToSummaryDF(runs.fs))[1:10,], type="scatter3d")

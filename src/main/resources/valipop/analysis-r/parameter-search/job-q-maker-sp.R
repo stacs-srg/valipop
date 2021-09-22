@@ -1,24 +1,26 @@
-setwd("~/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/analysis-r/")
+setwd("~/tom/phd/repos/population-model/src/main/resources/valipop/analysis-r/")
 
 source("parameter-search/function-code/job-file-maker.R")
 source("parameter-search/function-code/utils.R")
 source("parameter-search/function-code/promising-candidates-functions.R")
 
-ssCS <- makeConstantsSet(0.03,0.03,"1687-01-01")
-clustersResultDir <- "/cs/scratch/tsd4/results/"
-clustersSummaryResultDir <- "/cs/home/tsd4/results/"
+ssCS <- makeConstantsSet(0.01,0.01,"1772-01-01")
+clustersResultDir <- "/cs/tmp/tsd4/results/sns-populations"
+clustersSummaryResultDir <- "/cs/tmp/tsd4/results/sns-populations"
 
-maniResultDir <- "/home/tsd4/results/"
+
+maniResultDir <- "/home/tsd4/results/sns-populations"
 maniSummaryResultDir <- "/home/tsd4/results/"
 
+localResultDir <- "/Users/tdalton/tom/phd/"
+localSummaryResultDir <- "/Users/tdalton/tom/phd/"
 
-runs.ss <- filesToDF("/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/synthetic-scotland/_133k/ss-10k-records-results-summary.csv",
-                     "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/synthetic-scotland/_13k/ss-1k-records-results-summary.csv",
-                     "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/synthetic-scotland/_530k/ss-40k-records-results-summary.csv", onlyGetStatErrors = FALSE)
+
+runs.ss <- filesToDF("~/1k-sns-cluster-tk5-neg-df-results-summary.csv", onlyGetStatErrors = FALSE)
 
 
 summary(runs.ss)
-passingRuns <- runs.ss
+passingRuns <- runs.ss[which(runs.ss$v.M == 0),]
 
 selectOne <- function(select.from, seedSize) {
   selected.ss <- select.from[which(select.from$v.M == 0 & select.from$Seed.Pop.Size == seedSize), ]
@@ -55,15 +57,16 @@ selectBest <- function(select.from, seedSize) {
   return(data)
 }
 
-selected <- selectBest(runs.ss, 1000)[1:5,]
-selected <- rbind(selected, selectBest(runs.ss, 10000)[1:5,])
-selected <- rbind(selected, selectBest(runs.ss, 40000)[1:5,])
-selected <- rbind(selected, selectBest(runs.ss, 100000)[1:5,])
-selected <- rbind(selected, selectBest(runs.ss, 200000)[1:5,])
-selected <- rbind(selected, selectBest(runs.ss, 400000)[1:5,])
-selected <- rbind(selected, selectBest(runs.ss, 800000)[1:1,])
-selected <- rbind(selected, selectBest(runs.ss, 1600000)[1:2,])
-selected <- rbind(selected, selectBest(runs.ss, 2400000)[1:1,])
+selected <- selectBest(runs.ss, 170)[1:4,]
+selected <- rbind(selected, selectBest(runs.ss, 250)[1:4,])
+selected <- rbind(selected, selectBest(runs.ss, 275)[1:4,])
+selected <- rbind(selected, selectBest(runs.ss, 325)[1:4,])
+selected <- rbind(selected, selectBest(runs.ss, 3000)[1:4,])
+selected <- rbind(selected, selectBest(runs.ss, 4000)[1:4,])
+selected <- rbind(selected, selectBest(runs.ss, 6000)[1:4,])
+
+jobQ <- repeatJobsDeterministically(passingRuns, ssCS, localResultDir, localSummaryResultDir, recordFormat = "TD", reason = "ss-dr-final", reqMemory = 119)
+outputToFile(jobQ, "~/Desktop/gen-ss-dr-final.csv")
 
 selected.cluster <- selected[which(selected$Peak.Memory.Usage..MB. < 16000),]
 selected.mani <- selected[which(selected$Peak.Memory.Usage..MB. > 16000),]
@@ -79,8 +82,8 @@ checkPlots(selected)
 avgRunTimesBySeed(selected)
 
 passingRuns <- runs.ss[which(runs.ss$v.M == 0), ]
-jobQ <- repeatJobsDeterministically(passingRuns, ssCS, clustersResultDir, clustersSummaryResultDir, recordFormat = "TD", reason = "ss-scot-final")
-outputToFile(jobQ, "~/Desktop/valipop-experiments/gen-ss-max-records-400k.csv")
+jobQ <- repeatJobsDeterministically(runs.ss, ssCS, clustersResultDir, clustersSummaryResultDir, recordFormat = "TD", reason = "dr-final")
+outputToFile(jobQ, "~/Desktop/gen-dr-final-with-records.csv")
 
 promisingJobExtraRuns <- runMorePromisingJobs(passingRuns, ssCS, 25, maniResultDir, maniSummaryResultDir, 20, reqMemory = 100)
 calc <- calcDeployProfile(promisingJobExtraRuns, runs.ss, 22)
