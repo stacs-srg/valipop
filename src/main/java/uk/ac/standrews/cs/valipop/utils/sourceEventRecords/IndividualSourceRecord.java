@@ -58,7 +58,7 @@ public abstract class IndividualSourceRecord extends SourceRecord {
         setFathersId(String.valueOf(father.getId()));
         setFathersForename(father.getFirstName());
         setFathersSurname(getRecordedParentsSurname(father.getSurname(), person.getSurname()));
-        setFathersOccupation(father.getOccupation(person.getBirthDate()));
+        setFathersOccupation(father.getOccupation(person.getBirthDate())); // TODO fix this - is also used by death record, date for that should be death date
     }
 
     public String getSurname() {

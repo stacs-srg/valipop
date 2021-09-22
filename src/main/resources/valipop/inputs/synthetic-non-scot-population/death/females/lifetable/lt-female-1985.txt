@@ -1,6 +1,6 @@
 YEAR	1985
 POPULATION	DOMINICAN_REPUBLIC
-SOURCE	lifetables.org
+SOURCE	The Developing Countries Mortality Database
 VAR	DEATH
 FORM	RATE
 GENDER F

@@ -1,0 +1,8 @@
+POPULATION	SCOTLAND
+SOURCE	FAKE
+VAR	RATIO_BIRTH
+FORM	RATIO
+LABELS	YEAR	RATIO
+# i.e. if 0.52 then in every 100 births, 52 will be male and 48 female
+DATA
+1600	0.5

@@ -1,69 +1,74 @@
+setwd("/Users/tdalton/tom/phd/repos/population-model/src/main/resources/valipop/analysis-r/")
 source("paper/code/FileFunctions.R")
 
-df.all <- filesToDF("/Volumes/TSD4exHDD3/results/batch52-fs/batch52-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch53-fs/batch53-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch53-fs/batch52now53-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch54-fs/batch54-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch55-fs/batch55-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch56-fs/batch56-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch57-fs/batch57-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch58-fs/batch58-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch59-fs/batch59-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch60-fs/batch60-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch61-fs/batch61-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch62-fs/batch62-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch63-fs/batch63-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch64-fs/batch64-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch65-fs/batch65-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch66-fs/batch66-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch67-fs/batch67-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch68-fs/batch68-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch69-fs/batch69-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch70-fs/batch70-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch71-fs/batch71-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch73-fs/batch73-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch74-fs/batch74-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch75-fs/batch75-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch76-fs/batch76-fs-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch77-fs/batch77-fs-results-summary.csv",
-                    onlyGetStatErrors = FALSE)
+#df.all <- filesToDF("/Volumes/TSD4exHDD3/results/batch52-fs/batch52-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch53-fs/batch53-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch53-fs/batch52now53-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch54-fs/batch54-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch55-fs/batch55-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch56-fs/batch56-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch57-fs/batch57-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch58-fs/batch58-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch59-fs/batch59-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch60-fs/batch60-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch61-fs/batch61-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch62-fs/batch62-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch63-fs/batch63-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch64-fs/batch64-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch65-fs/batch65-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch66-fs/batch66-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch67-fs/batch67-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch68-fs/batch68-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch69-fs/batch69-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch70-fs/batch70-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch71-fs/batch71-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch73-fs/batch73-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch74-fs/batch74-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch75-fs/batch75-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch76-fs/batch76-fs-results-summary.csv",
+#                    "/Volumes/TSD4exHDD3/results/batch77-fs/batch77-fs-results-summary.csv",
+#                    onlyGetStatErrors = FALSE)
 
-df.all <- filesToDF("/Volumes/TSD4exHDD3/results/ja-batch1/ja-batch1-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch2/ja-batch2-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch3/ja-batch3-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch4/ja-batch4-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch5/ja-batch5-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch6/ja-batch6-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch7/ja-batch7-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch8/ja-batch8-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch9/ja-batch9-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch10/ja-batch10-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch11/ja-batch11-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch12/ja-batch12-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch13/ja-batch13-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch14/ja-batch14-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ja-batch15/ja-batch15-results-summary.csv",
-                    onlyGetStatErrors = FALSE)
+#df.all <- filesToDF("/Volumes/TSD4exHDD3/results/ja-batch1/ja-batch1-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch2/ja-batch2-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch3/ja-batch3-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch4/ja-batch4-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch5/ja-batch5-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch6/ja-batch6-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch7/ja-batch7-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch8/ja-batch8-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch9/ja-batch9-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch10/ja-batch10-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch11/ja-batch11-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch12/ja-batch12-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch13/ja-batch13-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch14/ja-batch14-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/ja-batch15/ja-batch15-results-summary.csv",
+#                   onlyGetStatErrors = FALSE)
+#
+#df.all <- filesToDF("/Volumes/TSD4exHDD3/results/PAPER-MANI/PAPER-MANI-results-summary.csv",
+#                   onlyGetStatErrors = FALSE)
+#
+#df.all <- filesToDF("/Volumes/TSD4exHDD3/results/mani-paper-19/mani-paper-19-results-summary.csv",
+#                   "/Volumes/TSD4exHDD3/results/batch72-fs/batch72-fs-results-summary.csv", 
+#                   onlyGetStatErrors = FALSE)
 
-df.all <- filesToDF("/Volumes/TSD4exHDD3/results/PAPER-MANI/PAPER-MANI-results-summary.csv",
-                    onlyGetStatErrors = FALSE)
+#df.all <- filesToDF("~/Desktop/mani-19.csv",
+#                   onlyGetStatErrors = FALSE)
 
-df.all <- filesToDF("/Volumes/TSD4exHDD3/results/mani-paper-19/mani-paper-19-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/batch72-fs/batch72-fs-results-summary.csv", 
-                    onlyGetStatErrors = FALSE)
-
-df.all <- filesToDF("~/Desktop/mani-19.csv",
-                    onlyGetStatErrors = FALSE)
-
-df.all <- filesToDF("/Volumes/TSD4exHDD3/results/fx-1/fx-1-results-summary.csv", 
-                    "/Volumes/TSD4exHDD3/results/fx-2/fx-2-results-summary.csv", 
-                    "/Volumes/TSD4exHDD3/results/mani-2/mani-2-results-summary.csv", 
-                    "/Volumes/TSD4exHDD3/results/fx-r/fx-r-results-summary.csv", 
-                    "/Volumes/TSD4exHDD3/results/mani-r/mani-r-results-summary.csv", onlyGetStatErrors = FALSE)
+#df.all <- filesToDF("/Volumes/TSD4exHDD3/results/fx-1/fx-1-results-summary.csv", 
+#                   "/Volumes/TSD4exHDD3/results/fx-2/fx-2-results-summary.csv", 
+#                   "/Volumes/TSD4exHDD3/results/mani-2/mani-2-results-summary.csv", 
+#                   "/Volumes/TSD4exHDD3/results/fx-r/fx-r-results-summary.csv", 
+#                   "/Volumes/TSD4exHDD3/results/mani-r/mani-r-results-summary.csv", onlyGetStatErrors = FALSE)
 
 df.all <- filesToDF("/Volumes/TSD4exHDD3/results/ss-6/ss-6-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ss-max-cluster/ss-max-results-summary.csv",
-                    "/Volumes/TSD4exHDD3/results/ss-max-cluster/ss-max-cluster-results-summary.csv")
+                   "/Volumes/TSD4exHDD3/results/ss-max-cluster/ss-max-results-summary.csv",
+                   "/Volumes/TSD4exHDD3/results/ss-max-cluster/ss-max-cluster-results-summary.csv")
+
+df.all <- filesToDF("/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/synthetic-scotland/ss-scot-final-results-summary.csv",
+                    "/Volumes/TSD4exHDD3/valipop-synthetic-populations-xl/src/main/resources/uk/ac/standrews/cs/data/synthetic/synthetic-scotland/ss-scot-final-results-summary.csv", onlyGetStatErrors = FALSE)
+
 
 df.all <- df.all[which(df.all$Seed.Pop.Size != 125000 ), ]
 df.all <- df.all[which(df.all$Seed.Pop.Size != 150000 ), ]
@@ -192,48 +197,63 @@ loglogaxis <- ggplot(df)
 theme <- theme_gdocs()
 scale <- scale_color_gdocs()
 
+error.bar.width <- 500000
+
 p1 <- ggplot(df) + theme + scale +
-  geom_errorbar(aes(x=averageTotalSize, ymin=simRT-simRTci, ymax=simRT+simRTci), width = 0.05) +
+  geom_errorbar(aes(x=averageTotalSize, ymin=simRT-simRTci, ymax=simRT+simRTci), width = error.bar.width) +
   geom_line(aes(x=averageTotalSize, y=simRT), colour = 'blue') +
   geom_point(aes(x=averageTotalSize, y=simRT), colour = 'blue') +
   xlab("Total Population Size") +
   ylab("Time Taken for Simulation Phase (s)") +
-  ggtitle("Simulation Run Time against Total Population Size")
-  
+  scale_x_continuous(breaks=c(0, 5000000, 10000000, 15000000, 20000000, 25000000), labels = comma) +
+  scale_y_continuous(labels = comma) +
+  ggtitle("Simulation Run Time against Total Population Size") + 
+  expand_limits(x = c(0, 26000000))
 
 p2 <- ggplot(df) + theme + scale +
-  geom_errorbar(aes(x=averageTotalSize, ymin=ctRT-ctRTci, ymax=ctRT+ctRTci), width = 0.05) +
+  geom_errorbar(aes(x=averageTotalSize, ymin=ctRT-ctRTci, ymax=ctRT+ctRTci), width = error.bar.width) +
   geom_line(aes(x=averageTotalSize, y=ctRT), colour = 'red') +
   geom_point(aes(x=averageTotalSize, y=ctRT), colour = 'red') +
   xlab("Total Population Size") +
   ylab("Time Taken for Contingengcy Table Phase (s)") +
-  ggtitle("Contingency Table Generation Time against \n Total Population Size")
+  scale_x_continuous(breaks=c(0, 5000000, 10000000, 15000000, 20000000, 25000000), labels = comma) +
+  scale_y_continuous(labels = comma) +
+  ggtitle("Contingency Table Generation Time against \n Total Population Size") + 
+  expand_limits(x = c(0, 26000000))
 
 p3 <- ggplot(df)+ theme + scale +
-  geom_errorbar(aes(x=averageTotalSize, ymin=statRT-statRTci, ymax=statRT+statRTci), width = 0.05) +
+  geom_errorbar(aes(x=averageTotalSize, ymin=statRT-statRTci, ymax=statRT+statRTci), width = error.bar.width) +
   geom_line(aes(x=averageTotalSize, y=statRT), colour = 'cyan') +
   geom_point(aes(x=averageTotalSize, y=statRT), colour = 'cyan') +
   xlab("Total Population Size") +
   ylab("Time Taken for Statistical Validation Phase (s)") +
-  ggtitle("Statistical Validation Time against Total Population Size")
+  scale_x_continuous(breaks=c(0, 5000000, 10000000, 15000000, 20000000, 25000000), labels = comma) +
+  scale_y_continuous(breaks=c(0, 100, 200, 300, 400, 500, 600), labels = comma) +
+  ggtitle("Statistical Validation Time against Total Population Size") + 
+  expand_limits(y = c(0, 600)) + 
+  expand_limits(x = c(0, 26000000))
   #scale_y_continuous(trans='log', breaks=c(300,360,420,480,540,600,660,720,780,840,900))
 
 p4 <- ggplot(df) + theme + scale +
-  geom_errorbar(aes(x=averageTotalSize, ymin=recRT-recRTci, ymax=recRT+recRTci), width = 0.05) +
+  geom_errorbar(aes(x=averageTotalSize, ymin=recRT-recRTci, ymax=recRT+recRTci), width = error.bar.width) +
   geom_line(aes(x=averageTotalSize, y=recRT), colour = 'green') +
   geom_point(aes(x=averageTotalSize, y=recRT), colour = 'green') +
   xlab("Total Population Size") +
   ylab("Time Taken for Record Output Phase (s)") +
-  ggtitle("Record Output Time against Total Population Size")
+  scale_x_continuous(breaks=c(0, 5000000, 10000000, 15000000, 20000000, 25000000), labels = comma) +
+  scale_y_continuous(breaks=c(0, 300, 600, 900, 1200, 1500), labels = comma) +
+  ggtitle("Record Output Time against Total Population Size") +
+  expand_limits(y = c(0, 1500)) + 
+  expand_limits(x = c(0, 26000000))
 
 dir <- paste("paper/", gsub(" ", "-", Sys.time()), sep = "")
 dir.create(dir)
 
 library(gridExtra)
-ggsave(plot = arrangeGrob(p1, p2, p3, p4, nrow=2), 
+ggsave(plot = arrangeGrob(p1, p2, p3, p4, nrow=4), 
        filename = "breakdown_plots.png",
        path=dir,
-       width=w*2, height=h*2, dpi=300)
+       width=w*1, height=h*4, dpi=300)
 
 p5 <- ggplot(data = rts) + theme + scale +
   geom_area(aes(x=averageTotalSize, y=runTime, fill = type), alpha = 0.7, position = position_stack(reverse=F)) +
@@ -253,14 +273,16 @@ ggsave(plot = p5,
        width = w, height=h, dpi=300)
 
 p6 <- ggplot(df) + theme + scale +
-  geom_errorbar(aes(x=averageTotalSize, ymin=memoryUsage-memoryUsageCI, ymax=memoryUsage+memoryUsageCI), width = 0.05) +
+  geom_errorbar(aes(x=averageTotalSize, ymin=memoryUsage-memoryUsageCI, ymax=memoryUsage+memoryUsageCI), width = 100000) +
   geom_line(aes(x=averageTotalSize, y=memoryUsage), colour = 'blue') +
   geom_point(aes(x=averageTotalSize, y=memoryUsage), colour = 'blue') +
   xlab("Total Population Size") +
   ylab("Memory Usage (MB)") +
   ggtitle("Memory Usage against Total Population Size") +
-  #scale_x_continuous(trans='log', breaks=c(300000, 500000, 1250000, 2500000, 5000000, 10000000,20000000))
-  #scale_y_continuous(trans='log', breaks=c(5000,10000, 20000, 40000, 80000))
+  scale_x_continuous(breaks=c(0, 1000000, 2000000, 3000000, 4000000, 5000000), labels = comma) +
+  scale_y_continuous(labels = comma) +
+  expand_limits(x = c(0, 5400000))+
+  expand_limits(y = c(0, 12000))
 
 ggsave(plot = p6, 
        filename = "memory_plot.png",
