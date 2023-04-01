@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.stream.Collectors;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.*;
@@ -111,11 +113,7 @@ public class OBDModel {
             population = new Population(config);
             desired = new PopulationStatistics(config);
 
-            try {
-                geography = new Geography(Cache.readFromFile(config.getGeographyFilePath().toString()), desired.getRandomGenerator(), config.getOverSizedGeographyFactor());
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Error initialising geography", e);
-            }
+            geography = new Geography(readAreaList(config), desired.getRandomGenerator(), config.getOverSizedGeographyFactor());
 
             birthOrders = new PrintWriter(config.getBirthOrdersPath().toFile());
             randomNumberGenerator = desired.getRandomGenerator();
@@ -148,6 +146,12 @@ public class OBDModel {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private List<Area> readAreaList(Config config) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return Arrays.stream(objectMapper.readValue(new File(config.getGeographyFilePath().toString()), Area[].class))
+                .collect(Collectors.toList());
     }
 
     public void runSimulation() {

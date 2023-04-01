@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class Geography {
 
-    private final Cache residentialGeography;
+    private final List<Area> residentialGeography;
 
     private TreeMap<Double, TreeMap<Double, Area>> areaLookup = new TreeMap<>();
 
@@ -30,13 +30,12 @@ public class Geography {
     }
 
 
-    public Geography(Cache residentialGeography, RandomGenerator random, double overSizedGeographyFactor) {
-        this.residentialGeography = residentialGeography;
+    public Geography(List<Area> residentialGeography, RandomGenerator random, double overSizedGeographyFactor) {
         this.rand = random;
 
         ArrayList<Area> newAllAreasList = new ArrayList<>();
 
-        for(Area area : this.residentialGeography.getAllAreas()) {
+        for(Area area : residentialGeography) {
 
             if(geographicalLimits.containsPoint(area.getCentriod())) {
                 if (!area.isFull()) {
@@ -51,7 +50,7 @@ public class Geography {
 
             }
         }
-        residentialGeography.setAllAreas(newAllAreasList);
+        this.residentialGeography = newAllAreasList;
     }
 
     public void updated(Address address) {
@@ -64,7 +63,7 @@ public class Geography {
 
     public Address getRandomEmptyAddress() {
 
-        List<Area> allAreas = residentialGeography.getAllAreas();
+        List<Area> allAreas = residentialGeography;
 
         Address area = null;
 

@@ -12,6 +12,8 @@ public class BoundingBox implements Serializable {
     private Coords bottomLeft;
     private Coords topRight;
 
+    public BoundingBox() {}
+
     public BoundingBox(String[] coords) throws InvalidCoordSet {
 
         if(coords.length != 4) {
@@ -58,5 +60,13 @@ public class BoundingBox implements Serializable {
 
     public boolean containsPoint(double lat, double lon) {
         return (bottomLeft.lat <= lat && lat <= topRight.lat) && (bottomLeft.lon <= lon && lon <= topRight.lon);
+    }
+
+    public void setBottomLeft(Coords bottomLeft) {
+        this.bottomLeft = bottomLeft;
+    }
+
+    public void setTopRight(Coords topRight) {
+        this.topRight = topRight;
     }
 }
