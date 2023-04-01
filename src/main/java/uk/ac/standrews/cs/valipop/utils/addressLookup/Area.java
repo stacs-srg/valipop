@@ -17,7 +17,7 @@ public class Area implements Serializable {
 
     private static final long serialVersionUID = 8749827387328328989L;
 
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @JsonProperty("error")
     private String error = "none";
@@ -96,7 +96,7 @@ public class Area implements Serializable {
 
                 } catch (IncompleteAreaInformationException e) {
                     System.out.println("--- Area incomplete ---");
-                    System.out.println(area.toString());
+                    System.out.println(area);
                 }
 
             }
@@ -154,7 +154,7 @@ public class Area implements Serializable {
     }
 
     public boolean isResidential() {
-        return details.getType().toLowerCase().equals("residential");
+        return details.getType().equalsIgnoreCase("residential");
     }
 
     public long getMaximumNumberOfAbodes() {
@@ -200,7 +200,7 @@ public class Area implements Serializable {
     }
 
     public boolean isWay() {
-        return (details == null ? false : details.isWay());
+        return (details != null && details.isWay());
     }
 
     public String getState() {
@@ -208,6 +208,9 @@ public class Area implements Serializable {
     }
 
     public Coords getCentriod() {
+//        if(details == null) {
+//            return null;
+//        }
         return details.getCentroid();
     }
 
@@ -257,4 +260,27 @@ public class Area implements Serializable {
         return true;
     }
 
+    public String getError() {
+        return error;
+    }
+
+    public long getPlaceId() {
+        return placeId;
+    }
+
+    public String[] getBoundingBoxString() {
+        return boundingBoxString;
+    }
+
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
+    public Place getDetails() {
+        return details;
+    }
+
+    public ArrayList<Address> getAddresses() {
+        return addresses;
+    }
 }

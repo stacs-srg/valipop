@@ -30,11 +30,13 @@ public class Place implements Serializable {
 
     private Coords centroid;
 
-    @JsonProperty("centroid")
-    private void unpackNestedCentroid(Map<String, Object> centroid) {
-        ArrayList<? extends Number> cen = (ArrayList<? extends Number>) centroid.get("coordinates");
-        this.centroid = new Coords(cen.get(1).doubleValue(), cen.get(0).doubleValue());
-    }
+//    @JsonProperty("centroid")
+//    private void unpackNestedCentroid(Map<String, Object> centroid) {
+//        ArrayList<? extends Number> cen = (ArrayList<? extends Number>) centroid.get("coordinates");
+//        if(cen != null) {
+//            this.centroid = new Coords(cen.get(1).doubleValue(), cen.get(0).doubleValue());
+//        }
+//    }
 
 
     @JsonProperty("osm_id")
@@ -65,4 +67,7 @@ public class Place implements Serializable {
         return osm_type.toLowerCase().equals("w");
     }
 
+    public void setCentroid(Coords centroid) {
+        this.centroid = centroid;
+    }
 }

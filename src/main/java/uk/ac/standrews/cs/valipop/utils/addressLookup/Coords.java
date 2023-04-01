@@ -9,8 +9,10 @@ public class Coords implements Serializable {
 
     private static final long serialVersionUID = 1209867823409878923L;
 
-    final double lat;
-    final double lon;
+    double lat;
+    double lon;
+
+    public Coords() {}
 
     public Coords(double lat, double lon) {
         this.lat = lat;
@@ -19,6 +21,14 @@ public class Coords implements Serializable {
 
     public Coords(String lat, String lon) {
         this(Double.parseDouble(lat), Double.parseDouble(lon));
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLon() {
+        return lon;
     }
 
     public String toString() {
