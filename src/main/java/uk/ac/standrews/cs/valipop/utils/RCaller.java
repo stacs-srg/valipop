@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Invokes R code.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class RCaller {

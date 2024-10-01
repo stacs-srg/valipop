@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
+ * Represents an OSM place.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

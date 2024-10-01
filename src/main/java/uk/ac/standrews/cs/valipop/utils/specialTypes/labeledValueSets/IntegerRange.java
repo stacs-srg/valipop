@@ -19,6 +19,19 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 import java.util.Objects;
 
 /**
+ * Represents an integer range, which may be parsed from a string
+ * or a raw integer value.
+ * 
+ * The input string must either be:
+ * <br>
+ * 1. a single integer value, like "23", representing [23,23]
+ * <br>
+ * 2. a single integer value and a plus, like "23+", representing [23,]
+ * <br>
+ * 3. a par of integer values delimited by '-', like "3-7", representing [3,7]
+ * <br>
+ * 4. the string "na", meaning it is not applicable
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class IntegerRange implements Comparable<IntegerRange> {

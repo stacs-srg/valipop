@@ -3,6 +3,7 @@ package uk.ac.standrews.cs.valipop.utils.addressLookup;
 import java.io.*;
 
 /**
+ * Return an area given coordinates.
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class ReverseGeocodeLookup {

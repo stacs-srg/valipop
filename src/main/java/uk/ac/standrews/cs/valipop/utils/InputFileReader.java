@@ -37,6 +37,10 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
+ * Parses the input files into input data to form the distribution used by the simulation.
+ * 
+ * Supports reading data in several different formats.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class InputFileReader {

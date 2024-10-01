@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Represents a location with persons living in it.
+ * 
+ * May alternatively represent an entire country.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class Address {

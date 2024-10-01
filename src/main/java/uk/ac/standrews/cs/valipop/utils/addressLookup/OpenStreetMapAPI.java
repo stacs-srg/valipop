@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Interface for Open Street Map API.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class OpenStreetMapAPI {

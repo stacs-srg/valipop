@@ -28,6 +28,12 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 /**
+ * An implementation of the input data type, expecting a mapping of integer ranges
+ * to floating point values.
+ * <br>
+ * 
+ * This is mainly used for assigned probability values to ages,
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class OneDimensionDataDistribution implements InputMetaData, Cloneable {

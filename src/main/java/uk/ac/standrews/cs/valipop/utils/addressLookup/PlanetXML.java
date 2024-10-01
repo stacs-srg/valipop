@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Standalone executable class
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class PlanetXML {

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
+ * UNUSED
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class RandomLookup {

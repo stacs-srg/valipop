@@ -3,6 +3,8 @@ package uk.ac.standrews.cs.valipop.utils.addressLookup;
 import java.io.Serializable;
 
 /**
+ * Represents the rectangle formed by a pair of coordinates.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class BoundingBox implements Serializable {

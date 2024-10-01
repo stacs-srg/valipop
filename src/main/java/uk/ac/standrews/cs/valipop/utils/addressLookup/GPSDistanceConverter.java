@@ -1,6 +1,10 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
 /**
+ * Utility functions for dealing with distance and movements with map coordinates. 
+ * 
+ * Also an executable class for some reason.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class GPSDistanceConverter {

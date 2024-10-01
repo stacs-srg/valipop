@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Represents a set of areas.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class AreaSet implements Serializable {
