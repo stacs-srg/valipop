@@ -15,6 +15,8 @@ import java.time.Year;
 import java.util.*;
 
 /**
+ * May be executed standalone.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DistributionGenerator {

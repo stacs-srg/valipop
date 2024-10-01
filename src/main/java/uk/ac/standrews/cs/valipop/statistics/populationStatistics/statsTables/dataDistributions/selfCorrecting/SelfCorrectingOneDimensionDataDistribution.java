@@ -32,6 +32,9 @@ import java.time.Year;
 import java.util.Map;
 
 /**
+ * An implementation of the input data type, expecting a mapping of integer ranges
+ * to floating point values and supporting self correction.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution implements SelfCorrection<Integer, Double, Integer, Integer> {

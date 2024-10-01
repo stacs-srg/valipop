@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.time.Period;
 
 /**
+ * Utility functions on Java datas and periods.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DateUtils {

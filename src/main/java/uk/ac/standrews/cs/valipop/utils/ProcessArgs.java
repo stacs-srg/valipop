@@ -20,6 +20,8 @@ import java.security.InvalidParameterException;
 import java.util.Objects;
 
 /**
+ * Utility functions for parsing process arguments.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class ProcessArgs {

@@ -20,6 +20,8 @@ import java.time.Period;
 import java.time.Year;
 
 /**
+ * A data structure for representing the keys used to access the input data
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class StatsKey<X, Y> {

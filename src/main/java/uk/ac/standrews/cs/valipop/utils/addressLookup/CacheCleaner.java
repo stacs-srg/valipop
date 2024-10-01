@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
+ * UNUSED
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class CacheCleaner {

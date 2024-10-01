@@ -3,6 +3,8 @@ package uk.ac.standrews.cs.valipop.utils.addressLookup;
 import java.io.Serializable;
 
 /**
+ * Representing coordinates with latititude and longitude.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class Coords implements Serializable {

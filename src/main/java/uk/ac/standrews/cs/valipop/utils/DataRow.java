@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Parses a row of a CSV string as a hash map.
+ * Offers utility functions to read the CSV valus as different types.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DataRow {

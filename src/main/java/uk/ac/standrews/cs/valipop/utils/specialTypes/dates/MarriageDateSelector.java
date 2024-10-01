@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
+ * Utility class for selecting a valid random marriage date of a couple.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class MarriageDateSelector extends DateSelector {

@@ -14,6 +14,8 @@ import java.time.Year;
 import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.GEEGLM;
 
 /**
+ * Invokes R analysis code in an asynchronous thread.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class AnalysisThread extends Thread {
