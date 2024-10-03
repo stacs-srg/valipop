@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
+/**
+ * Utility functions to navigate through population model via persons.
+ */
 public class PopulationNavigation {
 
     private static final int NUMBER_OF_GENERATIONS_TO_EXCLUDE = 3;

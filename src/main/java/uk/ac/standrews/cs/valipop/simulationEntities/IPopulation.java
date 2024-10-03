@@ -20,6 +20,8 @@ import java.time.LocalDate;
 
 /**
  * Interface for all population models.
+ * 
+ * FIXME Unrelated to Population class ?
  */
 public interface IPopulation {
 

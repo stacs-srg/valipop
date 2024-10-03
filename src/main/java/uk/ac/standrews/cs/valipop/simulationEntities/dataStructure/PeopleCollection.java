@@ -31,6 +31,8 @@ import java.time.Period;
 import java.util.*;
 
 /**
+ * Implementation of PersonCollection, storing people by gender.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class PeopleCollection extends PersonCollection implements IPopulation, Cloneable {

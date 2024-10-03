@@ -22,6 +22,9 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Interface of a partnership between a male and female person.
+ */
 public interface IPartnership extends Comparable<IPartnership> {
 
     /**
