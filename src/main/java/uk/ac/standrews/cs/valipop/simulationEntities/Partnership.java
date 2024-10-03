@@ -33,6 +33,8 @@ import java.util.List;
 import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.getDateOfNextPostSeparationEvent;
 
 /**
+ * Implementation of a partnership in a table format.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class Partnership implements IPartnership {

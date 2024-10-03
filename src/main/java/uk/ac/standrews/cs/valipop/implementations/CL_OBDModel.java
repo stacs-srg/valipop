@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 import java.time.Year;
 
 /**
+ * Command line entry point to simulate a population model and analysis.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class CL_OBDModel {

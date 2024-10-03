@@ -26,6 +26,8 @@ import java.time.Year;
 import java.util.*;
 
 /**
+ * Implementation of person in tabular format
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class Person implements IPerson {

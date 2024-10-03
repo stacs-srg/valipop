@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
+ * Command line entry point to run n population models and analysis.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class CL_RunNModels {

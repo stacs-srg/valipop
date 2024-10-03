@@ -30,6 +30,8 @@ import java.time.Period;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
+ * Data structure containing simulation meta data.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SummaryRow {
