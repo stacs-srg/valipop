@@ -16,7 +16,7 @@ plotOB.2(obirth, "N,1855,N,N,fixed,NO", yob = 1855, ciy = "NO", scales = "fixed"
 
 
 
----
+#---
   
 plotOB.2(obirth, "N,N,N,N,free_y,N")
 
@@ -29,5 +29,5 @@ plotOB.2(obirth, "N,1855,N,N,fixed,NO", yob = 1855, ciy = "NO", scales = "fixed"
 plotPart(part, "T")
 
 
---------
+#--------
   
