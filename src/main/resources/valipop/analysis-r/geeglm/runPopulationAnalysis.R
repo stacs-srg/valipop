@@ -1,4 +1,4 @@
-source("src/main/resources/valipop/analysis-r/geeglm/runAnalyisFunction.R")
+source("geeglm/runAnalyisFunction.R")
 
 pathToRunDir <- commandArgs(TRUE)[1]
 maxBirthAge <- as.integer(commandArgs(TRUE)[2])

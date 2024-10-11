@@ -1,4 +1,4 @@
-setwd("OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/analysis-r/")
+#setwd("OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/analysis-r/")
 pathToRunDir.nomig <- "/cs/tmp/tsd4/results/fs-15-revert/2019-07-11T15-51-46-491/"
 pathToRunDir.mig <- "/cs/tmp/tsd4/results/ss-6/1k/2019-08-16T16-22-57-637/"
 

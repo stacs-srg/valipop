@@ -54,7 +54,7 @@ require(mgcv)
 fit<- gam(residuals(mod2) ~ s(data.id.sorted$YOB))
 plot(fit, xlim = c(1855,2013))
 fit<- gam(residuals(mod2) ~ s(data.id.sorted$idvar))
-plot(fit
+plot(fit)
 summary(fit)
 
 

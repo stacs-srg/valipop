@@ -6,7 +6,7 @@ end <- commandArgs(TRUE)[4]
 
 write(paste("start.time", "v.M", sep = ","), out)
 
-source("src/main/resources/valipop/analysis-r/paper/code/FileFunctions.R")
+source("analysis-r/paper/code/FileFunctions.R")
 
 # Read in srf to df
 srf.df <- filesToDF(srf, onlyGetStatErrors = FALSE)
@@ -22,7 +22,7 @@ for(i in 1:nrow(srf.df)) {
   st <- srf.df[i,]$Start.Time
   
   # run analysis
-  source("src/main/resources/valipop/analysis-r/geeglm/runAnalyisFunction.R")
+  source("analysis-r/geeglm/runAnalyisFunction.R")
   pathToRunDir <- paste("/cs/tmp/tsd4/results", r, st, sep = "/") 
   runAnalysis(pathToRunDir, 50, paste(pathToRunDir, "RERUN"))
   
@@ -31,7 +31,7 @@ for(i in 1:nrow(srf.df)) {
   system(paste("touch ", failurePath, "/f.txt", sep = ""))
   # run count
   analysisFile <- paste("/cs/tmp/tsd4/results", r, st, "analysis.html", sep = "/")
-  command <- paste("sh src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh ", analysisFile, " ", failurePath, "/f.txt", sep = "")
+  command <- paste("sh analysis-r/geeglm/geeglm-minima-search.sh ", analysisFile, " ", failurePath, "/f.txt", sep = "")
   result <- system(command, intern = TRUE)
   
   # output start time and new v.m to file

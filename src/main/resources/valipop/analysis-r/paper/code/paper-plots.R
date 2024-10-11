@@ -1,4 +1,4 @@
-setwd("/Users/tdalton/tom/phd/repos/population-model/src/main/resources/valipop/analysis-r/")
+#setwd("/Users/tdalton/tom/phd/repos/population-model/src/main/resources/valipop/analysis-r/")
 source("paper/code/FileFunctions.R")
 
 #df.all <- filesToDF("/Volumes/TSD4exHDD3/results/batch52-fs/batch52-fs-results-summary.csv",
