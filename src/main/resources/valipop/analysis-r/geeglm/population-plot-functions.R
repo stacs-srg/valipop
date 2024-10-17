@@ -158,50 +158,6 @@ plotMB <- function(mb.data) {
   
   legend("topright", inset = 0.01, title = "Number of children in Year", c("Sim - 1", "Stat - 1", "Sim - 2", "Stat - 2", "Sim - 3", "Stat - 3", "Sim - 4", "Stat - 4"), 
          col = c(cols), lty = c(1,1,1,1,1,1,1,1), cex=0.8, y.intersp=c(0.8), box.lty=0)
-  
-  colour <- 3
-  selA <- sel[which(sel$Source == "SIM" & sel$NCIY == 2), ]
-  plot(selA$Date, selA$freq, col = cols[colour], type = "l", ylim = c(0, max(sel[sel$NCIY == 2, ]$freq) *1.05))
-  colour <- colour+1
-  
-  selA <- sel[which(sel$Source == "STAT" & sel$NCIY == 2), ]
-  points(selA$Date, selA$freq, col = cols[colour], type = "l")
-  colour <- colour+1
-  
-  selA <- sel[which(sel$Source == "SIM" & sel$NCIY == 3), ]
-  points(selA$Date, selA$freq, col = cols[colour], type = "l")
-  colour <- colour+1
-  
-  selA <- sel[which(sel$Source == "STAT" & sel$NCIY == 3), ]
-  points(selA$Date, selA$freq, col = cols[colour], type = "l")
-  colour <- colour+1
-  
-  selA <- sel[which(sel$Source == "SIM" & sel$NCIY == 4), ]
-  points(selA$Date, selA$freq, col = cols[colour], type = "l")
-  colour <- colour+1
-  
-  selA <- sel[which(sel$Source == "STAT" & sel$NCIY == 4), ]
-  points(selA$Date, selA$freq, col = cols[colour], type = "l")
-  colour <- colour+1
-  
-  colour <- 5
-  selA <- sel[which(sel$Source == "SIM" & sel$NCIY == 3), ]
-  plot(selA$Date, selA$freq, col = cols[colour], ylim = c(0, max(sel[sel$NCIY == 3, ]$freq) *1.05), type = "l")
-  colour <- colour+1
-  
-  selA <- sel[which(sel$Source == "STAT" & sel$NCIY == 3), ]
-  points(selA$Date, selA$freq, col = cols[colour], type = "l")
-  colour <- colour+1
-  
-  selA <- sel[which(sel$Source == "SIM" & sel$NCIY == 4), ]
-  points(selA$Date, selA$freq, col = cols[colour], type = "l")
-  colour <- colour+1
-  
-  selA <- sel[which(sel$Source == "STAT" & sel$NCIY == 4), ]
-  points(selA$Date, selA$freq, col = cols[colour], type = "l")
-  colour <- colour+1
-
-
 }
 
 plotPart <- function(part.data, title, date = NULL, disc = TRUE, scales = "free_y") {
