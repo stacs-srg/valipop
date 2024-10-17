@@ -57,6 +57,7 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         super(population, file_name);
     }
 
+    // Fails and Errors (No such file) (Fails assertions)
     @Ignore
     @Test
     public void GEDCOMExportIsAsExpected() throws Exception {
@@ -70,6 +71,7 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         assertThatFilesHaveSameContent(actual_output, intended_output);
     }
 
+    // Error (IO extendec characters...)
     @Ignore
     @Test
     public void reImportGivesSamePopulation() throws Exception {
