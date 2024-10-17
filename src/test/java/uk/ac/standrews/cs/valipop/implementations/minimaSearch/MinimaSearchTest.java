@@ -19,7 +19,7 @@ public class MinimaSearchTest {
 
     OBDModel model;
 
-    @Ignore
+    //@Ignore
     @Before
     public void setup() {
 
@@ -35,7 +35,7 @@ public class MinimaSearchTest {
         model = new OBDModel(config);
     }
 
-    @Ignore
+    //@Ignore
     @Test
     public void nanTesting() throws SpaceExploredException {
 

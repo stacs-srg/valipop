@@ -18,7 +18,7 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
  */
 public class PersonTest {
 
-    @Ignore
+    //@Ignore
     @Test
     public void testAgeOnDate() {
 
