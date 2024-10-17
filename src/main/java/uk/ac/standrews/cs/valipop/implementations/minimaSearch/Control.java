@@ -4,6 +4,16 @@ import java.security.InvalidParameterException;
 import java.util.Arrays;
 
 /**
+ * Specifies the controlling factor of the minima search.
+ * 
+ * <br>
+ * 
+ * Either BF (birth factor).
+ * 
+ * <br>
+ * 
+ * Or DF (death factor).
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public enum Control {

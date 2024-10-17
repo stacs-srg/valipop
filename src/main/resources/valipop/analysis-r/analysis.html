@@ -86,111 +86,97 @@
 <span class="hl def">title</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">wrap_sentence</span><span class="hl def">(title,</span> <span class="hl num">50</span><span class="hl def">)</span>
 <span class="hl kwd">plotCohorts</span><span class="hl def">(death,</span> <span class="hl num">0</span><span class="hl def">, title)</span>
 </pre></div>
-</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/testing-ogf/2024-10-11T00-52-02-826//figs/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" class="plot" /></div><div class="rcode">
+</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" class="plot" /></div><div class="rcode">
 <div class="source"><pre class="knitr r"><span class="hl def">title</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">paste</span><span class="hl def">(subTitle,</span> <span class="hl sng">&quot; - Age: 50 - &quot;</span><span class="hl def">, pathToRunDir)</span>
 <span class="hl def">title</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">wrap_sentence</span><span class="hl def">(title,</span> <span class="hl num">50</span><span class="hl def">)</span>
 <span class="hl kwd">plotCohorts</span><span class="hl def">(death,</span> <span class="hl num">50</span><span class="hl def">, title)</span>
 </pre></div>
-</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/testing-ogf/2024-10-11T00-52-02-826//figs/unnamed-chunk-2-2.png" alt="plot of chunk unnamed-chunk-2" class="plot" /></div></div>
+</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-2-2.png" alt="plot of chunk unnamed-chunk-2" class="plot" /></div></div>
 
 <div class="chunk" id="unnamed-chunk-3"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl def">(</span><span class="hl sng">&quot;process-data-functions.R&quot;</span><span class="hl def">)</span>
 
 <span class="hl kwd">sourceSummary</span><span class="hl def">(death)</span>
 </pre></div>
-<div class="output"><pre class="knitr r">##     Source               YOB           Sex                 Age            Died                Date           freq      
-##  Length:6333        Min.   :1846   Length:6333        Min.   : 0.00   Length:6333        Min.   :1941   Min.   : 1.00  
-##  Class :character   1st Qu.:1889   Class :character   1st Qu.:23.00   Class :character   1st Qu.:1948   1st Qu.: 8.00  
-##  Mode  :character   Median :1910   Mode  :character   Median :46.00   Mode  :character   Median :1956   Median :29.00  
-##                     Mean   :1911                      Mean   :44.87                      Mean   :1956   Mean   :26.63  
-##                     3rd Qu.:1933                      3rd Qu.:67.00                      3rd Qu.:1964   3rd Qu.:41.00  
-##                     Max.   :1971                      Max.   :98.00                      Max.   :1971   Max.   :61.00  
-##     Source               YOB           Sex                 Age            Died                Date           freq      
-##  Length:7106        Min.   :1852   Length:7106        Min.   : 0.00   Length:7106        Min.   :1941   Min.   : 1.00  
-##  Class :character   1st Qu.:1884   Class :character   1st Qu.:26.00   Class :character   1st Qu.:1949   1st Qu.: 4.00  
-##  Mode  :character   Median :1903   Mode  :character   Median :54.00   Mode  :character   Median :1957   Median :28.00  
-##                     Mean   :1907                      Mean   :49.51                      Mean   :1957   Mean   :24.93  
-##                     3rd Qu.:1930                      3rd Qu.:73.00                      3rd Qu.:1965   3rd Qu.:41.00  
-##                     Max.   :1972                      Max.   :95.00                      Max.   :1972   Max.   :54.00
+<div class="output"><pre class="knitr r">##     Source               YOB           Sex                 Age             Died                Date           freq       
+##  Length:23716       Min.   :1844   Length:23716       Min.   :  0.00   Length:23716       Min.   :1941   Min.   :   1.0  
+##  Class :character   1st Qu.:1902   Class :character   1st Qu.: 27.00   Class :character   1st Qu.:1959   1st Qu.:  13.0  
+##  Mode  :character   Median :1926   Mode  :character   Median : 51.00   Mode  :character   Median :1977   Median : 224.0  
+##                     Mean   :1927                      Mean   : 50.41                      Mean   :1977   Mean   : 648.8  
+##                     3rd Qu.:1950                      3rd Qu.: 74.00                      3rd Qu.:1996   3rd Qu.:1380.0  
+##                     Max.   :2013                      Max.   :109.00                      Max.   :2013   Max.   :2079.0  
+##     Source               YOB           Sex                 Age             Died                Date           freq       
+##  Length:28443       Min.   :1844   Length:28443       Min.   :  0.00   Length:28443       Min.   :1941   Min.   :   1.0  
+##  Class :character   1st Qu.:1901   Class :character   1st Qu.: 28.00   Class :character   1st Qu.:1959   1st Qu.:   6.0  
+##  Mode  :character   Median :1926   Mode  :character   Median : 52.00   Mode  :character   Median :1978   Median :  38.0  
+##                     Mean   :1926                      Mean   : 51.52                      Mean   :1978   Mean   : 573.7  
+##                     3rd Qu.:1951                      3rd Qu.: 76.00                      3rd Qu.:1996   3rd Qu.:1309.0  
+##                     Max.   :2014                      Max.   :104.00                      Max.   :2014   Max.   :2160.0
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl def">(obirth)</span>
 </pre></div>
 <div class="output"><pre class="knitr r">##     Source               YOB            Age           NPCIAP              CIY                 Date           freq       
-##  Length:6840        Min.   :1886   Min.   :15.00   Length:6840        Length:6840        Min.   :1941   Min.   : 1.000  
-##  Class :character   1st Qu.:1911   1st Qu.:26.00   Class :character   Class :character   1st Qu.:1948   1st Qu.: 2.000  
-##  Mode  :character   Median :1921   Median :34.00   Mode  :character   Mode  :character   Median :1956   Median : 4.000  
-##                     Mean   :1921   Mean   :35.09                                         Mean   :1956   Mean   : 7.405  
-##                     3rd Qu.:1931   3rd Qu.:44.00                                         3rd Qu.:1964   3rd Qu.: 9.000  
-##                     Max.   :1956   Max.   :55.00                                         Max.   :1971   Max.   :57.000  
+##  Length:24648       Min.   :1886   Min.   :15.00   Length:24648       Length:24648       Min.   :1941   Min.   :   1.0  
+##  Class :character   1st Qu.:1924   1st Qu.:26.00   Class :character   Class :character   1st Qu.:1959   1st Qu.:  20.0  
+##  Mode  :character   Median :1942   Median :34.00   Mode  :character   Mode  :character   Median :1977   Median :  85.0  
+##                     Mean   :1942   Mean   :34.64                                         Mean   :1977   Mean   : 178.7  
+##                     3rd Qu.:1961   3rd Qu.:43.00                                         3rd Qu.:1995   3rd Qu.: 237.0  
+##                     Max.   :1998   Max.   :55.00                                         Max.   :2013   Max.   :1916.0  
 ##     Source               YOB            Age           NPCIAP              CIY                 Date           freq       
-##  Length:8533        Min.   :1886   Min.   :15.00   Length:8533        Length:8533        Min.   :1941   Min.   : 1.000  
-##  Class :character   1st Qu.:1912   1st Qu.:26.00   Class :character   Class :character   1st Qu.:1949   1st Qu.: 2.000  
-##  Mode  :character   Median :1922   Median :33.00   Mode  :character   Mode  :character   Median :1957   Median : 4.000  
-##                     Mean   :1922   Mean   :34.62                                         Mean   :1957   Mean   : 6.128  
-##                     3rd Qu.:1932   3rd Qu.:44.00                                         3rd Qu.:1965   3rd Qu.: 9.000  
-##                     Max.   :1957   Max.   :55.00                                         Max.   :1972   Max.   :50.000
+##  Length:28597       Min.   :1886   Min.   :15.00   Length:28597       Length:28597       Min.   :1941   Min.   :   1.0  
+##  Class :character   1st Qu.:1925   1st Qu.:26.00   Class :character   Class :character   1st Qu.:1959   1st Qu.:  11.0  
+##  Mode  :character   Median :1943   Median :34.00   Mode  :character   Mode  :character   Median :1978   Median :  70.0  
+##                     Mean   :1943   Mean   :34.61                                         Mean   :1978   Mean   : 161.4  
+##                     3rd Qu.:1962   3rd Qu.:43.00                                         3rd Qu.:1996   3rd Qu.: 190.0  
+##                     Max.   :1999   Max.   :55.00                                         Max.   :2014   Max.   :1853.0
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl def">(mbirth)</span>
 </pre></div>
-<div class="output"><pre class="knitr r">##     Source               YOB            Age             NCIY        Date           freq      
-##  Length:679         Min.   :1895   Min.   :15.00   Min.   :1   Min.   :1941   Min.   : 1.00  
-##  Class :character   1st Qu.:1921   1st Qu.:21.00   1st Qu.:1   1st Qu.:1948   1st Qu.: 2.00  
-##  Mode  :character   Median :1929   Median :26.00   Median :1   Median :1956   Median : 4.00  
-##                     Mean   :1929   Mean   :26.88   Mean   :1   Mean   :1956   Mean   : 4.61  
-##                     3rd Qu.:1938   3rd Qu.:32.00   3rd Qu.:1   3rd Qu.:1964   3rd Qu.: 6.00  
-##                     Max.   :1956   Max.   :49.00   Max.   :1   Max.   :1971   Max.   :19.00  
-##     Source               YOB            Age          NCIY        Date           freq      
-##  Length:775         Min.   :1903   Min.   :15   Min.   :1   Min.   :1941   Min.   :1.000  
-##  Class :character   1st Qu.:1922   1st Qu.:21   1st Qu.:1   1st Qu.:1948   1st Qu.:3.000  
-##  Mode  :character   Median :1930   Median :27   Median :1   Median :1956   Median :4.000  
-##                     Mean   :1930   Mean   :27   Mean   :1   Mean   :1956   Mean   :3.849  
-##                     3rd Qu.:1938   3rd Qu.:33   3rd Qu.:1   3rd Qu.:1964   3rd Qu.:5.000  
-##                     Max.   :1957   Max.   :39   Max.   :1   Max.   :1971   Max.   :7.000
+<div class="output"><pre class="knitr r">##     Source               YOB            Age             NCIY            Date           freq       
+##  Length:4216        Min.   :1893   Min.   :15.00   Min.   :1.000   Min.   :1941   Min.   :  1.00  
+##  Class :character   1st Qu.:1929   1st Qu.:23.00   1st Qu.:1.000   1st Qu.:1959   1st Qu.:  2.00  
+##  Mode  :character   Median :1947   Median :30.00   Median :1.000   Median :1978   Median :  3.00  
+##                     Mean   :1947   Mean   :30.33   Mean   :1.432   Mean   :1977   Mean   : 61.17  
+##                     3rd Qu.:1965   3rd Qu.:37.00   3rd Qu.:2.000   3rd Qu.:1996   3rd Qu.:125.00  
+##                     Max.   :1998   Max.   :49.00   Max.   :3.000   Max.   :2013   Max.   :359.00  
+##     Source               YOB            Age             NCIY            Date           freq       
+##  Length:4376        Min.   :1893   Min.   :15.00   Min.   :1.000   Min.   :1941   Min.   :  1.00  
+##  Class :character   1st Qu.:1930   1st Qu.:22.00   1st Qu.:1.000   1st Qu.:1959   1st Qu.:  2.00  
+##  Mode  :character   Median :1948   Median :30.00   Median :1.000   Median :1977   Median :  4.00  
+##                     Mean   :1948   Mean   :29.93   Mean   :1.416   Mean   :1977   Mean   : 61.46  
+##                     3rd Qu.:1966   3rd Qu.:37.00   3rd Qu.:2.000   3rd Qu.:1995   3rd Qu.:128.00  
+##                     Max.   :1999   Max.   :49.00   Max.   :2.000   Max.   :2013   Max.   :272.00
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl def">(part)</span>
 </pre></div>
-<div class="output"><pre class="knitr r">##     Source               YOB            Age           NPA           Date           freq      
-##  Length:716         Min.   :1904   Min.   :15.00   15-19: 76   Min.   :1941   Min.   :1.000  
-##  Class :character   1st Qu.:1925   1st Qu.:19.00   20-24:236   1st Qu.:1948   1st Qu.:1.000  
-##  Mode  :character   Median :1933   Median :22.00   25-29:225   Median :1956   Median :2.000  
-##                     Mean   :1933   Mean   :22.94   30-34:139   Mean   :1956   Mean   :1.834  
-##                     3rd Qu.:1941   3rd Qu.:27.00   35-39: 37   3rd Qu.:1963   3rd Qu.:2.000  
-##                     Max.   :1956   Max.   :44.00   40-44:  3   Max.   :1971   Max.   :7.000  
-##     Source               YOB            Age           NPA           Date           freq      
-##  Length:863         Min.   :1912   Min.   :15.00   15-19:105   Min.   :1941   Min.   :1.000  
-##  Class :character   1st Qu.:1927   1st Qu.:17.50   20-24:320   1st Qu.:1948   1st Qu.:1.000  
-##  Mode  :character   Median :1934   Median :21.00   25-29:413   Median :1956   Median :1.000  
-##                     Mean   :1935   Mean   :20.99   30-34: 25   Mean   :1956   Mean   :1.127  
-##                     3rd Qu.:1944   3rd Qu.:24.00   35-39:  0   3rd Qu.:1965   3rd Qu.:1.000  
-##                     Max.   :1957   Max.   :29.00   40-44:  0   Max.   :1972   Max.   :2.000
+<div class="output"><pre class="knitr r">##     Source               YOB            Age             NPA            Date           freq       
+##  Length:9014        Min.   :1894   Min.   :15.00   30-34  :1564   Min.   :1941   Min.   :  1.00  
+##  Class :character   1st Qu.:1933   1st Qu.:20.00   35-39  :1553   1st Qu.:1959   1st Qu.:  2.00  
+##  Mode  :character   Median :1951   Median :26.00   25-29  :1484   Median :1977   Median :  4.00  
+##                     Mean   :1951   Mean   :26.44   40-44  :1306   Mean   :1977   Mean   : 12.17  
+##                     3rd Qu.:1969   3rd Qu.:32.00   20-24  :1289   3rd Qu.:1996   3rd Qu.: 16.00  
+##                     Max.   :1998   Max.   :49.00   45-49  : 701   Max.   :2013   Max.   :103.00  
+##                                                    (Other):1117                                  
+##     Source               YOB            Age             NPA            Date           freq      
+##  Length:10034       Min.   :1902   Min.   :15.00   30-34  :1850   Min.   :1941   Min.   : 1.00  
+##  Class :character   1st Qu.:1934   1st Qu.:20.00   35-39  :1850   1st Qu.:1960   1st Qu.: 1.00  
+##  Mode  :character   Median :1952   Median :26.00   40-44  :1760   Median :1978   Median : 4.00  
+##                     Mean   :1952   Mean   :25.77   20-24  :1480   Mean   :1978   Mean   :10.87  
+##                     3rd Qu.:1971   3rd Qu.:31.00   25-29  :1480   3rd Qu.:1997   3rd Qu.:14.00  
+##                     Max.   :1999   Max.   :39.00   45-49  : 874   Max.   :2014   Max.   :68.00  
+##                                                    (Other): 740
 </pre></div>
 </div></div>
 
 <div class="chunk" id="unnamed-chunk-4"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl def">(</span><span class="hl sng">&quot;population-plot-functions.R&quot;</span><span class="hl def">)</span>
 <span class="hl kwd">plotMB</span><span class="hl def">(mbirth)</span>
 </pre></div>
-</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/testing-ogf/2024-10-11T00-52-02-826//figs/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" class="plot" /></div><div class="rcode">
-<div class="warning"><pre class="knitr r">## Warning in min(x): no non-missing arguments to min; returning Inf
-</pre></div>
-<div class="warning"><pre class="knitr r">## Warning in max(x): no non-missing arguments to max; returning -Inf
-</pre></div>
-<div class="warning"><pre class="knitr r">## Warning in max(sel[sel$NCIY == 2, ]$freq): no non-missing arguments to max; returning -Inf
-</pre></div>
-</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/testing-ogf/2024-10-11T00-52-02-826//figs/unnamed-chunk-4-2.png" alt="plot of chunk unnamed-chunk-4" class="plot" /></div><div class="rcode">
-<div class="error"><pre class="knitr r">## Error in plot.window(...): need finite 'xlim' values
-</pre></div>
+</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" class="plot" /></div><div class="rcode">
 <div class="source"><pre class="knitr r"><span class="hl kwd">plotPart</span><span class="hl def">(part, subTitle,</span> <span class="hl kwc">date</span> <span class="hl def">=</span> <span class="hl kwa">NULL</span><span class="hl def">,</span> <span class="hl kwc">disc</span> <span class="hl def">=</span> <span class="hl num">TRUE</span><span class="hl def">,</span> <span class="hl kwc">scales</span> <span class="hl def">=</span> <span class="hl sng">&quot;free_y&quot;</span><span class="hl def">)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in `xlim()`:
-## ! Discrete values supplied to continuous scale.
-## ℹ Example values: 15-19, 15-19, 20-24, 20-24, and 25-29
-</pre></div>
+</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-4-2.png" alt="plot of chunk unnamed-chunk-4" class="plot" /></div><div class="rcode">
 <div class="source"><pre class="knitr r"><span class="hl kwd">plotPart</span><span class="hl def">(part, subTitle,</span> <span class="hl kwc">date</span> <span class="hl def">=</span> <span class="hl kwa">NULL</span><span class="hl def">,</span> <span class="hl kwc">disc</span> <span class="hl def">=</span> <span class="hl num">TRUE</span><span class="hl def">,</span> <span class="hl kwc">scales</span> <span class="hl def">=</span> <span class="hl sng">&quot;fixed&quot;</span><span class="hl def">)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in `xlim()`:
-## ! Discrete values supplied to continuous scale.
-## ℹ Example values: 15-19, 15-19, 20-24, 20-24, and 25-29
-</pre></div>
-</div></div>
+</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-4-3.png" alt="plot of chunk unnamed-chunk-4" class="plot" /></div></div>
 
 <div class="chunk" id="unnamed-chunk-5"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl def">(</span><span class="hl sng">&quot;id-funtions.R&quot;</span><span class="hl def">)</span>
 <span class="hl def">death.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.death</span><span class="hl def">(death)</span>
@@ -202,18 +188,6 @@
 </div></div>
 
 <div class="chunk" id="unnamed-chunk-6"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl def">death.GEEGLM</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">deathSatGEEGLM</span><span class="hl def">(death.ids)</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in if (corstrv == -1) stop(&quot;invalid corstr.&quot;): the condition has length &gt; 1
-</pre></div>
-</div></div>
-
-<div class="chunk" id="unnamed-chunk-7"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">print</span><span class="hl def">(</span><span class="hl kwd">summary</span><span class="hl def">(death.GEEGLM))</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'death.GEEGLM' not found
-</pre></div>
-</div></div>
-
-<div class="chunk" id="unnamed-chunk-8"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl def">ob.GEEGLM</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">obSatGEEGLM</span><span class="hl def">(obirth.ids)</span>
 </pre></div>
 <div class="message"><pre class="knitr r">## 
 ## Attaching package: 'dplyr'
@@ -237,7 +211,7 @@
 ## 
 ##     combine
 </pre></div>
-</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/testing-ogf/2024-10-11T00-52-02-826//figs/unnamed-chunk-8-1.png" alt="plot of chunk unnamed-chunk-8" class="plot" /></div><div class="rcode">
+</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" class="plot" /></div><div class="rcode">
 <div class="message"><pre class="knitr r">## Loading required package: mgcv
 </pre></div>
 <div class="message"><pre class="knitr r">## Loading required package: nlme
@@ -251,7 +225,68 @@
 </pre></div>
 <div class="message"><pre class="knitr r">## This is mgcv 1.9-1. For overview type 'help(&quot;mgcv-package&quot;)'.
 </pre></div>
-</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/testing-ogf/2024-10-11T00-52-02-826//figs/unnamed-chunk-8-2.png" alt="plot of chunk unnamed-chunk-8" class="plot" /></div></div>
+</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-6-2.png" alt="plot of chunk unnamed-chunk-6" class="plot" /></div></div>
+
+<div class="chunk" id="unnamed-chunk-7"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">print</span><span class="hl def">(</span><span class="hl kwd">summary</span><span class="hl def">(death.GEEGLM))</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## 
+## Call:
+## geeglm(formula = formula, data = in.data, id = idvar, corstr = constr)
+## 
+##  Coefficients:
+##                                     Estimate    Std.err    Wald Pr(&gt;|W|)    
+## (Intercept)                       -2.136e+04  1.226e+03 303.469  &lt; 2e-16 ***
+## Date                               1.178e+01  6.237e-01 356.819  &lt; 2e-16 ***
+## Age                                1.403e+02  2.628e+01  28.504 9.35e-08 ***
+## SexM                              -2.298e+02  1.676e+03   0.019  0.89091    
+## Diedtrue                           1.927e+04  2.342e+03  67.673 2.22e-16 ***
+## SourceSTAT                        -5.803e+02  1.671e+03   0.121  0.72838    
+## Date:Age                          -8.009e-02  1.334e-02  36.026 1.95e-09 ***
+## Date:SexM                          9.832e-02  8.516e-01   0.013  0.90808    
+## Age:SexM                           4.710e+01  3.502e+01   1.809  0.17864    
+## Date:Diedtrue                     -1.084e+01  1.183e+00  83.893  &lt; 2e-16 ***
+## Age:Diedtrue                      -8.068e+01  3.960e+01   4.150  0.04164 *  
+## SexM:Diedtrue                     -1.128e+03  3.186e+03   0.125  0.72338    
+## Date:SourceSTAT                    3.363e-01  8.496e-01   0.157  0.69227    
+## Age:SourceSTAT                    -1.024e+01  3.501e+01   0.086  0.76990    
+## SexM:SourceSTAT                   -1.715e+02  2.263e+03   0.006  0.93959    
+## Diedtrue:SourceSTAT                1.104e+02  3.053e+03   0.001  0.97114    
+## Date:Age:SexM                     -2.422e-02  1.777e-02   1.856  0.17309    
+## Date:Age:Diedtrue                  5.172e-02  2.001e-02   6.682  0.00974 ** 
+## Date:SexM:Diedtrue                 6.118e-01  1.607e+00   0.145  0.70341    
+## Age:SexM:Diedtrue                 -2.546e+01  5.416e+01   0.221  0.63823    
+## Date:Age:SourceSTAT                4.784e-03  1.778e-02   0.072  0.78784    
+## Date:SexM:SourceSTAT               9.129e-02  1.150e+00   0.006  0.93673    
+## Age:SexM:SourceSTAT               -7.022e+00  4.556e+01   0.024  0.87751    
+## Date:Diedtrue:SourceSTAT          -8.671e-02  1.542e+00   0.003  0.95515    
+## Age:Diedtrue:SourceSTAT            6.093e+00  5.154e+01   0.014  0.90590    
+## SexM:Diedtrue:SourceSTAT           1.205e+03  4.199e+03   0.082  0.77414    
+## Date:Age:SexM:Diedtrue             1.297e-02  2.733e-02   0.225  0.63521    
+## Date:Age:SexM:SourceSTAT           3.562e-03  2.312e-02   0.024  0.87759    
+## Date:Age:Diedtrue:SourceSTAT      -2.892e-03  2.604e-02   0.012  0.91157    
+## Date:SexM:Diedtrue:SourceSTAT     -6.173e-01  2.117e+00   0.085  0.77058    
+## Age:SexM:Diedtrue:SourceSTAT      -1.297e+01  7.050e+01   0.034  0.85402    
+## Date:Age:SexM:Diedtrue:SourceSTAT  6.639e-03  3.558e-02   0.035  0.85199    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Correlation structure = ar1 
+## Estimated Scale Parameters:
+## 
+##             Estimate Std.err
+## (Intercept)    30663    1325
+##   Link = identity 
+## 
+## Estimated Correlation Parameters:
+##       Estimate  Std.err
+## alpha   0.9829 0.001424
+## Number of clusters:   673  Maximum cluster size: 148
+</pre></div>
+</div></div>
+
+<div class="chunk" id="unnamed-chunk-8"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl def">ob.GEEGLM</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">obSatGEEGLM</span><span class="hl def">(obirth.ids)</span>
+</pre></div>
+</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-8-1.png" alt="plot of chunk unnamed-chunk-8" class="plot" /></div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-8-2.png" alt="plot of chunk unnamed-chunk-8" class="plot" /></div></div>
 
 <div class="chunk" id="unnamed-chunk-9"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">print</span><span class="hl def">(</span><span class="hl kwd">summary</span><span class="hl def">(ob.GEEGLM))</span>
 </pre></div>
@@ -260,23 +295,58 @@
 ## geeglm(formula = formula, data = in.data, id = idvar, corstr = constr)
 ## 
 ##  Coefficients:
-##                               Estimate    Std.err  Wald Pr(&gt;|W|)  
-## (Intercept)                  1.562e+02  2.421e+02 0.416   0.5190  
-## Date                        -7.305e-02  1.237e-01 0.349   0.5549  
-## Age                         -7.689e+00  5.558e+00 1.914   0.1666  
-## CIYtrue                     -2.423e+02  2.516e+02 0.927   0.3356  
-## SourceSTAT                  -5.749e+01  3.347e+02 0.030   0.8636  
-## Date:Age                     3.855e-03  2.839e-03 1.844   0.1745  
-## Date:CIYtrue                 1.185e-01  1.286e-01 0.850   0.3567  
-## Age:CIYtrue                  9.998e+00  5.986e+00 2.790   0.0948 .
-## Date:SourceSTAT              2.898e-02  1.710e-01 0.029   0.8654  
-## Age:SourceSTAT               1.675e+00  7.585e+00 0.049   0.8252  
-## CIYtrue:SourceSTAT           6.462e+01  3.432e+02 0.035   0.8506  
-## Date:Age:CIYtrue            -5.053e-03  3.057e-03 2.732   0.0983 .
-## Date:Age:SourceSTAT         -8.549e-04  3.873e-03 0.049   0.8253  
-## Date:CIYtrue:SourceSTAT     -3.285e-02  1.753e-01 0.035   0.8514  
-## Age:CIYtrue:SourceSTAT      -1.373e+00  7.977e+00 0.030   0.8634  
-## Date:Age:CIYtrue:SourceSTAT  6.988e-04  4.073e-03 0.029   0.8638  
+##                              Estimate   Std.err Wald Pr(&gt;|W|)
+## (Intercept)                 -8.39e+02  2.89e+03 0.08     0.77
+## Date                         6.15e-01  1.46e+00 0.18     0.67
+## Age                         -5.15e+01  6.27e+01 0.68     0.41
+## CIYtrue                      3.67e+01  2.90e+03 0.00     0.99
+## SourceSTAT                  -1.57e+01  4.07e+03 0.00     1.00
+## Date:Age                     2.43e-02  3.18e-02 0.59     0.44
+## Date:CIYtrue                -1.80e-01  1.47e+00 0.01     0.90
+## Age:CIYtrue                  6.69e+01  6.31e+01 1.12     0.29
+## Date:SourceSTAT              6.70e-03  2.06e+00 0.00     1.00
+## Age:SourceSTAT              -4.23e+00  8.83e+01 0.00     0.96
+## CIYtrue:SourceSTAT           5.56e+00  4.09e+03 0.00     1.00
+## Date:Age:CIYtrue            -3.26e-02  3.19e-02 1.04     0.31
+## Date:Age:SourceSTAT          2.22e-03  4.47e-02 0.00     0.96
+## Date:CIYtrue:SourceSTAT     -3.46e-03  2.07e+00 0.00     1.00
+## Age:CIYtrue:SourceSTAT       7.85e+00  8.88e+01 0.01     0.93
+## Date:Age:CIYtrue:SourceSTAT -4.05e-03  4.49e-02 0.01     0.93
+## 
+## Correlation structure = ar1 
+## Estimated Scale Parameters:
+## 
+##             Estimate Std.err
+## (Intercept)    44344    1708
+##   Link = identity 
+## 
+## Estimated Correlation Parameters:
+##       Estimate Std.err
+## alpha    0.932 0.00489
+## Number of clusters:   2494  Maximum cluster size: 41
+</pre></div>
+</div></div>
+
+<div class="chunk" id="unnamed-chunk-10"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl def">mb.GEEGLM</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">mbSatGEEGLM</span><span class="hl def">(mbirth.ids)</span>
+</pre></div>
+</div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-10-1.png" alt="plot of chunk unnamed-chunk-10" class="plot" /></div><div class="rimage default"><img src="/cs/home/db255/Documents/dev/valipop/results/minima/2024-10-17T19-29-24-991//figs/unnamed-chunk-10-2.png" alt="plot of chunk unnamed-chunk-10" class="plot" /></div></div>
+
+<div class="chunk" id="unnamed-chunk-11"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">print</span><span class="hl def">(</span><span class="hl kwd">summary</span><span class="hl def">(mb.GEEGLM))</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## 
+## Call:
+## geeglm(formula = formula, data = in.data, id = idvar, corstr = constr)
+## 
+##  Coefficients:
+##                Estimate   Std.err  Wald Pr(&gt;|W|)    
+## (Intercept)   -4.95e+03  9.07e+02 29.83  4.7e-08 ***
+## Date           2.74e+00  4.59e-01 35.66  2.3e-09 ***
+## Age            7.81e+01  2.26e+01 11.99  0.00053 ***
+## NCIY           2.33e+03  5.93e+02 15.46  8.4e-05 ***
+## Date:Age      -4.41e-02  1.14e-02 14.84  0.00012 ***
+## Date:NCIY     -1.29e+00  3.01e-01 18.41  1.8e-05 ***
+## Age:NCIY      -2.79e+01  1.54e+01  3.28  0.07005 .  
+## Date:Age:NCIY  1.62e-02  7.82e-03  4.30  0.03821 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -284,25 +354,13 @@
 ## Estimated Scale Parameters:
 ## 
 ##             Estimate Std.err
-## (Intercept)    46.39   2.732
+## (Intercept)     2256    76.9
 ##   Link = identity 
 ## 
 ## Estimated Correlation Parameters:
-##       Estimate  Std.err
-## alpha   0.9449 0.008411
-## Number of clusters:   1174  Maximum cluster size: 32
-</pre></div>
-</div></div>
-
-<div class="chunk" id="unnamed-chunk-10"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl def">mb.GEEGLM</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">mbSatGEEGLM</span><span class="hl def">(mbirth.ids)</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in geeglm(formula, id = idvar, data = in.data, corstr = constr): Model matrix is rank deficient; geeglm can not proceed
-</pre></div>
-</div></div>
-
-<div class="chunk" id="unnamed-chunk-11"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">print</span><span class="hl def">(</span><span class="hl kwd">summary</span><span class="hl def">(mb.GEEGLM))</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error: object 'mb.GEEGLM' not found
+##       Estimate Std.err
+## alpha    0.747   0.012
+## Number of clusters:   213  Maximum cluster size: 63
 </pre></div>
 </div></div>
 
@@ -321,7 +379,7 @@
 <span class="hl kwd">proc.time</span><span class="hl def">()[</span><span class="hl num">3</span><span class="hl def">]</span>
 </pre></div>
 <div class="output"><pre class="knitr r">## elapsed 
-##     8.6
+##    56.3
 </pre></div>
 </div></div>
 

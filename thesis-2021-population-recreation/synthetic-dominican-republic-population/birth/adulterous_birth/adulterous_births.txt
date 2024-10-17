@@ -1,8 +1,0 @@
-YEAR	2000
-POPULATION	FAKE
-SOURCE	FAKE
-VAR	ADULTEROUS_BIRTH
-FORM	RATE
-# Age range | Proportion of illegitimate births
-DATA
-0+	0.5

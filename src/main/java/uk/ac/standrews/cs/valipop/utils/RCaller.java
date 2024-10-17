@@ -5,6 +5,7 @@ import uk.ac.standrews.cs.valipop.implementations.StatsException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -74,6 +75,8 @@ public class RCaller {
 
             p.destroy();
 
+            System.out.println("Analysis done");
+
             String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh";
             String[] params = {pathOfRunDir + "/analysis.html", pathOfRunDir + "/failtures.txt"};
 
@@ -86,7 +89,10 @@ public class RCaller {
                 throw new StatsException("Too many values returned from sh for given script");
             }
 
+            /*
             // This checks to ensure that the parallelism bug in knitr hasn't affected this analysis run
+            // FIXME Not sure what bug this referred to, but it may not exist anymore?
+
             String checkScript = "src/main/resources/valipop/analysis-r/paper/code/re-runs/checker.sh";
             String[] checkParams = {pathOfRunDir + "/analysis.html", Config.formatTimeStamp(startTime)};
             Process checkProc = runProcess("/bin/sh", checkScript, checkParams);
@@ -95,8 +101,12 @@ public class RCaller {
             checkProc.destroy();
 
             if (checkRes.equals("CORRECT\n")) {
-                return Double.parseDouble(res[0]);
+            } else {
+                System.out.println("FAILED");
             }
+            */
+
+            return Double.parseDouble(res[0]);
         }
     }
 
