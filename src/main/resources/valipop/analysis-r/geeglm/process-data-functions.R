@@ -35,7 +35,7 @@ sourceSummary <- function(data) {
 cleanMBData <-function(dirtyData, largestBirthingAge, round = TRUE)  {
   #dirtyData$freq <- ceiling(dirtyData$freq)
   clean.data <- cleanOBData(dirtyData, largestBirthingAge, round)
-  #clean.data <- clean.data[which(clean.data$NCIY != "0"), ]
+  clean.data <- clean.data[which(clean.data$NCIY != "0"), ]
 
   return(clean.data)
 }
