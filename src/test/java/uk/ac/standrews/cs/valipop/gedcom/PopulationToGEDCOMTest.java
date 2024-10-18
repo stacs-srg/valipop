@@ -57,8 +57,7 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         super(population, file_name);
     }
 
-    // Fails and Errors (No such file) (Fails assertions)
-    @Ignore
+    //@Ignore
     @Test
     public void GEDCOMExportIsAsExpected() throws Exception {
 
@@ -71,7 +70,8 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         assertThatFilesHaveSameContent(actual_output, intended_output);
     }
 
-    // Error (IO extendec characters...)
+    // Error (IO extended characters not supported in ASCII)
+    // Probably need to remove special characters are change gedcom encoding
     @Ignore
     @Test
     public void reImportGivesSamePopulation() throws Exception {
@@ -88,10 +88,14 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
                 converter.convert();
             }
 
-            IPopulation imported = new GEDCOMPopulationAdapter(path1);
-
-            try (PopulationConverter converter = new PopulationConverter(imported, population_writer2)) {
-                converter.convert();
+            try {
+                IPopulation imported = new GEDCOMPopulationAdapter(path1);
+                try (PopulationConverter converter = new PopulationConverter(imported, population_writer2)) {
+                    converter.convert();
+                }
+            } catch (IOException e) {
+                System.err.println("Error reading path: " + path1.toString());
+                throw e;
             }
 
             assertThatFilesHaveSameContent(path1, path2);
