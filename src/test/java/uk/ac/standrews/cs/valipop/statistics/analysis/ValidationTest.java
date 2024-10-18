@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class ValidationTest {
 
+    // R needs to be prepped before running this test
     @Test
     @Ignore
     public void test() throws IOException, StatsException {
