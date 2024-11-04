@@ -132,6 +132,7 @@ public class OBDModel {
             log.info("Population seed size: " + config.getT0PopulationSize());
             log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
+            // End of init period is the greatest age specified in the ordered birth rates (take min bound if max bound is unset)
             Period timeStep = Period.ofYears(desired.getOrderedBirthRates(Year.of(currentTime.getYear())).getLargestLabel().getValue());
             endOfInitPeriod = currentTime.plus(timeStep);
 
@@ -270,6 +271,7 @@ public class OBDModel {
         }
 
         if (!simulationStarted()) {
+            // Updated the starting pop whilst simulation has not reached begin date
             summary.setStartPop(population.getLivingPeople().getNumberOfPeople());
         }
 
@@ -422,7 +424,6 @@ public class OBDModel {
 
         // For each division in the population data store up to the current date
         for (final LocalDate divisionDate : divisionDates) {
-
             if (divisionDate.isAfter(currentTime)) break;
             count += getBornAtTS(femalesLiving, divisionDate);
         }
@@ -472,7 +473,7 @@ public class OBDModel {
         determinedCount.setFulfilledCount(fulfilled);
 
         // TODO Does this output get used? TD: If I remember correctly it allows us to explain why it takes longer to generate small populations - may be useful to talk about in thesis...
-        birthOrders.println(currentTime.getYear() + "," + age + "," + birthOrder + "," + fulfilled + "," + numberOfChildren);
+        birthOrders.println(currentTime.getYear() + "," + age + "," + birthOrder + "," + fulfilled + "," + numberOfChildren + "," + birthAdjustment);
 
         desired.returnAchievedCount(determinedCount);
         return childrenMade;
@@ -485,6 +486,7 @@ public class OBDModel {
             final double birthFactor = config.getBirthFactor();
             final int adjuster = (int) Math.ceil(birthFactor);
 
+            // FIXME, Possible 0 / 0
             if (desired.getRandomGenerator().nextInt(BIRTH_ADJUSTMENT_BOUND) < Math.abs(birthFactor / adjuster) * BIRTH_ADJUSTMENT_BOUND) {
                 return (birthFactor < 0) ? adjuster : -adjuster;
             }
@@ -629,14 +631,14 @@ public class OBDModel {
 
         Address newAddress;
 
-        if(lastMaleAddress == null) {
-            if(lastFemaleAddress == null) {
+        if(lastMaleAddress == null || lastMaleAddress.getArea() == null) {
+            if(lastFemaleAddress == null || lastFemaleAddress.getArea() == null) {
                 newAddress = geography.getRandomEmptyAddress();
             } else {
                 newAddress = geography.getNearestEmptyAddressAtDistance(lastFemaleAddress.getArea().getCentriod(), moveDistance);
             }
         } else {
-            if(lastFemaleAddress == null) {
+            if(lastFemaleAddress == null || lastFemaleAddress.getArea() == null) {
                 newAddress = geography.getNearestEmptyAddressAtDistance(lastMaleAddress.getArea().getCentriod(), moveDistance);
             } else {
                 // both already have address, so flip coin to decide who acts as origin for move
@@ -1042,6 +1044,7 @@ public class OBDModel {
         return population.getLivingPeople().getPeople().size() < MINIMUM_POPULATION_SIZE;
     }
 
+    // When the time is after the end of init period
     private boolean initialisationFinished() {
 
         return !inInitPeriod(currentTime);

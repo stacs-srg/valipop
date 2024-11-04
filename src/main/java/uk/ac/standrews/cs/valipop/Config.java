@@ -45,6 +45,7 @@ import java.util.logging.*;
  */
 public class Config {
 
+    // ---- Constants ----
     private static final Level DEFAULT_LOG_LEVEL = Level.SEVERE;
 
     private static final boolean DEFAULT_BINOMIAL_SAMPLING_FLAG = true;
@@ -71,6 +72,7 @@ public class Config {
     private static final RecordFormat DEFAULT_OUTPUT_RECORD_FORMAT = RecordFormat.NONE;
     private static final String DEFAULT_RUN_PURPOSE = "default";
 
+    // Input directory structure
     private static final String birthSubFile = "birth";
     private static final String orderedBirthSubFile = "ordered_birth";
     private static final String multipleBirthSubFile = "multiple_birth";
@@ -110,8 +112,12 @@ public class Config {
     public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
     private final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
 
+    // ---- Input directory paths ----
 
+    // Input directory path
     private Path varPath;
+
+    // Paths to leaf directories within the input directory
     private Path varOrderedBirthPaths;
     private Path varMaleLifetablePaths;
     private Path varMaleDeathCausesPaths;
@@ -131,21 +137,37 @@ public class Config {
     private Path varSurnamePaths;
     private Path varMarriagePaths;
     private Path varGeographyPaths;
-
     private Path varMaleOccupationPaths;
     private Path varFemaleOccupationPaths;
-
     private Path varMaleOccupationChangePaths;
     private Path varFemaleOccupationChangePaths;
 
+    // ---- Run result paths ----
+
+    // Path for summary of results for all runs among all run purposes
     private Path globalSummaryPath;
+
+    // Path for summary of results for all runs within the run purpose
     private Path resultsSummaryPath;
+
+    // Path for detailed results for the run
     private Path detailedResultsPath;
+
+    // Path for the birth orders dump of a run
     private Path birthOrdersPath;
+
+    // Path for the records of a run
     private Path recordsPath;
+
+    // Path for the CT tables used in R analysis of a run
     private Path contingencyTablesPath;
+
+    // Path to directory of a run (defaults to the timestamp)
     private Path runPath;
 
+    // ---- Other configuration options ----
+
+    // Factors
     private double setUpBR = DEFAULT_SETUP_BR;
     private double setUpDR = DEFAULT_SETUP_DR;
     private double birthFactor = DEFAULT_BIRTH_FACTOR;
@@ -157,21 +179,19 @@ public class Config {
     private boolean deterministic = DEFAULT_DETERMINISTIC_FLAG;
     private boolean outputTables = DEFAULT_OUTPUT_TABLES_FLAG;
 
+    // Time steps
     private Period simulationTimeStep = DEFAULT_SIMULATION_TIME_STEP;
     private Period minBirthSpacing = DEFAULT_MIN_BIRTH_SPACING;
     private Period minGestationPeriod = DEFAULT_MIN_GESTATION_PERIOD;
     private Period inputWidth = DEFAULT_INPUT_WIDTH;
 
+    // Locations
     private Path summaryResultsDirPath = DEFAULT_RESULTS_SAVE_PATH;
     private Path resultsSavePath = DEFAULT_RESULTS_SAVE_PATH;
     private Path geographyFilePath = DEFAULT_GEOGRAPHY_FILE_PATH;
 
     private int seed = DEFAULT_SEED;
     private double overSizedGeographyFactor = DEFAULT_OVERSIZED_GEOGRAPHY_FACTOR;
-
-    public int getCtTreeStepback() {
-        return ctTreeStepback;
-    }
 
     private int ctTreeStepback = DEFAULT_CT_TREE_STEPBACK;
     private double ctTreePrecision = DEFAULT_CT_TREE_PRECISION;
@@ -181,6 +201,7 @@ public class Config {
 
     private final LocalDateTime startTime = LocalDateTime.now();
 
+    // Simulation period and start size
     private LocalDate tS;
     private LocalDate t0;
     private LocalDate tE;
@@ -192,6 +213,7 @@ public class Config {
         return startTime.format(FORMATTER);
     }
 
+    // Initialise configuration programmatically
     public Config(LocalDate tS, LocalDate t0, LocalDate tE, int t0PopulationSize, Path varPath, Path resultsDir, String runPurpose, Path summaryResultsDir) {
 
         this.tS = tS;
@@ -209,10 +231,12 @@ public class Config {
         setGeographyPath();
     }
 
+    // Initialise configuration from file
     public Config(Path pathToConfigFile) {
 
         configureFileProcessors();
         readConfigFile(pathToConfigFile);
+
         setUpFileStructure();
         configureLogging();
         initialiseVarPaths();
@@ -224,7 +248,11 @@ public class Config {
         setGeographyFilePath(it.next());
 
         if(it.hasNext())
-            throw new UnsupportedOperationException("Only one geography file is supported for each simulation - please remove surplus files from input dat structure or write more code...");
+            throw new UnsupportedOperationException("Only one geography file is supported for each simulation - please remove surplus files from input data structure or write more code...");
+    }
+
+    public int getCtTreeStepback() {
+        return ctTreeStepback;
     }
 
     public Path getDetailedResultsPath() {
@@ -609,6 +637,7 @@ public class Config {
         throw new IOException("Failed to get Filename");
     };
 
+    // Defines the allowed options in the config file and how to handle their values.
     private void configureFileProcessors() {
 
         processors = new HashMap<>();
