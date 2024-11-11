@@ -4,39 +4,18 @@
 ANALYSIS=$1
 FAILURES=$2
 
-# Makes temp files
-DATE=$(date +%s)
-
-DIRPATH="$(echo ~)/temp/$DATE/$RANDOM"
-mkdir -p $DIRPATH
-
-FILEPATH1="$DIRPATH/temp.txt"
-FILEPATH2="$DIRPATH/temp2.txt"
-touch $FILEPATH1
-touch $FILEPATH2
-
-#touch ~/temp.txt
-#touch ~/temp2.txt
-
-# Gets titles
-grep -n "GEEGLM" $ANALYSIS > $FAILURES
+# Gets titles and strip tags
+grep -n "GEEGLM" $ANALYSIS | sed -e 's/<[^>]*>//g' > $FAILURES
 
 # Gets STATS interactions that are significant
-grep -n "STAT" $ANALYSIS > $FILEPATH1
-grep " \." $FILEPATH1 >> $FAILURES
-grep "\*" $FILEPATH1 >> $FAILURES
+#  (that match '.  ', '*  ', '** ', or '***')
+grep -n "STAT" $ANALYSIS | grep "[\*.][* ][* ]$" >> $FAILURES
 
-# Gets any error messages
-grep -n "Error" $ANALYSIS >> $FAILURES
+# Gets any error messages and strip tags
+grep -n "Error" $ANALYSIS | sed -e 's/<[^>]*>//g' >> $FAILURES
 
-# Sorts by line number from origonal ANALYSIS file
-sort -n -t: -k1 $FAILURES > $FILEPATH1
-
-# Strips HTML tags if present
-sed -e 's/<[^>]*>//g' $FILEPATH1 > $FILEPATH2
+# Sorts by line number from original ANALYSIS file
+sort -n -t: -k1 -o $FAILURES $FAILURES
 
 # Strips line numbers
-sed 's/ *[0-9]*.//' $FILEPATH1 > $FAILURES
-
-# Removes temp files
-rm -rf $DIRPATH
+sed -i 's/ *[0-9]*.//' $FAILURES
