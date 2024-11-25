@@ -20,9 +20,9 @@ import java.util.List;
  */
 public class RCaller {
 
-    public static Process generateAnalysisHTML(Path pathOfRunDir, int maxBirthingAge, String subTitle) throws StatsException {
+    public static Process generateAnalysisHTML(Path projectPath, Path pathOfRunDir, int maxBirthingAge, String subTitle) throws StatsException {
 
-        String pathToScript = "src/main/resources/valipop/analysis-r/geeglm/runPopulationAnalysis.R";
+        String pathToScript = projectPath.toAbsolutePath().toString() + "/src/main/resources/valipop/analysis-r/geeglm/runPopulationAnalysis.R";
         String[] params = {pathOfRunDir.toAbsolutePath().toString(), String.valueOf(maxBirthingAge), subTitle};
 //        String[] params = {System.getProperty("user.dir") + "/" + pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
 
@@ -33,9 +33,9 @@ public class RCaller {
         }
     }
 
-    public static double getV(Path pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
+    public static double getV(Path projectPath, Path pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
 
-        String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/dev-minima-search.R";
+        String pathOfScript = projectPath.toAbsolutePath().toString() + "/src/main/resources/valipop/analysis-r/geeglm/dev-minima-search.R";
         String[] params = {pathOfTablesDir.toString(), String.valueOf(maxBirthingAge)};
 
         Process proc = runRScript(pathOfScript, params);
@@ -50,9 +50,9 @@ public class RCaller {
         return Double.parseDouble(res[1]);
     }
 
-    public static double getObV(Path pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
+    public static double getObV(Path projectPath, Path pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
 
-        String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/ob-minima-search.R";
+        String pathOfScript = projectPath.toAbsolutePath().toString() + "/src/main/resources/valipop/analysis-r/geeglm/ob-minima-search.R";
         String[] params = {pathOfTablesDir.toString(), String.valueOf(maxBirthingAge)};
 
         Process proc = runRScript(pathOfScript, params);
@@ -67,18 +67,18 @@ public class RCaller {
         return Double.parseDouble(res[1]);
     }
 
-    public static double getGeeglmV(String title, Path pathOfRunDir, int maxBirthingAge, LocalDateTime startTime) throws IOException, StatsException {
+    public static double getGeeglmV(String title, Path projectPath, Path pathOfRunDir, int maxBirthingAge, LocalDateTime startTime) throws IOException, StatsException {
 
         while (true) {
-            Process p = generateAnalysisHTML(pathOfRunDir, maxBirthingAge, title);
+            Process p = generateAnalysisHTML(projectPath, pathOfRunDir, maxBirthingAge, title);
             waitOnReturn(p);
 
             p.destroy();
 
             System.out.println("Analysis done");
 
-            String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh";
-            String[] params = {pathOfRunDir + "/analysis.html", pathOfRunDir + "/failtures.txt"};
+            String pathOfScript = projectPath.toAbsolutePath().toString() + "/src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh";
+            String[] params = {projectPath.toAbsolutePath().toString(), pathOfRunDir + "/analysis.html", pathOfRunDir + "/failtures.txt"};
 
             Process proc = runProcess("/bin/sh", pathOfScript, params);
             String[] res = waitOnReturn(proc).split(" ");
@@ -88,6 +88,7 @@ public class RCaller {
             if (res.length != 1) {
                 throw new StatsException("Too many values returned from sh for given script");
             }
+            System.out.println("Result: " + res[0]);
 
             /*
             // This checks to ensure that the parallelism bug in knitr hasn't affected this analysis run

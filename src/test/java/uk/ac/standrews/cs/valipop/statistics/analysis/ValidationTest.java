@@ -50,6 +50,7 @@ public class ValidationTest {
 
         double v = RCaller.getGeeglmV(
             "geeglm",
+            ".",
             tableDirectory,
             maxBirthingAge,
             time

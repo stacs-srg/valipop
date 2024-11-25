@@ -45,21 +45,21 @@ public class MinimaSearchTest {
         MinimaSearch.step = 0.5;
         MinimaSearch.initStep = 0.5;
 
-        Control control = Control.BF;
+        Control control = Control.RF;
 
         MinimaSearch.setControllingFactor(control, MinimaSearch.startFactor);
-        double bf = MinimaSearch.getControllingFactor(control);
+        double rf = MinimaSearch.getControllingFactor(control);
 
-        assertEquals(bf, startingFactor, 1E-6);
-
-        MinimaSearch.setControllingFactor(control, MinimaSearch.getNextFactorValue());
-        bf = MinimaSearch.getControllingFactor(control);
-        assertEquals(startingFactor, bf, 1E-6);
-
-        MinimaSearch.logFactortoV(bf, 0.2078297837489273);
+        assertEquals(rf, startingFactor, 1E-6);
 
         MinimaSearch.setControllingFactor(control, MinimaSearch.getNextFactorValue());
-        bf = MinimaSearch.getControllingFactor(control);
-        assertEquals(startingFactor + 0.5, bf, 1E-6);
+        rf = MinimaSearch.getControllingFactor(control);
+        assertEquals(startingFactor, rf, 1E-6);
+
+        MinimaSearch.logFactortoV(rf, 0.2078297837489273);
+
+        MinimaSearch.setControllingFactor(control, MinimaSearch.getNextFactorValue());
+        rf = MinimaSearch.getControllingFactor(control);
+        assertEquals(startingFactor + 0.5, rf, 1E-6);
     }
 }

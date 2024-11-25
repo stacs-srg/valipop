@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop;
 
 import uk.ac.standrews.cs.utilities.FileManipulation;
+import uk.ac.standrews.cs.valipop.implementations.SerializableConfig;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.utils.InputFileReader;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
@@ -24,7 +25,9 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,7 +46,7 @@ import java.util.logging.*;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class Config {
+public class Config implements Serializable {
 
     // ---- Constants ----
     private static final Level DEFAULT_LOG_LEVEL = Level.SEVERE;
@@ -111,6 +114,7 @@ public class Config {
     private static Level logLevel = DEFAULT_LOG_LEVEL;
     public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
     private final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
+    private final Path DEFAULT_PROJECT_PATH = Paths.get(".");
 
     // ---- Input directory paths ----
 
@@ -186,6 +190,7 @@ public class Config {
     private Period inputWidth = DEFAULT_INPUT_WIDTH;
 
     // Locations
+    private Path projectPath = DEFAULT_PROJECT_PATH;
     private Path summaryResultsDirPath = DEFAULT_RESULTS_SAVE_PATH;
     private Path resultsSavePath = DEFAULT_RESULTS_SAVE_PATH;
     private Path geographyFilePath = DEFAULT_GEOGRAPHY_FILE_PATH;
@@ -199,7 +204,7 @@ public class Config {
     private String runPurpose = DEFAULT_RUN_PURPOSE;
     private RecordFormat outputRecordFormat = DEFAULT_OUTPUT_RECORD_FORMAT;
 
-    private final LocalDateTime startTime = LocalDateTime.now();
+    private LocalDateTime startTime = LocalDateTime.now();
 
     // Simulation period and start size
     private LocalDate tS;
@@ -273,6 +278,10 @@ public class Config {
 
     public Path getResultsSummaryPath() {
         return resultsSummaryPath;
+    }
+
+    public Path getProjectPath() {
+        return projectPath;
     }
 
     private Path pathToLogDir(String runPurpose, LocalDateTime startTime, Path resultPath) {
@@ -515,7 +524,7 @@ public class Config {
         return this;
     }
 
-    public Config setMinGestationPeriod(Period minBirthSpacing) {
+    public Config setMinGestationPeriod(Period minGestationPeriod) {
 
         this.minGestationPeriod = minGestationPeriod;
         return this;
@@ -536,6 +545,11 @@ public class Config {
     public Config setResultsSavePath(Path resultsSavePath) {
 
         this.resultsSavePath = resultsSavePath;
+        return this;
+    }
+
+    public Config setProjectPath(Path projectPath) {
+        this.projectPath = projectPath;
         return this;
     }
 
@@ -593,6 +607,8 @@ public class Config {
 
         try {
             FileManipulation.createFileIfDoesNotExist(blankFilePath);
+        } catch (FileAlreadyExistsException e){
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -645,6 +661,7 @@ public class Config {
         processors.put("var_data_files", value -> varPath = Paths.get(value));
         processors.put("results_save_location", value -> resultsSavePath = Paths.get(value));
         processors.put("summary_results_save_location", value -> summaryResultsDirPath = Paths.get(value));
+        processors.put("project_location", value -> projectPath = Paths.get(value));
 //        processors.put("geography_file_location", value -> geographyFilePath = Paths.get(value));
 
         processors.put("simulation_time_step", value -> simulationTimeStep = Period.parse(value));
@@ -811,5 +828,131 @@ public class Config {
     private interface Processor {
 
         void set(String rep);
+    }
+
+    public SerializableConfig toSerialized() {
+        return new SerializableConfig(
+            varPath.toString(),
+            varOrderedBirthPaths.toString(),
+            varMaleLifetablePaths.toString(),
+            varMaleDeathCausesPaths.toString(),
+            varFemaleLifetablePaths.toString(),
+            varFemaleDeathCausesPaths.toString(),
+            varMultipleBirthPaths.toString(),
+            varAdulterousBirthPaths.toString(),
+            varPartneringPaths.toString(),
+            varSeparationPaths.toString(),
+            varBirthRatioPaths.toString(),
+            varMaleForenamePaths.toString(),
+            varFemaleForenamePaths.toString(),
+            varMigrantMaleForenamePaths.toString(),
+            varMigrantFemaleForenamePaths.toString(),
+            varMigrantSurnamePaths.toString(),
+            varMigrationRatePaths.toString(),
+            varSurnamePaths.toString(),
+            varMarriagePaths.toString(),
+            varGeographyPaths.toString(),
+            varMaleOccupationPaths.toString(),
+            varFemaleOccupationPaths.toString(),
+            varMaleOccupationChangePaths.toString(),
+            varFemaleOccupationChangePaths.toString(),
+            globalSummaryPath.toString(),
+            resultsSummaryPath.toString(),
+            detailedResultsPath.toString(),
+            birthOrdersPath.toString(),
+            recordsPath.toString(),
+            contingencyTablesPath.toString(),
+            runPath.toString(),
+            setUpBR,
+            setUpDR,
+            birthFactor,
+            deathFactor,
+            recoveryFactor,
+            proportionalRecoveryFactor,
+            binomialSampling,
+            deterministic,
+            outputTables,
+            simulationTimeStep,
+            minBirthSpacing,
+            minGestationPeriod,
+            inputWidth,
+            summaryResultsDirPath.toString(),
+            resultsSavePath.toString(),
+            geographyFilePath.toString(),
+            projectPath.toString(),
+            seed,
+            overSizedGeographyFactor,
+            ctTreeStepback,
+            ctTreePrecision,
+            runPurpose,
+            outputRecordFormat,
+            startTime,
+            tS,
+            t0,
+            tE,
+            t0PopulationSize
+        );
+    }
+
+    public Config(SerializableConfig config) {
+        this.varPath                          =Path.of(config.varPath);
+        this.varOrderedBirthPaths             =Path.of(config.varOrderedBirthPaths);
+        this.varMaleLifetablePaths            =Path.of(config.varMaleLifetablePaths);
+        this.varMaleDeathCausesPaths          =Path.of(config.varMaleDeathCausesPaths);
+        this.varFemaleLifetablePaths          =Path.of(config.varFemaleLifetablePaths);
+        this.varFemaleDeathCausesPaths        =Path.of(config.varFemaleDeathCausesPaths);
+        this.varMultipleBirthPaths            =Path.of(config.varMultipleBirthPaths);
+        this.varAdulterousBirthPaths          =Path.of(config.varAdulterousBirthPaths);
+        this.varPartneringPaths               =Path.of(config.varPartneringPaths);
+        this.varSeparationPaths               =Path.of(config.varSeparationPaths);
+        this.varBirthRatioPaths               =Path.of(config.varBirthRatioPaths);
+        this.varMaleForenamePaths             =Path.of(config.varMaleForenamePaths);
+        this.varFemaleForenamePaths           =Path.of(config.varFemaleForenamePaths);
+        this.varMigrantMaleForenamePaths      =Path.of(config.varMigrantMaleForenamePaths);
+        this.varMigrantFemaleForenamePaths    =Path.of(config.varMigrantFemaleForenamePaths);
+        this.varMigrantSurnamePaths           =Path.of(config.varMigrantSurnamePaths);
+        this.varMigrationRatePaths            =Path.of(config.varMigrationRatePaths);
+        this.varSurnamePaths                  =Path.of(config.varSurnamePaths);
+        this.varMarriagePaths                 =Path.of(config.varMarriagePaths);
+        this.varGeographyPaths                =Path.of(config.varGeographyPaths);
+        this.varMaleOccupationPaths           =Path.of(config.varMaleOccupationPaths);
+        this.varFemaleOccupationPaths         =Path.of(config.varFemaleOccupationPaths);
+        this.varMaleOccupationChangePaths     =Path.of(config.varMaleOccupationChangePaths);
+        this.varFemaleOccupationChangePaths   =Path.of(config.varFemaleOccupationChangePaths);
+        this.globalSummaryPath                =Path.of(config.globalSummaryPath);
+        this.resultsSummaryPath               =Path.of(config.resultsSummaryPath);
+        this.detailedResultsPath              =Path.of(config.detailedResultsPath);
+        this.birthOrdersPath                  =Path.of(config.birthOrdersPath);
+        this.recordsPath                      =Path.of(config.recordsPath);
+        this.contingencyTablesPath            =Path.of(config.contingencyTablesPath);
+        this.runPath                          =Path.of(config.runPath);
+        this.setUpBR                          =config.setUpBR;
+        this.setUpDR                          =config.setUpDR;
+        this.birthFactor                      =config.birthFactor;
+        this.deathFactor                      =config.deathFactor;
+        this.recoveryFactor                   =config.recoveryFactor;
+        this.proportionalRecoveryFactor       =config.proportionalRecoveryFactor;
+        this.binomialSampling                 =config.binomialSampling;
+        this.deterministic                    =config.deterministic;
+        this.outputTables                     =config.outputTables;
+        this.simulationTimeStep               =config.simulationTimeStep;
+        this.minBirthSpacing                  =config.minBirthSpacing;
+        this.minGestationPeriod               =config.minGestationPeriod;
+        this.inputWidth                       =config.inputWidth;
+        this.summaryResultsDirPath            =Path.of(config.summaryResultsDirPath);
+        this.resultsSavePath                  =Path.of(config.resultsSavePath);
+        this.geographyFilePath                =Path.of(config.geographyFilePath);
+        this.projectPath                      =Path.of(config.projectPath);
+        this.seed                             =config.seed;
+        this.overSizedGeographyFactor         =config.overSizedGeographyFactor;
+        this.ctTreeStepback                   =config.ctTreeStepback;
+        this.ctTreePrecision                  =config.ctTreePrecision;
+        this.runPurpose                       =config.runPurpose;
+        this.outputRecordFormat               =config.outputRecordFormat;
+        this.startTime                        =config.startTime;
+        this.tS                               =config.tS;
+        this.t0                               =config.t0;
+        this.tE                               =config.tE;
+        this.t0PopulationSize                 =config.t0PopulationSize;
     }
 }
