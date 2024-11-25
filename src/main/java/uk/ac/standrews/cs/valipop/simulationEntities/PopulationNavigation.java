@@ -375,6 +375,7 @@ public class PopulationNavigation {
         return earliestDate;
     }
 
+    // Ensures a person is present in country at the given date
     public static boolean presentOnDate(IPerson person, LocalDate date) {
 
         LocalDate immigrationDate = person.getImmigrationDate();

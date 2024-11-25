@@ -47,10 +47,10 @@ public class MinimaSearch {
     private static LocalDate t0 = LocalDate.of(1855,1,1);
     private static LocalDate tE = LocalDate.of(2015,1,1);
 
-    private static double birthFactor;
-    private static double deathFactor;
-    private static double recoveryFactor = 0.5;
-    private static double proportionalRecoveryFactor = 0.5;
+    private static double birthFactor = 0.0;
+    private static double deathFactor = 0.0;
+    private static double recoveryFactor = 0.0;
+    private static double proportionalRecoveryFactor = 0.0;
 
     private static double nanAsemtote = 1E6;
 
@@ -103,6 +103,8 @@ public class MinimaSearch {
                 for (; n < repeatRuns; n++) {
 
                     Config config = new Config(tS, t0, tE, populationSize, dataFiles, Config.DEFAULT_RESULTS_SAVE_PATH, runPurpose, Config.DEFAULT_RESULTS_SAVE_PATH);
+                    config.setDeterministic(true);
+                    config.setSeed(123);
 
                     config.setRecoveryFactor(recoveryFactor);
                     config.setProportionalRecoveryFactor(proportionalRecoveryFactor);
@@ -132,7 +134,9 @@ public class MinimaSearch {
                         if (minimiseFor != Minimise.GEEGLM) {
                             ProgramTimer statsTimer = new ProgramTimer();
 
-                            RCaller.generateAnalysisHTML(config.getRunPath(),
+                            RCaller.generateAnalysisHTML(
+                                    config.getProjectPath(),
+                                    config.getRunPath(),
                                     model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue(),
                                     runPurpose + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy));
 
@@ -174,12 +178,12 @@ public class MinimaSearch {
         switch (minimiseFor) {
 
             case ALL:
-                return RCaller.getV(config.getContingencyTablesPath(), maxBirthingAge);
+                return RCaller.getV(config.getProjectPath(), config.getContingencyTablesPath(), maxBirthingAge);
             case OB:
-                return RCaller.getObV(config.getContingencyTablesPath(), maxBirthingAge);
+                return RCaller.getObV(config.getProjectPath(), config.getContingencyTablesPath(), maxBirthingAge);
             case GEEGLM:
                 String title = config.getRunPurpose() + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy);
-                return RCaller.getGeeglmV(title, config.getRunPath(), maxBirthingAge, config.getStartTime());
+                return RCaller.getGeeglmV(title, config.getProjectPath(), config.getRunPath(), maxBirthingAge, config.getStartTime());
         }
 
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
@@ -189,11 +193,11 @@ public class MinimaSearch {
 
         switch (controlBy) {
 
-            case BF:
-                return birthFactor;
+            case RF:
+                return recoveryFactor;
 
-            case DF:
-                return deathFactor;
+            case PRF:
+                return proportionalRecoveryFactor;
         }
 
         throw new InvalidParameterException(controlBy.toString() + " did not resolve to a known parameter");
@@ -203,11 +207,11 @@ public class MinimaSearch {
 
         switch (controlBy) {
 
-            case BF:
-                birthFactor = startFactor;
+            case RF:
+                recoveryFactor = startFactor;
                 break;
-            case DF:
-                deathFactor = startFactor;
+            case PRF:
+                proportionalRecoveryFactor = startFactor;
                 break;
         }
     }
@@ -479,6 +483,7 @@ public class MinimaSearch {
             } else {
                 // if flat line
 
+                // Narrow the search to between the points and reduce step
                 newFactor = penultimatePoint.x_f - (penultimatePoint.x_f - lastPoint.x_f) / 2;
                 step = step / 2;
             }

@@ -18,8 +18,8 @@ import java.util.Arrays;
  */
 public enum Control {
 
-    BF,
-    DF;
+    RF,
+    PRF;
 
     public static Control resolve(String s) {
 
@@ -27,10 +27,10 @@ public enum Control {
 
         switch (s) {
 
-            case "bf":
-                return BF;
-            case "df":
-                return DF;
+            case "rf":
+                return RF;
+            case "prf":
+                return PRF;
 
         }
 

@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging;
 
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.implementations.SerializableSummaryRow;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
 import java.io.IOException;
@@ -226,5 +227,87 @@ public class SummaryRow {
 
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public SummaryRow(SerializableSummaryRow sr) {
+        this.startTime                     = sr.startTime;
+        this.reason                        = sr.reason;
+        this.codeVersion                   = sr.codeVersion;
+        this.inputWidth                    = sr.inputWidth;
+        this.timestep                      = sr.timestep;
+        this.startDate                     = sr.startDate;
+        this.endDate                       = sr.endDate;
+        this.simLength                     = sr.simLength;
+        this.seed                          = sr.seed;
+        this.birthFactor                   = sr.birthFactor;
+        this.deathFactor                   = sr.deathFactor;
+        this.recoveryFactor                = sr.recoveryFactor;
+        this.proportionalRecoveryFactor    = sr.proportionalRecoveryFactor;
+        this.oversizedGeographyFactor      = sr.oversizedGeographyFactor;
+        this.minBirthSpacing               = sr.minBirthSpacing;
+        this.outputRecordFormat            = sr.outputRecordFormat;
+        this.seedPop                       = sr.seedPop;
+        this.resultsDirectory              = Path.of(sr.resultsDirectory);
+        this.inputsDirectory               = Path.of(sr.inputsDirectory);
+        this.startPop                      = sr.startPop;
+        this.totalPop                      = sr.totalPop;
+        this.endPop                        = sr.endPop;
+        this.peakPop                       = sr.peakPop;
+        this.ctTreeStepback                = sr.ctTreeStepback;
+        this.ctTreePrecision               = sr.ctTreePrecision;
+        this.eligibilityChecks             = sr.eligibilityChecks;
+        this.failedEligibilityChecks       = sr.failedEligibilityChecks;
+        this.completed                     = sr.completed;
+        this.simRunTime                    = sr.simRunTime;
+        this.ctRunTime                     = sr.ctRunTime;
+        this.recordsRunTime                = sr.recordsRunTime;
+        this.statsRunTime                  = sr.statsRunTime;
+        this.binomialSampling              = sr.binomialSampling;
+        this.maxMemoryUsage                = sr.maxMemoryUsage;
+        this.v                             = sr.v;
+        this.hostname                      = sr.hostname;
+        this.config                        = new Config(sr.config);
+    }
+
+    public SerializableSummaryRow toSerialized() {
+        return new SerializableSummaryRow(
+            startTime,
+            reason,
+            codeVersion,
+            inputWidth,
+            timestep,
+            startDate,
+            endDate,
+            simLength,
+            seed,
+            birthFactor,
+            deathFactor,
+            recoveryFactor,
+            proportionalRecoveryFactor,
+            oversizedGeographyFactor,
+            minBirthSpacing,
+            outputRecordFormat,
+            seedPop,
+            resultsDirectory.toString(),
+            inputsDirectory.toString(),
+            startPop,
+            totalPop,
+            endPop,
+            peakPop,
+            ctTreeStepback,
+            ctTreePrecision,
+            eligibilityChecks,
+            failedEligibilityChecks,
+            completed,
+            simRunTime,
+            ctRunTime,
+            recordsRunTime,
+            statsRunTime,
+            binomialSampling,
+            maxMemoryUsage,
+            v,
+            hostname,
+            config.toSerialized()
+        );
     }
 }
