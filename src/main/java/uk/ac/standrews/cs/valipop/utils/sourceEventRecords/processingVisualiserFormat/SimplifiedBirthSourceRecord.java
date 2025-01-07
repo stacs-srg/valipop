@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiser
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 
 import java.time.LocalDate;
@@ -45,7 +45,7 @@ public class SimplifiedBirthSourceRecord extends IndividualSourceRecord {
     private String adoption;
 
 
-    public SimplifiedBirthSourceRecord(final IPerson person, IPopulation population) {
+    public SimplifiedBirthSourceRecord(final IPerson person, IPersonCollection population) {
 
         // Attributes associated with individual
         setUid(String.valueOf(person.getId()));

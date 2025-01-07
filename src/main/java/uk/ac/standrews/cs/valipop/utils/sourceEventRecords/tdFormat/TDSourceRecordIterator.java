@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.utilities.MappedIterator;
 import uk.ac.standrews.cs.utilities.Mapper;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 
 import java.time.LocalDate;
@@ -35,7 +35,7 @@ import java.util.function.Predicate;
  */
 public class TDSourceRecordIterator {
 
-    public static Iterable<TDBirthSourceRecord> getBirthRecordIterator(final IPopulation population, LocalDate startDate) {
+    public static Iterable<TDBirthSourceRecord> getBirthRecordIterator(final IPersonCollection population, LocalDate startDate) {
 
         return () -> {
 
@@ -49,7 +49,7 @@ public class TDSourceRecordIterator {
         };
     }
 
-    public static Iterable<TDDeathSourceRecord> getDeathRecordIterator(final IPopulation population, LocalDate startDate) {
+    public static Iterable<TDDeathSourceRecord> getDeathRecordIterator(final IPersonCollection population, LocalDate startDate) {
 
         return () -> {
 
@@ -63,7 +63,7 @@ public class TDSourceRecordIterator {
         };
     }
 
-    public static Iterable<TDMarriageSourceRecord> getMarriageRecordIterator(final IPopulation population, LocalDate startDate) {
+    public static Iterable<TDMarriageSourceRecord> getMarriageRecordIterator(final IPersonCollection population, LocalDate startDate) {
 
         return () -> {
 

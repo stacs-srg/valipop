@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Iterator;
 
 /**
  * Represents a population.

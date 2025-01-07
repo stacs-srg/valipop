@@ -19,11 +19,9 @@ package uk.ac.standrews.cs.valipop.simulationEntities;
 import java.time.LocalDate;
 
 /**
- * Interface for all population models.
- * 
- * FIXME Unrelated to Population class ?
+ * Interface for a collection of persons
  */
-public interface IPopulation {
+public interface IPersonCollection {
 
     /**
      * Allows iteration over the people in the population.

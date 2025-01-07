@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.utilities.PercentageProgressIndicator;
 import uk.ac.standrews.cs.utilities.ProgressIndicator;
 import uk.ac.standrews.cs.utilities.TimeManipulation;
 import uk.ac.standrews.cs.utilities.archive.CommandLineArgs;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -45,10 +45,10 @@ public class SourceRecordGenerator {
     private static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 10;
     private static final String NUMBER_OF_PROGRESS_UPDATES_FLAG = "-u";
 
-    private final IPopulation population;
+    private final IPersonCollection population;
     private final Path outputDir;
 
-    public SourceRecordGenerator(IPopulation population, Path outputDir) {
+    public SourceRecordGenerator(IPersonCollection population, Path outputDir) {
 
         this.population = population;
         this.outputDir = outputDir;

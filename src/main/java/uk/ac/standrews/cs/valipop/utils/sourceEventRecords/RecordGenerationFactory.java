@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat.EGSkyeSourceRecordGenerator;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecordGenerator;
@@ -18,7 +19,7 @@ public class RecordGenerationFactory {
 
     public static final Logger log = Logger.getLogger(RecordGenerationFactory.class.getName());
 
-    public static void outputRecords(RecordFormat recordFormat, Path recordsOutputDir,  PeopleCollection population, LocalDate startDate) {
+    public static void outputRecords(RecordFormat recordFormat, Path recordsOutputDir,  IPersonCollection population, LocalDate startDate) {
 
         switch(recordFormat) {
             case DS:
@@ -40,7 +41,7 @@ public class RecordGenerationFactory {
         }
     }
 
-    private static void extractSimplifiedBMDRecords(PeopleCollection population, Path recordsDirPath) {
+    private static void extractSimplifiedBMDRecords(IPersonCollection population, Path recordsDirPath) {
         log.info("OBDModel --- Outputting Simplified BMD records");
 
         try {
@@ -54,7 +55,7 @@ public class RecordGenerationFactory {
         }
     }
 
-    private static void extractBMDRecords(PeopleCollection population, Path recordsDirPath) {
+    private static void extractBMDRecords(IPersonCollection population, Path recordsDirPath) {
         log.info("OBDModel --- Outputting BMD records");
 
         try {
@@ -67,7 +68,7 @@ public class RecordGenerationFactory {
         }
     }
 
-    private static void extractEGSkyeRecords(PeopleCollection population, Path recordsDirPath, LocalDate startDate) {
+    private static void extractEGSkyeRecords(IPersonCollection population, Path recordsDirPath, LocalDate startDate) {
         log.info("OBDModel --- Outputting EG_SKYE records");
 
         try {
@@ -79,7 +80,7 @@ public class RecordGenerationFactory {
         }
     }
 
-    private static void extractTDRecords(PeopleCollection population, Path recordsDirPath, LocalDate startDate) {
+    private static void extractTDRecords(IPersonCollection population, Path recordsDirPath, LocalDate startDate) {
         log.info("OBDModel --- Outputting TD records");
 
         try {

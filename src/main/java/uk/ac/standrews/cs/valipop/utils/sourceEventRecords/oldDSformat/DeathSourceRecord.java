@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 
 import java.time.LocalDate;
@@ -101,7 +101,7 @@ public class DeathSourceRecord extends IndividualSourceRecord {
     private String spouses_names = "";
     private String spouses_occupations = "";
 
-    public DeathSourceRecord(final IPerson person, IPopulation population) {
+    public DeathSourceRecord(final IPerson person, IPersonCollection population) {
 
         // Attributes associated with individual
         setUid(String.valueOf(person.getId()));

@@ -64,7 +64,7 @@ public abstract class PersonCollection implements Iterable<IPerson> {
      *
      * @return All people in the PersonCollection
      */
-    public abstract Collection<IPerson> getPeople();
+    public abstract Iterable<IPerson> getPeople();
 
     /**
      * Adds the given person to the PersonCollection.

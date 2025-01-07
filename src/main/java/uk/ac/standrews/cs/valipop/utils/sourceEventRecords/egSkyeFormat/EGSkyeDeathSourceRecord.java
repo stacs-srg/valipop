@@ -3,7 +3,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
@@ -28,7 +28,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
     protected String marriageIDs;
     protected String deathAddress;
 
-    public EGSkyeDeathSourceRecord(IPerson person, IPopulation population) {
+    public EGSkyeDeathSourceRecord(IPerson person, IPersonCollection population) {
 
         super(person, population);
 

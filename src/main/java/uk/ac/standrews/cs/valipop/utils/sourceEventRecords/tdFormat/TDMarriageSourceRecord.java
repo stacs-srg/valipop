@@ -3,7 +3,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.tdFormat;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
@@ -40,7 +40,7 @@ public class TDMarriageSourceRecord extends MarriageSourceRecord {
     private String BRIDE_FATHER_BIRTH_RECORD_IDENTITY = "";
     private String BRIDE_MOTHER_BIRTH_RECORD_IDENTITY = "";
 
-    public TDMarriageSourceRecord(IPartnership partnership, IPopulation population) {
+    public TDMarriageSourceRecord(IPartnership partnership, IPersonCollection population) {
         super(partnership, population);
 
         marriageDate = partnership.getPartnershipDate();

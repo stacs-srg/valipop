@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.MarriageSourceRecord;
 
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
     protected int brideID;
     protected String marriageLocation;
 
-    public EGSkyeMarriageSourceRecord(IPartnership partnership, IPopulation population) {
+    public EGSkyeMarriageSourceRecord(IPartnership partnership, IPersonCollection population) {
         super(partnership, population);
 
         marriageDate = partnership.getPartnershipDate();

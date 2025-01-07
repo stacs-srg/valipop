@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.gedcom;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.graphviz.GraphvizPopulationWriter;
@@ -39,7 +39,7 @@ public class GraphvizTestCaseRecorder extends AbstractTestCaseRecorder {
     }
 
     @Override
-    protected IPopulationWriter getPopulationWriter(final Path path, final IPopulation population) throws IOException {
+    protected IPopulationWriter getPopulationWriter(final Path path, final IPersonCollection population) throws IOException {
 
         return new GraphvizPopulationWriter(population, path);
     }

@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.utilities.ProgressIndicator;
 import uk.ac.standrews.cs.utilities.TimeManipulation;
 import uk.ac.standrews.cs.utilities.archive.CommandLineArgs;
 import uk.ac.standrews.cs.utilities.archive.Diagnostic;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
 import java.io.IOException;
@@ -48,10 +48,10 @@ public class TDSourceRecordGenerator {
     public static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 10;
     private static final String NUMBER_OF_PROGRESS_UPDATES_FLAG = "-u";
 
-    private final IPopulation population;
+    private final IPersonCollection population;
     private final Path outputDir;
 
-    public TDSourceRecordGenerator(IPopulation population, Path outputDir) {
+    public TDSourceRecordGenerator(IPersonCollection population, Path outputDir) {
 
         this.population = population;
         this.outputDir = outputDir;

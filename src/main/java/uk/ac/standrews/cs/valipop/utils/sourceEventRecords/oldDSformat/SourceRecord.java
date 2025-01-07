@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -52,7 +52,7 @@ public abstract class SourceRecord {
         this.entry = entry;
     }
 
-    protected String getMaidenSurname(IPopulation population, IPerson female) {
+    protected String getMaidenSurname(IPersonCollection population, IPerson female) {
 
         IPartnership parents_partnership = female.getParents();
 
