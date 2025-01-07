@@ -2,7 +2,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.tdFormat;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
 
@@ -44,7 +44,7 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
     private String IMMIGRATION_GENERATION = "NA";
 
 
-    public TDBirthSourceRecord(IPerson person, IPopulation population) {
+    public TDBirthSourceRecord(IPerson person, IPersonCollection population) {
 
         super(person, population);
 

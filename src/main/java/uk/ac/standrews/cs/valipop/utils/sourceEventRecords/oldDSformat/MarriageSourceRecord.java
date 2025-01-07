@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
@@ -136,7 +136,7 @@ public class MarriageSourceRecord extends SourceRecord {
     private String bride_mother_deceased;
     private String bride_father_occupation;
 
-    public MarriageSourceRecord(final IPartnership partnership, final IPopulation population) {
+    public MarriageSourceRecord(final IPartnership partnership, final IPersonCollection population) {
 
         marriage_date = partnership.getMarriageDate();
 

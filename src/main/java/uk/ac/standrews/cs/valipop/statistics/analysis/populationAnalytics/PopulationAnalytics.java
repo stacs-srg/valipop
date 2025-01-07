@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
 import java.io.PrintStream;
@@ -35,7 +35,7 @@ import java.util.List;
 public class PopulationAnalytics {
 
     private static final int ONE_HUNDRED = 100;
-    private final IPopulation population;
+    private final IPersonCollection population;
     private PrintStream out;
 
     /**
@@ -43,7 +43,7 @@ public class PopulationAnalytics {
      *
      * @param population the population to analyse
      */
-    public PopulationAnalytics(final IPopulation population, PrintStream resultsOutput) {
+    public PopulationAnalytics(final IPersonCollection population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;

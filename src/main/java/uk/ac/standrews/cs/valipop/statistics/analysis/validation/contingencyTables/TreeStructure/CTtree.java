@@ -28,6 +28,7 @@ import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
@@ -54,7 +55,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
     private SourceNodeInt simNode;
     private SourceNodeDouble statNode = null;
 
-    public CTtree(PeopleCollection population, PopulationStatistics expected, LocalDate startDate, LocalDate zeroDate, LocalDate endDate, int startStepBack, double precision) {
+    public CTtree(Iterable<IPerson> population, PopulationStatistics expected, LocalDate startDate, LocalDate zeroDate, LocalDate endDate, int startStepBack, double precision) {
 
         this.NODE_MIN_COUNT = precision;
         this.expected = expected;
@@ -70,7 +71,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
             LocalDate prevDay = LocalDate.of(y.getYear() - 1, 12, 31);
 
             // for every person in population
-            for (IPerson person : population.getPeople()) {
+            for (IPerson person : population) {
 
                 if (prevY.getYear() == y.getYear() && PopulationNavigation.aliveOnDate(person, prevDay) && PopulationNavigation.presentOnDate(person, prevDay)) {
 

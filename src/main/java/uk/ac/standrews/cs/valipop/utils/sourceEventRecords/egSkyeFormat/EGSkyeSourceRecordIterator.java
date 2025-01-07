@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.utilities.MappedIterator;
 import uk.ac.standrews.cs.utilities.Mapper;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 
 import java.time.LocalDate;
@@ -35,7 +35,7 @@ import java.util.function.Predicate;
  */
 public class EGSkyeSourceRecordIterator {
 
-    public static Iterable<EGSkyeBirthSourceRecord> getBirthRecordIterator(final IPopulation population, LocalDate startDate) {
+    public static Iterable<EGSkyeBirthSourceRecord> getBirthRecordIterator(final IPersonCollection population, LocalDate startDate) {
 
         return () -> {
 
@@ -49,7 +49,7 @@ public class EGSkyeSourceRecordIterator {
         };
     }
 
-    public static Iterable<EGSkyeDeathSourceRecord> getDeathRecordIterator(final IPopulation population, LocalDate startDate) {
+    public static Iterable<EGSkyeDeathSourceRecord> getDeathRecordIterator(final IPersonCollection population, LocalDate startDate) {
 
         return () -> {
 
@@ -63,7 +63,7 @@ public class EGSkyeSourceRecordIterator {
         };
     }
 
-    public static Iterable<EGSkyeMarriageSourceRecord> getMarriageRecordIterator(final IPopulation population, LocalDate startDate) {
+    public static Iterable<EGSkyeMarriageSourceRecord> getMarriageRecordIterator(final IPersonCollection population, LocalDate startDate) {
 
         return () -> {
 

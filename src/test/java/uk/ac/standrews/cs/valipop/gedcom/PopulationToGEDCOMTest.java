@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.PopulationConverter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationAdapter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         intended_output = Paths.get(TEST_DIRECTORY_PATH_STRING, "gedcom", file_name_root + INTENDED_SUFFIX);
     }
 
-    public PopulationToGEDCOMTest(final IPopulation population, final String file_name) {
+    public PopulationToGEDCOMTest(final IPersonCollection population, final String file_name) {
 
         super(population, file_name);
     }
@@ -89,7 +89,7 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
             }
 
             try {
-                IPopulation imported = new GEDCOMPopulationAdapter(path1);
+                IPersonCollection imported = new GEDCOMPopulationAdapter(path1);
                 try (PopulationConverter converter = new PopulationConverter(imported, population_writer2)) {
                     converter.convert();
                 }

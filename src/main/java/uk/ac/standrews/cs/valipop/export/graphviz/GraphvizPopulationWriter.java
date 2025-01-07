@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.export.graphviz;
 import uk.ac.standrews.cs.valipop.export.AbstractFilePopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -44,7 +44,7 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
     private static final String FAMILY_ARC_ATTRIBUTES = " [color=" + PARTNERSHIP_ARC_COLOUR + " arrowhead=none]";
 
     private final DateTimeFormatter formatter;
-    private final IPopulation population;
+    private final IPersonCollection population;
 
     /**
      * Initialises the writer.
@@ -53,7 +53,7 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
      * @param path       the path for the output file
      * @throws IOException if the file does not exist and cannot be created
      */
-    public GraphvizPopulationWriter(final IPopulation population, final Path path) throws IOException {
+    public GraphvizPopulationWriter(final IPersonCollection population, final Path path) throws IOException {
 
         super(path);
         this.population = population;

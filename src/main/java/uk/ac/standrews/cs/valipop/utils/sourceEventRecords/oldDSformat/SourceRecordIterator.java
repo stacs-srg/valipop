@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.utilities.MappedIterator;
 import uk.ac.standrews.cs.utilities.Mapper;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,7 +33,7 @@ import java.util.function.Predicate;
  */
 public class SourceRecordIterator {
 
-    public static Iterable<BirthSourceRecord> getBirthRecordIterator(final IPopulation population) {
+    public static Iterable<BirthSourceRecord> getBirthRecordIterator(final IPersonCollection population) {
 
         return () -> {
 
@@ -45,7 +45,7 @@ public class SourceRecordIterator {
         };
     }
 
-    public static Iterable<DeathSourceRecord> getDeathRecordIterator(final IPopulation population) {
+    public static Iterable<DeathSourceRecord> getDeathRecordIterator(final IPersonCollection population) {
 
         return () -> {
 
@@ -59,7 +59,7 @@ public class SourceRecordIterator {
         };
     }
 
-    public static Iterable<MarriageSourceRecord> getMarriageRecordIterator(final IPopulation population) {
+    public static Iterable<MarriageSourceRecord> getMarriageRecordIterator(final IPersonCollection population) {
 
         return () -> {
 

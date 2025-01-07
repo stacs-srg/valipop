@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiser
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
 import java.time.LocalDate;
@@ -83,7 +83,7 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
     private String bride_mother_deceased;
     private String bride_father_occupation;
 
-    SimplifiedMarriageSourceRecord(final IPartnership partnership, final IPopulation population) {
+    SimplifiedMarriageSourceRecord(final IPartnership partnership, final IPersonCollection population) {
 
         setUid(String.valueOf(partnership.getId()));
 
