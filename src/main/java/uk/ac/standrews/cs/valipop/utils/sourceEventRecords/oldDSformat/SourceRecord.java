@@ -52,7 +52,7 @@ public abstract class SourceRecord {
         this.entry = entry;
     }
 
-    protected String getMaidenSurname(IPersonCollection population, IPerson female) {
+    protected String getMaidenSurname(IPerson female) {
 
         IPartnership parents_partnership = female.getParents();
 

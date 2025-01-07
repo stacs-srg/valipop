@@ -16,8 +16,8 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
     protected int brideID;
     protected String marriageLocation;
 
-    public EGSkyeMarriageSourceRecord(IPartnership partnership, IPersonCollection population) {
-        super(partnership, population);
+    public EGSkyeMarriageSourceRecord(IPartnership partnership) {
+        super(partnership);
 
         marriageDate = partnership.getPartnershipDate();
         groomID = partnership.getMalePartner().getId();

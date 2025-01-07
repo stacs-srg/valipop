@@ -41,9 +41,9 @@ public class TDDeathSourceRecord extends DeathSourceRecord {
     private String SPOUSE_MARRIAGE_RECORD_IDENTITY = "";
     private String SPOUSE_BIRTH_RECORD_IDENTITY = "";
 
-    public TDDeathSourceRecord(IPerson person, IPersonCollection population) {
+    public TDDeathSourceRecord(IPerson person) {
 
-        super(person, population);
+        super(person);
 
         deathDate = person.getDeathDate();
         deathAddress = person.getAddress(deathDate).toString();

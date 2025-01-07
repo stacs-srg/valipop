@@ -40,8 +40,8 @@ public class TDMarriageSourceRecord extends MarriageSourceRecord {
     private String BRIDE_FATHER_BIRTH_RECORD_IDENTITY = "";
     private String BRIDE_MOTHER_BIRTH_RECORD_IDENTITY = "";
 
-    public TDMarriageSourceRecord(IPartnership partnership, IPersonCollection population) {
-        super(partnership, population);
+    public TDMarriageSourceRecord(IPartnership partnership) {
+        super(partnership);
 
         marriageDate = partnership.getPartnershipDate();
         groomID = partnership.getMalePartner().getId();

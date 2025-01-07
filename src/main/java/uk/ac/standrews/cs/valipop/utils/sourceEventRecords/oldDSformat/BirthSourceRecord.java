@@ -89,7 +89,7 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 
     protected int parents_partnership_id;
 
-    public BirthSourceRecord(final IPerson person, IPersonCollection population) {
+    public BirthSourceRecord(final IPerson person) {
 
         // Attributes associated with individual
         setUid(String.valueOf(person.getId()));
@@ -119,7 +119,7 @@ public class BirthSourceRecord extends IndividualSourceRecord {
                 setBirthAddress(person.getAddress(person.getBirthDate()).toString());
             }
 
-            setParentAttributes(person, population, parents_partnership);
+            setParentAttributes(person);
         }
     }
 

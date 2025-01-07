@@ -28,9 +28,9 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
     protected String marriageIDs;
     protected String deathAddress;
 
-    public EGSkyeDeathSourceRecord(IPerson person, IPersonCollection population) {
+    public EGSkyeDeathSourceRecord(IPerson person) {
 
-        super(person, population);
+        super(person);
 
         deathDate = person.getDeathDate();
         deathAddress = person.getAddress(deathDate).toString();

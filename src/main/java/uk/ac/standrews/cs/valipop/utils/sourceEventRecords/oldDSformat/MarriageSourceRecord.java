@@ -136,7 +136,7 @@ public class MarriageSourceRecord extends SourceRecord {
     private String bride_mother_deceased;
     private String bride_father_occupation;
 
-    public MarriageSourceRecord(final IPartnership partnership, final IPersonCollection population) {
+    public MarriageSourceRecord(final IPartnership partnership) {
 
         marriage_date = partnership.getMarriageDate();
 
@@ -168,7 +168,7 @@ public class MarriageSourceRecord extends SourceRecord {
             setGroomFathersOccupation(groom_father.getOccupation(marriage_date));
 
             setGroomMothersForename(groom_mother.getFirstName());
-            setGroomMothersMaidenSurname(getMaidenSurname(population, groom_mother));
+            setGroomMothersMaidenSurname(getMaidenSurname(groom_mother));
         }
 
         final IPartnership bride_parents_partnership = bride.getParents();
@@ -182,7 +182,7 @@ public class MarriageSourceRecord extends SourceRecord {
             setBrideFatherOccupation(bride_father.getOccupation(marriage_date));
 
             setBrideMothersForename(bride_mother.getFirstName());
-            setBrideMothersMaidenSurname(getMaidenSurname(population, bride_mother));
+            setBrideMothersMaidenSurname(getMaidenSurname(bride_mother));
         }
     }
 
