@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiser
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
 import java.time.LocalDate;
@@ -83,7 +82,7 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
     private String bride_mother_deceased;
     private String bride_father_occupation;
 
-    SimplifiedMarriageSourceRecord(final IPartnership partnership, final IPersonCollection population) {
+    public SimplifiedMarriageSourceRecord(final IPartnership partnership) {
 
         setUid(String.valueOf(partnership.getId()));
 
@@ -117,7 +116,7 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
 
             setGroomMotherId(String.valueOf(groom_mother.getId()));
             setGroomMothersForename(groom_mother.getFirstName());
-            setGroomMothersMaidenSurname(getMaidenSurname(population, groom_mother));
+            setGroomMothersMaidenSurname(getMaidenSurname(groom_mother));
         }
 
         IPartnership bride_parents_partnership = bride.getParents();
@@ -133,7 +132,7 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
 
             setBrideMotherId(String.valueOf(bride_mother.getId()));
             setBrideMothersForename(bride_mother.getFirstName());
-            setBrideMothersMaidenSurname(getMaidenSurname(population, bride_mother));
+            setBrideMothersMaidenSurname(getMaidenSurname(bride_mother));
         }
     }
 

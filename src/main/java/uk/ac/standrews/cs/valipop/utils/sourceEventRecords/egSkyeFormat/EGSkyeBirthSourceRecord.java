@@ -23,9 +23,9 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
     protected String marriageBaby = "";
     protected String deathID = "";
 
-    public EGSkyeBirthSourceRecord(IPerson person, IPersonCollection population) {
+    public EGSkyeBirthSourceRecord(IPerson person) {
 
-        super(person, population);
+        super(person);
 
         familyID = parents_partnership_id;
         birthDate = person.getBirthDate();

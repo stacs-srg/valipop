@@ -94,8 +94,8 @@ public class Partnership implements IPartnership {
 
     private void appendPerson(StringBuilder s, IPerson person) {
 
-        s.append(person.getId()).append(" | ");
-        s.append(person.getFirstName()).append(" ");
+        //s.append(person.getId()).append(" | ");
+        //s.append(person.getFirstName()).append(" ");
         s.append(person.getSurname()).append(" | ");
         s.append(person.getSex()).append(" | ");
         s.append(person.getBirthDate()).append(" | ");

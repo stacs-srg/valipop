@@ -42,7 +42,7 @@ public class Person implements IPerson {
     private IPartnership parents;
 
     private final String firstName;
-    private final String surname;
+    private final Surname surname;
     private final String representation;
     private boolean adulterousBirth;
 
@@ -141,6 +141,11 @@ public class Person implements IPerson {
 
     @Override
     public String getSurname() {
+        return surname.getName();
+    }
+
+    @Override
+    public Surname getSurnameRef() {
         return surname;
     }
 
@@ -457,16 +462,16 @@ public class Person implements IPerson {
         }
     }
 
-    private String getSurname(PopulationStatistics statistics, boolean immigrant) {
+    private Surname getSurname(PopulationStatistics statistics, boolean immigrant) {
 
         if (parents != null) {
-            return parents.getMalePartner().getSurname();
+            return parents.getMalePartner().getSurnameRef();
         }
         else {
             if(immigrant) {
-                return statistics.getMigrantSurnameDistribution(Year.of(birthDate.getYear())).getSample();
+                return new Surname(statistics.getMigrantSurnameDistribution(Year.of(birthDate.getYear())).getSample());
             } else {
-                return statistics.getSurnameDistribution(Year.of(birthDate.getYear())).getSample();
+                return new Surname(statistics.getSurnameDistribution(Year.of(birthDate.getYear())).getSample());
             }
         }
     }
