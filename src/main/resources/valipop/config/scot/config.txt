@@ -11,6 +11,7 @@ min_birth_spacing = P147D
 min_gestation_period = P147D
 results_save_location = /app/results
 output_record_format = TD
+output_graph_format = GRAPHVIZ
 input_width = P10Y
 recovery_factor = 50
 proportional_recovery_factor = 50
