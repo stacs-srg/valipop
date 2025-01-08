@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop;
 
 import uk.ac.standrews.cs.utilities.FileManipulation;
+import uk.ac.standrews.cs.valipop.export.ExportFormat;
 import uk.ac.standrews.cs.valipop.implementations.SerializableConfig;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.utils.InputFileReader;
@@ -73,6 +74,7 @@ public class Config implements Serializable {
     private static final double DEFAULT_CT_TREE_PRECISION = 1E-66;
 
     private static final RecordFormat DEFAULT_OUTPUT_RECORD_FORMAT = RecordFormat.NONE;
+    private static final ExportFormat DEFAULT_OUTPUT_GRAPH_FORMAT = ExportFormat.NONE;
     private static final String DEFAULT_RUN_PURPOSE = "default";
 
     // Input directory structure
@@ -163,6 +165,9 @@ public class Config implements Serializable {
     // Path for the records of a run
     private Path recordsPath;
 
+    // Path for the graphs of a run
+    private Path graphsPath;
+
     // Path for the CT tables used in R analysis of a run
     private Path contingencyTablesPath;
 
@@ -203,6 +208,7 @@ public class Config implements Serializable {
 
     private String runPurpose = DEFAULT_RUN_PURPOSE;
     private RecordFormat outputRecordFormat = DEFAULT_OUTPUT_RECORD_FORMAT;
+    private ExportFormat outputGraphFormat = DEFAULT_OUTPUT_GRAPH_FORMAT;
 
     private LocalDateTime startTime = LocalDateTime.now();
 
@@ -266,6 +272,10 @@ public class Config implements Serializable {
 
     public Path getRecordsDirPath() {
         return recordsPath;
+    }
+
+    public Path getGraphsDirPath() {
+        return graphsPath;
     }
 
     public Path getContingencyTablesPath() {
@@ -464,6 +474,10 @@ public class Config implements Serializable {
 
     public RecordFormat getOutputRecordFormat() {
         return outputRecordFormat;
+    }
+
+    public ExportFormat getOutputGraphFormat() {
+        return outputGraphFormat;
     }
 
     public boolean getOutputTables() {
@@ -691,6 +705,7 @@ public class Config implements Serializable {
         processors.put("deterministic", value -> deterministic = value.toLowerCase().equals("true"));
 
         processors.put("output_record_format", value -> outputRecordFormat = RecordFormat.valueOf(value));
+        processors.put("output_graph_format", value -> outputGraphFormat = ExportFormat.valueOf(value));
         processors.put("log_level", value -> logLevel = Level.parse(value));
         processors.put("run_purpose", value -> runPurpose = value);
     }
@@ -741,6 +756,7 @@ public class Config implements Serializable {
         Path dumpPath = runPath.resolve("dump");
         birthOrdersPath = dumpPath.resolve("order.csv");
         recordsPath = runPath.resolve("records");
+        graphsPath = runPath.resolve("graphs");
         contingencyTablesPath = runPath.resolve("tables");
         Path log = runPath.resolve("log");
         Path tracePath = log.resolve("trace.txt");
@@ -750,6 +766,7 @@ public class Config implements Serializable {
         mkDirs(runPath);
         mkDirs(dumpPath);
         mkDirs(recordsPath);
+        mkDirs(graphsPath);
         mkDirs(contingencyTablesPath);
         mkDirs(log);
 
@@ -861,6 +878,7 @@ public class Config implements Serializable {
             detailedResultsPath.toString(),
             birthOrdersPath.toString(),
             recordsPath.toString(),
+            graphsPath.toString(),
             contingencyTablesPath.toString(),
             runPath.toString(),
             setUpBR,
@@ -886,6 +904,7 @@ public class Config implements Serializable {
             ctTreePrecision,
             runPurpose,
             outputRecordFormat,
+            outputGraphFormat,
             startTime,
             tS,
             t0,
@@ -924,6 +943,7 @@ public class Config implements Serializable {
         this.detailedResultsPath              =Path.of(config.detailedResultsPath);
         this.birthOrdersPath                  =Path.of(config.birthOrdersPath);
         this.recordsPath                      =Path.of(config.recordsPath);
+        this.graphsPath                       =Path.of(config.graphsPath);
         this.contingencyTablesPath            =Path.of(config.contingencyTablesPath);
         this.runPath                          =Path.of(config.runPath);
         this.setUpBR                          =config.setUpBR;
@@ -949,6 +969,7 @@ public class Config implements Serializable {
         this.ctTreePrecision                  =config.ctTreePrecision;
         this.runPurpose                       =config.runPurpose;
         this.outputRecordFormat               =config.outputRecordFormat;
+        this.outputGraphFormat                =config.outputGraphFormat;
         this.startTime                        =config.startTime;
         this.tS                               =config.tS;
         this.t0                               =config.t0;

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
+import uk.ac.standrews.cs.valipop.export.ExportFormat;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
 public class SerializableConfig implements Serializable {
@@ -37,6 +38,7 @@ public class SerializableConfig implements Serializable {
     public String detailedResultsPath;
     public String birthOrdersPath;
     public String recordsPath;
+    public String graphsPath;
     public String contingencyTablesPath;
     public String runPath;
     public double setUpBR;
@@ -62,6 +64,7 @@ public class SerializableConfig implements Serializable {
     public double ctTreePrecision;
     public String runPurpose;
     public RecordFormat outputRecordFormat;
+    public ExportFormat outputGraphFormat;
     public LocalDateTime startTime;
     public LocalDate tS;
     public LocalDate t0;
@@ -98,6 +101,7 @@ public class SerializableConfig implements Serializable {
         String detailedResultsPath,
         String birthOrdersPath,
         String recordsPath,
+        String graphsPath,
         String contingencyTablesPath,
         String runPath,
         double setUpBR,
@@ -123,6 +127,7 @@ public class SerializableConfig implements Serializable {
         double ctTreePrecision,
         String runPurpose,
         RecordFormat outputRecordFormat,
+        ExportFormat outputGraphFormat,
         LocalDateTime startTime,
         LocalDate tS,
         LocalDate t0,
@@ -158,6 +163,7 @@ public class SerializableConfig implements Serializable {
         this.detailedResultsPath              =detailedResultsPath;
         this.birthOrdersPath                  =birthOrdersPath;
         this.recordsPath                      =recordsPath;
+        this.graphsPath                       =graphsPath;
         this.contingencyTablesPath            =contingencyTablesPath;
         this.runPath                          =runPath;
         this.setUpBR                          =setUpBR;
@@ -183,6 +189,7 @@ public class SerializableConfig implements Serializable {
         this.ctTreePrecision                  =ctTreePrecision;
         this.runPurpose                       =runPurpose;
         this.outputRecordFormat               =outputRecordFormat;
+        this.outputGraphFormat                =outputGraphFormat;
         this.startTime                        =startTime;
         this.tS                               =tS;
         this.t0                               =t0;

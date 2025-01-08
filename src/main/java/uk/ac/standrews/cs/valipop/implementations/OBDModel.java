@@ -18,8 +18,16 @@ package uk.ac.standrews.cs.valipop.implementations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.stream.Collectors;
+
+import javax.imageio.IIOException;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.export.ExportFormat;
+import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
+import uk.ac.standrews.cs.valipop.export.PopulationConverter;
+import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
+import uk.ac.standrews.cs.valipop.export.graphviz.GraphvizPopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.*;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.AnalyticsRunner;
@@ -44,6 +52,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.MarriageDateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.Year;
@@ -189,6 +198,10 @@ public class OBDModel {
             RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), config.getRecordsDirPath(), population.getPeople(), population.getPeople().getPartnerships(), config.getT0());
         }
 
+        if (config.getOutputGraphFormat() != ExportFormat.NONE) {
+            outputToGraph(config.getOutputGraphFormat(), population.getPeople(), config.getGraphsDirPath());
+        }
+
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
 
         try (PrintStream resultsOutput = new PrintStream(config.getDetailedResultsPath().toFile(), "UTF-8")) {
@@ -208,6 +221,33 @@ public class OBDModel {
         }
 
         log.info("OBDModel --- Output complete");
+    }
+
+    private void outputToGraph(ExportFormat type, IPersonCollection people, Path outputDir) {
+        try {
+            IPopulationWriter populationWriter = null;
+            switch (type) {
+                case GEDCOM:
+                    Path gedcomPath = outputDir.resolve("graph.ged");
+                    populationWriter = new GEDCOMPopulationWriter(gedcomPath);
+                    break;
+                case GRAPHVIZ:
+                    Path graphvizPath = outputDir.resolve("graph.dot");
+                    populationWriter = new GraphvizPopulationWriter(people, graphvizPath);
+                    break;
+                default:
+                    return;
+            }
+
+            try (PopulationConverter converter = new PopulationConverter(people, populationWriter)) {
+                converter.convert();
+            }
+
+        } catch (Exception e) {
+            log.info("Graph generation failed");
+            e.printStackTrace();
+            log.info(e.getMessage());
+        }
     }
 
     private boolean successfulRun() {
