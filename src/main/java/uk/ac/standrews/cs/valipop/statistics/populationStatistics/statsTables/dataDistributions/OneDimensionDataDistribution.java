@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
+public class OneDimensionDataDistribution implements InputMetaData<IntegerRange>, Cloneable {
 
     public static Logger log = Logger.getLogger(OneDimensionDataDistribution.class.getName());
 

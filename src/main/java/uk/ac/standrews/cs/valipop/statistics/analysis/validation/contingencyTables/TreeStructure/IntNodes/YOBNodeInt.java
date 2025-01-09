@@ -61,6 +61,7 @@ public class YOBNodeInt extends IntNode<Year, SexOption> {
         return "YOB";
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTRow<Integer> toCTRow() {
         CTRow r = getParent().toCTRow();
         r.setVariable(getVariableName(), Integer.toString(getOption().getValue()));

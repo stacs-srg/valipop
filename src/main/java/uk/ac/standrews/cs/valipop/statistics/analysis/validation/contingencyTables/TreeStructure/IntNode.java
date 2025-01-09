@@ -22,7 +22,8 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
  */
 public abstract class IntNode<Op extends Comparable<Op>, cOp extends Comparable<cOp>> extends Node<Op, cOp, Integer, Integer> {
 
-    public IntNode(Op option, Node parentNode, int initCount) {
+    @SuppressWarnings("unchecked")
+    public IntNode(Op option, @SuppressWarnings("rawtypes") Node parentNode, int initCount) {
         super(option, parentNode, initCount);
     }
 
@@ -30,7 +31,8 @@ public abstract class IntNode<Op extends Comparable<Op>, cOp extends Comparable<
 
     }
 
-    public IntNode(Op option, Node parentNode) {
+    @SuppressWarnings("unchecked")
+    public IntNode(Op option, @SuppressWarnings("rawtypes") Node parentNode) {
         super(option, parentNode, 0);
     }
 

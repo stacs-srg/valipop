@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.valipop.gedcom;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
-import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.graphviz.GraphvizPopulationWriter;
 
 import java.io.IOException;

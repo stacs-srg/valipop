@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.time.LocalDate;
 import java.time.Period;

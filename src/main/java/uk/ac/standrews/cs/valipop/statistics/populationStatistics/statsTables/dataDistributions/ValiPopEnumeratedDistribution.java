@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class ValiPopEnumeratedDistribution extends EnumeratedDistribution implements InputMetaData {
+public class ValiPopEnumeratedDistribution extends EnumeratedDistribution implements InputMetaData<String> {
 
     private final Year year;
     private final String sourcePopulation;

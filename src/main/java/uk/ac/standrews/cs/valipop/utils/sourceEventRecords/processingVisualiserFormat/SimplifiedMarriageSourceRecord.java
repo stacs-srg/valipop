@@ -34,53 +34,29 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
 
     private LocalDate marriage_date;
 
-    private String denomination;
-
     private String groom_id;
     private String groom_forename;
-    private String groom_forename_changed;
     private String groom_surname;
-    private String groom_surname_changed;
-    private String groom_did_not_sign;
-
-    private String groom_address;
-    private String groom_age_or_date_of_birth;
-    private String groom_occupation;
-    private String groom_marital_status;
 
     private String groom_fathers_id;
     private String groom_fathers_forename;
     private String groom_fathers_surname;
-    private String groom_father_deceased;
 
     private String groom_mothers_id;
     private String groom_mothers_forename;
     private String groom_mothers_maiden_surname;
-    private String groom_mother_deceased;
-    private String groom_fathers_occupation;
 
     private String bride_id;
     private String bride_forename;
-    private String bride_forename_changed;
     private String bride_surname;
-    private String bride_surname_changed;
-    private String bride_did_not_sign;
-
-    private String bride_address;
-    private String bride_age_or_date_of_birth;
-    private String bride_occupation;
-    private String bride_marital_status;
 
     private String bride_fathers_id;
     private String bride_fathers_forename;
     private String bride_fathers_surname;
-    private String bride_father_deceased;
 
     private String bride_mothers_id;
     private String bride_mothers_forename;
     private String bride_mothers_maiden_surname;
-    private String bride_mother_deceased;
-    private String bride_father_occupation;
 
     public SimplifiedMarriageSourceRecord(final IPartnership partnership) {
 
@@ -94,14 +70,10 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
         setGroomId(String.valueOf(groom.getId()));
         setGroomForename(groom.getFirstName());
         setGroomSurname(groom.getSurname());
-        setGroomOccupation(groom.getOccupation(marriage_date));
-        setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate(), marriage_date)));
 
         setBrideId(String.valueOf(bride.getId()));
         setBrideForename(bride.getFirstName());
         setBrideSurname(bride.getSurname());
-        setBrideOccupation(bride.getOccupation(marriage_date));
-        setBrideAgeOrDateOfBirth(String.valueOf(fullYearsBetween(bride.getBirthDate(), marriage_date)));
 
         IPartnership groom_parents_partnership = groom.getParents();
         if (groom_parents_partnership != null) {
@@ -112,7 +84,6 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
             setGroomFatherId(String.valueOf(groom_father.getId()));
             setGroomFathersForename(groom_father.getFirstName());
             setGroomFathersSurname(getRecordedParentsSurname(groom_father.getSurname(), groom.getSurname()));
-            setGroomFathersOccupation(groom_father.getOccupation(marriage_date));
 
             setGroomMotherId(String.valueOf(groom_mother.getId()));
             setGroomMothersForename(groom_mother.getFirstName());
@@ -128,7 +99,6 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
             setBrideFatherId(String.valueOf(bride_father.getId()));
             setBrideFathersForename(bride_father.getFirstName());
             setBrideFathersSurname(getRecordedParentsSurname(bride_father.getSurname(), bride.getSurname()));
-            setBrideFatherOccupation(bride_father.getOccupation(marriage_date));
 
             setBrideMotherId(String.valueOf(bride_mother.getId()));
             setBrideMothersForename(bride_mother.getFirstName());
@@ -156,14 +126,6 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
         this.groom_surname = groom_surname;
     }
 
-    private void setGroomAgeOrDateOfBirth(final String groom_age_or_date_of_birth) {
-        this.groom_age_or_date_of_birth = groom_age_or_date_of_birth;
-    }
-
-    private void setGroomOccupation(final String groom_occupation) {
-        this.groom_occupation = groom_occupation;
-    }
-
     private void setGroomFathersForename(final String groom_fathers_forename) {
         this.groom_fathers_forename = groom_fathers_forename;
     }
@@ -178,10 +140,6 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
 
     private void setGroomMothersMaidenSurname(final String groom_mothers_maiden_surname) {
         this.groom_mothers_maiden_surname = groom_mothers_maiden_surname;
-    }
-
-    private void setGroomFathersOccupation(final String groom_fathers_occupation) {
-        this.groom_fathers_occupation = groom_fathers_occupation;
     }
 
     private void setBrideId(String id) {
@@ -204,14 +162,6 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
         this.bride_surname = bride_surname;
     }
 
-    private void setBrideAgeOrDateOfBirth(final String bride_age_or_date_of_birth) {
-        this.bride_age_or_date_of_birth = bride_age_or_date_of_birth;
-    }
-
-    private void setBrideOccupation(final String bride_occupation) {
-        this.bride_occupation = bride_occupation;
-    }
-
     private void setBrideFathersForename(final String bride_fathers_Forename) {
         this.bride_fathers_forename = bride_fathers_Forename;
     }
@@ -226,10 +176,6 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
 
     private void setBrideMothersMaidenSurname(final String bride_mothers_maiden_surname) {
         this.bride_mothers_maiden_surname = bride_mothers_maiden_surname;
-    }
-
-    private void setBrideFatherOccupation(final String bride_father_occupation) {
-        this.bride_father_occupation = bride_father_occupation;
     }
 
     @Override

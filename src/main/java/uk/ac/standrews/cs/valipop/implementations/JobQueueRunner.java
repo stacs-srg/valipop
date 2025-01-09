@@ -67,14 +67,14 @@ public class JobQueueRunner {
                             
                             OBDModel model = new OBDModel(config);
                             try {
-                                doubleLog(model.log, "Sim commencing @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " with seed: " + config.getSeed());
+                                doubleLog(OBDModel.log, "Sim commencing @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " with seed: " + config.getSeed());
                                 model.runSimulation();
-                                doubleLog(model.log, "Sim concluded, beginning CT tables generation @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                doubleLog(OBDModel.log, "Sim concluded, beginning CT tables generation @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                 model.analyseAndOutputPopulation(false, 5);
-                                doubleLog(model.log, "CT tables generation concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                doubleLog(OBDModel.log, "CT tables generation concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
                                 if(THREAD_LIMIT == 1) {
-                                    doubleLog(model.log, "Beginning R Analysis in main thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                    doubleLog(OBDModel.log, "Beginning R Analysis in main thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                     new AnalysisThread(model, config, threadCount).run(); // this runs it in the main thread
                                 } else {
                                     while (threadCount >= THREAD_LIMIT) {
@@ -82,11 +82,11 @@ public class JobQueueRunner {
                                         Thread.sleep(10000);
                                     }
 
-                                    doubleLog(model.log, "Beginning R Analysis in new thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                    doubleLog(OBDModel.log, "Beginning R Analysis in new thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                     new AnalysisThread(model, config, threadCount).start(); // this runs it in a new thread
                                 }
 
-                                doubleLog(model.log, "R Analysis concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                doubleLog(OBDModel.log, "R Analysis concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
                             } catch (PreEmptiveOutOfMemoryWarning e) {
                                 model.recordOutOfMemorySummary();
@@ -139,8 +139,9 @@ public class JobQueueRunner {
     }
 
     public static String execCmd(String cmd) throws java.io.IOException {
-        java.util.Scanner s = new java.util.Scanner(Runtime.getRuntime().exec(cmd).getInputStream()).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
+        try (java.util.Scanner s = new java.util.Scanner(Runtime.getRuntime().exec(cmd).getInputStream()).useDelimiter("\\A")) {
+            return s.hasNext() ? s.next() : "";
+        }
     }
 
     private static boolean getStatus(Path statusPath) throws IOException {

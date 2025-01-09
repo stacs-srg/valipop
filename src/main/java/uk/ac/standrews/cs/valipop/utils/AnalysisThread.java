@@ -1,7 +1,6 @@
 package uk.ac.standrews.cs.valipop.utils;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.implementations.FactorSearch;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.implementations.StatsException;
 import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Control;
@@ -22,11 +21,11 @@ public class AnalysisThread extends Thread {
 
     private int maxBirthingAge;
     private SummaryRow summaryRow;
+
+    @SuppressWarnings("unused")
     private int threadCount;
 
     private final Config config;
-
-    private final OBDModel model;
 
     public AnalysisThread(OBDModel model, Config config, int threadCount) {
 
@@ -35,7 +34,6 @@ public class AnalysisThread extends Thread {
 
         maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
         summaryRow = model.getSummaryRow();
-        this.model = model;
     }
 
     @Override

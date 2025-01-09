@@ -19,8 +19,6 @@ package uk.ac.standrews.cs.valipop.implementations;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.stream.Collectors;
 
-import javax.imageio.IIOException;
-
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.export.ExportFormat;
@@ -427,6 +425,7 @@ public class OBDModel {
 
     }
 
+    @SuppressWarnings("unused")
     private void removePeople(final int excessBirths) {
 
         final int numberOfFemalesToRemove = excessBirths / 2;
@@ -559,8 +558,9 @@ public class OBDModel {
         final int peopleOfAge = ofSexLiving.getNumberOfPeople(divisionDate, consideredTimePeriod);
 
         // gets death rate for people of age at the current date
-        final StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentTime, sex);
-        final DeterminedCount determinedCount = desired.getDeterminedCount(key, config);
+        final StatsKey<Integer,Integer> key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentTime, sex);
+        @SuppressWarnings("unchecked")
+        final DeterminedCount<Integer, Double, Integer, Integer> determinedCount = (DeterminedCount<Integer, Double, Integer, Integer>) desired.getDeterminedCount(key, config);
 
         // Calculate the appropriate number to kill
         final Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();

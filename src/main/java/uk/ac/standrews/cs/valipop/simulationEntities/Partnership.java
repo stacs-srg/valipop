@@ -18,12 +18,8 @@ package uk.ac.standrews.cs.valipop.simulationEntities;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Cache;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;

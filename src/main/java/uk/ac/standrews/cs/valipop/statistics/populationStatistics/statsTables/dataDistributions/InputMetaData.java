@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
-import java.nio.file.Path;
 import java.time.Year;
 import java.util.Collection;
 

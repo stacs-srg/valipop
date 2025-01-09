@@ -6,7 +6,6 @@ import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightExc
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 
-import java.nio.file.Path;
 import java.security.InvalidParameterException;
 import java.time.Year;
 import java.util.Collection;
@@ -16,7 +15,7 @@ import java.util.TreeMap;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class AgeDependantEnumeratedDistribution implements InputMetaData {
+public class AgeDependantEnumeratedDistribution implements InputMetaData<String> {
 
     private final Year year;
     private final String sourcePopulation;

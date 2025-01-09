@@ -1,7 +1,5 @@
 package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 
-import java.util.Random;
-
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */

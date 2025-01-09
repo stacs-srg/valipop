@@ -18,12 +18,11 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.d
 
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrection;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface SelfCorrectingProportionalDistribution<Type, X, Y> extends
-                        InputMetaData,
+                        InputMetaData<Type>,
                         SelfCorrection<LabelledValueSet<Type, Integer>, LabelledValueSet<Type, Double>, X, Y> {
 }

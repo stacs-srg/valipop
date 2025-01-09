@@ -27,8 +27,8 @@ public class CL_RunNModels {
         }
 
         Path pathToConfigFile = Paths.get(pArgs[0]);
-        String resultsPath = pArgs[1];
-        String runPurpose = pArgs[2];
+        //String resultsPath = pArgs[1];
+        //String runPurpose = pArgs[2];
 
         int nRuns = Integer.parseInt(pArgs[3]);
 

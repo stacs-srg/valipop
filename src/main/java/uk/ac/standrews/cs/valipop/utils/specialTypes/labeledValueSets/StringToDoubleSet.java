@@ -30,7 +30,7 @@ public class StringToDoubleSet extends AbstractLabelToAbstractValueSet<String, D
     }
 
     @Override
-    public Class getValueClass() {
+    public Class<Double> getValueClass() {
         return Double.class;
     }
 

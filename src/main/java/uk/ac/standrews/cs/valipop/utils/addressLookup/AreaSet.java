@@ -1,12 +1,8 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
-import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Area;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Represents a set of areas.

@@ -21,7 +21,7 @@ public class StringToIntegerSet extends AbstractLabelToAbstractValueSet<String, 
     public StringToIntegerSet(RandomGenerator random) { super(random);}
 
     @Override
-    public Class getValueClass() {
+    public Class<Integer> getValueClass() {
         return Integer.class;
     }
 

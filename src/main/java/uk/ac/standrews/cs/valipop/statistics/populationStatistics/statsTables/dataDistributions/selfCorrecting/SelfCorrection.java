@@ -28,7 +28,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.Stat
  */
 public interface SelfCorrection<Type, Raw, X, Y> {
 
-    DeterminedCount determineCount(StatsKey<X, Y> key, Config config, RandomGenerator random);
+    DeterminedCount<Type, Raw, X, Y> determineCount(StatsKey<X, Y> key, Config config, RandomGenerator random);
 
     void returnAchievedCount(DeterminedCount<Type, Raw, X, Y> achievedCount, RandomGenerator random);
 }
