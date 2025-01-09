@@ -59,9 +59,9 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
         this.random = random;
     }
 
-    public abstract Class getValueClass();
+    public abstract Class<AV> getValueClass();
 
-    public AbstractLabelToAbstractValueSet init(final Map<AL, AV> map) {
+    public AbstractLabelToAbstractValueSet<AL, AV> init(final Map<AL, AV> map) {
         this.map = map;
         return this;
     }
@@ -143,7 +143,6 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
         return constructDoubleEquivalent(labels, products);
     }
 
-    @SuppressWarnings("Duplicates")
     @Override
     public LabelledValueSet<AL, Double> valuesSubtractValues(final LabelledValueSet<AL, ? extends Number> n) {
 
@@ -217,7 +216,6 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
         return labelOfLargestRemainder;
     }
 
-    @SuppressWarnings("Duplicates")
     @Override
     public LabelledValueSet<AL, Double> valuesPlusValues(final LabelledValueSet<AL, ? extends Number> n) {
 

@@ -36,13 +36,6 @@ public class SimplifiedBirthSourceRecord extends IndividualSourceRecord {
     private String birth_address;
 
     private LocalDate parents_marriage_date;
-    private String parents_place_of_marriage;
-
-    private String illegitimate_indicator;
-    private String informant;
-    private String informant_did_not_sign;
-    private String adoption;
-
 
     public SimplifiedBirthSourceRecord(final IPerson person) {
 
@@ -67,8 +60,6 @@ public class SimplifiedBirthSourceRecord extends IndividualSourceRecord {
             // record should be generated.
             if (parents_marriage_date != null) {
 
-                setParentsPlaceOfMarriage(parents_partnership.getMarriagePlace());
-
                 // TODO this will need to change to reflect however we choose to model current location in geographical model
                 setBirthAddress(parents_partnership.getMarriagePlace());
 
@@ -79,10 +70,6 @@ public class SimplifiedBirthSourceRecord extends IndividualSourceRecord {
 
     public void setBirthAddress(final String birth_address) {
         this.birth_address = birth_address;
-    }
-
-    public void setParentsPlaceOfMarriage(final String parents_place_of_marriage) {
-        this.parents_place_of_marriage = parents_place_of_marriage;
     }
 
     @Override

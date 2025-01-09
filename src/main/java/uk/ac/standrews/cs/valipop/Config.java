@@ -645,11 +645,6 @@ public class Config implements Serializable {
         }
     }
 
-    private void mkDirs(Path parent, String newDir) {
-
-        mkDirs(Paths.get(parent.toString(), newDir));
-    }
-
     private void mkDirs(Path path) {
 
         if (!Files.exists(path)) {

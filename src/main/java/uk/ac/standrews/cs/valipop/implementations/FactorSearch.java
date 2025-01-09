@@ -17,7 +17,6 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.AnalysisThread;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 

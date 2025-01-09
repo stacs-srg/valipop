@@ -240,8 +240,6 @@ public class DistributedFactorSearch {
 
         final Period[] input_widths = new Period[]{Period.ofYears(10)};
         final Period[] minBirthSpacings = new Period[]{Period.ofDays(147)};
-        final double[] birth_factors = new double[]{0};
-        final double[] death_factors = new double[]{0};
         final int[] t0_pop_sizes = new int[]{size0};
 
         List<ModelInput> inputs = new ArrayList<>();
@@ -253,8 +251,6 @@ public class DistributedFactorSearch {
                     for (double proportional_recovery_factor : proportional_recovery_factors) {
                         for (Period input_width : input_widths) {
                             for (Period minBirthSpacing : minBirthSpacings) {
-                                for (double birth_factor : birth_factors) {
-                                    for (double death_factor : death_factors) {
                                         for (int n = 0; n < numberOfRunsPerSim; n++) {
                                             ModelInput input = new ModelInput(
                                                 tS,

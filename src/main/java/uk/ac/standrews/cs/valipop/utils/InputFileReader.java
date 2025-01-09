@@ -415,7 +415,7 @@ public class InputFileReader {
         return new SelfCorrecting2DEnumeratedProportionalDistribution(year, sourcePopulation, sourceOrganisation, data, random);
     }
 
-    public static SelfCorrectingProportionalDistribution readInAndAdaptAgeAndProportionalStatsInput(Path path, RandomGenerator random) throws IOException, InvalidInputFileException {
+    public static SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer> readInAndAdaptAgeAndProportionalStatsInput(Path path, RandomGenerator random) throws IOException, InvalidInputFileException {
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 

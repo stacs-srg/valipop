@@ -2,7 +2,6 @@ package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
-import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**

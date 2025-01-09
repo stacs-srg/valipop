@@ -1,6 +1,5 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.Person;

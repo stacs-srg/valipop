@@ -54,6 +54,7 @@ public class PlanetXML {
 
     }
 
+    @SuppressWarnings("unused")
     private static void addResidentialWaysToCache(Document document, ReverseGeocodeLookup rgl) throws InterruptedException, InvalidCoordSet, IOException, APIOverloadedException {
 
         NodeList wayList = document.getElementsByTagName("way");
@@ -115,6 +116,7 @@ public class PlanetXML {
         }
     }
 
+    @SuppressWarnings("unused")
     private static void populateNodeMap(Document document) {
         NodeList nodeList = document.getElementsByTagName("node");
 
@@ -137,6 +139,7 @@ public class PlanetXML {
         }
     }
 
+    @SuppressWarnings("unused")
     private static Document readInDocument(String pathToDocument) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

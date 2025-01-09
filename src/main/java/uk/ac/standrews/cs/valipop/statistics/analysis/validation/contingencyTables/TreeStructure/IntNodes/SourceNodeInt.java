@@ -30,6 +30,7 @@ import java.util.ArrayList;
  */
 public class SourceNodeInt extends IntNode<SourceType, Year> {
 
+    @SuppressWarnings("rawtypes")
     private Node parent;
 
     public SourceNodeInt(SourceType option, CTtree parent) {
@@ -37,6 +38,7 @@ public class SourceNodeInt extends IntNode<SourceType, Year> {
         this.parent = parent;
     }
 
+    @SuppressWarnings("rawtypes")
     public Node getAncestor(Node nodeType) {
 
         if (nodeType.getClass().isInstance(this)) {
@@ -78,6 +80,7 @@ public class SourceNodeInt extends IntNode<SourceType, Year> {
         return s;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTRow<Integer> toCTRow() {
         CTRow r = new CTRowInt();
         r.setVariable(getVariableName(), getOption().toString());

@@ -1,6 +1,5 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
-import java.io.IOException;
 import java.util.Random;
 
 /**

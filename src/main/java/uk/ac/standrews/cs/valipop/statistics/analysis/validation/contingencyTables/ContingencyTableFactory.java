@@ -3,7 +3,6 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.MemoryUsageAnalysis;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableInstances.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;
@@ -15,7 +14,6 @@ import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.logging.Logger;
 
 /**

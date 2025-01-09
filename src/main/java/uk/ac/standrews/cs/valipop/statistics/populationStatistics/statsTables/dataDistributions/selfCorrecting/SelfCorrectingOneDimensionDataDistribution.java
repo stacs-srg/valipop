@@ -179,7 +179,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         }
     }
 
-    private SingleDeterminedCount resolveRateToCount(StatsKey key, double rate, double uncorrectedRate) {
+    private SingleDeterminedCount resolveRateToCount(StatsKey<Integer,Integer> key, double rate, double uncorrectedRate) {
 
         double rawCorrectedCount = rate * key.getForNPeople();
         double rawUncorrectedCount = uncorrectedRate * key.getForNPeople();
