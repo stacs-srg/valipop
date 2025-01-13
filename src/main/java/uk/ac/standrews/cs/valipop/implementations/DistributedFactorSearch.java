@@ -251,28 +251,26 @@ public class DistributedFactorSearch {
                     for (double proportional_recovery_factor : proportional_recovery_factors) {
                         for (Period input_width : input_widths) {
                             for (Period minBirthSpacing : minBirthSpacings) {
-                                        for (int n = 0; n < numberOfRunsPerSim; n++) {
-                                            ModelInput input = new ModelInput(
-                                                tS,
-                                                t0,
-                                                tE,
-                                                size,
-                                                dataFiles.toString(),
-                                                resultsDir.toString(),
-                                                runPurpose,
-                                                summaryResultsDir.toString(),
-                                                projectPath.toString(),
-                                                precision,
-                                                set_up_br,
-                                                set_up_dr,
-                                                recovery_factor,
-                                                proportional_recovery_factor,
-                                                input_width,
-                                                minBirthSpacing
-                                            );
-                                            inputs.add(input);
-                                        }
-                                    }
+                                for (int n = 0; n < numberOfRunsPerSim; n++) {
+                                    ModelInput input = new ModelInput(
+                                        tS,
+                                        t0,
+                                        tE,
+                                        size,
+                                        dataFiles.toString(),
+                                        resultsDir.toString(),
+                                        runPurpose,
+                                        summaryResultsDir.toString(),
+                                        projectPath.toString(),
+                                        precision,
+                                        set_up_br,
+                                        set_up_dr,
+                                        recovery_factor,
+                                        proportional_recovery_factor,
+                                        input_width,
+                                        minBirthSpacing
+                                    );
+                                    inputs.add(input);
                                 }
                             }
                         }
