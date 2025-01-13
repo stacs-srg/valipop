@@ -23,28 +23,28 @@ end.rcode-->
 <!--begin.rcode 
 source("utils.R")
 source("population-plot-functions.R")
-title <- paste(subTitle, " - Age: 0 - ", pathToRunDir)
-title <- wrap_sentence(title, 50)
-plotCohorts(death, 0, title)
-title <- paste(subTitle, " - Age: 50 - ", pathToRunDir)
-title <- wrap_sentence(title, 50)
-plotCohorts(death, 50, title)
+#title <- paste(subTitle, " - Age: 0 - ", pathToRunDir)
+#title <- wrap_sentence(title, 50)
+#plotCohorts(death, 0, title)
+#title <- paste(subTitle, " - Age: 50 - ", pathToRunDir)
+#title <- wrap_sentence(title, 50)
+#plotCohorts(death, 50, title)
 end.rcode-->
 
 <!--begin.rcode
 source("process-data-functions.R")  
 
-sourceSummary(death)
-sourceSummary(obirth)
-sourceSummary(mbirth)
-sourceSummary(part)
+#sourceSummary(death)
+#sourceSummary(obirth)
+#sourceSummary(mbirth)
+#sourceSummary(part)
 end.rcode-->
 
 <!--begin.rcode 
 source("population-plot-functions.R")
-plotMB(mbirth)
-plotPart(part, subTitle, date = NULL, disc = TRUE, scales = "free_y")
-plotPart(part, subTitle, date = NULL, disc = TRUE, scales = "fixed")
+#plotMB(mbirth)
+#plotPart(part, subTitle, date = NULL, disc = TRUE, scales = "free_y")
+#plotPart(part, subTitle, date = NULL, disc = TRUE, scales = "fixed")
 end.rcode-->
 
 <!--begin.rcode
