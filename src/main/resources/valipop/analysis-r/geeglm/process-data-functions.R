@@ -54,4 +54,3 @@ cleanSepData <- function(dirtyData, round = TRUE) {
   clean.data$NCIP <- droplevels(factor(clean.data$NCIP))
   return(clean.data)
 }
-

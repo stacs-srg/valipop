@@ -92,4 +92,3 @@ runDiagnosticsADAPTED<-function(model){
   grid.arrange(a, b, ncol=2, nrow = 1)  
   
 }
-

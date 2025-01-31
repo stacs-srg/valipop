@@ -97,7 +97,7 @@ public class SummaryRow {
     public SummaryRow(Config config, String codeVersion, String hostname) {
 
         this.config = config;
-        this.resultsDirectory = config.getResultsSavePath().resolve( config.getRunPurpose()).resolve( config.getStartTime().toString());
+        this.resultsDirectory = config.getRunPath();
         this.inputsDirectory = config.getVarPath();
         this.startTime = config.getStartTime();
         this.reason = config.getRunPurpose();
