@@ -34,7 +34,7 @@ public class CL_RunNModels {
 
         for (int n = 0; n < nRuns; n++) {
 
-            CL_OBDModel.runOBDModel(pathToConfigFile);
+            CL_OBDModel.runOBDModel(pathToConfigFile.toString());
             System.gc();
         }
     }

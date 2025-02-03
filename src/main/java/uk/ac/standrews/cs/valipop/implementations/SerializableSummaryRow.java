@@ -17,8 +17,6 @@ public class SerializableSummaryRow implements Serializable {
     public LocalDate endDate;
     public int simLength;
     public int seed;
-    public double birthFactor;
-    public double deathFactor;
     public double recoveryFactor;
     public double proportionalRecoveryFactor;
     public double oversizedGeographyFactor;
@@ -56,8 +54,6 @@ public class SerializableSummaryRow implements Serializable {
         LocalDate endDate,
         int simLength,
         int seed,
-        double birthFactor,
-        double deathFactor,
         double recoveryFactor,
         double proportionalRecoveryFactor,
         double oversizedGeographyFactor,
@@ -94,8 +90,6 @@ public class SerializableSummaryRow implements Serializable {
         this.endDate                       = endDate;
         this.simLength                     = simLength;
         this.seed                          = seed;
-        this.birthFactor                   = birthFactor;
-        this.deathFactor                   = deathFactor;
         this.recoveryFactor                = recoveryFactor;
         this.proportionalRecoveryFactor    = proportionalRecoveryFactor;
         this.oversizedGeographyFactor      = oversizedGeographyFactor;

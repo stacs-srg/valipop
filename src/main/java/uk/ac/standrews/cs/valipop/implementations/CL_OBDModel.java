@@ -9,6 +9,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
+import java.util.Arrays;
+
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 
 /**
  * Command line entry point to simulate a population model and analysis.
@@ -23,16 +27,20 @@ public class CL_OBDModel {
 
         if (ProcessArgs.check(pArgs, "STANDARD")) {
 
-            runOBDModel(Paths.get(pArgs[0]));
-
+            //SparkConf conf = new SparkConf().setAppName("valipop");
+            //JavaSparkContext sc = new JavaSparkContext(conf);
+            //sc.parallelize(Arrays.asList(pArgs[0]))
+                //.foreach(CL_OBDModel::runOBDModel);
+            //sc.close();
+            runOBDModel(Paths.get(pArgs[0]).toString());
         } else {
             System.err.println("Incorrect arguments given");
         }
     }
 
-    public static void runOBDModel(Path pathToConfigFile) throws IOException, PreEmptiveOutOfMemoryWarning, StatsException {
+    public static void runOBDModel(String pathToConfigFile) throws IOException, PreEmptiveOutOfMemoryWarning, StatsException {
 
-        Config config = new Config(pathToConfigFile);
+        Config config = new Config(Paths.get(pathToConfigFile));
 
         OBDModel model = new OBDModel( config);
         model.runSimulation();

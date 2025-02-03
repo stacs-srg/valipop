@@ -4,11 +4,14 @@ WORKDIR /app
 
 COPY pom.xml ./
 
-RUN mvn dependency:resolve
+RUN mvn -B -s /usr/share/maven/ref/settings-docker.xml dependency:resolve-plugins dependency:resolve clean package -Dmaven.test.skip -Dmaven.repo.local=repository
 
 COPY src/main/java src/main/java
 
-RUN mvn package -Dmaven.test.skip -Dmaven.repo.local=repository
+# We need the R code packcaged in the jar file
+COPY src/main/resources/valipop/analysis-r/geeglm src/main/resources/valipop/analysis-r/geeglm
+
+RUN mvn -B -s /usr/share/maven/ref/settings-docker.xml clean package -Dmaven.test.skip -Dmaven.repo.local=repository
 
 FROM valipop-base AS run
 

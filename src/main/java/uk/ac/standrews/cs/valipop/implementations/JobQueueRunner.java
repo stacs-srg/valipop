@@ -29,7 +29,7 @@ public class JobQueueRunner {
     private static double appropriateUsageThreshold = 0.65;
     private static double memoryIncreaseOnMemoryException = 1.2;
 
-    private static final ArrayList<String> order = new ArrayList<>(Arrays.asList(new String[]{"priority","code version","reason","n","seed size","rf","prf","iw","input dir","results dir","summary results dir","required memory","output record format","deterministic","seed","setup br","setup dr","bf","df","tS","t0","tE","timestep","binomial sampling","min birth spacing","min ges period","ct tree stepback","oversized geography factor"}));
+    private static final ArrayList<String> order = new ArrayList<>(Arrays.asList(new String[]{"priority","code version","reason","n","seed size","rf","prf","iw","input dir","results dir","summary results dir","required memory","output record format","deterministic","seed","setup br","setup dr","tS","t0","tE","timestep","binomial sampling","min birth spacing","min ges period","ct tree stepback","oversized geography factor"}));
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
@@ -264,26 +264,19 @@ public class JobQueueRunner {
 
         for(DataRow job : jobs) {
 
-            if(job.getInt("priority") != 99 && (job.getValue("prf").matches(multipleJobs) || job.getValue("rf").matches(multipleJobs)) || job.getValue("bf").matches(multipleJobs) || job.getValue("df").matches(multipleJobs)) {
+            if(job.getInt("priority") != 99 && (job.getValue("prf").matches(multipleJobs) || job.getValue("rf").matches(multipleJobs))) {
 
                 try {
                     for(double prf : toValueSet(job.getValue("prf"))) {
                         for(double rf : toValueSet(job.getValue("rf"))) {
-                            for (double bf : toValueSet(job.getValue("bf"))) {
-                                for (double df : toValueSet(job.getValue("df"))) {
+                            DataRow copy = job.clone();
+                            copy.setValue("rf", String.valueOf(rf));
+                            copy.setValue("prf", String.valueOf(prf));
 
-                                    DataRow copy = job.clone();
-                                    copy.setValue("rf", String.valueOf(rf));
-                                    copy.setValue("prf", String.valueOf(prf));
-                                    copy.setValue("bf", String.valueOf(bf));
-                                    copy.setValue("df", String.valueOf(df));
-
-                                    if (explodedJobs == null) {
-                                        explodedJobs = new DataRowSet(copy);
-                                    } else {
-                                        explodedJobs.add(copy);
-                                    }
-                                }
+                            if (explodedJobs == null) {
+                                explodedJobs = new DataRowSet(copy);
+                            } else {
+                                explodedJobs.add(copy);
                             }
 
                         }
@@ -416,8 +409,6 @@ public class JobQueueRunner {
         config.setInputWidth(chosenJob.getPeriod("iw"));
         config.setMinBirthSpacing(chosenJob.getPeriod("min birth spacing"));
         config.setMinGestationPeriod(chosenJob.getPeriod("min ges period"));
-        config.setBirthFactor(chosenJob.getDouble("bf"));
-        config.setDeathFactor(chosenJob.getDouble("df"));
         config.setOverSizedGeographyFactor(chosenJob.getValue("oversized geography factor"));
 
         try {

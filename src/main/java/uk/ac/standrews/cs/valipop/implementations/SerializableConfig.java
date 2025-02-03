@@ -43,8 +43,6 @@ public class SerializableConfig implements Serializable {
     public String runPath;
     public double setUpBR;
     public double setUpDR;
-    public double birthFactor;
-    public double deathFactor;
     public double recoveryFactor;
     public double proportionalRecoveryFactor;
     public boolean binomialSampling;
@@ -106,8 +104,6 @@ public class SerializableConfig implements Serializable {
         String runPath,
         double setUpBR,
         double setUpDR,
-        double birthFactor,
-        double deathFactor,
         double recoveryFactor,
         double proportionalRecoveryFactor,
         boolean binomialSampling,
@@ -168,8 +164,6 @@ public class SerializableConfig implements Serializable {
         this.runPath                          =runPath;
         this.setUpBR                          =setUpBR;
         this.setUpDR                          =setUpDR;
-        this.birthFactor                      =birthFactor;
-        this.deathFactor                      =deathFactor;
         this.recoveryFactor                   =recoveryFactor;
         this.proportionalRecoveryFactor       =proportionalRecoveryFactor;
         this.binomialSampling                 =binomialSampling;

@@ -300,7 +300,7 @@ public class OBDModel {
     private void simulationStep() {
 
         MemoryUsageAnalysis.log();
-        final StringBuilder logEntry = new StringBuilder(currentTime + "\t");
+        final StringBuilder logEntry = new StringBuilder(currentTime + "\t" + MemoryUsageAnalysis.getMaxSimUsage() / 1e6 + "\tMB");
 
         if (initialisationFinished() && populationTooSmall()) {
 
@@ -497,8 +497,7 @@ public class OBDModel {
         final BirthStatsKey key = new BirthStatsKey(age, birthOrder.getValue(), cohortSize, consideredTimePeriod, currentTime);
         final SingleDeterminedCount determinedCount = (SingleDeterminedCount) desired.getDeterminedCount(key, config);
 
-        final int birthAdjustment = getBirthAdjustment(determinedCount);
-        final int numberOfChildren = determinedCount.getDeterminedCount() + birthAdjustment;
+        final int numberOfChildren = determinedCount.getDeterminedCount();
 
         // Make women into mothers
 
@@ -506,31 +505,15 @@ public class OBDModel {
 
         // Partner females of age who don't have partners
         final int cancelledChildren = createPartnerships(mothersNeedingPartners.mothers);
-        final int childrenMade = mothersNeedingPartners.newlyProducedChildren - cancelledChildren;
-        final int fulfilled = childrenMade > birthAdjustment ? childrenMade - birthAdjustment : 0;
+        final int fulfilled = mothersNeedingPartners.newlyProducedChildren - cancelledChildren;
 
         determinedCount.setFulfilledCount(fulfilled);
 
         // TODO Does this output get used? TD: If I remember correctly it allows us to explain why it takes longer to generate small populations - may be useful to talk about in thesis...
-        birthOrders.println(currentTime.getYear() + "," + age + "," + birthOrder + "," + fulfilled + "," + numberOfChildren + "," + birthAdjustment);
+        birthOrders.println(currentTime.getYear() + "," + age + "," + birthOrder + "," + fulfilled + "," + numberOfChildren);
 
         desired.returnAchievedCount(determinedCount);
-        return childrenMade;
-    }
-
-    private int getBirthAdjustment(final SingleDeterminedCount determinedCount) {
-
-        if (determinedCount.getDeterminedCount() != 0) {
-
-            final double birthFactor = config.getBirthFactor();
-            final int adjuster = (int) Math.ceil(birthFactor);
-
-            // FIXME, Possible 0 / 0
-            if (desired.getRandomGenerator().nextInt(BIRTH_ADJUSTMENT_BOUND) < Math.abs(birthFactor / adjuster) * BIRTH_ADJUSTMENT_BOUND) {
-                return (birthFactor < 0) ? adjuster : -adjuster;
-            }
-        }
-        return 0;
+        return fulfilled;
     }
 
     private int createDeaths(final SexOption sex) {
@@ -565,18 +548,7 @@ public class OBDModel {
         // Calculate the appropriate number to kill
         final Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
-        int killAdjust = 0;
-        if (numberToKill != 0) {
-
-            // TODO fix magic number
-
-            int bound = 10000;
-            if (desired.getRandomGenerator().nextInt(bound) < config.getDeathFactor() * bound) {
-                killAdjust = -1;
-            }
-        }
-
-        final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divisionDate, consideredTimePeriod, true);
+        final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill, divisionDate, consideredTimePeriod, true);
 
         final int killed = killPeople(peopleToKill);
 
@@ -584,7 +556,7 @@ public class OBDModel {
         determinedCount.setFulfilledCount(killed);
         desired.returnAchievedCount(determinedCount);
 
-        return killed + killAdjust;
+        return killed;
     }
 
     private int createPartnerships(final Collection<NewMother> mothersNeedingPartners) {

@@ -179,8 +179,6 @@ public class Config implements Serializable {
     // Factors
     private double setUpBR = DEFAULT_SETUP_BR;
     private double setUpDR = DEFAULT_SETUP_DR;
-    private double birthFactor = DEFAULT_BIRTH_FACTOR;
-    private double deathFactor = DEFAULT_DEATH_FACTOR;
     private double recoveryFactor = DEFAULT_RECOVERY_FACTOR;
     private double proportionalRecoveryFactor = DEFAULT_PROPORTIONAL_RECOVERY_FACTOR;
 
@@ -456,14 +454,6 @@ public class Config implements Serializable {
         return minBirthSpacing;
     }
 
-    public double getBirthFactor() {
-        return birthFactor;
-    }
-
-    public double getDeathFactor() {
-        return deathFactor;
-    }
-
     public double getRecoveryFactor() {
         return recoveryFactor;
     }
@@ -541,18 +531,6 @@ public class Config implements Serializable {
     public Config setMinGestationPeriod(Period minGestationPeriod) {
 
         this.minGestationPeriod = minGestationPeriod;
-        return this;
-    }
-
-    public Config setBirthFactor(double birthFactor) {
-
-        this.birthFactor = birthFactor;
-        return this;
-    }
-
-    public Config setDeathFactor(double deathFactor) {
-
-        this.deathFactor = deathFactor;
         return this;
     }
 
@@ -689,8 +667,6 @@ public class Config implements Serializable {
 
         processors.put("set_up_br", value -> setUpBR = Double.parseDouble(value));
         processors.put("set_up_dr", value -> setUpDR = Double.parseDouble(value));
-        processors.put("birth_factor", value -> birthFactor = Double.parseDouble(value));
-        processors.put("death_factor", value -> deathFactor = Double.parseDouble(value));
         processors.put("recovery_factor", value -> recoveryFactor = Double.parseDouble(value));
         processors.put("proportional_recovery_factor", value -> proportionalRecoveryFactor = Double.parseDouble(value));
         processors.put("over_sized_geography_factor", value -> overSizedGeographyFactor = parseOversizedGeographyFactor(value));
@@ -878,8 +854,6 @@ public class Config implements Serializable {
             runPath.toString(),
             setUpBR,
             setUpDR,
-            birthFactor,
-            deathFactor,
             recoveryFactor,
             proportionalRecoveryFactor,
             binomialSampling,
@@ -943,8 +917,6 @@ public class Config implements Serializable {
         this.runPath                          =Path.of(config.runPath);
         this.setUpBR                          =config.setUpBR;
         this.setUpDR                          =config.setUpDR;
-        this.birthFactor                      =config.birthFactor;
-        this.deathFactor                      =config.deathFactor;
         this.recoveryFactor                   =config.recoveryFactor;
         this.proportionalRecoveryFactor       =config.proportionalRecoveryFactor;
         this.binomialSampling                 =config.binomialSampling;

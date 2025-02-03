@@ -170,8 +170,6 @@ public class DistributedFactorSearch {
         config.setProportionalRecoveryFactor(i.prf);
         config.setInputWidth(i.input_width);
         config.setMinBirthSpacing(i.minBirthSpacing);
-        config.setBirthFactor(0);
-        config.setDeathFactor(0);
         config.setDeterministic(true);
         config.setSeed(123);
         config.setProjectPath(Paths.get(i.projectPath));

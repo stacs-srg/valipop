@@ -78,7 +78,7 @@ public class BirthSourceRecord extends IndividualSourceRecord {
     protected LocalDate birth_date;
     protected String birth_address;
 
-    protected LocalDate parents_marriage_date;
+    protected LocalDate parents_marriage_date = LocalDate.of(1, 1, 1);
     protected String parents_place_of_marriage;
 
     protected String illegitimate_indicator;
