@@ -47,8 +47,6 @@ public class MinimaSearch {
     private static LocalDate t0 = LocalDate.of(1855,1,1);
     private static LocalDate tE = LocalDate.of(2015,1,1);
 
-    private static double birthFactor = 0.0;
-    private static double deathFactor = 0.0;
     private static double recoveryFactor = 0.0;
     private static double proportionalRecoveryFactor = 0.0;
 
@@ -108,8 +106,6 @@ public class MinimaSearch {
 
                     config.setRecoveryFactor(recoveryFactor);
                     config.setProportionalRecoveryFactor(proportionalRecoveryFactor);
-                    config.setBirthFactor(birthFactor);
-                    config.setDeathFactor(deathFactor);
 
                     OBDModel model = new OBDModel(config);
 

@@ -2,7 +2,9 @@
 
 ## Config File
 
-The main source of configuration for `Valipop` is the config file. This a text file containing a collection of assignments of values to config options. An assignment is of the form `<option> = <value>`. Comments are prefixed with `#` and are ignored by `valipop`. Below detail the possible options are 
+The main source of configuration for `Valipop` is the config file. This a `.txt` file containing a collection of configuration options. A configuration opetion is of the form `<option> = <value>`, where `option` is the name of the configuration option and `value` is the value set. Comments are prefixed with `#` and are ignored by `valipop`.
+
+These are the following configuration options supported in Valipop
 
 ### File Paths
 
@@ -27,14 +29,6 @@ The main source of configuration for `Valipop` is the config file. This a text f
 `set_up_br`
 
 - The death rate used in calculating the initial population size at `tS`.
-
-`birth_factor` = $b$
-
-- This options takes a float greater or equal to 0. It reduces the number of births that occur at every timestep. It gives a probability of $b/\ceil{b}$ to reduce the number of births that occured in a timestep by $\ceil{b}$
-
-`death_factor`
-
-- This option takes a float $d$ between 0 and 1 inclusive. $d$ is the probability of reducing the number of deaths to occur by 1 at each timestep.
 
 `recovery_factor`
 
@@ -74,6 +68,17 @@ The main source of configuration for `Valipop` is the config file. This a text f
 `output_record_format`
 
 - This specifies the output format of the population records. These records represent the simulated population by representing each birth, death, and marriage between `t0` and `tE` in tabular form. 
+
+`output_graph_format`
+
+This specifies the output format of the generated graph from the population simulation. It can be one of three options:
+
+- `NONE`
+    - Does not generate a graph
+- `GRAPHVIZ`
+    - Generates a Graphviz `.dot` file to render a family tree graph
+- `GEDCOM`
+    - Generates a GEDCOM family tree file
 
 ### Other
 

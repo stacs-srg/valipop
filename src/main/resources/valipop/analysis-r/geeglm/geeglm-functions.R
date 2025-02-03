@@ -1,6 +1,6 @@
 deathSatGEEGLM <- function(in.data) {
   # "ar2" not supported in geeglm ?
-  return(runGEEGLM(freq ~ Date * Age * Sex * Died * Source, in.data, constr = "ar1"))
+  return(runGEEGLM(freq ~ (Date * Age * Sex * Died):Source, in.data, constr = "ar1"))
 }
 
 obSatGEEGLM <- function(in.data) {

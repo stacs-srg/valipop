@@ -53,8 +53,6 @@ public class SummaryRow {
 
     private int seed;
 
-    private double birthFactor;
-    private double deathFactor;
     private double recoveryFactor;
     private double proportionalRecoveryFactor;
     private double oversizedGeographyFactor;
@@ -107,8 +105,6 @@ public class SummaryRow {
         this.startDate = config.getT0();
         this.endDate = config.getTE();
         this.simLength = (int) DAYS.between(startDate, endDate);
-        this.birthFactor = config.getBirthFactor();
-        this.deathFactor = config.getDeathFactor();
         this.recoveryFactor = config.getRecoveryFactor();
         this.proportionalRecoveryFactor = config.getProportionalRecoveryFactor();
         this.binomialSampling = config.getBinomialSampling();
@@ -175,8 +171,8 @@ public class SummaryRow {
         return makeRow(startTime, reason, codeVersion, inputsDirectory, totalPop, seedPop,
                 completed, simLength, timestep, inputWidth, startPop,
                 endPop, peakPop, startDate, endDate, simRunTime,
-                ctRunTime, recordsRunTime, resultsDirectory, birthFactor,
-                deathFactor, recoveryFactor, proportionalRecoveryFactor, binomialSampling,
+                ctRunTime, recordsRunTime, resultsDirectory, recoveryFactor,
+                proportionalRecoveryFactor, binomialSampling,
                 minBirthSpacing, (maxMemoryUsage / 1e6), outputRecordFormat.toString(),
                 v.toString(), statsRunTime, eligibilityChecks, failedEligibilityChecks, seed,
                 ctTreeStepback, ctTreePrecision, hostname, oversizedGeographyFactor) + "\n";
@@ -204,7 +200,7 @@ public class SummaryRow {
                  "Seed Pop Size", "Completed", "Sim Length", "Timestep" ,
                  "Input Width", "Start Pop", "End Pop", "Peak Pop", "Start Date" ,
                  "End Date", "Sim Run time", "CT Run time", "Records Run time" ,
-                 "Results Directory", "Birth Factor", "Death Factor", "Recovery Factor" ,
+                 "Results Directory", "Recovery Factor" ,
                  "Proportional Recovery Factor", "binomial Sampling", "Min Birth Spacing" ,
                  "Peak Memory Usage (MB)", "Output Record Format", "v/M", "Stats Run Time" ,
                  "Eligibility Checks", "Failed Eligibility Checks", "Seed", "CT Tree Stepback",
@@ -239,8 +235,6 @@ public class SummaryRow {
         this.endDate                       = sr.endDate;
         this.simLength                     = sr.simLength;
         this.seed                          = sr.seed;
-        this.birthFactor                   = sr.birthFactor;
-        this.deathFactor                   = sr.deathFactor;
         this.recoveryFactor                = sr.recoveryFactor;
         this.proportionalRecoveryFactor    = sr.proportionalRecoveryFactor;
         this.oversizedGeographyFactor      = sr.oversizedGeographyFactor;
@@ -280,8 +274,6 @@ public class SummaryRow {
             endDate,
             simLength,
             seed,
-            birthFactor,
-            deathFactor,
             recoveryFactor,
             proportionalRecoveryFactor,
             oversizedGeographyFactor,

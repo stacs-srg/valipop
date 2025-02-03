@@ -8,11 +8,11 @@ import java.util.Arrays;
  * 
  * <br>
  * 
- * Either BF (birth factor).
+ * Either RF (recovery factor).
  * 
  * <br>
  * 
- * Or DF (death factor).
+ * Or PRF (proportional recovery factor).
  * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */

@@ -15,6 +15,7 @@ services:
     volumes:
       - "./src/main/resources/valipop/config:/app/src/main/resources/valipop/config"
       - "./src/main/resources/valipop/inputs/:/app/src/main/resources/valipop/inputs/"
+      - "./results/:/app/results/"
   master:
     image: valipop-master
     build:
@@ -39,8 +40,9 @@ services:
       context: .
       dockerfile: docker/factor-search/Dockerfile
     volumes:
-    - "./src/main/resources/valipop/inputs/:/app/src/main/resources/valipop/inputs/"
-    - "./results/:/app/results/"
+      - "./src/main/resources/valipop/config:/app/src/main/resources/valipop/config"
+      - "./src/main/resources/valipop/inputs/:/app/src/main/resources/valipop/inputs/"
+      - "./results/:/app/results/"
     ports:
       - 5055:5055
     network_mode: "host"
