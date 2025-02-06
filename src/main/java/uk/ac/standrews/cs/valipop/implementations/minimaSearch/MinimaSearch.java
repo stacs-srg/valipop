@@ -171,18 +171,13 @@ public class MinimaSearch {
 
     public static double getV(Minimise minimiseFor, int maxBirthingAge, Control controlBy, Config config) throws IOException, StatsException {
 
-        switch (minimiseFor) {
-
-            case ALL:
-                return RCaller.getV(config.getProjectPath(), config.getContingencyTablesPath(), maxBirthingAge);
-            case OB:
-                return RCaller.getObV(config.getProjectPath(), config.getContingencyTablesPath(), maxBirthingAge);
+        String title = config.getRunPurpose() + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy);
+        switch(minimiseFor) {
             case GEEGLM:
-                String title = config.getRunPurpose() + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy);
                 return RCaller.getGeeglmV(title, config.getProjectPath(), config.getRunPath(), maxBirthingAge, config.getStartTime());
+            default:
+                throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
         }
-
-        throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
     }
 
     static double getControllingFactor(Control controlBy) {
@@ -237,7 +232,7 @@ public class MinimaSearch {
 
         step = initStep;
 
-        int options = new Double((topSearchBoundFactor - bottomSearchBoundFactor) / (initStep / 2.0)).intValue();
+        int options = Double.valueOf((topSearchBoundFactor - bottomSearchBoundFactor) / (initStep / 2.0)).intValue();
 
         double chosenFactor;
 

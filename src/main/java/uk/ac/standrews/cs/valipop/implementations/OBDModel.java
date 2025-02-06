@@ -80,6 +80,7 @@ public class OBDModel {
     }
 
     private final Geography geography;
+    @SuppressWarnings("unused")
     private static final int BIRTH_ADJUSTMENT_BOUND = 1000000;
 
     private final Config config;

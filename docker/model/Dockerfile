@@ -6,9 +6,8 @@ COPY pom.xml ./
 
 RUN mvn -B -s /usr/share/maven/ref/settings-docker.xml dependency:resolve-plugins dependency:resolve clean package -Dmaven.test.skip -Dmaven.repo.local=repository
 
+# We need the Java source code and the R analysis
 COPY src/main/java src/main/java
-
-# We need the R code packcaged in the jar file
 COPY src/main/resources/valipop/analysis-r/geeglm src/main/resources/valipop/analysis-r/geeglm
 
 RUN mvn -B -s /usr/share/maven/ref/settings-docker.xml clean package -Dmaven.test.skip -Dmaven.repo.local=repository

@@ -5,6 +5,7 @@ import uk.ac.standrews.cs.valipop.implementations.StatsException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,40 +38,6 @@ public class RCaller {
         }
     }
 
-    public static double getV(Path projectPath, Path pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
-
-        String pathOfScript = projectPath.toAbsolutePath().toString() + "/src/main/resources/valipop/analysis-r/geeglm/dev-minima-search.R";
-        String[] params = {pathOfTablesDir.toString(), String.valueOf(maxBirthingAge)};
-
-        Process proc = runRScript(pathOfScript, params);
-        String[] res = waitOnReturn(proc).split(" ");
-
-        proc.destroy();
-
-        if (res.length != 2) {
-            throw new StatsException("Too many values returned from RScript for given script");
-        }
-
-        return Double.parseDouble(res[1]);
-    }
-
-    public static double getObV(Path projectPath, Path pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
-
-        String pathOfScript = projectPath.toAbsolutePath().toString() + "/src/main/resources/valipop/analysis-r/geeglm/ob-minima-search.R";
-        String[] params = {pathOfTablesDir.toString(), String.valueOf(maxBirthingAge)};
-
-        Process proc = runRScript(pathOfScript, params);
-        String[] res = waitOnReturn(proc).split(" ");
-
-        proc.destroy();
-
-        if (res.length != 2) {
-            throw new StatsException("Too many values returned from RScript for given script");
-        }
-
-        return Double.parseDouble(res[1]);
-    }
-
     public static double getGeeglmV(String title, Path projectPath, Path pathOfRunDir, int maxBirthingAge, LocalDateTime startTime) throws IOException, StatsException {
         // Combine the R files into a single file 
         String[] scripts = new String[]{
@@ -81,13 +48,19 @@ public class RCaller {
         };
 
         Path analysisPath = pathOfRunDir.resolve("analysis.R");
+        Path outputPath = pathOfRunDir.resolve("analysis.out");
 
-        File file = new File(analysisPath.toString());
+        File analysisFile = new File(analysisPath.toString());
+
+        File outputFile = new File(outputPath.toString());
+        FileWriter outputFileWrtier = new FileWriter(outputFile);
+        outputFile.createNewFile();
+
         for (String script : scripts) {
             try (
                 // Retrieving the R files as streams in case they are in a jar
                 InputStream stream = RCaller.class.getClassLoader().getResourceAsStream(script);
-                OutputStream output = new FileOutputStream(file, true)
+                OutputStream output = new FileOutputStream(analysisFile, true)
             ) {
                 IOUtils.copy(stream, output);
             }
@@ -105,6 +78,16 @@ public class RCaller {
         // Filter relevant lines, calculate v per line and sum together
         int v = stdout
             .lines()
+            // Writing lines to file
+            .map((l) -> {
+                try {
+                    outputFileWrtier.write(l);
+                } catch (IOException e) {
+                    System.err.println("Unable to write results of analysis to file " + outputPath.toString());
+                }
+
+                return l;
+            })
             .filter(RCaller::filterAnalysis)
             .map(RCaller::countV)
             .reduce(Integer::sum).orElse(0);
@@ -116,6 +99,7 @@ public class RCaller {
         stdout.close();
         stderr.close();
         p.destroy();
+        outputFileWrtier.close();
 
         System.out.println("Result: " + v);
 
@@ -132,6 +116,7 @@ public class RCaller {
         int[] STAR_VALUES = new int[]{ 2, 3, 4 };
 
         // Scan for sequences stars
+        // Start from max star count to prevent lower star counts from identifying first
         int[] starCounts = new int[MAX_STARS];
         for (int starNumber = MAX_STARS; starNumber > 0; starNumber--) {
             starCounts[starNumber - 1] = 0;
@@ -152,40 +137,7 @@ public class RCaller {
         return value;
     }
 
-    public static String waitOnReturn(Process process) throws IOException {
-
-
-        BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-
-        String result = "";
-        String s;
-
-        while ((s = stdInput.readLine()) != null) {
-            result += s + "\n";
-        }
-
-        while ((s = stdError.readLine()) != null) {
-            System.out.println(s);
-        }
-
-        stdInput.close();
-        stdError.close();
-
-        return result;
-    }
-
-    private static Process runProcess(String processName, String pathOfScript, String[] params) throws IOException {
-
-        String[] commands = {processName, pathOfScript};
-        commands = joinArrays(commands, params);
-        ProcessBuilder pb = new ProcessBuilder(commands);
-
-        return pb.start();
-    }
-
     private static Process runRScript(String pathOfScript, String[] params) throws IOException {
-
         String[] commands = {"Rscript", pathOfScript};
         commands = joinArrays(commands, params);
         ProcessBuilder pb = new ProcessBuilder(commands);
@@ -194,7 +146,6 @@ public class RCaller {
     }
 
     private static String[] joinArrays(String[] first, String[] second) {
-
         List<String> both = new ArrayList<String>(first.length + second.length);
         Collections.addAll(both, first);
         Collections.addAll(both, second);
