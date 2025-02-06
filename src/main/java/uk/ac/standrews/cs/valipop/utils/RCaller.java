@@ -47,13 +47,18 @@ public class RCaller {
             "valipop/analysis-r/geeglm/analysis.R"
         };
 
+        // The file the R is written to
         Path analysisPath = pathOfRunDir.resolve("analysis.R");
-        Path outputPath = pathOfRunDir.resolve("analysis.out");
-
         File analysisFile = new File(analysisPath.toString());
 
+        // This overwrites any existing file of the same name
+        FileWriter analysisFileWriter = new FileWriter(analysisFile, false);
+        analysisFileWriter.close();
+
+        // The file the output of the analysis is written to
+        Path outputPath = pathOfRunDir.resolve("analysis.out");
         File outputFile = new File(outputPath.toString());
-        FileWriter outputFileWrtier = new FileWriter(outputFile);
+        FileWriter outputFileWrtier = new FileWriter(outputFile, false);
         outputFile.createNewFile();
 
         for (String script : scripts) {
@@ -68,7 +73,7 @@ public class RCaller {
 
         String[] params = {pathOfRunDir.toAbsolutePath().toString(), String.valueOf(maxBirthingAge)};
 
-        System.out.println("Running command: RScript " + analysisPath.toString() + " " + String.join(" ",params));
+        System.out.println("Running command: Rscript " + analysisPath.toString() + " " + String.join(" ",params));
         Process p = runRScript(analysisPath.toString(), params);
 
         // Extracting stdout and stderr
@@ -82,6 +87,7 @@ public class RCaller {
             .map((l) -> {
                 try {
                     outputFileWrtier.write(l);
+                    outputFileWrtier.append("\n");
                 } catch (IOException e) {
                     System.err.println("Unable to write results of analysis to file " + outputPath.toString());
                 }
@@ -90,7 +96,9 @@ public class RCaller {
             })
             .filter(RCaller::filterAnalysis)
             .map(RCaller::countV)
-            .reduce(Integer::sum).orElse(0);
+            .reduce(Double::sum)
+            .map((res) -> (int) Math.floor(res))
+            .orElse(0);
 
         // Print out any errors
         stderr.lines().forEach(System.out::println);
@@ -111,9 +119,9 @@ public class RCaller {
         return line.contains("STAT");
     }
 
-    private static int countV(String line) {
+    private static double countV(String line) {
         int MAX_STARS = 3;
-        int[] STAR_VALUES = new int[]{ 2, 3, 4 };
+        double[] STAR_VALUES = new double[]{ 2, 3, 4 };
 
         // Scan for sequences stars
         // Start from max star count to prevent lower star counts from identifying first
@@ -121,15 +129,15 @@ public class RCaller {
         for (int starNumber = MAX_STARS; starNumber > 0; starNumber--) {
             starCounts[starNumber - 1] = 0;
 
-            if (line.indexOf(" " + "*".repeat(starNumber)) != -1) {
+            if (line.indexOf("*".repeat(starNumber) + " ".repeat(MAX_STARS - starNumber)) != -1) {
                 starCounts[starNumber - 1]++;
                 break;
             }
         }
 
         // Clever way to count dots in line
-        int dotCount = (line.length() - line.replace(" .", "").length()) / 2;
-        int value = dotCount;
+        double dotCount = (line.length() - line.replace(".  ", "").length()) / 3;
+        double value = dotCount / 3;
         for (int i = 0; i < MAX_STARS; i++) {
             value += starCounts[i] * STAR_VALUES[i];
         }
