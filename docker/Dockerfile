@@ -18,25 +18,6 @@ RUN add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_r
 RUN apt install -y --no-install-recommends r-base
 
 # For the markdown package in R
-RUN apt install -y make gcc
+RUN apt install -y make gcc build-essential
 
-# --- Installing renv ---
-
-RUN R -e "install.packages('renv', repos = c(CRAN = 'https://cloud.r-project.org'))"
-
-# --- Copy the R scripts and configure the R profile ---
-
-COPY src/main/resources/valipop/analysis-r src/main/resources/valipop/analysis-r
-
-# Rewrite .Rprofile
-RUN echo 'setwd("/app/src/main/resources/valipop/analysis-r")' > src/main/resources/valipop/analysis-r/.Rprofile
-RUN echo 'source("renv/activate.R")' >> src/main/resources/valipop/analysis-r/.Rprofile
-
-ENV R_PROFILE /app/src/main/resources/valipop/analysis-r/.Rprofile
-
-# --- Install the R dependencies ---
-
-RUN R -e "renv::restore()"
-
-# FIXME: needed by Knitr, for some reason not installed by renv?
-RUN R -e "install.packages('markdown', repos = c(CRAN = 'https://cloud.r-project.org'))"
+RUN R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'))"

@@ -218,7 +218,7 @@ public class InputFileReader {
 
                         String rowLabel = split[0];
 
-                        data.put(rowLabel, new Double(split[1]));
+                        data.put(rowLabel, Double.valueOf(split[1]));
                     }
                     break;
             }
