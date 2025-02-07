@@ -1,12 +1,30 @@
 # _ValiPop_ Configuration
 
-## Config File
+## The config File
 
-The main source of configuration for `Valipop` is the config file. This a `.txt` file containing a collection of configuration options. A configuration opetion is of the form `<option> = <value>`, where `option` is the name of the configuration option and `value` is the value set. Comments are prefixed with `#` and are ignored by `valipop`.
+The main source of configuration for `Valipop` is the config file. This a `.txt` file containing a collection of configuration options per line. A configuration option is of the form 
 
-These are the following configuration options supported in Valipop
+```<option> = <value>```
 
-### File Paths
+where `option` is the name of the configuration option and `value` is the value given. Comments are prefixed with `#` and are ignored by `valipop`.
+
+This is an example of a simple configuration file:
+
+```txt
+# Properties File - for model v3 - Tom, Graham, Al
+
+var_data_files = src/main/resources/valipop/inputs/synthetic-scotland
+tS = 1687-01-01
+t0 = 1855-01-01
+tE = 1973-01-01
+t0_pop_size = 1000
+```
+
+### Configuration Options
+
+These are all configuration options supported by Valipop.
+
+#### File Paths
 
 `var_data_files`
 
@@ -20,7 +38,7 @@ These are the following configuration options supported in Valipop
 
 - Path to the directory where summarising data about runs are contained. Defaults to `results/`.
 
-### Distribution Factors
+#### Distribution Factors
 
 `set_up_dr`
 
@@ -39,7 +57,7 @@ These are the following configuration options supported in Valipop
 - ??
 
 
-### Dates and Periods
+#### Dates and Periods
 
 `tS`
 
@@ -80,7 +98,7 @@ This specifies the output format of the generated graph from the population simu
 - `GEDCOM`
     - Generates a GEDCOM family tree file
 
-### Other
+#### Other
 
 `input_width`
 
