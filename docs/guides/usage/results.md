@@ -1,18 +1,18 @@
 # _Valipop_ Results
 
-All results of running Valipop are written to a single directory. The directory is saved at the following path
+All results of running Valipop are written to a single directory. The directory is saved in the following path structure
 
 ```
 <results_path>/<run_purpose>/<current_time>/
 ```
 
-where `results_path` and `run_purpose` can be specified in the *configuration* and `current_time` represents the datetime when valipop was called.
+`results_path` and `run_purpose` can be specified in the [configuration](/docs/usage/config.md) and `current_time` represents the timestamp when valipop was executed.
 
 Valipop will create the directory structure for the results if it does not exist already.
 
 ## Result Structure
 
-The directory structure of the results of running valipop is as follows
+The directory structure of the results of running valipop looks like the following:
 
 ```
 ├───analysis.R
