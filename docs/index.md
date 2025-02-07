@@ -20,7 +20,7 @@ and statistical code is written in R.
 
 To learn more about using Valipop, you can read these guides:
 
-- [How to run Valipop](/usage/execution.md)
+- [How to run Valipop](/usage/execution/index.md)
 - [How to configure Valipop](/usage/config.md)
 - [How to read the results](/usage/results.md)
 
@@ -29,7 +29,7 @@ To learn more about using Valipop, you can read these guides:
 To learn more about how Valipop works, and how to develop it, you can read the following:
 
 - [Valipop execution overview](/development/overview.md)
-- [Valipop implementation](/development/implementation.md)
+- [Valipop implementation](/development/implementations.md)
 
 ---
 

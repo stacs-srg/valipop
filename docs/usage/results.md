@@ -1,10 +1,10 @@
 ---
 layout: default
-title: ValiPop
+title: ValiPop Results
 markdown: kramdown
 ---
 
-# _Valipop_ Results
+# Valipop Results
 
 All results of running Valipop are written to a single directory. The directory is saved in the following path structure
 
