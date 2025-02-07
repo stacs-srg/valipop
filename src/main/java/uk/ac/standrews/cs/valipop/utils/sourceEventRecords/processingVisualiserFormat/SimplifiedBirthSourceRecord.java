@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiser
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 
 import java.time.LocalDate;
@@ -37,15 +36,8 @@ public class SimplifiedBirthSourceRecord extends IndividualSourceRecord {
     private String birth_address;
 
     private LocalDate parents_marriage_date;
-    private String parents_place_of_marriage;
 
-    private String illegitimate_indicator;
-    private String informant;
-    private String informant_did_not_sign;
-    private String adoption;
-
-
-    public SimplifiedBirthSourceRecord(final IPerson person, IPopulation population) {
+    public SimplifiedBirthSourceRecord(final IPerson person) {
 
         // Attributes associated with individual
         setUid(String.valueOf(person.getId()));
@@ -68,22 +60,16 @@ public class SimplifiedBirthSourceRecord extends IndividualSourceRecord {
             // record should be generated.
             if (parents_marriage_date != null) {
 
-                setParentsPlaceOfMarriage(parents_partnership.getMarriagePlace());
-
                 // TODO this will need to change to reflect however we choose to model current location in geographical model
                 setBirthAddress(parents_partnership.getMarriagePlace());
 
-                setParentAttributes(person, population, parents_partnership);
+                setParentAttributes(person);
             }
         }
     }
 
     public void setBirthAddress(final String birth_address) {
         this.birth_address = birth_address;
-    }
-
-    public void setParentsPlaceOfMarriage(final String parents_place_of_marriage) {
-        this.parents_place_of_marriage = parents_place_of_marriage;
     }
 
     @Override

@@ -24,6 +24,8 @@ import java.time.Period;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
+ * For utility class for selecting random dates in a range.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DateSelector {

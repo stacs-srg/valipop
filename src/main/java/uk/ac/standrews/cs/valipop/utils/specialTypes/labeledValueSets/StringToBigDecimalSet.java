@@ -19,7 +19,7 @@ public class StringToBigDecimalSet extends AbstractLabelToAbstractValueSet<Strin
     }
 
     @Override
-    public Class getValueClass() {
+    public Class<BigDecimal> getValueClass() {
         return BigDecimal.class;
     }
 

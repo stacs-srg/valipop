@@ -8,10 +8,12 @@ import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
+ * Parses a row of a CSV string as a hash map.
+ * Offers utility functions to read the CSV valus as different types.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DataRow {
@@ -103,6 +105,7 @@ public class DataRow {
         return sb.toString();
     }
 
+    @SuppressWarnings("unchecked")
     public DataRow clone() {
         return new DataRow((HashMap<String, String>) values.clone());
 

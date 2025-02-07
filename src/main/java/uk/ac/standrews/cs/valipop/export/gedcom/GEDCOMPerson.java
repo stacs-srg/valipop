@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.valipop.export.gedcom;
 import org.gedcom4j.model.*;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.Surname;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
@@ -39,7 +40,7 @@ public class GEDCOMPerson implements IPerson {
     private final GEDCOMPopulationAdapter adapter;
     protected int id;
     private String first_name;
-    protected String surname;
+    protected Surname surname;
     protected SexOption sex;
     private LocalDate birth_date;
     private String birth_place;
@@ -62,6 +63,11 @@ public class GEDCOMPerson implements IPerson {
 
     @Override
     public String getSurname() {
+        return surname.getName();
+    }
+
+    @Override
+    public Surname getSurnameRef() {
         return surname;
     }
 
@@ -199,7 +205,7 @@ public class GEDCOMPerson implements IPerson {
         }
     }
 
-    private static String findSurname(final List<PersonalName> names) {
+    private static Surname findSurname(final List<PersonalName> names) {
 
         for (final PersonalName gedcom_name : names) {
 
@@ -208,7 +214,7 @@ public class GEDCOMPerson implements IPerson {
                 final int start = name.indexOf('/');
                 final int end = name.lastIndexOf('/');
                 if (end > start) {
-                    return name.substring(start + 1, end);
+                    return new Surname(name.substring(start + 1, end));
                 }
             }
         }

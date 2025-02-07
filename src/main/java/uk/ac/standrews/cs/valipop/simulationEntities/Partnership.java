@@ -18,12 +18,8 @@ package uk.ac.standrews.cs.valipop.simulationEntities;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Cache;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -33,6 +29,8 @@ import java.util.List;
 import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.getDateOfNextPostSeparationEvent;
 
 /**
+ * Implementation of a partnership in a table format.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class Partnership implements IPartnership {
@@ -92,8 +90,8 @@ public class Partnership implements IPartnership {
 
     private void appendPerson(StringBuilder s, IPerson person) {
 
-        s.append(person.getId()).append(" | ");
-        s.append(person.getFirstName()).append(" ");
+        //s.append(person.getId()).append(" | ");
+        //s.append(person.getFirstName()).append(" ");
         s.append(person.getSurname()).append(" | ");
         s.append(person.getSex()).append(" | ");
         s.append(person.getBirthDate()).append(" | ");

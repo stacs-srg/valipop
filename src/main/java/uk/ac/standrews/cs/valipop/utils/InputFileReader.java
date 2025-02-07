@@ -37,6 +37,10 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
+ * Parses the input files into input data to form the distribution used by the simulation.
+ * 
+ * Supports reading data in several different formats.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class InputFileReader {
@@ -214,7 +218,7 @@ public class InputFileReader {
 
                         String rowLabel = split[0];
 
-                        data.put(rowLabel, new Double(split[1]));
+                        data.put(rowLabel, Double.valueOf(split[1]));
                     }
                     break;
             }
@@ -411,7 +415,7 @@ public class InputFileReader {
         return new SelfCorrecting2DEnumeratedProportionalDistribution(year, sourcePopulation, sourceOrganisation, data, random);
     }
 
-    public static SelfCorrectingProportionalDistribution readInAndAdaptAgeAndProportionalStatsInput(Path path, RandomGenerator random) throws IOException, InvalidInputFileException {
+    public static SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer> readInAndAdaptAgeAndProportionalStatsInput(Path path, RandomGenerator random) throws IOException, InvalidInputFileException {
 
         List<String> lines = new ArrayList<>(getAllLines(path));
 

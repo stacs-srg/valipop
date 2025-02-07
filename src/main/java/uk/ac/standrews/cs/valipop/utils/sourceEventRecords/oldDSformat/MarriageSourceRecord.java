@@ -19,14 +19,11 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,7 +133,7 @@ public class MarriageSourceRecord extends SourceRecord {
     private String bride_mother_deceased;
     private String bride_father_occupation;
 
-    public MarriageSourceRecord(final IPartnership partnership, final IPopulation population) {
+    public MarriageSourceRecord(final IPartnership partnership) {
 
         marriage_date = partnership.getMarriageDate();
 
@@ -168,7 +165,7 @@ public class MarriageSourceRecord extends SourceRecord {
             setGroomFathersOccupation(groom_father.getOccupation(marriage_date));
 
             setGroomMothersForename(groom_mother.getFirstName());
-            setGroomMothersMaidenSurname(getMaidenSurname(population, groom_mother));
+            setGroomMothersMaidenSurname(getMaidenSurname(groom_mother));
         }
 
         final IPartnership bride_parents_partnership = bride.getParents();
@@ -182,7 +179,7 @@ public class MarriageSourceRecord extends SourceRecord {
             setBrideFatherOccupation(bride_father.getOccupation(marriage_date));
 
             setBrideMothersForename(bride_mother.getFirstName());
-            setBrideMothersMaidenSurname(getMaidenSurname(population, bride_mother));
+            setBrideMothersMaidenSurname(getMaidenSurname(bride_mother));
         }
     }
 

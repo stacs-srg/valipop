@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
+ * Represents a serializable area defined by an address, bounding box, and place id.
+ * Created by passing in input geography data.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,13 +48,13 @@ public abstract class AbstractExporterTest {
         }
     }
 
-    protected final IPopulation population;
+    protected final IPersonCollection population;
     final String file_name_root;
 
     Path actual_output = null;
     Path intended_output = null;
 
-    AbstractExporterTest(final IPopulation population, final String file_name_root) {
+    AbstractExporterTest(final IPersonCollection population, final String file_name_root) {
 
         this.population = population;
         this.file_name_root = file_name_root;
@@ -95,7 +95,7 @@ public abstract class AbstractExporterTest {
         OBDModel sim = new OBDModel(config);
         sim.runSimulation();
 
-        final IPopulation population = sim.getPopulation().getPeople();
+        final IPersonCollection population = sim.getPopulation().getPeople();
         population.setDescription(String.valueOf(population_size));
 
         return new Object[]{population, file_name_root};

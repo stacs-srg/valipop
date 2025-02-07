@@ -48,7 +48,7 @@ public class BalancedMigrationModel {
                 .getRate(0)));
 
         Collection<List<IPerson>> peopleToMigrate = new ArrayList<>();
-        List<IPerson> livingPeople = new ArrayList(population.getLivingPeople().getPeople());
+        List<IPerson> livingPeople = new ArrayList<>(population.getLivingPeople().getPeople());
 
         HashSet<IPerson> theMigrated = new HashSet<>();
         // select people to move out of country

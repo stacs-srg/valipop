@@ -29,7 +29,7 @@ public class JobQueueRunner {
     private static double appropriateUsageThreshold = 0.65;
     private static double memoryIncreaseOnMemoryException = 1.2;
 
-    private static final ArrayList<String> order = new ArrayList<>(Arrays.asList(new String[]{"priority","code version","reason","n","seed size","rf","prf","iw","input dir","results dir","summary results dir","required memory","output record format","deterministic","seed","setup br","setup dr","bf","df","tS","t0","tE","timestep","binomial sampling","min birth spacing","min ges period","ct tree stepback","oversized geography factor"}));
+    private static final ArrayList<String> order = new ArrayList<>(Arrays.asList(new String[]{"priority","code version","reason","n","seed size","rf","prf","iw","input dir","results dir","summary results dir","required memory","output record format","deterministic","seed","setup br","setup dr","tS","t0","tE","timestep","binomial sampling","min birth spacing","min ges period","ct tree stepback","oversized geography factor"}));
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
@@ -67,14 +67,14 @@ public class JobQueueRunner {
                             
                             OBDModel model = new OBDModel(config);
                             try {
-                                doubleLog(model.log, "Sim commencing @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " with seed: " + config.getSeed());
+                                doubleLog(OBDModel.log, "Sim commencing @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " with seed: " + config.getSeed());
                                 model.runSimulation();
-                                doubleLog(model.log, "Sim concluded, beginning CT tables generation @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                doubleLog(OBDModel.log, "Sim concluded, beginning CT tables generation @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                 model.analyseAndOutputPopulation(false, 5);
-                                doubleLog(model.log, "CT tables generation concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                doubleLog(OBDModel.log, "CT tables generation concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
                                 if(THREAD_LIMIT == 1) {
-                                    doubleLog(model.log, "Beginning R Analysis in main thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                    doubleLog(OBDModel.log, "Beginning R Analysis in main thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                     new AnalysisThread(model, config, threadCount).run(); // this runs it in the main thread
                                 } else {
                                     while (threadCount >= THREAD_LIMIT) {
@@ -82,11 +82,11 @@ public class JobQueueRunner {
                                         Thread.sleep(10000);
                                     }
 
-                                    doubleLog(model.log, "Beginning R Analysis in new thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                    doubleLog(OBDModel.log, "Beginning R Analysis in new thread @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                                     new AnalysisThread(model, config, threadCount).start(); // this runs it in a new thread
                                 }
 
-                                doubleLog(model.log, "R Analysis concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                doubleLog(OBDModel.log, "R Analysis concluded @ " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
                             } catch (PreEmptiveOutOfMemoryWarning e) {
                                 model.recordOutOfMemorySummary();
@@ -139,8 +139,9 @@ public class JobQueueRunner {
     }
 
     public static String execCmd(String cmd) throws java.io.IOException {
-        java.util.Scanner s = new java.util.Scanner(Runtime.getRuntime().exec(cmd).getInputStream()).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
+        try (java.util.Scanner s = new java.util.Scanner(Runtime.getRuntime().exec(cmd).getInputStream()).useDelimiter("\\A")) {
+            return s.hasNext() ? s.next() : "";
+        }
     }
 
     private static boolean getStatus(Path statusPath) throws IOException {
@@ -263,26 +264,19 @@ public class JobQueueRunner {
 
         for(DataRow job : jobs) {
 
-            if(job.getInt("priority") != 99 && (job.getValue("prf").matches(multipleJobs) || job.getValue("rf").matches(multipleJobs)) || job.getValue("bf").matches(multipleJobs) || job.getValue("df").matches(multipleJobs)) {
+            if(job.getInt("priority") != 99 && (job.getValue("prf").matches(multipleJobs) || job.getValue("rf").matches(multipleJobs))) {
 
                 try {
                     for(double prf : toValueSet(job.getValue("prf"))) {
                         for(double rf : toValueSet(job.getValue("rf"))) {
-                            for (double bf : toValueSet(job.getValue("bf"))) {
-                                for (double df : toValueSet(job.getValue("df"))) {
+                            DataRow copy = job.clone();
+                            copy.setValue("rf", String.valueOf(rf));
+                            copy.setValue("prf", String.valueOf(prf));
 
-                                    DataRow copy = job.clone();
-                                    copy.setValue("rf", String.valueOf(rf));
-                                    copy.setValue("prf", String.valueOf(prf));
-                                    copy.setValue("bf", String.valueOf(bf));
-                                    copy.setValue("df", String.valueOf(df));
-
-                                    if (explodedJobs == null) {
-                                        explodedJobs = new DataRowSet(copy);
-                                    } else {
-                                        explodedJobs.add(copy);
-                                    }
-                                }
+                            if (explodedJobs == null) {
+                                explodedJobs = new DataRowSet(copy);
+                            } else {
+                                explodedJobs.add(copy);
                             }
 
                         }
@@ -415,8 +409,6 @@ public class JobQueueRunner {
         config.setInputWidth(chosenJob.getPeriod("iw"));
         config.setMinBirthSpacing(chosenJob.getPeriod("min birth spacing"));
         config.setMinGestationPeriod(chosenJob.getPeriod("min ges period"));
-        config.setBirthFactor(chosenJob.getDouble("bf"));
-        config.setDeathFactor(chosenJob.getDouble("df"));
         config.setOverSizedGeographyFactor(chosenJob.getValue("oversized geography factor"));
 
         try {

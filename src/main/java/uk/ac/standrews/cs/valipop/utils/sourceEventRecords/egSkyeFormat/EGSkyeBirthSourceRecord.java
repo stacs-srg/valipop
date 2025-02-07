@@ -1,7 +1,6 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
 
 import java.time.LocalDate;
@@ -23,9 +22,9 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
     protected String marriageBaby = "";
     protected String deathID = "";
 
-    public EGSkyeBirthSourceRecord(IPerson person, IPopulation population) {
+    public EGSkyeBirthSourceRecord(IPerson person) {
 
-        super(person, population);
+        super(person);
 
         familyID = parents_partnership_id;
         birthDate = person.getBirthDate();

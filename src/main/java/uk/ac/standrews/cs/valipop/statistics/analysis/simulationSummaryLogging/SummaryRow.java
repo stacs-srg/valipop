@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging;
 
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.implementations.SerializableSummaryRow;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
 import java.io.IOException;
@@ -30,6 +31,8 @@ import java.time.Period;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
+ * Data structure containing simulation meta data.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SummaryRow {
@@ -50,8 +53,6 @@ public class SummaryRow {
 
     private int seed;
 
-    private double birthFactor;
-    private double deathFactor;
     private double recoveryFactor;
     private double proportionalRecoveryFactor;
     private double oversizedGeographyFactor;
@@ -94,7 +95,7 @@ public class SummaryRow {
     public SummaryRow(Config config, String codeVersion, String hostname) {
 
         this.config = config;
-        this.resultsDirectory = config.getResultsSavePath().resolve( config.getRunPurpose()).resolve( config.getStartTime().toString());
+        this.resultsDirectory = config.getRunPath();
         this.inputsDirectory = config.getVarPath();
         this.startTime = config.getStartTime();
         this.reason = config.getRunPurpose();
@@ -104,8 +105,6 @@ public class SummaryRow {
         this.startDate = config.getT0();
         this.endDate = config.getTE();
         this.simLength = (int) DAYS.between(startDate, endDate);
-        this.birthFactor = config.getBirthFactor();
-        this.deathFactor = config.getDeathFactor();
         this.recoveryFactor = config.getRecoveryFactor();
         this.proportionalRecoveryFactor = config.getProportionalRecoveryFactor();
         this.binomialSampling = config.getBinomialSampling();
@@ -172,8 +171,8 @@ public class SummaryRow {
         return makeRow(startTime, reason, codeVersion, inputsDirectory, totalPop, seedPop,
                 completed, simLength, timestep, inputWidth, startPop,
                 endPop, peakPop, startDate, endDate, simRunTime,
-                ctRunTime, recordsRunTime, resultsDirectory, birthFactor,
-                deathFactor, recoveryFactor, proportionalRecoveryFactor, binomialSampling,
+                ctRunTime, recordsRunTime, resultsDirectory, recoveryFactor,
+                proportionalRecoveryFactor, binomialSampling,
                 minBirthSpacing, (maxMemoryUsage / 1e6), outputRecordFormat.toString(),
                 v.toString(), statsRunTime, eligibilityChecks, failedEligibilityChecks, seed,
                 ctTreeStepback, ctTreePrecision, hostname, oversizedGeographyFactor) + "\n";
@@ -201,7 +200,7 @@ public class SummaryRow {
                  "Seed Pop Size", "Completed", "Sim Length", "Timestep" ,
                  "Input Width", "Start Pop", "End Pop", "Peak Pop", "Start Date" ,
                  "End Date", "Sim Run time", "CT Run time", "Records Run time" ,
-                 "Results Directory", "Birth Factor", "Death Factor", "Recovery Factor" ,
+                 "Results Directory", "Recovery Factor" ,
                  "Proportional Recovery Factor", "binomial Sampling", "Min Birth Spacing" ,
                  "Peak Memory Usage (MB)", "Output Record Format", "v/M", "Stats Run Time" ,
                  "Eligibility Checks", "Failed Eligibility Checks", "Seed", "CT Tree Stepback",
@@ -224,5 +223,83 @@ public class SummaryRow {
 
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public SummaryRow(SerializableSummaryRow sr) {
+        this.startTime                     = sr.startTime;
+        this.reason                        = sr.reason;
+        this.codeVersion                   = sr.codeVersion;
+        this.inputWidth                    = sr.inputWidth;
+        this.timestep                      = sr.timestep;
+        this.startDate                     = sr.startDate;
+        this.endDate                       = sr.endDate;
+        this.simLength                     = sr.simLength;
+        this.seed                          = sr.seed;
+        this.recoveryFactor                = sr.recoveryFactor;
+        this.proportionalRecoveryFactor    = sr.proportionalRecoveryFactor;
+        this.oversizedGeographyFactor      = sr.oversizedGeographyFactor;
+        this.minBirthSpacing               = sr.minBirthSpacing;
+        this.outputRecordFormat            = sr.outputRecordFormat;
+        this.seedPop                       = sr.seedPop;
+        this.resultsDirectory              = Path.of(sr.resultsDirectory);
+        this.inputsDirectory               = Path.of(sr.inputsDirectory);
+        this.startPop                      = sr.startPop;
+        this.totalPop                      = sr.totalPop;
+        this.endPop                        = sr.endPop;
+        this.peakPop                       = sr.peakPop;
+        this.ctTreeStepback                = sr.ctTreeStepback;
+        this.ctTreePrecision               = sr.ctTreePrecision;
+        this.eligibilityChecks             = sr.eligibilityChecks;
+        this.failedEligibilityChecks       = sr.failedEligibilityChecks;
+        this.completed                     = sr.completed;
+        this.simRunTime                    = sr.simRunTime;
+        this.ctRunTime                     = sr.ctRunTime;
+        this.recordsRunTime                = sr.recordsRunTime;
+        this.statsRunTime                  = sr.statsRunTime;
+        this.binomialSampling              = sr.binomialSampling;
+        this.maxMemoryUsage                = sr.maxMemoryUsage;
+        this.v                             = sr.v;
+        this.hostname                      = sr.hostname;
+        this.config                        = new Config(sr.config);
+    }
+
+    public SerializableSummaryRow toSerialized() {
+        return new SerializableSummaryRow(
+            startTime,
+            reason,
+            codeVersion,
+            inputWidth,
+            timestep,
+            startDate,
+            endDate,
+            simLength,
+            seed,
+            recoveryFactor,
+            proportionalRecoveryFactor,
+            oversizedGeographyFactor,
+            minBirthSpacing,
+            outputRecordFormat,
+            seedPop,
+            resultsDirectory.toString(),
+            inputsDirectory.toString(),
+            startPop,
+            totalPop,
+            endPop,
+            peakPop,
+            ctTreeStepback,
+            ctTreePrecision,
+            eligibilityChecks,
+            failedEligibilityChecks,
+            completed,
+            simRunTime,
+            ctRunTime,
+            recordsRunTime,
+            statsRunTime,
+            binomialSampling,
+            maxMemoryUsage,
+            v,
+            hostname,
+            config.toSerialized()
+        );
     }
 }

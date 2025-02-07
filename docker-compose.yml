@@ -1,0 +1,49 @@
+services:
+  base:
+    image: valipop-base
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+  model:
+    image: valipop
+    build:
+      context: .
+      dockerfile: docker/model/Dockerfile
+      # mvn package needs to be able to open more files
+      ulimits:
+        nofile: 65536
+    volumes:
+      - "./src/main/resources/valipop/config:/app/src/main/resources/valipop/config"
+      - "./src/main/resources/valipop/inputs/:/app/src/main/resources/valipop/inputs/"
+      - "./results/:/app/results/"
+  master:
+    image: valipop-master
+    build:
+      context: .
+      dockerfile: docker/cluster/master/Dockerfile
+    ports:
+      - 8080:8080
+      - 23177:23177
+    network_mode: "host"
+  worker:
+    image: valipop-worker
+    build:
+      context: .
+      dockerfile: docker/cluster/worker/Dockerfile
+    volumes:
+      - "./src/main/resources/valipop/inputs/:/app/src/main/resources/valipop/inputs/"
+    network_mode: "host"
+    
+  factor-search:
+    image: valipop-factor-search
+    build:
+      context: .
+      dockerfile: docker/factor-search/Dockerfile
+    volumes:
+      - "./src/main/resources/valipop/config:/app/src/main/resources/valipop/config"
+      - "./src/main/resources/valipop/inputs/:/app/src/main/resources/valipop/inputs/"
+      - "./results/:/app/results/"
+    ports:
+      - 5055:5055
+    network_mode: "host"
+    

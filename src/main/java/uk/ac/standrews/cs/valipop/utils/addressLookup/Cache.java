@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Represents the raw data read from a geography file.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class Cache implements Serializable {

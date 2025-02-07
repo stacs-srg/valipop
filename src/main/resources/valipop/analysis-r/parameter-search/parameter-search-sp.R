@@ -1,4 +1,4 @@
-setwd("~/tom/phd/repos/population-model/src/main/resources/valipop/analysis-r/")
+#setwd("~/tom/phd/repos/population-model/src/main/resources/valipop/analysis-r/")
 
 source("parameter-search/function-code/new-search-plots.R")
 source("parameter-search/function-code/promising-candidates-functions.R")
