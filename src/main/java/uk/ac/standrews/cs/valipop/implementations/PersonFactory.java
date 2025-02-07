@@ -16,6 +16,8 @@ import java.time.Year;
 import java.time.temporal.ChronoUnit;
 
 /**
+ * Source for creating persons in simulation.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class PersonFactory {

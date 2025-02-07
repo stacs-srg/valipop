@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.export;
 import uk.ac.standrews.cs.utilities.ProgressIndicator;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class PopulationConverter implements AutoCloseable {
 
-    private final IPopulation population;
+    private final IPersonCollection population;
     private final IPopulationWriter population_writer;
 
     private ProgressIndicator progress_indicator;
@@ -43,7 +43,7 @@ public class PopulationConverter implements AutoCloseable {
      * @param population        the population to be converted
      * @param population_writer the population writer to be used to create the new representation
      */
-    public PopulationConverter(final IPopulation population, final IPopulationWriter population_writer) {
+    public PopulationConverter(final IPersonCollection population, final IPopulationWriter population_writer) {
 
         this.population = population;
         this.population_writer = population_writer;
@@ -58,7 +58,7 @@ public class PopulationConverter implements AutoCloseable {
      * @param progress_indicator a progress indicator
      * @throws Exception if the progress indicator cannot be initialised
      */
-    public PopulationConverter(final IPopulation population, final IPopulationWriter population_writer, final ProgressIndicator progress_indicator) {
+    public PopulationConverter(final IPersonCollection population, final IPopulationWriter population_writer, final ProgressIndicator progress_indicator) {
 
         this(population, population_writer);
 

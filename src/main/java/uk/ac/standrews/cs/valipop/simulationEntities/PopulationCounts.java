@@ -17,6 +17,8 @@
 package uk.ac.standrews.cs.valipop.simulationEntities;
 
 /**
+ * Class to keep track of statisitcs of population count.l
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class PopulationCounts {

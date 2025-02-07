@@ -24,6 +24,8 @@ import java.time.LocalDate;
 import java.time.Period;
 
 /**
+ * Represents a population.
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class Population {

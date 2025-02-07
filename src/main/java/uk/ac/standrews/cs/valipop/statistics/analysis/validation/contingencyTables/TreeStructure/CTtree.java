@@ -18,13 +18,11 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
-import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.SourceNodeInt;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 import java.time.LocalDate;
-import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,9 +52,9 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
     private SourceNodeInt simNode;
     private SourceNodeDouble statNode = null;
 
-    public CTtree(PeopleCollection population, PopulationStatistics expected, LocalDate startDate, LocalDate zeroDate, LocalDate endDate, int startStepBack, double precision) {
+    public CTtree(Iterable<IPerson> population, PopulationStatistics expected, LocalDate startDate, LocalDate zeroDate, LocalDate endDate, int startStepBack, double precision) {
 
-        this.NODE_MIN_COUNT = precision;
+        CTtree.NODE_MIN_COUNT = precision;
         this.expected = expected;
         this.startDate = startDate;
         this.endDate = endDate.minus(1, ChronoUnit.YEARS);
@@ -70,7 +68,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
             LocalDate prevDay = LocalDate.of(y.getYear() - 1, 12, 31);
 
             // for every person in population
-            for (IPerson person : population.getPeople()) {
+            for (IPerson person : population) {
 
                 if (prevY.getYear() == y.getYear() && PopulationNavigation.aliveOnDate(person, prevDay) && PopulationNavigation.presentOnDate(person, prevDay)) {
 
@@ -93,6 +91,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
     public CTtree() {
     }
 
+    @SuppressWarnings("rawtypes")
     public Collection<Node> getLeafNodes() {
 
         Collection<Node> childNodes = new ArrayList<>();
@@ -120,6 +119,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
         return expected;
     }
 
+    @SuppressWarnings("rawtypes")
     public Node addChildA(SourceType childOption) {
 
         if (childOption == SourceType.SIM) {
@@ -131,6 +131,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Node getChild(SourceType option) throws ChildNotFoundException {
 
         if (option == SourceType.SIM) {

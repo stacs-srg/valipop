@@ -2,13 +2,14 @@ package uk.ac.standrews.cs.valipop.utils;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.StringToDoubleSet;
 
 import java.util.*;
 
 /**
+ * Represents a set of CSV rows.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DataRowSet implements Iterable<DataRow> {

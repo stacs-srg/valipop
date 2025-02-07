@@ -43,15 +43,14 @@ cleanMBData <-function(dirtyData, largestBirthingAge, round = TRUE)  {
 cleanPartData <- function(dirtyData, round = TRUE, start = 1940, end = 2019) {
   clean.data <- cleanData(dirtyData, round = round, start = start, end = end)
   clean.data <- clean.data[which(clean.data$NPA != "na") , ]
-  clean.data$NPA <- droplevels(clean.data$NPA)
+  clean.data$NPA <- droplevels(factor(clean.data$NPA))
   return(clean.data)
 }
 
 cleanSepData <- function(dirtyData, round = TRUE) {
   clean.data <- cleanData(dirtyData, round)
   clean.data <- clean.data[which(clean.data$Separated == "YES") , ]
-  clean.data$Separated <- droplevels(clean.data$Separated)
-  clean.data$NCIP <- droplevels(clean.data$NCIP)
+  clean.data$Separated <- droplevels(factor(clean.data$Separated))
+  clean.data$NCIP <- droplevels(factor(clean.data$NCIP))
   return(clean.data)
 }
-

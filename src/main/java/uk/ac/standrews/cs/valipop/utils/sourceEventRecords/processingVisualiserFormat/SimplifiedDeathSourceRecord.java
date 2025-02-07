@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiser
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 
 import java.time.LocalDate;
@@ -41,27 +40,16 @@ public class SimplifiedDeathSourceRecord extends IndividualSourceRecord {
 
     private LocalDate death_date;
 
-    private String death_age;
-    private String death_age_changed;
-
     private String death_place;
     private String death_cause_a;
-    private String death_cause_b;
-    private String death_cause_c;
-    private String certifying_doctor;
 
     private String birth_date;
     private String occupation;
 
-    private String father_deceased;
-    private String mother_deceased;
-
-    private String marital_status;
     private String spouses_names;
     private String spouses_id = "";
-    private String spouses_occupations;
 
-    SimplifiedDeathSourceRecord(final IPerson person, IPopulation population) {
+    public SimplifiedDeathSourceRecord(final IPerson person) {
 
         // Attributes associated with individual
         setUid(String.valueOf(person.getId()));
@@ -82,24 +70,15 @@ public class SimplifiedDeathSourceRecord extends IndividualSourceRecord {
         LocalDate birth_date = person.getBirthDate();
         death_date = person.getDeathDate();
 
-        if (death_date != null) {
-
-            setDeathAge(String.valueOf(fullYearsBetween(birth_date, death_date)));
-
-            if (!death_date.isBefore(LocalDate.of( FIRST_YEAR_DOB_PRESENT,1,1))) {
-                setBirthDate(birth_date.format( DOB_DATE_FORMAT));
-            }
+        if (death_date != null && !death_date.isBefore(LocalDate.of( FIRST_YEAR_DOB_PRESENT,1,1))) {
+            setBirthDate(birth_date.format( DOB_DATE_FORMAT));
         }
 
         final IPartnership parents_partnership = person.getParents();
         if (parents_partnership != null) {
 
-            setParentAttributes(person, population, parents_partnership);
+            setParentAttributes(person);
         }
-    }
-
-    private void setDeathAge(final String death_age) {
-        this.death_age = death_age;
     }
 
     private void setDeathCauseA(final String death_cause_a) {

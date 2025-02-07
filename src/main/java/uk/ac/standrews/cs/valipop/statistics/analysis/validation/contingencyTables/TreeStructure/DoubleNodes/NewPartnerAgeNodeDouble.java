@@ -106,6 +106,7 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
         return s;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTRow<Double> toCTRow() {
         CTRow r = getParent().toCTRow();
 

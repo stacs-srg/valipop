@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.implementations;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
 import java.time.LocalDate;
@@ -46,10 +46,10 @@ public abstract class GeneralPopulationStructureTest {
     private static final int MAX_REASONABLE_FAMILY_SIZE = 20;
     private static final int POPULATION_SIZE_LIMIT_FOR_EXPENSIVE_TESTS = 10000;
 
-    private final IPopulation population;
+    private final IPersonCollection population;
     private final int initialSize;
 
-    GeneralPopulationStructureTest(final IPopulation population, int initialSize) {
+    GeneralPopulationStructureTest(final IPersonCollection population, int initialSize) {
 
         this.population = population;
         this.initialSize = initialSize;

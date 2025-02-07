@@ -16,9 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
 /**
@@ -44,16 +42,16 @@ public abstract class IndividualSourceRecord extends SourceRecord {
     protected String fathers_surname;
     protected String fathers_occupation;
 
-    protected void setParentAttributes(IPerson person, IPopulation population, IPartnership parents_partnership) {
+    protected void setParentAttributes(IPerson person) {
 
         // Attributes associated with individual's parents.
-        IPerson mother = parents_partnership.getFemalePartner();
-        IPerson father = parents_partnership.getMalePartner();
+        IPerson mother = person.getParents().getFemalePartner();
+        IPerson father = person.getParents().getMalePartner();
 
         setMothersId(String.valueOf(mother.getId()));
         setMothersForename(mother.getFirstName());
         setMothersSurname(getRecordedParentsSurname(mother.getSurname(), person.getSurname()));
-        setMothersMaidenSurname(getMaidenSurname(population, mother));
+        setMothersMaidenSurname(getMaidenSurname(mother));
 
         setFathersId(String.valueOf(father.getId()));
         setFathersForename(father.getFirstName());

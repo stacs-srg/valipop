@@ -1,5 +1,6 @@
 deathSatGEEGLM <- function(in.data) {
-  return(runGEEGLM(freq ~ Date * Age * Sex * Died * Source, in.data, constr = "ar2"))
+  # "ar2" not supported in geeglm ?
+  return(runGEEGLM(freq ~ Date * Age * Sex * Died * Source, in.data, constr = "ar1"))
 }
 
 obSatGEEGLM <- function(in.data) {
@@ -8,7 +9,7 @@ obSatGEEGLM <- function(in.data) {
 }
 
 mbSatGEEGLM <- function(in.data) {
-  return(runGEEGLM(freq ~ Date * Age * NCIY * Source, in.data))
+  return(runGEEGLM(freq ~ Date * Age * NCIY , in.data, constr = "ar1"))
 }
 
 partSatGEEGLM <- function(in.data) {
@@ -37,24 +38,24 @@ runGEEGLM <- function(formula, in.data, constr = "ar1") {
   mod <- geeglm(formula, id=idvar, data = in.data, corstr=constr)
   #print(summary(mod))
   
-  par(mfrow = c(1,2))
-  plot(residuals(mod), type = "l")
+  #par(mfrow = c(1,2))
+  #plot(residuals(mod), type = "l")
   
-  library(MRSea)
-  library(ggplot2)
-  runACF(in.data$idvar, mod, store=F)
-  runDiagnosticsADAPTED(mod)
+  #library(MRSea)
+  #library(ggplot2)
+  #runACF(in.data$idvar, mod, store=F)
+  #runDiagnosticsADAPTED(mod)
   
-  par(mfrow = c(1,2))
-  require(mgcv)
-  fit<- gam(residuals(mod) ~ s(in.data$YOB))
-  plot(fit)
-  summary(fit)
+  #par(mfrow = c(1,2))
+  #require(mgcv)
+  #fit<- gam(residuals(mod) ~ s(in.data$YOB))
+  #plot(fit)
+  #summary(fit)
   
-  fit<- gam(residuals(mod) ~ s(in.data$idvar))
-  plot(fit)
-  summary(fit)
-  par(mfrow = c(1,1))
+  #fit<- gam(residuals(mod) ~ s(in.data$idvar))
+  #plot(fit)
+  #summary(fit)
+  #par(mfrow = c(1,1))
   
   return(mod)
 }
@@ -91,4 +92,3 @@ runDiagnosticsADAPTED<-function(model){
   grid.arrange(a, b, ncol=2, nrow = 1)  
   
 }
-

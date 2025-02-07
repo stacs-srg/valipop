@@ -37,6 +37,7 @@ import java.util.Objects;
  */
 public class CTtableFull extends CTtable {
 
+    @SuppressWarnings({ "rawtypes", "unused" })
     public CTtableFull(CTtree tree, PrintStream ps, int zeroAdjustValue) {
 
         Iterator<Node> leafs = tree.getLeafNodes().iterator();
@@ -168,6 +169,7 @@ public class CTtableFull extends CTtable {
         ps.close();
     }
 
+    @SuppressWarnings("rawtypes")
     private String getVarNames(String sep, CTRow row) {
 
         StringBuilder s = new StringBuilder();

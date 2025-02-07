@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
+/**
+ * Utility functions to navigate through population model via persons.
+ */
 public class PopulationNavigation {
 
     private static final int NUMBER_OF_GENERATIONS_TO_EXCLUDE = 3;
@@ -372,6 +375,7 @@ public class PopulationNavigation {
         return earliestDate;
     }
 
+    // Ensures a person is present in country at the given date
     public static boolean presentOnDate(IPerson person, LocalDate date) {
 
         LocalDate immigrationDate = person.getImmigrationDate();

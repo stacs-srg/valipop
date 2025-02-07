@@ -30,8 +30,10 @@ import java.util.ArrayList;
  */
 public class SourceNodeDouble extends DoubleNode<SourceType, Year> {
 
+    @SuppressWarnings("rawtypes")
     private Node parent;
 
+    @SuppressWarnings("rawtypes")
     public SourceNodeDouble(SourceType option, Node parent) {
          super(option, parent);
          this.parent = parent;
@@ -46,6 +48,7 @@ public class SourceNodeDouble extends DoubleNode<SourceType, Year> {
         return new YOBNodeDouble(childOption, this, initCount);
     }
 
+    @SuppressWarnings("rawtypes")
     public Node getAncestor(Node nodeType) {
 
         if(nodeType.getClass().isInstance(this)) {
@@ -76,6 +79,7 @@ public class SourceNodeDouble extends DoubleNode<SourceType, Year> {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTRow<Double> toCTRow() {
         CTRow r = new CTRowDouble();
         r.setVariable(getVariableName(), getOption().toString());

@@ -5,6 +5,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import java.util.ArrayList;
 
 /**
+ * Stores countries (excluding UK) as addresses and supports picking a country address at random.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class ForeignGeography {

@@ -26,6 +26,8 @@ import java.time.LocalDate;
 import java.time.Period;
 
 /**
+ * Utility class for selecting a valid random death date of an person.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DeathDateSelector extends DateSelector {

@@ -8,6 +8,8 @@ import java.util.ListIterator;
 import java.util.RandomAccess;
 
 /**
+ * Utiliity functions on Java Collections.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class CollectionUtils {
@@ -18,7 +20,8 @@ public class CollectionUtils {
 
     private static final int SHUFFLE_THRESHOLD = 5;
 
-    public static void shuffle(List<?> list, RandomGenerator rnd) {
+    @SuppressWarnings("unchecked")
+    public static <T extends Object> void shuffle(List<T> list, RandomGenerator rnd) {
 
         int size = list.size();
         if (size < SHUFFLE_THRESHOLD || list instanceof RandomAccess) {
@@ -35,10 +38,10 @@ public class CollectionUtils {
             // instead of using a raw type here, it's possible to capture
             // the wildcard but it will require a call to a supplementary
             // private method
-            ListIterator it = list.listIterator();
+            ListIterator<T> it = list.listIterator();
             for (Object o : array) {
                 it.next();
-                it.set(o);
+                it.set((T) o);
             }
         }
     }

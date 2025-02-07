@@ -18,8 +18,14 @@ package uk.ac.standrews.cs.valipop.implementations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.stream.Collectors;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.export.ExportFormat;
+import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
+import uk.ac.standrews.cs.valipop.export.PopulationConverter;
+import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
+import uk.ac.standrews.cs.valipop.export.graphviz.GraphvizPopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.*;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.AnalyticsRunner;
@@ -44,6 +50,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.MarriageDateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.Year;
@@ -73,6 +80,7 @@ public class OBDModel {
     }
 
     private final Geography geography;
+    @SuppressWarnings("unused")
     private static final int BIRTH_ADJUSTMENT_BOUND = 1000000;
 
     private final Config config;
@@ -132,6 +140,7 @@ public class OBDModel {
             log.info("Population seed size: " + config.getT0PopulationSize());
             log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
+            // End of init period is the greatest age specified in the ordered birth rates (take min bound if max bound is unset)
             Period timeStep = Period.ofYears(desired.getOrderedBirthRates(Year.of(currentTime.getYear())).getLargestLabel().getValue());
             endOfInitPeriod = currentTime.plus(timeStep);
 
@@ -185,7 +194,11 @@ public class OBDModel {
         final ProgramTimer recordTimer = new ProgramTimer();
 
         if (config.getOutputRecordFormat() != RecordFormat.NONE) {
-            RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), config.getRecordsDirPath(), population.getPeople(), config.getT0());
+            RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), config.getRecordsDirPath(), population.getPeople(), population.getPeople().getPartnerships(), config.getT0());
+        }
+
+        if (config.getOutputGraphFormat() != ExportFormat.NONE) {
+            outputToGraph(config.getOutputGraphFormat(), population.getPeople(), config.getGraphsDirPath());
         }
 
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
@@ -207,6 +220,33 @@ public class OBDModel {
         }
 
         log.info("OBDModel --- Output complete");
+    }
+
+    private void outputToGraph(ExportFormat type, IPersonCollection people, Path outputDir) {
+        try {
+            IPopulationWriter populationWriter = null;
+            switch (type) {
+                case GEDCOM:
+                    Path gedcomPath = outputDir.resolve("graph.ged");
+                    populationWriter = new GEDCOMPopulationWriter(gedcomPath);
+                    break;
+                case GRAPHVIZ:
+                    Path graphvizPath = outputDir.resolve("graph.dot");
+                    populationWriter = new GraphvizPopulationWriter(people, graphvizPath);
+                    break;
+                default:
+                    return;
+            }
+
+            try (PopulationConverter converter = new PopulationConverter(people, populationWriter)) {
+                converter.convert();
+            }
+
+        } catch (Exception e) {
+            log.info("Graph generation failed");
+            e.printStackTrace();
+            log.info(e.getMessage());
+        }
     }
 
     private boolean successfulRun() {
@@ -261,7 +301,7 @@ public class OBDModel {
     private void simulationStep() {
 
         MemoryUsageAnalysis.log();
-        final StringBuilder logEntry = new StringBuilder(currentTime + "\t");
+        final StringBuilder logEntry = new StringBuilder(currentTime + "\t" + MemoryUsageAnalysis.getMaxSimUsage() / 1e6 + "\tMB");
 
         if (initialisationFinished() && populationTooSmall()) {
 
@@ -270,6 +310,7 @@ public class OBDModel {
         }
 
         if (!simulationStarted()) {
+            // Updated the starting pop whilst simulation has not reached begin date
             summary.setStartPop(population.getLivingPeople().getNumberOfPeople());
         }
 
@@ -385,6 +426,7 @@ public class OBDModel {
 
     }
 
+    @SuppressWarnings("unused")
     private void removePeople(final int excessBirths) {
 
         final int numberOfFemalesToRemove = excessBirths / 2;
@@ -422,7 +464,6 @@ public class OBDModel {
 
         // For each division in the population data store up to the current date
         for (final LocalDate divisionDate : divisionDates) {
-
             if (divisionDate.isAfter(currentTime)) break;
             count += getBornAtTS(femalesLiving, divisionDate);
         }
@@ -457,8 +498,7 @@ public class OBDModel {
         final BirthStatsKey key = new BirthStatsKey(age, birthOrder.getValue(), cohortSize, consideredTimePeriod, currentTime);
         final SingleDeterminedCount determinedCount = (SingleDeterminedCount) desired.getDeterminedCount(key, config);
 
-        final int birthAdjustment = getBirthAdjustment(determinedCount);
-        final int numberOfChildren = determinedCount.getDeterminedCount() + birthAdjustment;
+        final int numberOfChildren = determinedCount.getDeterminedCount();
 
         // Make women into mothers
 
@@ -466,8 +506,7 @@ public class OBDModel {
 
         // Partner females of age who don't have partners
         final int cancelledChildren = createPartnerships(mothersNeedingPartners.mothers);
-        final int childrenMade = mothersNeedingPartners.newlyProducedChildren - cancelledChildren;
-        final int fulfilled = childrenMade > birthAdjustment ? childrenMade - birthAdjustment : 0;
+        final int fulfilled = mothersNeedingPartners.newlyProducedChildren - cancelledChildren;
 
         determinedCount.setFulfilledCount(fulfilled);
 
@@ -475,21 +514,7 @@ public class OBDModel {
         birthOrders.println(currentTime.getYear() + "," + age + "," + birthOrder + "," + fulfilled + "," + numberOfChildren);
 
         desired.returnAchievedCount(determinedCount);
-        return childrenMade;
-    }
-
-    private int getBirthAdjustment(final SingleDeterminedCount determinedCount) {
-
-        if (determinedCount.getDeterminedCount() != 0) {
-
-            final double birthFactor = config.getBirthFactor();
-            final int adjuster = (int) Math.ceil(birthFactor);
-
-            if (desired.getRandomGenerator().nextInt(BIRTH_ADJUSTMENT_BOUND) < Math.abs(birthFactor / adjuster) * BIRTH_ADJUSTMENT_BOUND) {
-                return (birthFactor < 0) ? adjuster : -adjuster;
-            }
-        }
-        return 0;
+        return fulfilled;
     }
 
     private int createDeaths(final SexOption sex) {
@@ -517,24 +542,14 @@ public class OBDModel {
         final int peopleOfAge = ofSexLiving.getNumberOfPeople(divisionDate, consideredTimePeriod);
 
         // gets death rate for people of age at the current date
-        final StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentTime, sex);
-        final DeterminedCount determinedCount = desired.getDeterminedCount(key, config);
+        final StatsKey<Integer,Integer> key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentTime, sex);
+        @SuppressWarnings("unchecked")
+        final DeterminedCount<Integer, Double, Integer, Integer> determinedCount = (DeterminedCount<Integer, Double, Integer, Integer>) desired.getDeterminedCount(key, config);
 
         // Calculate the appropriate number to kill
         final Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
-        int killAdjust = 0;
-        if (numberToKill != 0) {
-
-            // TODO fix magic number
-
-            int bound = 10000;
-            if (desired.getRandomGenerator().nextInt(bound) < config.getDeathFactor() * bound) {
-                killAdjust = -1;
-            }
-        }
-
-        final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divisionDate, consideredTimePeriod, true);
+        final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill, divisionDate, consideredTimePeriod, true);
 
         final int killed = killPeople(peopleToKill);
 
@@ -542,7 +557,7 @@ public class OBDModel {
         determinedCount.setFulfilledCount(killed);
         desired.returnAchievedCount(determinedCount);
 
-        return killed + killAdjust;
+        return killed;
     }
 
     private int createPartnerships(final Collection<NewMother> mothersNeedingPartners) {
@@ -629,14 +644,14 @@ public class OBDModel {
 
         Address newAddress;
 
-        if(lastMaleAddress == null) {
-            if(lastFemaleAddress == null) {
+        if(lastMaleAddress == null || lastMaleAddress.getArea() == null) {
+            if(lastFemaleAddress == null || lastFemaleAddress.getArea() == null) {
                 newAddress = geography.getRandomEmptyAddress();
             } else {
                 newAddress = geography.getNearestEmptyAddressAtDistance(lastFemaleAddress.getArea().getCentriod(), moveDistance);
             }
         } else {
-            if(lastFemaleAddress == null) {
+            if(lastFemaleAddress == null || lastFemaleAddress.getArea() == null) {
                 newAddress = geography.getNearestEmptyAddressAtDistance(lastMaleAddress.getArea().getCentriod(), moveDistance);
             } else {
                 // both already have address, so flip coin to decide who acts as origin for move
@@ -1042,6 +1057,7 @@ public class OBDModel {
         return population.getLivingPeople().getPeople().size() < MINIMUM_POPULATION_SIZE;
     }
 
+    // When the time is after the end of init period
     private boolean initialisationFinished() {
 
         return !inInitPeriod(currentTime);

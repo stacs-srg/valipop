@@ -17,7 +17,6 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.AnalysisThread;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 
@@ -86,8 +85,6 @@ public class FactorSearch {
 
         final Period[] input_widths = new Period[]{Period.ofYears(10)};
         final Period[] minBirthSpacings = new Period[]{Period.ofDays(147)};
-        final double[] birth_factors = new double[]{0};
-        final double[] death_factors = new double[]{0};
         final int[] t0_pop_sizes = new int[]{size0};
 
         for (double precision : precisions) {
@@ -97,40 +94,34 @@ public class FactorSearch {
                     for (double proportional_recovery_factor : proportional_recovery_factors) {
                         for (Period input_width : input_widths) {
                             for (Period minBirthSpacing : minBirthSpacings) {
-                                for (double birth_factor : birth_factors) {
-                                    for (double death_factor : death_factors) {
-                                        for (int n = 0; n < numberOfRunsPerSim; n++) {
+                                for (int n = 0; n < numberOfRunsPerSim; n++) {
 
-                                            Config config = new Config(tS, t0, tE, size, dataFiles, results_save_location, runPurpose, results_save_location);
+                                    Config config = new Config(tS, t0, tE, size, dataFiles, results_save_location, runPurpose, results_save_location);
 
-                                            config.setCTtreePrecision(precision);
-                                            config.setRunPurpose(runPurpose);
-                                            config.setSetupBirthRate(set_up_br);
-                                            config.setSetupDeathRate(set_up_dr);
-                                            config.setRecoveryFactor(recovery_factor);
-                                            config.setProportionalRecoveryFactor(proportional_recovery_factor);
-                                            config.setInputWidth(input_width);
-                                            config.setMinBirthSpacing(minBirthSpacing);
-                                            config.setBirthFactor(birth_factor);
-                                            config.setDeathFactor(death_factor);
+                                    config.setCTtreePrecision(precision);
+                                    config.setRunPurpose(runPurpose);
+                                    config.setSetupBirthRate(set_up_br);
+                                    config.setSetupDeathRate(set_up_dr);
+                                    config.setRecoveryFactor(recovery_factor);
+                                    config.setProportionalRecoveryFactor(proportional_recovery_factor);
+                                    config.setInputWidth(input_width);
+                                    config.setMinBirthSpacing(minBirthSpacing);
 
-                                            OBDModel model = new OBDModel(config);
-                                            try {
-                                                model.runSimulation();
-                                                model.analyseAndOutputPopulation(false, 5);
+                                    OBDModel model = new OBDModel(config);
+                                    try {
+                                        model.runSimulation();
+                                        model.analyseAndOutputPopulation(false, 5);
 
-                                            } catch (PreEmptiveOutOfMemoryWarning e) {
-                                                model.getSummaryRow().outputSummaryRowToFile();
-                                                throw e;
-                                            }
-
-                                            while (threadCount >= THREAD_LIMIT) {
-                                                Thread.sleep(10000);
-                                            }
-
-                                            new AnalysisThread(model, config, threadCount).start();
-                                        }
+                                    } catch (PreEmptiveOutOfMemoryWarning e) {
+                                        model.getSummaryRow().outputSummaryRowToFile();
+                                        throw e;
                                     }
+
+                                    while (threadCount >= THREAD_LIMIT) {
+                                        Thread.sleep(10000);
+                                    }
+
+                                    new AnalysisThread(model, config, threadCount).start();
                                 }
                             }
                         }

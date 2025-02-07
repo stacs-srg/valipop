@@ -28,6 +28,7 @@ import java.util.Objects;
  */
 public class CTtableOB extends CTtable {
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTtableOB(CTtree tree) {
 
         for (Node n : tree.getLeafNodes()) {

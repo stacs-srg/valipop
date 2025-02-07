@@ -32,6 +32,15 @@ import java.time.Year;
 import java.util.Map;
 
 /**
+ * An implementation of the input data type, expecting a mapping of integer ranges
+ * to floating point values and supporting self correction.
+ * 
+ * Trying to correct by compensating against what couldn't acheive the statistic in the prior year.
+ * 
+ * But correcting quickly could be inaccurate and slowly could change distribution too much.
+ * 
+ * Perhaps better to have correction value per properity in model.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution implements SelfCorrection<Integer, Double, Integer, Integer> {
@@ -170,7 +179,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         }
     }
 
-    private SingleDeterminedCount resolveRateToCount(StatsKey key, double rate, double uncorrectedRate) {
+    private SingleDeterminedCount resolveRateToCount(StatsKey<Integer,Integer> key, double rate, double uncorrectedRate) {
 
         double rawCorrectedCount = rate * key.getForNPeople();
         double rawUncorrectedCount = uncorrectedRate * key.getForNPeople();

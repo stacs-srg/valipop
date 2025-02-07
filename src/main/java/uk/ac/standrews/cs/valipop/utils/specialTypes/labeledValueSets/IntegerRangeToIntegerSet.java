@@ -25,7 +25,7 @@ import java.util.*;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<IntegerRange, Integer>
-        implements OperableLabelledValueSet<IntegerRange, Integer>, Cloneable {
+        implements OperableLabelledValueSet<IntegerRange, Integer> {
 
     public IntegerRangeToIntegerSet(List<IntegerRange> labels, List<Integer> values, RandomGenerator random) {
         super(labels, values, random);
@@ -44,7 +44,7 @@ public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<In
     }
 
     @Override
-    public Class getValueClass() {
+    public Class<Integer> getValueClass() {
         return Integer.class;
     }
 

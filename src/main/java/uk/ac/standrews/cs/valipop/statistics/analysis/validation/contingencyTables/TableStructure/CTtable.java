@@ -24,11 +24,15 @@ import java.util.*;
  */
 public abstract class CTtable {
 
+    @SuppressWarnings("rawtypes")
     protected Map<String, CTRow> table = new HashMap<>();
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void outputToFile(PrintStream ps) throws NoTableRowsException {
 
+        @SuppressWarnings("unused")
         int simZeroFreqs = 0;
+        @SuppressWarnings("unused")
         int statZeroFreqs = 0;
         ps.print(getVarNames());
 
@@ -67,6 +71,7 @@ public abstract class CTtable {
         ps.close();
     }
 
+    @SuppressWarnings("rawtypes")
     private String getVarNames() throws NoTableRowsException {
 
         ArrayList<String> keys = new ArrayList<>(table.keySet());
