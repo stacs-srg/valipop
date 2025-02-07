@@ -1,10 +1,10 @@
 ---
 layout: default
-title: ValiPop
+title: Valipop Implementation
 markdown: kramdown
 ---
 
-# Implementations
+# Implementation
 
 If you are using a pre-packeaged set of summary statistics it is likely you will be able to produce 
 populations using the core programs. If you are using your own summary statistics then you may

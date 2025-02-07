@@ -16,8 +16,6 @@ RUN wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc |
 RUN add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
 
 RUN apt install -y --no-install-recommends r-base
-
-# For the markdown package in R
 RUN apt install -y make gcc build-essential
 
 RUN R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'))"
