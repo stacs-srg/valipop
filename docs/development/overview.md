@@ -1,3 +1,9 @@
+---
+layout: default
+title: ValiPop
+markdown: kramdown
+---
+
 # _Valipop_ Overview
 
 Valipop has there main stages during execution, population simulation, validation, and result generation.

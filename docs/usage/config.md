@@ -1,3 +1,9 @@
+---
+layout: default
+title: ValiPop
+markdown: kramdown
+---
+
 # _ValiPop_ Configuration
 
 ## The config File

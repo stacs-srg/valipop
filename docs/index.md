@@ -20,16 +20,16 @@ and statistical code is written in R.
 
 To learn more about using Valipop, you can read these guides:
 
-- [How to run Valipop](/docs/guides/usage/execution.md)
-- [How to configure Valipop](/docs/guides/usage/config.md)
-- [How to read the results](/docs/guides/usage/results.md)
+- [How to run Valipop](/usage/execution.md)
+- [How to configure Valipop](/usage/config.md)
+- [How to read the results](/usage/results.md)
 
 ## Developing Valipop
 
 To learn more about how Valipop works, and how to develop it, you can read the following:
 
-- [Valipop execution overview](/docs/guides/development/overview.md)
-- [Valipop implementation](/docs/guides/development/implementation.md)
+- [Valipop execution overview](/development/overview.md)
+- [Valipop implementation](/development/implementation.md)
 
 ---
 

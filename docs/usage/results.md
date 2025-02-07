@@ -1,3 +1,9 @@
+---
+layout: default
+title: ValiPop
+markdown: kramdown
+---
+
 # _Valipop_ Results
 
 All results of running Valipop are written to a single directory. The directory is saved in the following path structure
@@ -6,7 +12,7 @@ All results of running Valipop are written to a single directory. The directory 
 <results_path>/<run_purpose>/<current_time>/
 ```
 
-`results_path` and `run_purpose` can be specified in the [configuration](/docs/usage/config.md) and `current_time` represents the timestamp when valipop was executed.
+`results_path` and `run_purpose` can be specified in the [configuration](/usage/config.md) and `current_time` represents the timestamp when valipop was executed.
 
 Valipop will create the directory structure for the results if it does not exist already.
 
