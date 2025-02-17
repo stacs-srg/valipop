@@ -49,11 +49,8 @@ public class ValidationTest {
         LocalDateTime time = LocalDateTime.now();
 
         double v = RCaller.getGeeglmV(
-            "geeglm",
-            Path.of("."),
             tableDirectory,
             maxBirthingAge,
-            time
         );
 
         assertEquals(v, expectedV, 1e-10);
