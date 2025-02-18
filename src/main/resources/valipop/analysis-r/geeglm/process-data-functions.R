@@ -1,56 +1,53 @@
 
-readInData <- function(path) {
-  data = read.csv(path, sep = ',', header = T)
+read_in_data <- function(path) {
+  data <- read.csv(path, sep = ",", header = TRUE)
+
   return(data)
 }
 
-cleanData <- function(dirtyData, round = TRUE, start = 1940, end = 2019) {
-  clean.data <- dirtyData
-  if(round) {
-    clean.data <- dirtyData[which(dirtyData$freq > 0.5),]
-    clean.data$freq <- round(clean.data$freq)
+clean_data <- function(dirty_data, round = TRUE, start = 1940, end = 2019) {
+  data <- dirty_data
+  if (round) {
+    data <- dirty_data[which(dirty_data$freq > 0.5), ]
+    data$freq <- round(data$freq)
   }
-  clean.data <- clean.data[which(clean.data$Date < end),]
-  clean.data <- clean.data[which(clean.data$Date > start),]
-  return(clean.data)
+  data <- data[which(data$Date < end), ]
+  data <- data[which(data$Date > start), ]
+
+  return(data)
 }
 
-cleanDeathData <- function(dirtyData, round = TRUE, start = 1940, end = 2019) {
-  return(cleanData(dirtyData, round, start = start, end = end))
+clean_death_data <- function(
+  dirty_data,
+  round = TRUE,
+  start = 1940,
+  end = 2019
+) {
+  return(clean_data(dirty_data, round, start = start, end = end))
 }
 
-cleanOBData <- function(dirtyData, largestBirthingAge, round = TRUE) {
-  clean.data <- cleanData(dirtyData, round)
-  clean.data <- clean.data[which(clean.data$Age >= 15), ]
-  clean.data <- clean.data[which(clean.data$Age <= largestBirthingAge), ]
-  #clean.data <- clean.data[which(clean.data$CIY == "YES"), ]
-  return(clean.data)
+clean_ob_data <- function(dirty_data, max_birthing_age, round = TRUE) {
+  data <- clean_data(dirty_data, round)
+  data <- data[which(data$Age >= 15), ]
+  data <- data[which(data$Age <= max_birthing_age), ]
+  return(data)
 }
 
-sourceSummary <- function(data) {
-  print(summary(data[which(data$Source == "SIM" ),]))
-  print(summary(data[which(data$Source == "STAT"),]))
+clean_mb_data <- function(dirty_data, max_birthing_age, round = TRUE)  {
+  clean_data <- clean_ob_data(dirty_data, max_birthing_age, round)
+  clean_data <- clean_data[which(clean_data$NCIY != "0"), ]
+
+  return(clean_data)
 }
 
-cleanMBData <-function(dirtyData, largestBirthingAge, round = TRUE)  {
-  #dirtyData$freq <- ceiling(dirtyData$freq)
-  clean.data <- cleanOBData(dirtyData, largestBirthingAge, round)
-  clean.data <- clean.data[which(clean.data$NCIY != "0"), ]
-
-  return(clean.data)
-}
-
-cleanPartData <- function(dirtyData, round = TRUE, start = 1940, end = 2019) {
-  clean.data <- cleanData(dirtyData, round = round, start = start, end = end)
-  clean.data <- clean.data[which(clean.data$NPA != "na") , ]
-  clean.data$NPA <- droplevels(factor(clean.data$NPA))
-  return(clean.data)
-}
-
-cleanSepData <- function(dirtyData, round = TRUE) {
-  clean.data <- cleanData(dirtyData, round)
-  clean.data <- clean.data[which(clean.data$Separated == "YES") , ]
-  clean.data$Separated <- droplevels(factor(clean.data$Separated))
-  clean.data$NCIP <- droplevels(factor(clean.data$NCIP))
-  return(clean.data)
+clean_part_data <- function(
+  dirty_data,
+  round = TRUE,
+  start = 1940,
+  end = 2019
+) {
+  data <- clean_data(dirty_data, round = round, start = start, end = end)
+  data <- data[which(data$NPA != "na"), ]
+  data$NPA <- droplevels(factor(data$NPA))
+  return(data)
 }

@@ -79,7 +79,8 @@ public class RCaller {
         String[] params = {runDirPath.toAbsolutePath().toString(), String.valueOf(maxBirthingAge)};
         String[] commands = joinArrays(new String[]{ "Rscript", rScriptPath.toString()}, params);
 
-        System.out.println("Running command: Rscript " + String.join(" ", commands));
+        System.out.println("Running command:");
+        System.out.println(String.join(" ", commands));
         ProcessBuilder pb = new ProcessBuilder(commands);
         return pb.start();
     }

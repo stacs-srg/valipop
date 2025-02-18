@@ -1,28 +1,37 @@
+run_dir_path <- commandArgs(TRUE)[1]
+max_birthing_age <- as.integer(commandArgs(TRUE)[2])
 
-# Install geepack if not already present
-#if (!require(geepack)) {
-#  install.packages("geepack")
-#}
+death <- clean_death_data(
+  read_in_data(paste(run_dir_path, "/tables/death-CT.csv", sep = ""))
+)
 
-pathToRunDir <- commandArgs(TRUE)[1]
-maxBirthingAge <- as.integer(commandArgs(TRUE)[2])
+mbirth <- clean_mb_data(
+  read_in_data(paste(run_dir_path, "/tables/mb-CT.csv", sep = "")),
+  max_birthing_age,
+  round = TRUE
+)
 
-death <- cleanDeathData(readInData(paste(pathToRunDir, "/tables/death-CT.csv", sep = "")))
-mbirth <- cleanMBData(readInData(paste(pathToRunDir, "/tables/mb-CT.csv", sep = "")), maxBirthingAge, round = T)
-obirth <- cleanOBData(readInData(paste(pathToRunDir, "/tables/ob-CT.csv", sep = "")), maxBirthingAge)
-part <- cleanPartData(readInData(paste(pathToRunDir, "/tables/part-CT.csv", sep = "")), round = T)
+obirth <- clean_ob_data(
+  read_in_data(paste(run_dir_path, "/tables/ob-CT.csv", sep = "")),
+  max_birthing_age
+)
 
-death.ids <- addCohortIDs.death(death)
-obirth.ids <- addCohortIDs.ob(obirth)
-mbirth.ids <- addCohortIDs.mb2(mbirth)
-part.ids <- addCohortIDs.part3(part)
+part <- clean_part_data(
+  read_in_data(paste(run_dir_path, "/tables/part-CT.csv", sep = "")),
+  round = TRUE
+)
 
-death.GEEGLM <- try(deathSatGEEGLM(death.ids))
-ob.GEEGLM <- try(obSatGEEGLM(obirth.ids))
-mb.GEEGLM <- try(mbSatGEEGLM(mbirth.ids))
-part.GEEGLM <- try(partSatGEEGLM(part.ids))
+death_ids <- add_cohort_ids_death(death)
+obirth_ids <- add_cohort_ids_ob(obirth)
+mbirth_ids <- add_cohort_ids_mb(mbirth)
+part_ids <- add_cohort_ids_part(part)
 
-print(summary(death.GEEGLM))
-print(summary(ob.GEEGLM))
-print(summary(mb.GEEGLM))
-print(summary(part.GEEGLM))
+death_geeglm <- try(death_sat_geeglm(death_ids))
+ob_geeglm <- try(ob_sat_geeglm(obirth_ids))
+mb_geeglm <- try(mb_sat_geeglm(mbirth_ids))
+part_geeglm <- try(part_sat_geeglm(part_ids))
+
+print(summary(death_geeglm))
+print(summary(ob_geeglm))
+print(summary(mb_geeglm))
+print(summary(part_geeglm))
