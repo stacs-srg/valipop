@@ -4,7 +4,6 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.*;
 import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
-import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 
 import java.io.IOException;
@@ -158,8 +157,6 @@ public class MinimaSearch {
     }
 
     public static double getV(Minimise minimiseFor, int maxBirthingAge, Control controlBy, Config config) throws IOException, StatsException {
-
-        String title = config.getRunPurpose() + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy);
         switch(minimiseFor) {
             case GEEGLM:
                 return RCaller.getGeeglmV(config.getRunPath(), maxBirthingAge);

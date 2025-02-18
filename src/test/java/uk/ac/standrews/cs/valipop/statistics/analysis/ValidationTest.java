@@ -9,7 +9,6 @@ import uk.ac.standrews.cs.valipop.utils.RCaller;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -46,11 +45,10 @@ public class ValidationTest {
     @Test
     public void test() throws IOException, StatsException {
         int maxBirthingAge = 55;
-        LocalDateTime time = LocalDateTime.now();
 
         double v = RCaller.getGeeglmV(
             tableDirectory,
-            maxBirthingAge,
+            maxBirthingAge
         );
 
         assertEquals(v, expectedV, 1e-10);
