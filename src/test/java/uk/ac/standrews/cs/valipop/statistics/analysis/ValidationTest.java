@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import net.jcip.annotations.NotThreadSafe;
 import uk.ac.standrews.cs.valipop.implementations.StatsException;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 
@@ -20,7 +21,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class ValidationTest {
     private Path tableDirectory;
-    double expectedV;
+    private double expectedV;
+
+    private static Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/validation");
 
     public ValidationTest(Path tableDirectory, double expectedV) {
         this.tableDirectory = tableDirectory;
@@ -29,15 +32,15 @@ public class ValidationTest {
 
     @Parameterized.Parameters
     public static Collection<Object[]> tables() {
-        Path baseDir = Path.of("src/test/resources/valipop/validation");
-
         return Arrays.asList(new Object[][] {
-            { baseDir.resolve("test1"), 0.0 },
-            { baseDir.resolve("test2"), 17.0 },
-            { baseDir.resolve("test3"), 0.0 },
-            { baseDir.resolve("test4"), 0.0 },
-            { baseDir.resolve("test5"), 0.0 },
-            { baseDir.resolve("test6"), 61.0 },
+            { TEST_RESOURCE_DIR.resolve("test1"), 0.0 },
+            { TEST_RESOURCE_DIR.resolve("test2"), 17.0 },
+            { TEST_RESOURCE_DIR.resolve("test3"), 0.0 },
+            { TEST_RESOURCE_DIR.resolve("test4"), 0.0 },
+            { TEST_RESOURCE_DIR.resolve("test5"), 0.0 },
+            { TEST_RESOURCE_DIR.resolve("test6"), 61.0 },
+            { TEST_RESOURCE_DIR.resolve("test7"), 0 },
+            { TEST_RESOURCE_DIR.resolve("test8"), 16.0 },
         });
     }
 
