@@ -2,7 +2,6 @@
 layout: default
 title: ValiPop Configuration Reference
 markdown: kramdown
-permalink: /usage/config/reference
 ---
 
 # Valipop Configuration Reference

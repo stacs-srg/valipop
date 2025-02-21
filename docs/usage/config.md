@@ -26,6 +26,6 @@ tE = 1973-01-01
 t0_pop_size = 1000
 ```
 
-See [here](/usage/config/reference) to see all possible configuration options.
+See [here](https://daniel5055.github.io/valipop/usage/config-reference.html) to see all possible configuration options.
 
 ## Input Distribution
