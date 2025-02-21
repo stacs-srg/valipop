@@ -8,7 +8,7 @@ markdown: kramdown
 
 These are all the configuration options supported by Valipop.
 
-```
+<code>
 -----------------------------------------
 -------------- Locations ----------------
 -----------------------------------------
@@ -189,3 +189,4 @@ ct_tree_stepback =
 ct_tree_precision =
 
     The precision used in the contigency table calculation.
+</code>

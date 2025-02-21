@@ -10,8 +10,6 @@ services:
       context: .
       dockerfile: docker/model/Dockerfile
       # mvn package needs to be able to open more files
-      ulimits:
-        nofile: 65536
     volumes:
       - "./src/main/resources/valipop/config:/app/src/main/resources/valipop/config"
       - "./src/main/resources/valipop/inputs/:/app/src/main/resources/valipop/inputs/"
