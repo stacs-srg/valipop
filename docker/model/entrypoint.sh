@@ -6,23 +6,21 @@
     #uk.ac.standrews.cs.valipop.implementations.CL_OBDModel \
     #/app/src/main/resources/valipop/config/scot/config.txt
 
-if [ -z $1 ]; then
-    MASTER_URL="local[*]"
-else
-    MASTER_URL=$1
-fi
+#if [ -z $1 ]; then
+    #MASTER_URL="local[*]"
+#else
+    #MASTER_URL=$1
+#fi
 
-if [ -z $2 ]; then
-    HOST="localhost"
-else
-    HOST=$2
-fi
+#if [ -z $2 ]; then
+    #HOST="localhost"
+#else
+    #HOST=$2
+#fi
 
 java \
-    -cp valipop.jar \
-    -Xmx12G \
-    uk.ac.standrews.cs.valipop.implementations.CL_OBDModel \
-    /app/src/main/resources/valipop/config/scot/config.txt
+    -jar valipop.jar \
+    $1
 
 #spark/bin/spark-submit \
     #--class uk.ac.standrews.cs.valipop.implementations.CL_OBDModel \
