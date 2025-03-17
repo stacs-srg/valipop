@@ -4,7 +4,6 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.*;
 import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
-import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 
 import java.io.IOException;
@@ -127,18 +126,6 @@ public class MinimaSearch {
                         model.getSummaryRow().setV(v);
                         model.getSummaryRow().outputSummaryRowToFile();
 
-                        if (minimiseFor != Minimise.GEEGLM) {
-                            ProgramTimer statsTimer = new ProgramTimer();
-
-                            RCaller.generateAnalysisHTML(
-                                    config.getProjectPath(),
-                                    config.getRunPath(),
-                                    model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue(),
-                                    runPurpose + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy));
-
-                            model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
-                        }
-
                         totalV += v;
 
                     } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
@@ -170,11 +157,9 @@ public class MinimaSearch {
     }
 
     public static double getV(Minimise minimiseFor, int maxBirthingAge, Control controlBy, Config config) throws IOException, StatsException {
-
-        String title = config.getRunPurpose() + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy);
         switch(minimiseFor) {
             case GEEGLM:
-                return RCaller.getGeeglmV(title, config.getProjectPath(), config.getRunPath(), maxBirthingAge, config.getStartTime());
+                return RCaller.getGeeglmV(config.getRunPath(), maxBirthingAge);
             default:
                 throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
         }

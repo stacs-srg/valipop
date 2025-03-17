@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,66 +18,88 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 
 /**
- * Invokes R code.
+ * For extracting, invoking, and reading the results of the R analysis scripts.
  * 
- * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ * @author Daniel Brathagen (db255@st-andrews.ac.uk)
  */
 public class RCaller {
 
-    public static Process generateAnalysisHTML(Path projectPath, Path pathOfRunDir, int maxBirthingAge, String subTitle) throws StatsException {
+    // Constants
 
-        String pathToScript = projectPath.toAbsolutePath().toString() + "/src/main/resources/valipop/analysis-r/geeglm/runPopulationAnalysis.R";
-        String[] params = {pathOfRunDir.toAbsolutePath().toString(), String.valueOf(maxBirthingAge), subTitle};
-//        String[] params = {System.getProperty("user.dir") + "/" + pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
+    private static Path R_SCRIPT_LOCATION = Path.of("analysis.R");
+    private static Path R_SCRIPT_OUTPUT_LOCATION = Path.of("analysis.out");
 
-        try {
-            return runRScript(pathToScript, params);
-        } catch (IOException e) {
-            throw new StatsException(e.getMessage());
-        }
-    }
+    private static String[] R_SCRIPT_PATHS = new String[]{
+        "valipop/analysis-r/geeglm/process-data-functions.R",
+        "valipop/analysis-r/geeglm/id-funtions.R",
+        "valipop/analysis-r/geeglm/geeglm-functions.R",
+        "valipop/analysis-r/geeglm/analysis.R"
+    };
 
-    public static double getGeeglmV(String title, Path projectPath, Path pathOfRunDir, int maxBirthingAge, LocalDateTime startTime) throws IOException, StatsException {
-        // Combine the R files into a single file 
-        String[] scripts = new String[]{
-            "valipop/analysis-r/geeglm/process-data-functions.R",
-            "valipop/analysis-r/geeglm/id-funtions.R",
-            "valipop/analysis-r/geeglm/geeglm-functions.R",
-            "valipop/analysis-r/geeglm/analysis.R"
-        };
+    // Public Methods
 
+    /**
+     * Extracts and concats the R analysis scripts to a local file.
+     * 
+     * @param rScriptPath the full path to extract the scripts to
+     * 
+     * @return the parameter {@code rScriptPath}
+     */
+    public static Path extractRScript(Path rScriptPath) throws IOException {
         // The file the R is written to
-        Path analysisPath = pathOfRunDir.resolve("analysis.R");
-        File analysisFile = new File(analysisPath.toString());
+        File rScriptFile = new File(rScriptPath.toString());
 
         // This overwrites any existing file of the same name
-        FileWriter analysisFileWriter = new FileWriter(analysisFile, false);
-        analysisFileWriter.close();
+        FileWriter rScriptFileWriter = new FileWriter(rScriptFile, false);
+        rScriptFileWriter.close();
 
-        // The file the output of the analysis is written to
-        Path outputPath = pathOfRunDir.resolve("analysis.out");
-        File outputFile = new File(outputPath.toString());
-        FileWriter outputFileWrtier = new FileWriter(outputFile, false);
-        outputFile.createNewFile();
-
-        for (String script : scripts) {
+        for (String script : R_SCRIPT_PATHS) {
             try (
                 // Retrieving the R files as streams in case they are in a jar
                 InputStream stream = RCaller.class.getClassLoader().getResourceAsStream(script);
-                OutputStream output = new FileOutputStream(analysisFile, true)
+                OutputStream output = new FileOutputStream(rScriptFile, true)
             ) {
                 IOUtils.copy(stream, output);
             }
         }
 
-        String[] params = {pathOfRunDir.toAbsolutePath().toString(), String.valueOf(maxBirthingAge)};
+        return rScriptPath;
+    }
 
-        System.out.println("Running command: Rscript " + analysisPath.toString() + " " + String.join(" ",params));
-        Process p = runRScript(analysisPath.toString(), params);
+    /**
+     * Executes the R analysis script and returns the running process. The process must be destroyed separately.
+     * 
+     * @param runDirPath the path of the current run directory
+     * @param rScriptPath the path of the R analysis script
+     * @param maxBirthingAge the maximum birthing age of the population model
+     * 
+     * @return the executing process
+     */
+    public static Process runRScript(Path runDirPath, Path rScriptPath, int maxBirthingAge) throws IOException {
+        String[] params = {runDirPath.toAbsolutePath().toString(), String.valueOf(maxBirthingAge)};
+        String[] commands = joinArrays(new String[]{ "Rscript", rScriptPath.toString()}, params);
 
+        System.out.println("Running command:");
+        System.out.println(String.join(" ", commands));
+        ProcessBuilder pb = new ProcessBuilder(commands);
+        return pb.start();
+    }
+
+    /**
+     * Outputs the standard otuput and error of the R analysis to {@code outputPath} and returns the calculated v value.
+     * 
+     * @param process the executing R analysis process
+     * @param outputPath the path of the process output and error streams
+     */
+    public static double getRScriptResult(Process process, Path outputPath) throws IOException {
         // Extracting stdout and stderr
-        BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        BufferedReader stderr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+        BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+        // The file the output of the R script is written to
+        File outputFile = new File(outputPath.toString());
+        FileWriter outputFileWrtier = new FileWriter(outputFile, false);
+        outputFile.createNewFile();
 
         // Filter relevant lines, calculate v per line and sum together
         int v = stdout
@@ -106,13 +127,30 @@ public class RCaller {
         // Clean up
         stdout.close();
         stderr.close();
-        p.destroy();
         outputFileWrtier.close();
 
         System.out.println("Result: " + v);
 
         return v;
     }
+
+    /**
+     * Runs the R analysis on the population model and returns the analysis result
+     * 
+     * @param runDirPath the path of the run directory 
+     * @param maxBirthingAge the maximum birthing age of the population model
+     */
+    public static double getGeeglmV(Path runDirPath, int maxBirthingAge) throws IOException, StatsException {
+        Path rScriptPath = extractRScript(runDirPath.resolve(R_SCRIPT_LOCATION));
+        Process process = runRScript(runDirPath, rScriptPath, maxBirthingAge);
+        double v = getRScriptResult(process, runDirPath.resolve(R_SCRIPT_OUTPUT_LOCATION));
+
+        process.destroy();
+
+        return v;
+    }
+
+    // Private methods
 
     private static boolean filterAnalysis(String line) {
         // Only STATS interactions are signficant; 
@@ -143,14 +181,6 @@ public class RCaller {
         }
 
         return value;
-    }
-
-    private static Process runRScript(String pathOfScript, String[] params) throws IOException {
-        String[] commands = {"Rscript", pathOfScript};
-        commands = joinArrays(commands, params);
-        ProcessBuilder pb = new ProcessBuilder(commands);
-
-        return pb.start();
     }
 
     private static String[] joinArrays(String[] first, String[] second) {

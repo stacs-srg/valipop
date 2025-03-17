@@ -58,8 +58,6 @@ public class Config implements Serializable {
 
     private static final double DEFAULT_SETUP_BR = 0.0133;
     private static final double DEFAULT_SETUP_DR = 0.0122;
-    private static final double DEFAULT_BIRTH_FACTOR = 0;
-    private static final double DEFAULT_DEATH_FACTOR = 0;
     private static final double DEFAULT_RECOVERY_FACTOR = 1.0;
     private static final double DEFAULT_PROPORTIONAL_RECOVERY_FACTOR = 1.0;
     private static final double DEFAULT_OVERSIZED_GEOGRAPHY_FACTOR = 1.0;
