@@ -56,6 +56,7 @@ public class YOBNodeDouble extends DoubleNode<Year, SexOption> implements Contro
         return "YOB";
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTRow<Double> toCTRow() {
         CTRow r = getParent().toCTRow();
         r.setVariable(getVariableName(), Integer.toString(getOption().getValue()));

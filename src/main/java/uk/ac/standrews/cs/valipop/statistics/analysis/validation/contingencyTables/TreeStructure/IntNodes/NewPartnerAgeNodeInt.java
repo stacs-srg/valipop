@@ -51,6 +51,7 @@ public class NewPartnerAgeNodeInt extends IntNode<IntegerRange, String> {
         return s;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTRow<Integer> toCTRow() {
         CTRow r = getParent().toCTRow();
 

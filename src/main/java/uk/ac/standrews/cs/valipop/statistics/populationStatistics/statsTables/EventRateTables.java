@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrecting2DIntegerRangeProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
 import java.time.Year;
 
@@ -113,7 +114,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    SelfCorrectingProportionalDistribution getMultipleBirthRates(Year year);
+    SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer> getMultipleBirthRates(Year year);
 
     /**
      * Gets the rate of separation after having a given number of children as a couple. The rate is considered in respect

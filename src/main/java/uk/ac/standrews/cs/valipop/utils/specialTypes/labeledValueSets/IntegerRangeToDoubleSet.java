@@ -30,7 +30,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
     }
 
     @Override
-    public Class getValueClass() {
+    public Class<Double> getValueClass() {
         return Double.class;
     }
 
@@ -232,7 +232,7 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
                     largestLabel = range;
                 }
             } else {
-                if (largestLabel == null || currentIRLabel < smallestLabelLargerThanN.getValue()) {
+                if (largestLabel == null || smallestLabelLargerThanN == null || currentIRLabel < smallestLabelLargerThanN.getValue()) {
                     smallestLabelLargerThanN = range;
                 }
             }

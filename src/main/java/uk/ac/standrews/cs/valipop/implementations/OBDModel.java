@@ -18,8 +18,14 @@ package uk.ac.standrews.cs.valipop.implementations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.stream.Collectors;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.export.ExportFormat;
+import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
+import uk.ac.standrews.cs.valipop.export.PopulationConverter;
+import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
+import uk.ac.standrews.cs.valipop.export.graphviz.GraphvizPopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.*;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.AnalyticsRunner;
@@ -44,6 +50,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.MarriageDateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.Year;
@@ -73,6 +80,7 @@ public class OBDModel {
     }
 
     private final Geography geography;
+    @SuppressWarnings("unused")
     private static final int BIRTH_ADJUSTMENT_BOUND = 1000000;
 
     private final Config config;
@@ -94,7 +102,6 @@ public class OBDModel {
 
     private int birthsCount = 0;
     private int deathCount = 0;
-    private int numberOfBirthsInThisTimestep = 0;
 
     private PrintWriter birthOrders;
 
@@ -132,6 +139,7 @@ public class OBDModel {
             log.info("Population seed size: " + config.getT0PopulationSize());
             log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
+            // End of init period is the greatest age specified in the ordered birth rates (take min bound if max bound is unset)
             Period timeStep = Period.ofYears(desired.getOrderedBirthRates(Year.of(currentTime.getYear())).getLargestLabel().getValue());
             endOfInitPeriod = currentTime.plus(timeStep);
 
@@ -155,9 +163,15 @@ public class OBDModel {
     }
 
     public void runSimulation() {
-
         for (int countAttempts = 0; countAttempts < MAX_ATTEMPTS; countAttempts++) {
-            if (successfulRun()) break;
+            try {
+                simTimer = new ProgramTimer();
+                runSimulationAttempt();
+                break;
+            } catch (InsufficientNumberOfPeopleException e) {
+
+                resetSimulation(simTimer);
+            }
         }
 
         recordFinalSummary();
@@ -185,7 +199,11 @@ public class OBDModel {
         final ProgramTimer recordTimer = new ProgramTimer();
 
         if (config.getOutputRecordFormat() != RecordFormat.NONE) {
-            RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), config.getRecordsDirPath(), population.getPeople(), config.getT0());
+            RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), config.getRecordsDirPath(), population.getPeople(), population.getPeople().getPartnerships(), config.getT0());
+        }
+
+        if (config.getOutputGraphFormat() != ExportFormat.NONE) {
+            outputToGraph(config.getOutputGraphFormat(), population.getPeople(), config.getGraphsDirPath());
         }
 
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
@@ -209,27 +227,37 @@ public class OBDModel {
         log.info("OBDModel --- Output complete");
     }
 
-    private boolean successfulRun() {
-
+    private void outputToGraph(ExportFormat type, IPersonCollection people, Path outputDir) {
         try {
-            simTimer = new ProgramTimer();
-            runSimulationAttempt();
-            return true;
+            IPopulationWriter populationWriter = null;
+            switch (type) {
+                case GEDCOM:
+                    Path gedcomPath = outputDir.resolve("graph.ged");
+                    populationWriter = new GEDCOMPopulationWriter(gedcomPath);
+                    break;
+                case GRAPHVIZ:
+                    Path graphvizPath = outputDir.resolve("graph.dot");
+                    populationWriter = new GraphvizPopulationWriter(people, graphvizPath);
+                    break;
+                default:
+                    return;
+            }
 
-        } catch (InsufficientNumberOfPeopleException e) {
+            try (PopulationConverter converter = new PopulationConverter(people, populationWriter)) {
+                converter.convert();
+            }
 
-            resetSimulation(simTimer);
-            return false;
+        } catch (Exception e) {
+            log.info("Graph generation failed");
+            e.printStackTrace();
+            log.info(e.getMessage());
         }
     }
 
     private void runSimulationAttempt() {
-
-        while (!simulationFinished()) {
-            simulationStep();
-        }
-
-        finalisePartnerships();
+        initialisePopulation();
+        simulatePopulationUntilStart();
+        simulatePopulationUntilEnd();
 
         logResults();
         recordSummary();
@@ -258,55 +286,82 @@ public class OBDModel {
         }
     }
 
-    private void simulationStep() {
+    private void countBirthsAndDeaths(int births, int deaths) {
+        birthsCount += births;
+        deathCount += deaths;
+    }
 
+    private void logTimeStep(int numberBorn, int shortFallInBirths, int numberDying) {
         MemoryUsageAnalysis.log();
-        final StringBuilder logEntry = new StringBuilder(currentTime + "\t");
-
-        if (initialisationFinished() && populationTooSmall()) {
-
-            cleanUpAfterUnsuccessfulAttempt();
-            throw new InsufficientNumberOfPeopleException("Seed size likely too small");
-        }
-
-        if (!simulationStarted()) {
-            summary.setStartPop(population.getLivingPeople().getNumberOfPeople());
-        }
-
-        final int numberBorn = createBirths();
-        birthsCount += numberBorn;
-        numberOfBirthsInThisTimestep += numberBorn;
+        final StringBuilder logEntry = new StringBuilder(currentTime + "\t" + MemoryUsageAnalysis.getMaxSimUsage() / 1e6 + "\tMB");
 
         logEntry.append(numberBorn).append("\t");
-
-        if (!initialisationFinished() && timeFromInitialisationStartIsWholeTimeUnit()) {
-
-            final int shortFallInBirths = adjustPopulationNumbers();
-            logEntry.append(shortFallInBirths).append("\t");
-
-        } else if (initialisationFinished()) {
-            logEntry.append(0 + "\t");
-        }
-
-        final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
-        deathCount += numberDying;
+        logEntry.append(shortFallInBirths).append("\t");
         logEntry.append(numberDying).append("\t");
 
-        migrationModel.performMigration(currentTime, this);
-
-        occupationChangeModel.performOccupationChange(currentTime);
-
-        if (simulationStarted()) {
-            population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
-        }
-
-        advanceSimulationTime();
-        recordPeopleCounts(logEntry);
+        logEntry.append(population.getLivingPeople().getNumberOfPeople()).append("\t");
+        logEntry.append(population.getDeadPeople().getNumberOfPeople());
 
         log.info(logEntry.toString());
     }
 
+    // Progress the simulation until initialisation is finished
+    private void initialisePopulation() throws InsufficientNumberOfPeopleException {
+        while (!initialisationFinished()) {
+            final int numberBorn = createBirths();
+            final int shortFallInBirths = adjustPopulationNumbers(numberBorn);
+            final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
 
+            migrationModel.performMigration(currentTime, this);
+            occupationChangeModel.performOccupationChange(currentTime);
+
+            logTimeStep(numberBorn, shortFallInBirths, numberDying);
+            countBirthsAndDeaths(numberBorn, numberDying);
+
+            advanceSimulationTime();
+        }
+
+        if (populationTooSmall()) {
+            cleanUpAfterUnsuccessfulAttempt();
+            throw new InsufficientNumberOfPeopleException("Seed size likely too small");
+        }
+    }
+
+    private void simulatePopulationUntilStart() {
+        while (currentTime.isBefore(config.getT0())) {
+            final int numberBorn = createBirths();
+            final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
+
+            migrationModel.performMigration(currentTime, this);
+            occupationChangeModel.performOccupationChange(currentTime);
+
+            logTimeStep(numberBorn, 0, numberDying);
+            countBirthsAndDeaths(numberBorn, numberDying);
+
+            advanceSimulationTime();
+        }
+
+        summary.setStartPop(population.getLivingPeople().getNumberOfPeople());
+    }
+
+    private void simulatePopulationUntilEnd() {
+        while (!simulationFinished()) {
+            final int numberBorn = createBirths();
+            final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
+
+            migrationModel.performMigration(currentTime, this);
+            occupationChangeModel.performOccupationChange(currentTime);
+
+            logTimeStep(numberBorn, 0, numberDying);
+            countBirthsAndDeaths(numberBorn, numberDying);
+
+            advanceSimulationTime();
+
+            population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
+        }
+
+        finalisePartnerships();
+    }
 
     private void cleanUpAfterUnsuccessfulAttempt() {
 
@@ -325,12 +380,6 @@ public class OBDModel {
 
         // Performs compound growth in reverse to work backwards from the target population to the
         return (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpBR() - config.getSetUpDR() + 1, Period.between(config.getTS(), config.getT0()).getYears()));
-    }
-
-    private void recordPeopleCounts(final StringBuilder logEntry) {
-
-        logEntry.append(population.getLivingPeople().getNumberOfPeople()).append("\t");
-        logEntry.append(population.getDeadPeople().getNumberOfPeople());
     }
 
     private void advanceSimulationTime() {
@@ -353,15 +402,14 @@ public class OBDModel {
         return period.toTotalMonths() / (double) DateUtils.MONTHS_IN_YEAR;
     }
 
-    private int adjustPopulationNumbers() {
+    private int adjustPopulationNumbers(int birthsInTimeStp) {
 
         // calculate hypothetical number of expected births
         final Period initTimeStep = config.getSimulationTimeStep();
 
         final int hypotheticalBirths = calculateNumberToHaveEvent(config.getSetUpBR() * toDecimalRepresentation(initTimeStep));
 
-        final int shortFallInBirths = hypotheticalBirths - numberOfBirthsInThisTimestep;
-        numberOfBirthsInThisTimestep = 0;
+        final int shortFallInBirths = hypotheticalBirths - birthsInTimeStp;
 
         // calculate hypothetical number of expected deaths
         final int hypotheticalDeaths = calculateNumberToHaveEvent(config.getSetUpDR() * toDecimalRepresentation(initTimeStep));
@@ -369,22 +417,17 @@ public class OBDModel {
         // update hypothetical population
         currentHypotheticalPopulationSize += hypotheticalBirths - hypotheticalDeaths;
 
-        adjustPopulationNumbers(shortFallInBirths);
-
-        return shortFallInBirths;
-    }
-
-    private void adjustPopulationNumbers(final int shortFallInBirths) {
-
         if (shortFallInBirths >= 0) {
             createOrphanChildren(shortFallInBirths);
         } else {
             // REMOVED BY TOM - CHECKING THIS - but think this should rather be later handled by self correction mechanisms
-//            removePeople(-shortFallInBirths);
+            //  removePeople(-shortFallInBirths);
         }
 
+        return shortFallInBirths;
     }
 
+    @SuppressWarnings("unused")
     private void removePeople(final int excessBirths) {
 
         final int numberOfFemalesToRemove = excessBirths / 2;
@@ -422,7 +465,6 @@ public class OBDModel {
 
         // For each division in the population data store up to the current date
         for (final LocalDate divisionDate : divisionDates) {
-
             if (divisionDate.isAfter(currentTime)) break;
             count += getBornAtTS(femalesLiving, divisionDate);
         }
@@ -457,17 +499,16 @@ public class OBDModel {
         final BirthStatsKey key = new BirthStatsKey(age, birthOrder.getValue(), cohortSize, consideredTimePeriod, currentTime);
         final SingleDeterminedCount determinedCount = (SingleDeterminedCount) desired.getDeterminedCount(key, config);
 
-        final int birthAdjustment = getBirthAdjustment(determinedCount);
-        final int numberOfChildren = determinedCount.getDeterminedCount() + birthAdjustment;
+        final int numberOfChildren = determinedCount.getDeterminedCount();
 
         // Make women into mothers
 
         final MothersNeedingPartners mothersNeedingPartners = selectMothers(people, numberOfChildren);
 
         // Partner females of age who don't have partners
+        // Children are created in the partnerships phase
         final int cancelledChildren = createPartnerships(mothersNeedingPartners.mothers);
-        final int childrenMade = mothersNeedingPartners.newlyProducedChildren - cancelledChildren;
-        final int fulfilled = childrenMade > birthAdjustment ? childrenMade - birthAdjustment : 0;
+        final int fulfilled = mothersNeedingPartners.newlyProducedChildren - cancelledChildren;
 
         determinedCount.setFulfilledCount(fulfilled);
 
@@ -475,21 +516,7 @@ public class OBDModel {
         birthOrders.println(currentTime.getYear() + "," + age + "," + birthOrder + "," + fulfilled + "," + numberOfChildren);
 
         desired.returnAchievedCount(determinedCount);
-        return childrenMade;
-    }
-
-    private int getBirthAdjustment(final SingleDeterminedCount determinedCount) {
-
-        if (determinedCount.getDeterminedCount() != 0) {
-
-            final double birthFactor = config.getBirthFactor();
-            final int adjuster = (int) Math.ceil(birthFactor);
-
-            if (desired.getRandomGenerator().nextInt(BIRTH_ADJUSTMENT_BOUND) < Math.abs(birthFactor / adjuster) * BIRTH_ADJUSTMENT_BOUND) {
-                return (birthFactor < 0) ? adjuster : -adjuster;
-            }
-        }
-        return 0;
+        return fulfilled;
     }
 
     private int createDeaths(final SexOption sex) {
@@ -517,24 +544,14 @@ public class OBDModel {
         final int peopleOfAge = ofSexLiving.getNumberOfPeople(divisionDate, consideredTimePeriod);
 
         // gets death rate for people of age at the current date
-        final StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentTime, sex);
-        final DeterminedCount determinedCount = desired.getDeterminedCount(key, config);
+        final StatsKey<Integer,Integer> key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentTime, sex);
+        @SuppressWarnings("unchecked")
+        final DeterminedCount<Integer, Double, Integer, Integer> determinedCount = (DeterminedCount<Integer, Double, Integer, Integer>) desired.getDeterminedCount(key, config);
 
         // Calculate the appropriate number to kill
         final Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
-        int killAdjust = 0;
-        if (numberToKill != 0) {
-
-            // TODO fix magic number
-
-            int bound = 10000;
-            if (desired.getRandomGenerator().nextInt(bound) < config.getDeathFactor() * bound) {
-                killAdjust = -1;
-            }
-        }
-
-        final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill - killAdjust, divisionDate, consideredTimePeriod, true);
+        final Collection<IPerson> peopleToKill = ofSexLiving.removeNPersons(numberToKill, divisionDate, consideredTimePeriod, true);
 
         final int killed = killPeople(peopleToKill);
 
@@ -542,7 +559,7 @@ public class OBDModel {
         determinedCount.setFulfilledCount(killed);
         desired.returnAchievedCount(determinedCount);
 
-        return killed + killAdjust;
+        return killed;
     }
 
     private int createPartnerships(final Collection<NewMother> mothersNeedingPartners) {
@@ -629,14 +646,14 @@ public class OBDModel {
 
         Address newAddress;
 
-        if(lastMaleAddress == null) {
-            if(lastFemaleAddress == null) {
+        if(lastMaleAddress == null || lastMaleAddress.getArea() == null) {
+            if(lastFemaleAddress == null || lastFemaleAddress.getArea() == null) {
                 newAddress = geography.getRandomEmptyAddress();
             } else {
                 newAddress = geography.getNearestEmptyAddressAtDistance(lastFemaleAddress.getArea().getCentriod(), moveDistance);
             }
         } else {
-            if(lastFemaleAddress == null) {
+            if(lastFemaleAddress == null || lastFemaleAddress.getArea() == null) {
                 newAddress = geography.getNearestEmptyAddressAtDistance(lastMaleAddress.getArea().getCentriod(), moveDistance);
             } else {
                 // both already have address, so flip coin to decide who acts as origin for move
@@ -1042,6 +1059,7 @@ public class OBDModel {
         return population.getLivingPeople().getPeople().size() < MINIMUM_POPULATION_SIZE;
     }
 
+    // When the time is after the end of init period
     private boolean initialisationFinished() {
 
         return !inInitPeriod(currentTime);

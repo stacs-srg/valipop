@@ -98,6 +98,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, Boolean> implements 
         makeChildren();
     }
 
+    @SuppressWarnings("rawtypes")
     double sumOfNPCIAPDescendants(IntegerRange option) {
 
         double count = 0;
@@ -121,6 +122,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, Boolean> implements 
         return count;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTRow<Double> toCTRow() {
 
         if (initNode) {

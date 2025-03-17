@@ -3,7 +3,6 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.tdFormat;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
@@ -41,9 +40,9 @@ public class TDDeathSourceRecord extends DeathSourceRecord {
     private String SPOUSE_MARRIAGE_RECORD_IDENTITY = "";
     private String SPOUSE_BIRTH_RECORD_IDENTITY = "";
 
-    public TDDeathSourceRecord(IPerson person, IPopulation population) {
+    public TDDeathSourceRecord(IPerson person) {
 
-        super(person, population);
+        super(person);
 
         deathDate = person.getDeathDate();
         deathAddress = person.getAddress(deathDate).toString();

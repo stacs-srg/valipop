@@ -4,12 +4,22 @@ import java.security.InvalidParameterException;
 import java.util.Arrays;
 
 /**
+ * Specifies the controlling factor of the minima search.
+ * 
+ * <br>
+ * 
+ * Either RF (recovery factor).
+ * 
+ * <br>
+ * 
+ * Or PRF (proportional recovery factor).
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public enum Control {
 
-    BF,
-    DF;
+    RF,
+    PRF;
 
     public static Control resolve(String s) {
 
@@ -17,10 +27,10 @@ public enum Control {
 
         switch (s) {
 
-            case "bf":
-                return BF;
-            case "df":
-                return DF;
+            case "rf":
+                return RF;
+            case "prf":
+                return PRF;
 
         }
 

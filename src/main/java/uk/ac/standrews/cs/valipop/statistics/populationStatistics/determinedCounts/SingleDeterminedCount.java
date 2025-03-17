@@ -19,6 +19,8 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCou
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 
 /**
+ * A data structure implementing determined counts for single values
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SingleDeterminedCount implements DeterminedCount<Integer, Double, Integer, Integer> {

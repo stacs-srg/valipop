@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
+ * Command line entry point to run n population models and analysis.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class CL_RunNModels {
@@ -25,14 +27,14 @@ public class CL_RunNModels {
         }
 
         Path pathToConfigFile = Paths.get(pArgs[0]);
-        String resultsPath = pArgs[1];
-        String runPurpose = pArgs[2];
+        //String resultsPath = pArgs[1];
+        //String runPurpose = pArgs[2];
 
         int nRuns = Integer.parseInt(pArgs[3]);
 
         for (int n = 0; n < nRuns; n++) {
 
-            CL_OBDModel.runOBDModel(pathToConfigFile);
+            CL_OBDModel.runOBDModel(pathToConfigFile.toString());
             System.gc();
         }
     }

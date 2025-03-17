@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.io.PrintStream;
 import java.time.LocalDate;
@@ -35,11 +35,11 @@ class DeathAnalytics {
     private static final int ONE_HUNDRED = 100;
 
     private final int[] age_at_death = new int[MAX_AGE_AT_DEATH]; // tracks age of death over population
-    private final IPopulation population;
+    private final IPersonCollection population;
 
     private PrintStream out;
 
-    DeathAnalytics(final IPopulation population, PrintStream resultsOutput) {
+    DeathAnalytics(final IPersonCollection population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;

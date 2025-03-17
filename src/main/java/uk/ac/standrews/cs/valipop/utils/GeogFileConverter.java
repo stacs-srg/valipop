@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Area;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Cache;
 
+/**
+ * Used to convert a custom geography files (.ser) into JSON. May be executed standalone.
+ */
 public class GeogFileConverter {
 
     public static void convert(String source, String target) throws IOException, ClassNotFoundException {

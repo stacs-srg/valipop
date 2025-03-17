@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.PopulationConverter;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightException;
 
 import java.io.IOException;
@@ -51,7 +51,7 @@ public abstract class AbstractTestCaseRecorder {
             OBDModel sim = new OBDModel(config);
             sim.runSimulation();
 
-            final IPopulation abstract_population = sim.getPopulation().getPeople();
+            final IPersonCollection abstract_population = sim.getPopulation().getPeople();
             final IPopulationWriter population_writer = getPopulationWriter(path, abstract_population);
 
             try (PopulationConverter converter = new PopulationConverter(abstract_population, population_writer)) {
@@ -64,5 +64,5 @@ public abstract class AbstractTestCaseRecorder {
 
     protected abstract String getDirectoryName();
 
-    protected abstract IPopulationWriter getPopulationWriter(Path path, IPopulation population) throws IOException, InconsistentWeightException;
+    protected abstract IPopulationWriter getPopulationWriter(Path path, IPersonCollection population) throws IOException, InconsistentWeightException;
 }

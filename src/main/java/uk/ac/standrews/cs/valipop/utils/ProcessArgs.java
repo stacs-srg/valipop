@@ -20,6 +20,8 @@ import java.security.InvalidParameterException;
 import java.util.Objects;
 
 /**
+ * Utility functions for parsing process arguments.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class ProcessArgs {
@@ -128,6 +130,18 @@ public class ProcessArgs {
             } catch (ArrayIndexOutOfBoundsException e) {
                 System.err.println("Factor Error C");
             }
+
+            try {
+                processed[8] = args[8];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Factor Error D");
+            }
+
+            try {
+                processed[9] = args[9];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Factor Error E");
+            }
         }
 
         return processed;
@@ -185,10 +199,11 @@ public class ProcessArgs {
 
     private static boolean factorPrecisionCheck(String[] args) {
 
-        return args.length == 8
+        return (args.length == 9 || args.length == 10)
                 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
                 && !Objects.equals(args[2], "") && !Objects.equals(args[3], "")
                 && !Objects.equals(args[4], "") && !Objects.equals(args[5], "")
-                && !Objects.equals(args[6], "") && !Objects.equals(args[7], "");
+                && !Objects.equals(args[6], "") && !Objects.equals(args[7], "")
+                && !Objects.equals(args[8], "");
     }
 }

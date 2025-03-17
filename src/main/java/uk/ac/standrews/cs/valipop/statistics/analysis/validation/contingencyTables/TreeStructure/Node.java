@@ -60,6 +60,7 @@ public abstract class Node<Op extends Comparable<Op>, cOp extends Comparable<cOp
         return child;
     }
 
+    @SuppressWarnings("rawtypes")
     public Collection<Node> getLeafNodes() {
 
         Collection<Node> childNodes = new ArrayList<>();
@@ -82,8 +83,9 @@ public abstract class Node<Op extends Comparable<Op>, cOp extends Comparable<cOp
         return s;
     }
 
+    @SuppressWarnings("unchecked")
     public CTRow<Count> toCTRow() {
-        CTRow r = getParent().toCTRow();
+        CTRow<Count> r = (CTRow<Count>) getParent().toCTRow();
         if (r != null) {
             r.setVariable(getVariableName(), getOption().toString());
         }
@@ -127,6 +129,7 @@ public abstract class Node<Op extends Comparable<Op>, cOp extends Comparable<cOp
         getParent().addDelayedTask(node);
     }
 
+    @SuppressWarnings("rawtypes")
     public Node getAncestor(final Node nodeType) {
 
         if (nodeType.getClass().isInstance(this)) {
@@ -148,6 +151,7 @@ public abstract class Node<Op extends Comparable<Op>, cOp extends Comparable<cOp
         return getAncestor(new CTtree()).getEndDate();
     }
 
+    @SuppressWarnings({ "unused", "rawtypes" })
     private int printDescent() {
 
         int depth = 0;

@@ -1,15 +1,16 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.Person;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
+ * Represents a location with persons living in it.
+ * 
+ * May alternatively represent an entire country.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class Address {

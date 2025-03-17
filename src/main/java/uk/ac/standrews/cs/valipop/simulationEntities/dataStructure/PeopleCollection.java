@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
@@ -31,9 +31,11 @@ import java.time.Period;
 import java.util.*;
 
 /**
+ * Implementation of PersonCollection, storing people by gender.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PeopleCollection extends PersonCollection implements IPopulation, Cloneable {
+public class PeopleCollection extends PersonCollection implements Cloneable, IPersonCollection {
 
     private final MaleCollection males;
     private final FemaleCollection females;
@@ -62,11 +64,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
 
         final PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate(), getDivisionSize(), description);
 
-        for (IPerson person : males) {
+        for (IPerson person : males.getPeople()) {
             clone.add(person);
         }
 
-        for (IPerson person : females) {
+        for (IPerson person : females.getPeople()) {
             clone.add(person);
         }
 
@@ -180,11 +182,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation, C
     @Override
     public IPerson findPerson(final int id) {
 
-        for (IPerson person : males) {
+        for (IPerson person : males.getPeople()) {
             if (person.getId() == id) return person;
         }
 
-        for (IPerson person : females) {
+        for (IPerson person : females.getPeople()) {
             if (person.getId() == id) return person;
         }
         return null;

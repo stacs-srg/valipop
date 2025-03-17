@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 
 import java.nio.file.Path;
@@ -43,7 +43,7 @@ class PopulationTestCases {
         return testCases;
     }
 
-    private static IPopulation fullPopulation(final int t0PopulationSize, final int seed)  {
+    private static IPersonCollection fullPopulation(final int t0PopulationSize, final int seed)  {
 
         LocalDate tS = LocalDate.of(1599, 1, 1);
         LocalDate t0 = LocalDate.of(1855, 1, 1);

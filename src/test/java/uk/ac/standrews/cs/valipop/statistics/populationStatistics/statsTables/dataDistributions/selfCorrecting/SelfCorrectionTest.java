@@ -68,16 +68,19 @@ public class SelfCorrectionTest {
             double check = sc1DDDCopy.getRate(iR.getValue());
 
             // Basic first retrieval tests
-            StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, y, null, SexOption.MALE);
+            StatsKey<Integer,Integer> k1 = new DeathStatsKey(iR.getValue(), 100, y, null, SexOption.MALE);
+            @SuppressWarnings("rawtypes")
             DeterminedCount r1 = sc1DDD.determineCount(k1, null, random);
             assertEquals((int) Math.round(check * 100), (int) r1.getDeterminedCount(), DELTA);
 
-            StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, y, null, SexOption.MALE);
+            StatsKey<Integer, Integer> k2 = new DeathStatsKey(iR.getValue(), 1000, y, null, SexOption.MALE);
+            @SuppressWarnings("rawtypes")
             DeterminedCount r2 = sc1DDD.determineCount(k2, null, random);
             assertEquals((int) Math.round(check * 1000), (int) r2.getDeterminedCount(), DELTA);
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void correctingChecksSC1DDD() {
 
@@ -94,10 +97,11 @@ public class SelfCorrectionTest {
 
             for (IntegerRange iR : sc1DDD.getRate().keySet()) {
 
-                StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, tp, null, SexOption.MALE);
+                StatsKey<Integer, Integer> k1 = new DeathStatsKey(iR.getValue(), 100, tp, null, SexOption.MALE);
 
                 double c1 = sc1DDDCopy.getRate(iR.getValue());
 
+                @SuppressWarnings("rawtypes")
                 DeterminedCount r1 = sc1DDD.determineCount(k1, null, random);
                 assertEquals((int) Math.round(c1 * r1.getKey().getForNPeople()), r1.getDeterminedCount());
 
@@ -108,6 +112,7 @@ public class SelfCorrectionTest {
         }
     }
 
+    @SuppressWarnings({ "unused", "rawtypes" })
     private int calcExpectedCount(DeterminedCount applied, StatsKey corrective, double targetRate) {
 
         int count = calcUnfetteredExpectedCount(applied, corrective, targetRate);
@@ -123,16 +128,19 @@ public class SelfCorrectionTest {
         return count;
     }
 
+    @SuppressWarnings("rawtypes")
     private int calcUnfetteredExpectedCount(DeterminedCount applied, StatsKey corrective, double targetRate) {
 
         return (int) Math.ceil(targetRate * (applied.getKey().getForNPeople() + corrective.getForNPeople()) - (int) applied.getFulfilledCount());
     }
 
+    @SuppressWarnings({ "unused", "rawtypes" })
     private double calcAdditiveRate(StatsKey k1, double r1, StatsKey k2, double r2) {
 
         return (r1 * k1.getForNPeople() + r2 * k2.getForNPeople()) / (k1.getForNPeople() + k2.getForNPeople());
     }
 
+    @SuppressWarnings({ "unused", "rawtypes" })
     private double calcExpectedCorrectiveRate(double targetRate, double returnedRate, StatsKey returnedKey, StatsKey checkKey) {
 
         double expectedCorrectiveRate = (targetRate * (returnedKey.getForNPeople() + checkKey.getForNPeople()) - (returnedRate * returnedKey.getForNPeople())) / checkKey.getForNPeople();
@@ -148,6 +156,7 @@ public class SelfCorrectionTest {
         return expectedCorrectiveRate;
     }
 
+    @SuppressWarnings({ "unused", "rawtypes" })
     private double calcUnfetteredExpectedCorrectiveRate(double targetRate, double returnedRate, StatsKey returnedKey, StatsKey checkKey) {
 
         return (targetRate * (returnedKey.getForNPeople() + checkKey.getForNPeople()) - (returnedRate * returnedKey.getForNPeople())) / checkKey.getForNPeople();
@@ -165,11 +174,11 @@ public class SelfCorrectionTest {
         Period y = Period.ofYears(1);
         Period m2 = Period.ofMonths(2);
 
-        StatsKey yearK = new DeathStatsKey(age, popSize, y, null, SexOption.MALE);
+        StatsKey<Integer, Integer> yearK = new DeathStatsKey(age, popSize, y, null, SexOption.MALE);
         int expPopSize = popSize - data.determineCount(yearK, null, random).getDeterminedCount();
 
         for (int m = 1; m <= 12; m += 2) {
-            StatsKey k = new DeathStatsKey(age, popSize, m2, null, SexOption.MALE);
+            StatsKey<Integer, Integer> k = new DeathStatsKey(age, popSize, m2, null, SexOption.MALE);
 
             int count = data.determineCount(k, null, random).getDeterminedCount();
 

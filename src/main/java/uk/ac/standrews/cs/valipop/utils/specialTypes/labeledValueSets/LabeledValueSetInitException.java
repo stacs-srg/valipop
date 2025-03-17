@@ -24,10 +24,10 @@ import java.util.List;
 public class LabeledValueSetInitException extends RuntimeException {
 
     private String message;
-    private List labels;
-    private List values;
+    private List<?> labels;
+    private List<?> values;
 
-    public LabeledValueSetInitException(String message, List labels, List values) {
+    public LabeledValueSetInitException(String message, List<?> labels, List<?> values) {
 
         this.message = message;
         this.labels = labels;
@@ -35,11 +35,11 @@ public class LabeledValueSetInitException extends RuntimeException {
 
     }
 
-    public List getLabels() {
+    public List<?> getLabels() {
         return labels;
     }
 
-    public List getValues() {
+    public List<?> getValues() {
         return values;
     }
 

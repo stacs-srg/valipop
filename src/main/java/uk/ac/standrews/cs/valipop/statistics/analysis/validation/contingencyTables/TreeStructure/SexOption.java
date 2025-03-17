@@ -17,6 +17,10 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure;
 
 /**
+ * Enumeration representing the sex of an individual.
+ * <br>
+ * Either MALE ("M") or FEMALE ("F")
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public enum SexOption {

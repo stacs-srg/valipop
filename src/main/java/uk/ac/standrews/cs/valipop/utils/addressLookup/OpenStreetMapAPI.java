@@ -1,9 +1,5 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Area;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.InvalidCoordSet;
-import uk.ac.standrews.cs.valipop.utils.addressLookup.Place;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Interface for Open Street Map API.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class OpenStreetMapAPI {
@@ -92,7 +90,7 @@ public class OpenStreetMapAPI {
         System.out.println(con.toString());
 
         try {
-            int status = con.getResponseCode();
+            con.getResponseCode();
         } catch (java.io.IOException e) {
             throw new APIOverloadedException();
         }

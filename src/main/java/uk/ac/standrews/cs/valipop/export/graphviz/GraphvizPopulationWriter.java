@@ -19,14 +19,13 @@ package uk.ac.standrews.cs.valipop.export.graphviz;
 import uk.ac.standrews.cs.valipop.export.AbstractFilePopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 
 /**
@@ -44,8 +43,8 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
     private static final String INDIVIDUAL_NODE_ATTRIBUTES = " [shape=box style=solid color=" + INDIVIDUAL_NODE_COLOUR + ']';
     private static final String FAMILY_ARC_ATTRIBUTES = " [color=" + PARTNERSHIP_ARC_COLOUR + " arrowhead=none]";
 
-    private final DateFormat formatter;
-    private final IPopulation population;
+    private final DateTimeFormatter formatter;
+    private final IPersonCollection population;
 
     /**
      * Initialises the writer.
@@ -54,12 +53,12 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
      * @param path       the path for the output file
      * @throws IOException if the file does not exist and cannot be created
      */
-    public GraphvizPopulationWriter(final IPopulation population, final Path path) throws IOException {
+    public GraphvizPopulationWriter(final IPersonCollection population, final Path path) throws IOException {
 
         super(path);
         this.population = population;
 
-        formatter = new SimpleDateFormat("dd/MM/yyyy");
+        formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     }
 
     @Override
@@ -119,10 +118,10 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
         final StringBuilder builder = new StringBuilder();
 
         builder.append(" [label=\"b: ");
-        builder.append(formatter.format(person.getBirthDate()));
+        builder.append(person.getBirthDate().format(formatter));
         if (date_of_death != null) {
             builder.append("\\nd: ");
-            builder.append(formatter.format(date_of_death));
+            builder.append(date_of_death.format(formatter));
         }
         builder.append("\"]");
 
@@ -131,7 +130,11 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
 
     private String getFamilyNodeAttributes(final IPartnership partnership) {
 
-        return " [shape=box color=" + PARTNERSHIP_NODE_COLOUR + " label=\"m: " + formatter.format(partnership.getMarriageDate()) + "\"]";
+        if (partnership.getMarriageDate() != null) {
+            return " [shape=box color=" + PARTNERSHIP_NODE_COLOUR + " label=\"m: " + partnership.getMarriageDate().format(formatter) + "\"]";
+        } else {
+            return " [shape=box color=" + PARTNERSHIP_NODE_COLOUR + " label=\"m: " + "null" + "\"]";
+        } 
     }
 
     private void setRankIfOrphan(final IPerson person) {

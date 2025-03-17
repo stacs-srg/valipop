@@ -23,6 +23,8 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRan
 import java.util.*;
 
 /**
+ * Utility functions for the Java Map type.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class MapUtils {

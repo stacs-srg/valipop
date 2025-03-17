@@ -34,7 +34,7 @@ import java.util.Set;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData, SelfCorrection<Integer, Double, Integer, Integer> {
+public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData<IntegerRange>, SelfCorrection<Integer, Double, Integer, Integer> {
 
     // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
     private Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data;

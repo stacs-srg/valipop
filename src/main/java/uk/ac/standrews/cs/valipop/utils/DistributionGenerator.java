@@ -3,7 +3,6 @@ package uk.ac.standrews.cs.valipop.utils;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.nds.util.FileUtil;
 import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightException;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 
@@ -11,10 +10,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Year;
 import java.util.*;
 
 /**
+ * May be executed standalone.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DistributionGenerator {
