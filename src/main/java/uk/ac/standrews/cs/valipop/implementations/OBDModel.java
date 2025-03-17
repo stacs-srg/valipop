@@ -102,7 +102,6 @@ public class OBDModel {
 
     private int birthsCount = 0;
     private int deathCount = 0;
-    private int numberOfBirthsInThisTimestep = 0;
 
     private PrintWriter birthOrders;
 
@@ -164,9 +163,15 @@ public class OBDModel {
     }
 
     public void runSimulation() {
-
         for (int countAttempts = 0; countAttempts < MAX_ATTEMPTS; countAttempts++) {
-            if (successfulRun()) break;
+            try {
+                simTimer = new ProgramTimer();
+                runSimulationAttempt();
+                break;
+            } catch (InsufficientNumberOfPeopleException e) {
+
+                resetSimulation(simTimer);
+            }
         }
 
         recordFinalSummary();
@@ -249,27 +254,10 @@ public class OBDModel {
         }
     }
 
-    private boolean successfulRun() {
-
-        try {
-            simTimer = new ProgramTimer();
-            runSimulationAttempt();
-            return true;
-
-        } catch (InsufficientNumberOfPeopleException e) {
-
-            resetSimulation(simTimer);
-            return false;
-        }
-    }
-
     private void runSimulationAttempt() {
-
-        while (!simulationFinished()) {
-            simulationStep();
-        }
-
-        finalisePartnerships();
+        initialisePopulation();
+        simulatePopulationUntilStart();
+        simulatePopulationUntilEnd();
 
         logResults();
         recordSummary();
@@ -298,56 +286,82 @@ public class OBDModel {
         }
     }
 
-    private void simulationStep() {
+    private void countBirthsAndDeaths(int births, int deaths) {
+        birthsCount += births;
+        deathCount += deaths;
+    }
 
+    private void logTimeStep(int numberBorn, int shortFallInBirths, int numberDying) {
         MemoryUsageAnalysis.log();
         final StringBuilder logEntry = new StringBuilder(currentTime + "\t" + MemoryUsageAnalysis.getMaxSimUsage() / 1e6 + "\tMB");
 
-        if (initialisationFinished() && populationTooSmall()) {
-
-            cleanUpAfterUnsuccessfulAttempt();
-            throw new InsufficientNumberOfPeopleException("Seed size likely too small");
-        }
-
-        if (!simulationStarted()) {
-            // Updated the starting pop whilst simulation has not reached begin date
-            summary.setStartPop(population.getLivingPeople().getNumberOfPeople());
-        }
-
-        final int numberBorn = createBirths();
-        birthsCount += numberBorn;
-        numberOfBirthsInThisTimestep += numberBorn;
-
         logEntry.append(numberBorn).append("\t");
-
-        if (!initialisationFinished() && timeFromInitialisationStartIsWholeTimeUnit()) {
-
-            final int shortFallInBirths = adjustPopulationNumbers();
-            logEntry.append(shortFallInBirths).append("\t");
-
-        } else if (initialisationFinished()) {
-            logEntry.append(0 + "\t");
-        }
-
-        final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
-        deathCount += numberDying;
+        logEntry.append(shortFallInBirths).append("\t");
         logEntry.append(numberDying).append("\t");
 
-        migrationModel.performMigration(currentTime, this);
-
-        occupationChangeModel.performOccupationChange(currentTime);
-
-        if (simulationStarted()) {
-            population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
-        }
-
-        advanceSimulationTime();
-        recordPeopleCounts(logEntry);
+        logEntry.append(population.getLivingPeople().getNumberOfPeople()).append("\t");
+        logEntry.append(population.getDeadPeople().getNumberOfPeople());
 
         log.info(logEntry.toString());
     }
 
+    // Progress the simulation until initialisation is finished
+    private void initialisePopulation() throws InsufficientNumberOfPeopleException {
+        while (!initialisationFinished()) {
+            final int numberBorn = createBirths();
+            final int shortFallInBirths = adjustPopulationNumbers(numberBorn);
+            final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
 
+            migrationModel.performMigration(currentTime, this);
+            occupationChangeModel.performOccupationChange(currentTime);
+
+            logTimeStep(numberBorn, shortFallInBirths, numberDying);
+            countBirthsAndDeaths(numberBorn, numberDying);
+
+            advanceSimulationTime();
+        }
+
+        if (populationTooSmall()) {
+            cleanUpAfterUnsuccessfulAttempt();
+            throw new InsufficientNumberOfPeopleException("Seed size likely too small");
+        }
+    }
+
+    private void simulatePopulationUntilStart() {
+        while (currentTime.isBefore(config.getT0())) {
+            final int numberBorn = createBirths();
+            final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
+
+            migrationModel.performMigration(currentTime, this);
+            occupationChangeModel.performOccupationChange(currentTime);
+
+            logTimeStep(numberBorn, 0, numberDying);
+            countBirthsAndDeaths(numberBorn, numberDying);
+
+            advanceSimulationTime();
+        }
+
+        summary.setStartPop(population.getLivingPeople().getNumberOfPeople());
+    }
+
+    private void simulatePopulationUntilEnd() {
+        while (!simulationFinished()) {
+            final int numberBorn = createBirths();
+            final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
+
+            migrationModel.performMigration(currentTime, this);
+            occupationChangeModel.performOccupationChange(currentTime);
+
+            logTimeStep(numberBorn, 0, numberDying);
+            countBirthsAndDeaths(numberBorn, numberDying);
+
+            advanceSimulationTime();
+
+            population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
+        }
+
+        finalisePartnerships();
+    }
 
     private void cleanUpAfterUnsuccessfulAttempt() {
 
@@ -366,12 +380,6 @@ public class OBDModel {
 
         // Performs compound growth in reverse to work backwards from the target population to the
         return (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpBR() - config.getSetUpDR() + 1, Period.between(config.getTS(), config.getT0()).getYears()));
-    }
-
-    private void recordPeopleCounts(final StringBuilder logEntry) {
-
-        logEntry.append(population.getLivingPeople().getNumberOfPeople()).append("\t");
-        logEntry.append(population.getDeadPeople().getNumberOfPeople());
     }
 
     private void advanceSimulationTime() {
@@ -394,15 +402,14 @@ public class OBDModel {
         return period.toTotalMonths() / (double) DateUtils.MONTHS_IN_YEAR;
     }
 
-    private int adjustPopulationNumbers() {
+    private int adjustPopulationNumbers(int birthsInTimeStp) {
 
         // calculate hypothetical number of expected births
         final Period initTimeStep = config.getSimulationTimeStep();
 
         final int hypotheticalBirths = calculateNumberToHaveEvent(config.getSetUpBR() * toDecimalRepresentation(initTimeStep));
 
-        final int shortFallInBirths = hypotheticalBirths - numberOfBirthsInThisTimestep;
-        numberOfBirthsInThisTimestep = 0;
+        final int shortFallInBirths = hypotheticalBirths - birthsInTimeStp;
 
         // calculate hypothetical number of expected deaths
         final int hypotheticalDeaths = calculateNumberToHaveEvent(config.getSetUpDR() * toDecimalRepresentation(initTimeStep));
@@ -410,20 +417,14 @@ public class OBDModel {
         // update hypothetical population
         currentHypotheticalPopulationSize += hypotheticalBirths - hypotheticalDeaths;
 
-        adjustPopulationNumbers(shortFallInBirths);
-
-        return shortFallInBirths;
-    }
-
-    private void adjustPopulationNumbers(final int shortFallInBirths) {
-
         if (shortFallInBirths >= 0) {
             createOrphanChildren(shortFallInBirths);
         } else {
             // REMOVED BY TOM - CHECKING THIS - but think this should rather be later handled by self correction mechanisms
-//            removePeople(-shortFallInBirths);
+            //  removePeople(-shortFallInBirths);
         }
 
+        return shortFallInBirths;
     }
 
     @SuppressWarnings("unused")
@@ -505,6 +506,7 @@ public class OBDModel {
         final MothersNeedingPartners mothersNeedingPartners = selectMothers(people, numberOfChildren);
 
         // Partner females of age who don't have partners
+        // Children are created in the partnerships phase
         final int cancelledChildren = createPartnerships(mothersNeedingPartners.mothers);
         final int fulfilled = mothersNeedingPartners.newlyProducedChildren - cancelledChildren;
 
