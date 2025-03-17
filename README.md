@@ -28,8 +28,28 @@ Then you can follow these steps to run the project
 R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'))"
 
 # Run the JAR with java
-java -jar valipop.jar
+java -jar valipop.jar <valipop-args>
 ```
+
+[Learn more about running with Java.](https://daniel5055.github.io/valipop/usage/execution/java.html)
+
+
+### Via Docker
+
+To run valipop as a docker container, you will need to have [docker](https://www.docker.com/) installed.
+
+Then you can follow these steps to run the project
+
+```shell
+# Pull the container
+docker pull ghcr.io/daniel5055/valipop:develop
+
+# Run the container
+docker run ghcr.io/daniel5055/valipop:develop <valipop-args>
+```
+
+[Learn more about running with Docker.](https://daniel5055.github.io/valipop/usage/execution/docker.html)
+
 
 ## Building Valipop from source
 
