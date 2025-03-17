@@ -26,6 +26,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
  */
 public class CTtableDeath extends CTtable {
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTtableDeath(CTtree tree) {
 
         for (Node n : tree.getLeafNodes()) {

@@ -17,6 +17,8 @@
 package uk.ac.standrews.cs.valipop.utils;
 
 /**
+ * Used to return the time since this class was instantiated.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class ProgramTimer {

@@ -22,11 +22,13 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCoun
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 
 /**
+ * An interface for including self correction support to input data representations
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface SelfCorrection<Type, Raw, X, Y> {
 
-    DeterminedCount determineCount(StatsKey<X, Y> key, Config config, RandomGenerator random);
+    DeterminedCount<Type, Raw, X, Y> determineCount(StatsKey<X, Y> key, Config config, RandomGenerator random);
 
     void returnAchievedCount(DeterminedCount<Type, Raw, X, Y> achievedCount, RandomGenerator random);
 }

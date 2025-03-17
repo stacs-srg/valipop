@@ -1,7 +1,5 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys;
 
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
-
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.Year;

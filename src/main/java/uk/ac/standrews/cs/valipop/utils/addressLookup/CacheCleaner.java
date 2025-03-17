@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
+ * UNUSED
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class CacheCleaner {
@@ -26,6 +28,7 @@ public class CacheCleaner {
 
     }
 
+    @SuppressWarnings("unused")
     private static void removeNonResidentialAreas(Cache cache) {
 
         System.out.println(cache.size());
@@ -49,6 +52,7 @@ public class CacheCleaner {
 
     }
 
+    @SuppressWarnings("unused")
     private static void removeNonScotlandAreas(Cache cache) {
 
         System.out.println(cache.size());
@@ -71,6 +75,7 @@ public class CacheCleaner {
 
     }
 
+    @SuppressWarnings("unused")
     private static void removeNullAddressAreas(Cache cache) {
 
         System.out.println(cache.size());

@@ -43,7 +43,6 @@ public class PopulationLogic {
      * @param child  the child
      * @return true if the parents' ages are sensible
      */
-    @SuppressWarnings("FeatureEnvy")
     public static boolean parentsHaveSensibleAgesAtChildBirth(final IPerson father, final IPerson mother, final IPerson child) {
 
         final LocalDate mother_birth_date = mother.getBirthDate();

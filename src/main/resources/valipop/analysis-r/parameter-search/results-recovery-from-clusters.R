@@ -1,4 +1,4 @@
-setwd("~/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/analysis-r/")
+#setwd("~/OneDrive/cs/PhD/code/population-model/src/main/resources/valipop/analysis-r/")
 
 source("paper/code/FileFunctions.R")
 source("parameter-search/function-code/promising-candidates-functions.R")

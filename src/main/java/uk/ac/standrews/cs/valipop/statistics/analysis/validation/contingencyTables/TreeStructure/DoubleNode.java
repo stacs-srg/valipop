@@ -21,10 +21,12 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
  */
 public abstract class DoubleNode<Op extends Comparable<Op>, cOp extends Comparable<cOp>> extends Node<Op, cOp, Double, Double> {
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public DoubleNode(final Op option, final Node parentNode, final double initCount) {
         super(option, parentNode, initCount);
     }
 
+    @SuppressWarnings("rawtypes")
     public DoubleNode(final Op option, final Node parentNode) {
         this(option, parentNode, 0);
     }
@@ -53,6 +55,7 @@ public abstract class DoubleNode<Op extends Comparable<Op>, cOp extends Comparab
         super.setCount(count);
     }
 
+    @SuppressWarnings("unchecked")
     public Node<?, Op, Double, Double> getParent() {
         return (Node<?, Op, Double, Double>) super.getParent();
     }

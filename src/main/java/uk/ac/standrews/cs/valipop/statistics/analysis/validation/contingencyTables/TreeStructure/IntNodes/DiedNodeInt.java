@@ -109,6 +109,7 @@ public class DiedNodeInt extends IntNode<Boolean, IntegerRange> {
         return s;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTRow<Integer> toCTRow() {
 
         CTRow r = getParent().toCTRow();

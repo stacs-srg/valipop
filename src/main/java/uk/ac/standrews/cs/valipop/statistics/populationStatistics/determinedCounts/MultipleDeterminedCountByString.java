@@ -10,7 +10,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.StringToIn
  */
 public class MultipleDeterminedCountByString extends MultipleDeterminedCount<String, String, String> {
 
-    public MultipleDeterminedCountByString(StatsKey key, LabelledValueSet<String, Integer> determinedCount,
+    public MultipleDeterminedCountByString(StatsKey<String, String> key, LabelledValueSet<String, Integer> determinedCount,
                                            LabelledValueSet<String, Double> rawCorrectedCount,
                                            LabelledValueSet<String, Double> rawUncorrectedCount) {
 

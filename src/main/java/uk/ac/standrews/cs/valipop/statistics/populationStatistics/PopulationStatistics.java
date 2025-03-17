@@ -31,6 +31,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.InputFileReader;
 import uk.ac.standrews.cs.valipop.utils.InvalidInputFileException;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -52,7 +53,7 @@ public class PopulationStatistics implements EventRateTables {
     private TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> femaleDeath;
     private TreeMap<Year, SelfCorrecting2DIntegerRangeProportionalDistribution> partnering;
     private TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
-    private TreeMap<Year, SelfCorrectingProportionalDistribution> multipleBirth;
+    private TreeMap<Year, SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer>> multipleBirth;
     private TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> adulterousBirth;
     private TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> marriage;
     private TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> separation;
@@ -75,6 +76,7 @@ public class PopulationStatistics implements EventRateTables {
     private Period minBirthSpacing;
     private RandomGenerator randomGenerator;
 
+    @SuppressWarnings("unused")
     private static Logger log = Logger.getLogger(PopulationStatistics.class.getName());
 
     private TreeMap<Year, AgeDependantEnumeratedDistribution> maleOccupation;
@@ -101,7 +103,7 @@ public class PopulationStatistics implements EventRateTables {
             TreeMap<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses = readInAgeDependantEnumeratedDistributionDataFiles(config.getVarFemaleDeathCausesPaths(), config);
             TreeMap<Year, SelfCorrecting2DIntegerRangeProportionalDistribution> partnering = readInAgeAndProportionalStatsInputFiles(config.getVarPartneringPaths(), config);
             TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths(), config);
-            TreeMap<Year, SelfCorrectingProportionalDistribution> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
+            TreeMap<Year, SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer>> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
             TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> adulterousBirth = readInSC1DDataFiles(config.getVarAdulterousBirthPaths(), config);
             TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> marriage = readInSC1DDataFiles(config.getVarMarriagePaths(), config);
             TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> separation = readInSC2DDataFiles(config.getVarSeparationPaths(), config);
@@ -141,7 +143,7 @@ public class PopulationStatistics implements EventRateTables {
                                 TreeMap<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses,
                                 TreeMap<Year, SelfCorrecting2DIntegerRangeProportionalDistribution> partnering,
                                 TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
-                                TreeMap<Year, SelfCorrectingProportionalDistribution> multipleBirth,
+                                TreeMap<Year, SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer>> multipleBirth,
                                 TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> adulterousBirth,
                                 TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> marriage,
                                 TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> separation,
@@ -170,7 +172,7 @@ public class PopulationStatistics implements EventRateTables {
 
     private void init(TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> maleDeath, TreeMap<Year, AgeDependantEnumeratedDistribution> maleDeathCauses, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
                       TreeMap<Year, AgeDependantEnumeratedDistribution> femaleDeathCauses, TreeMap<Year, SelfCorrecting2DIntegerRangeProportionalDistribution> partnering, TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
-                      TreeMap<Year, SelfCorrectingProportionalDistribution> multipleBirth, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> adulterousBirth, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> marriage,
+                      TreeMap<Year, SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer>> multipleBirth, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> adulterousBirth, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> marriage,
                       TreeMap<Year, SelfCorrectingTwoDimensionDataDistribution> separation, TreeMap<Year, Double> sexRatioBirths, TreeMap<Year, ValiPopEnumeratedDistribution> maleForename, TreeMap<Year, ValiPopEnumeratedDistribution> femaleForename,
                       TreeMap<Year, ValiPopEnumeratedDistribution> surname, TreeMap<Year, ValiPopEnumeratedDistribution> migrantMaleForenames,
                       TreeMap<Year, ValiPopEnumeratedDistribution> migrantFemaleForenames, TreeMap<Year, ValiPopEnumeratedDistribution> migrantSurname, TreeMap<Year, SelfCorrectingOneDimensionDataDistribution> migrationRate,
@@ -214,7 +216,7 @@ public class PopulationStatistics implements EventRateTables {
     -------------------- EventRateTables interface methods --------------------
      */
 
-    public DeterminedCount getDeterminedCount(StatsKey key, Config config) {
+    public DeterminedCount<?,?,?,?> getDeterminedCount(StatsKey<?, ?> key, Config config) {
 
         if (key instanceof DeathStatsKey) {
             DeathStatsKey k = (DeathStatsKey) key;
@@ -259,6 +261,7 @@ public class PopulationStatistics implements EventRateTables {
         throw new Error("Key based access not implemented for key class: " + key.getClass().toGenericString());
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void returnAchievedCount(DeterminedCount achievedCount) {
 
         if (achievedCount.getKey() instanceof DeathStatsKey) {
@@ -363,7 +366,7 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
-    public SelfCorrectingProportionalDistribution getMultipleBirthRates(Year year) {
+    public SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer> getMultipleBirthRates(Year year) {
         return multipleBirth.get(getNearestYearInMap(year, multipleBirth));
     }
 
@@ -579,20 +582,20 @@ public class PopulationStatistics implements EventRateTables {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private TreeMap<Year, SelfCorrectingProportionalDistribution> readInAndAdaptAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+    private TreeMap<Year, SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer>> readInAndAdaptAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        TreeMap<Year, SelfCorrectingProportionalDistribution> data = new TreeMap<>();
+        TreeMap<Year, SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer>> data = new TreeMap<>();
 
         for (Path path : paths) {
             // read in each file
-            SelfCorrectingProportionalDistribution tempData = InputFileReader.readInAndAdaptAgeAndProportionalStatsInput(path, randomGenerator);
+            SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer> tempData = InputFileReader.readInAndAdaptAgeAndProportionalStatsInput(path, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
         paths.close();
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private static <T extends InputMetaData> TreeMap<Year, T> insertDistributionsToMeetInputWidth(Config config, TreeMap<Year, T> inputs) {
+    private static <T extends InputMetaData<?>> TreeMap<Year, T> insertDistributionsToMeetInputWidth(Config config, TreeMap<Year, T> inputs) {
 
         Period inputWidth = config.getInputWidth();
 

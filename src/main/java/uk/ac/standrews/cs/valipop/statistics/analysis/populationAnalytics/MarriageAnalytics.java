@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
 import java.io.PrintStream;
@@ -36,11 +36,11 @@ class MarriageAnalytics {
     private static final int ONE_HUNDRED = 100;
 
     private final int[] count_marriages = new int[MAX_MARRIAGES];
-    private final IPopulation population;
+    private final IPersonCollection population;
 
     private PrintStream out;
 
-    MarriageAnalytics(final IPopulation population, PrintStream resultsOutput) {
+    MarriageAnalytics(final IPersonCollection population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;

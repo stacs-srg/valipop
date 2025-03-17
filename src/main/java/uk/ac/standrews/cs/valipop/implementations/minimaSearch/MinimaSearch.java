@@ -4,7 +4,6 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.*;
 import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
-import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 
 import java.io.IOException;
@@ -47,10 +46,8 @@ public class MinimaSearch {
     private static LocalDate t0 = LocalDate.of(1855,1,1);
     private static LocalDate tE = LocalDate.of(2015,1,1);
 
-    private static double birthFactor;
-    private static double deathFactor;
-    private static double recoveryFactor = 0.5;
-    private static double proportionalRecoveryFactor = 0.5;
+    private static double recoveryFactor = 0.0;
+    private static double proportionalRecoveryFactor = 0.0;
 
     private static double nanAsemtote = 1E6;
 
@@ -103,11 +100,11 @@ public class MinimaSearch {
                 for (; n < repeatRuns; n++) {
 
                     Config config = new Config(tS, t0, tE, populationSize, dataFiles, Config.DEFAULT_RESULTS_SAVE_PATH, runPurpose, Config.DEFAULT_RESULTS_SAVE_PATH);
+                    config.setDeterministic(true);
+                    config.setSeed(123);
 
                     config.setRecoveryFactor(recoveryFactor);
                     config.setProportionalRecoveryFactor(proportionalRecoveryFactor);
-                    config.setBirthFactor(birthFactor);
-                    config.setDeathFactor(deathFactor);
 
                     OBDModel model = new OBDModel(config);
 
@@ -128,16 +125,6 @@ public class MinimaSearch {
 
                         model.getSummaryRow().setV(v);
                         model.getSummaryRow().outputSummaryRowToFile();
-
-                        if (minimiseFor != Minimise.GEEGLM) {
-                            ProgramTimer statsTimer = new ProgramTimer();
-
-                            RCaller.generateAnalysisHTML(config.getRunPath(),
-                                    model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue(),
-                                    runPurpose + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy));
-
-                            model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
-                        }
 
                         totalV += v;
 
@@ -170,30 +157,23 @@ public class MinimaSearch {
     }
 
     public static double getV(Minimise minimiseFor, int maxBirthingAge, Control controlBy, Config config) throws IOException, StatsException {
-
-        switch (minimiseFor) {
-
-            case ALL:
-                return RCaller.getV(config.getContingencyTablesPath(), maxBirthingAge);
-            case OB:
-                return RCaller.getObV(config.getContingencyTablesPath(), maxBirthingAge);
+        switch(minimiseFor) {
             case GEEGLM:
-                String title = config.getRunPurpose() + " - " + controlBy.toString() + ": " + getControllingFactor(controlBy);
-                return RCaller.getGeeglmV(title, config.getRunPath(), maxBirthingAge, config.getStartTime());
+                return RCaller.getGeeglmV(config.getRunPath(), maxBirthingAge);
+            default:
+                throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
         }
-
-        throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
     }
 
     static double getControllingFactor(Control controlBy) {
 
         switch (controlBy) {
 
-            case BF:
-                return birthFactor;
+            case RF:
+                return recoveryFactor;
 
-            case DF:
-                return deathFactor;
+            case PRF:
+                return proportionalRecoveryFactor;
         }
 
         throw new InvalidParameterException(controlBy.toString() + " did not resolve to a known parameter");
@@ -203,11 +183,11 @@ public class MinimaSearch {
 
         switch (controlBy) {
 
-            case BF:
-                birthFactor = startFactor;
+            case RF:
+                recoveryFactor = startFactor;
                 break;
-            case DF:
-                deathFactor = startFactor;
+            case PRF:
+                proportionalRecoveryFactor = startFactor;
                 break;
         }
     }
@@ -237,7 +217,7 @@ public class MinimaSearch {
 
         step = initStep;
 
-        int options = new Double((topSearchBoundFactor - bottomSearchBoundFactor) / (initStep / 2.0)).intValue();
+        int options = Double.valueOf((topSearchBoundFactor - bottomSearchBoundFactor) / (initStep / 2.0)).intValue();
 
         double chosenFactor;
 
@@ -479,6 +459,7 @@ public class MinimaSearch {
             } else {
                 // if flat line
 
+                // Narrow the search to between the points and reduce step
                 newFactor = penultimatePoint.x_f - (penultimatePoint.x_f - lastPoint.x_f) / 2;
                 step = step / 2;
             }

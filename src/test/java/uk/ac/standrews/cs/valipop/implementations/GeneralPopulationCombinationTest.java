@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.valipop.implementations;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPopulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.util.Collection;
 
@@ -32,7 +32,7 @@ public class GeneralPopulationCombinationTest extends GeneralPopulationStructure
         return PopulationTestCases.getTestCases();
     }
 
-    public GeneralPopulationCombinationTest(IPopulation population, int initialSize) {
+    public GeneralPopulationCombinationTest(IPersonCollection population, int initialSize) {
 
         super(population, initialSize);
     }

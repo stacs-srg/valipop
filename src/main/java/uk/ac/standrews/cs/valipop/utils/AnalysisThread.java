@@ -1,7 +1,6 @@
 package uk.ac.standrews.cs.valipop.utils;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.implementations.FactorSearch;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.implementations.StatsException;
 import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Control;
@@ -14,17 +13,19 @@ import java.time.Year;
 import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.GEEGLM;
 
 /**
+ * Invokes R analysis code in an asynchronous thread.
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class AnalysisThread extends Thread {
 
     private int maxBirthingAge;
     private SummaryRow summaryRow;
+
+    @SuppressWarnings("unused")
     private int threadCount;
 
     private final Config config;
-
-    private final OBDModel model;
 
     public AnalysisThread(OBDModel model, Config config, int threadCount) {
 
@@ -33,7 +34,6 @@ public class AnalysisThread extends Thread {
 
         maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
         summaryRow = model.getSummaryRow();
-        this.model = model;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class AnalysisThread extends Thread {
 
         double v = 99999;
         try {
-            v = MinimaSearch.getV(GEEGLM, maxBirthingAge, Control.BF, config);
+            v = MinimaSearch.getV(GEEGLM, maxBirthingAge, Control.RF, config);
         } catch (IOException | StatsException e) {
 
             System.err.println("Error in AnalysisThread");

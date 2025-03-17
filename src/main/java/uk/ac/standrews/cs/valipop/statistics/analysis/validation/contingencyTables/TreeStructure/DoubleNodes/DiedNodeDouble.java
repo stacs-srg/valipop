@@ -207,6 +207,7 @@ public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements
         return s;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CTRow<Double> toCTRow() {
         CTRow r = getParent().toCTRow();
 
