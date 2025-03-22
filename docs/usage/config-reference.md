@@ -9,6 +9,7 @@ markdown: kramdown
 These are all the configuration options supported by Valipop.
 
 <code>
+
 -----------------------------------------
 -------------- Locations ----------------
 -----------------------------------------
