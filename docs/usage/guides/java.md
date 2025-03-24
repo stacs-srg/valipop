@@ -123,13 +123,13 @@ run_purpose = example
 
 You can make the following changes to the configuration file to alter Valipop's behaviour
 
-- Change the starting population size with [`t0_pop_size`](../configuration/config-reference.md#t0_pop_size)
-- Change the start and end data (as written in the record files) with [`t0`](../configuration/config-reference.md#t0) and [`tE`](../configuration/config-reference.md#tE)
-- Change input distributions used with [`var_data_files`](../configuration/config-reference.md#var_data_files). [Read more about input distributions.](../configuration/input-reference.md)
-- Change output record format with [`output_record_format`](../configuration/config-reference.md#output_record_format)
+- Change the starting population size with [`t0_pop_size`](../configuration/config-reference.md#t0_pop_size).
+- Change the start and end data (as written in the record files) with [`t0`](../configuration/config-reference.md#t0) and [`tE`](../configuration/config-reference.md#tE).
+- Change input distributions used with [`var_data_files`](../configuration/config-reference.md#var_data_files). [Read more about input distributions.](../configuration/input-reference.md).
+- Change output record format with [`output_record_format`](../configuration/config-reference.md#output_record_format).
 - To disable the analysis portion of valipop, set [`output_tables`](../configuration/config-reference.md#output_tables) to `false`.
-- Change the location of the result directory with [`results_save_location`](../configuration/config-reference.md#results_save_location)
-- Change the name of the run within the result directory with [`run_purpose`](../configuration/config-reference.md#run_purpose)
+- Change the location of the result directory with [`results_save_location`](../configuration/config-reference.md#results_save_location).
+- Change the name of the run within the result directory with [`run_purpose`](../configuration/config-reference.md#run_purpose).
 
 You may then save the changes and rerun the following command for different results
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Running with Java 
+title: Running with Docker 
 markdown: kramdown
 ---
 
@@ -34,7 +34,7 @@ To verify you have installed the image correctly, you can run the following comm
 ```shell
 # In a terminal (Windows/MacOs/Linux)
 
-docker run valipop:master
+docker run ghcr.io/daniel5055/valipop:master
 ```
 
 which should print the following message
@@ -64,10 +64,20 @@ Docker runs everything in an isolated environment. To ensure we can handle Valip
 
 In our case, we will want to link the following directories to the container:
 
-- `./src/main/resources/valipop/config/scot/config.txt` to `/app/config/`
-- `./src/main/resources/valipop/input` to `/app/config/`
-- `./results` to `/app/results/`
+- `./src` to `/app/src`
+  - To access the config file and input distributions
+- `./results` to `/app/results`
+  - To receiv the results
 
+Therefore we can run the container with the following command to bind the directories
+
+```sh
+# For Windows
+docker run -v .\src:/app/src -v .\results:/app/results ghcr.io/daniel5055/valipop:master /app/src/main/resources/valipop/config/scot/config.txt
+
+# For MacOs/Linux
+docker run -v ./src:/app/src -v ./results:/app/results ghcr.io/daniel5055/valipop:master /app/src/main/resources/valipop/config/scot/config.txt
+```
 By default, this will run Valipop will a starting population size of 1000 between the years 1855 to 1973. This will usually take under 5 minutes to run, and should eventually print something like the following:
 
 ```
@@ -119,15 +129,15 @@ run_purpose = example
 
 You can make the following changes to the configuration file to alter Valipop's behaviour
 
-- Change the starting population size with [`t0_pop_size`](../configuration/config-reference.md#t0_pop_size)
-- Change the start and end data (as written in the record files) with [`t0`](../configuration/config-reference.md#t0) and [`tE`](../configuration/config-reference.md#tE)
-- Change input distributions used with [`var_data_files`](../configuration/config-reference.md#var_data_files). [Read more about input distributions.](../configuration/input-reference.md)
-- Change output record format with [`output_record_format`](../configuration/config-reference.md#output_record_format)
+- Change the starting population size with [`t0_pop_size`](../configuration/config-reference.md#t0_pop_size).
+- Change the start and end data (as written in the record files) with [`t0`](../configuration/config-reference.md#t0) and [`tE`](../configuration/config-reference.md#tE).
+- Change input distributions used with [`var_data_files`](../configuration/config-reference.md#var_data_files) ([See Gotchas](#32-gotchas)). [Read more about input distributions.](../configuration/input-reference.md). 
+- Change output record format with [`output_record_format`](../configuration/config-reference.md#output_record_format).
 - To disable the analysis portion of valipop, set [`output_tables`](../configuration/config-reference.md#output_tables) to `false`.
-- Change the location of the result directory with [`results_save_location`](../configuration/config-reference.md#results_save_location)
-- Change the name of the run within the result directory with [`run_purpose`](../configuration/config-reference.md#run_purpose)
+- Change the location of the result directory with [`results_save_location`](../configuration/config-reference.md#results_save_location) (You would need to change the Docker linking also, [see Gotchas](#32-gotchas)).
+- Change the name of the run within the result directory with [`run_purpose`](../configuration/config-reference.md#run_purpose).
 
-You may then save the changes and rerun the following command for different results
+You may then save the changes and rerun the following command for different results.
 
 ```sh
 # In a terminal (Windows/MacOs/Linux)
@@ -137,3 +147,6 @@ java -jar valipop.jar src/main/resources/valipop/config/scot/config.txt
 
 [Read more about the configuration options.](../configuration/config-reference.md)
 
+### 3.2 Gotchas
+
+As Valipop is running inside a container, all paths refer to files inside the container. In our case, we linked the directories such that we can use the same paths on the computer and container, but this is not alwasy the case.
