@@ -145,6 +145,7 @@ DATA
 50-54	0	0	0	0	0	0
 55+	0	0	0	0	0	0
 ```
+
 ## Directory Structure
 
 The structure of the input distributions directory is shown in the following tree:
@@ -193,93 +194,244 @@ my-input-distribution/
     └───separation/
 ```
 
-The following sections describes every property within the directory structure.
+### Properties
 
-### `annotations/female_forename`
+<dl>
 
+<dt>
+<a name="annotationsfemale_forename">
+<code>annotations/female_forename</code>
+</a>
+</dt>
+
+<dd markdown="1">
 The probability of each name a newborn female could be given. Uses the [Name Data](#name-data) format.
+</dd>
 
-### `annotations/male_forename`
+<dt>
+<a name="annotationsmale_forename">
+<code>annotations/male_forename</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The probability of each name a newborn male could be given. Uses the [Name Data](#name-data) format.
+</dd>
 
-### `annotations/surname`
+<dt>
+<a name="annotationssurname">
+<code>annotations/surname</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The probability of each surname a newly spawned family could be given. Uses the [Name Data](#name-data) format.
+</dd>
 
-### `annotations/geogrpahy`
+<dt>
+<a name="annotationsgeography">
+<code>annotations/geogrpahy</code>
+</a>
+</dt>
 
-### `annotations/occupation/change/female`
+<dd markdown="1">
+The geography the population is set in. This requires a single JSON file which defines the array of Areas a person can inhabit. An Area is defined by the following minimal JSON:
 
+```json
+{
+    "place_id": <OSM place id>,
+    "road": <road>,
+    "suburb" <suburb>,
+    "town": <town>,
+    "county": <county>,
+    "state": <country>,
+    "postcode": <postcode>,
+    "boundingbox": [<min lat>, <max lat>, <min long>, <max long>],
+}
+```
+</dd>
+
+<dt>
+<a name="annotationsoccupationchangefemale">
+<code>annotations/occupation/change/female</code>
+</a>
+</dt>
+
+<dd markdown="1">
 The proportion of occupations a female will change to from their current occupation. Uses the [2D double enumerated data](#2d-doubly-enumerated-data) format.
+</dd>
 
-### `annotations/occupation/change/male`
+<dt>
+<a name="annotationsoccupationchangemale">
+<code>annotations/occupation/change/male</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The proportion of occupations a male will change to from their current occupation. Uses the [2D double enumerated data](#2d-doubly-enumerated-data) format.
+</dd>
 
-### `annotations/occupation/female/`
+<dt>
+<a name="annotationsoccupationfemale">
+<code>annotations/occupation/female</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The probabilities of occupations for a male at a given. Uses the [2D age-dependent enumerated data](#2d-age-dependent-enumerated-data) format.
+</dd>
 
-### `annotations/occupation/male/`
+<dt>
+<a name="annotationsoccupationmale">
+<code>annotations/occupation/male</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The probabilities of occupations for a male at a given. Uses the [2D age-dependent enumerated data](#2d-age-dependent-enumerated-data) format.
+</dd>
 
-### `annotations/migration/female_forename/`
+<dt>
+<a name="annotationsmigrationfemale_forename">
+<code>annotations/migration/female_forename</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The probability of each forename a newly immigrated female could have. Uses the [Name Data](#name-data) format.
+</dd>
 
-### `annotations/migration/male_forename/`
+<dt>
+<a name="annotationsmigrationmale_forename">
+<code>annotations/migration/male_forename</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The probability of each forename a newly immigrated male could have. Uses the [Name Data](#name-data) format.
+</dd>
 
-### `annotations/migration/surname/`
+<dt>
+<a name="annotationsmigrationsurname">
+<code>annotations/migration/surname</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The probability of each surname a newly immigrated person could have. Uses the [Name Data](#name-data) format.
+</dd>
 
-### `birth/adulterous_birth`
+<dt>
+<a name="birthadulterous_birth">
+<code>birth/adulterous_birth</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The proportion of illegitimate births among all births. Uses the [1D age-depedent data](#1d-age-dependent-data) format.
+</dd>
 
-### `birth/multiple_birth`
+<dt>
+<a name="birthmultiple_birth">
+<code>birth/multiple_birth</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The proportion of maternaties producing a given number of childrens. For example, whether a pregnancy results in twins, triplet, or just a single child. Uses the [2D age-dependent data](#2d-age-dependent-data) format, with the number of children produced on the columns. Each row should sum to one (or zero if no births allowed).
+</dd>
 
-### `birth/ordered_birth`
+<dt>
+<a name="birthordered_birth">
+<code>birth/ordered_birth</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The probability of a mother having a given number of children at a given age. Uses the [2d age-dependent data](#2d-age-dependent-data) format.
+</dd>
 
-### `birth/ratio_birth`
+<dt>
+<a name="birthratio_birth">
+<code>birth/ratio_birth</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The proportion of children born male. Uses the [single input data](#single-input-data) format.
+</dd>
 
-### `death/females/cause`
+<dt>
+<a name="deathfemalescause">
+<code>death/females/cause</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The proportions of causes of death for female deaths at a given age. Uses the HICOD notation to enumerate causes of deaths. Uses the [2d-age-dependent-enumerated data](#2d-age-dependent-enumerated-data) format.
+</dd>
 
-### `death/females/lifetable`
+<dt>
+<a name="deathfemaleslifetable">
+<code>death/females/lifetable</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The probability of a female dying at a given age. Uses the [1d age-dependent data](#1d-age-dependent-data) format.
+</dd>
 
-### `death/males/cause`
+<dt>
+<a name="deathmalescause">
+<code>death/males/cause</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The proportions of causes of death for male deaths at a given age. Uses the HICOD notation to enumerate causes of deaths for each column. Uses the [2d-age-dependent-enumerated data](#2d-age-dependent-enumerated-data) format.
+</dd>
 
-### `death/males/lifetable`
+<dt>
+<a name="deathmaleslifetable">
+<code>death/males/lifetable</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The probability of a male dying at a given age. Uses the [1d age-dependent data](#1d-age-dependent-data) format.
+</dd>
 
-### `relationships/marriage`
+<dt>
+<a name="relationshipsmarriage">
+<code>relationships/marriage</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The proportion of children born within a marriage, as opposed to a civil partnership. Uses the [1d age-dependent data](#1d-age-dependent-data) format.
+</dd>
 
-### `relationships/partnering`
+<dt>
+<a name="relationshipspartnering">
+<code>relationships/partnering</code>
+</a>
+</dt>
 
+<dd markdown="1">
 The proportion of male ages females of a given age will partner with. Female ages for each row, male ages for each column. Uses the [2d age-dependent data](#2d-age-dependent-data) format.
+</dd>
 
-### `relationships/separation`
+<dt>
+<a name="relationshipsseparation">
+<code>relationships/separation</code>
+</a>
+</dt>
 
+<dd markdown="1">
 Out of the total number of marriages with children, how many divorce in a given year for each number of children in the marriage. Uses the [2d-age-dependent-data](#2d-age-dependent-data) format.
+</dd>
+
+</dl>
 
 ## Input Distribution files
 
