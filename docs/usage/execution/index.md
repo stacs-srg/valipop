@@ -16,7 +16,7 @@ Valipop can either be run locally with Java or within a Docker container.
 
 ---
 
-[To install and run it with Java](https://daniel5055.github.io/valipop/usage/execution/java.html)
+[To run Valipop with Java](java.md)
 
 ## Why Docker?
 
@@ -26,4 +26,4 @@ Valipop can either be run locally with Java or within a Docker container.
 
 ---
 
-[To run it with Docker](https://daniel5055.github.io/valipop/usage/execution/docker.html)
+[To run Valipop with Docker](docker.md)

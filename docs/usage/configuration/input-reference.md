@@ -447,7 +447,7 @@ In the following example, the marriage property (which defines the proportion of
         └───marriage_1973.txt
 ```
 
-Each input distribution of a property will apply for a period of time during the simulation. The length of the period is defined by the `input_width` option in the config file. Valipop will divide the given input distributions into these equal periods based on which input distribution is closest to the end time of that period.
+Each input distribution of a property will apply for a period of time during the simulation. The length of the period is defined by the [`input_width`](config-reference#input_width) option in the config file. Valipop will divide the given input distributions into these equal periods based on which input distribution is closest to the end time of that period.
 
 For example, using the input distributions defined above in a simulation running from years 1900 to 2000 with an input width of 10 years. The input distributions will be divided over the following periods.
 

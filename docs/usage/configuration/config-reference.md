@@ -6,7 +6,7 @@ markdown: kramdown
 
 # Valipop Configuration Reference
 
-These are all the configuration options supported by Valipop.
+These are all the configuration options supported by Valipop. Options suffixed with a '*' are required.
 
 **Configuration Options**
 
@@ -14,17 +14,17 @@ These are all the configuration options supported by Valipop.
     - [`run_purpose`](#run_purpose)
     - [`results_save_location`](#results_save_location)
     - [`summary_results_save_location`](#summary_results_save_location)
-    - [`var_data_files`](#var_data_files)
+    - [`var_data_files`*](#var_data_files)
 - [Dates and Periods](#dates-and-periods)
-    - [`tS`](#tS)
-    - [`t0`](#t0)
-    - [`tE`](#tE)
+    - [`tS`*](#tS)
+    - [`t0`*](#t0)
+    - [`tE`*](#tE)
     - [`simulation_time_step`](#simulation_time_step)
     - [`min_birth_spacing`](#min_birth_spacing)
     - [`min_gestation_period`](#min_gestation_period)
     - [`input_width`](#input_width)
 - [Simulation Factors](#simulation-factors)
-    - [`t0_pop_size`](#t0_pop_size)
+    - [`t0_pop_size`*](#t0_pop_size)
     - [`set_up_br`](#set_up_br)
     - [`set_up_dr`](#set_up_dr)
     - [`recovery-factor`](#recovery-factor)
