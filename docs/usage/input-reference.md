@@ -241,12 +241,12 @@ The geography the population is set in. This requires a single JSON file which d
 {
     "place_id": <OSM place id>,
     "road": <road>,
-    "suburb" <suburb>,
+    "suburb": <suburb>,
     "town": <town>,
     "county": <county>,
     "state": <country>,
     "postcode": <postcode>,
-    "boundingbox": [<min lat>, <max lat>, <min long>, <max long>],
+    "boundingbox": [<min lat>, <max lat>, <min long>, <max long>]
 }
 ```
 </dd>
@@ -338,7 +338,7 @@ The proportion of illegitimate births among all births. Uses the [1D age-depeden
 </dt>
 
 <dd markdown="1">
-The proportion of maternaties producing a given number of childrens. For example, whether a pregnancy results in twins, triplet, or just a single child. Uses the [2D age-dependent data](#2d-age-dependent-data) format, with the number of children produced on the columns. Each row should sum to one (or zero if no births allowed).
+The proportion of maternaties producing a given number of childrens. For example, whether a pregnancy results in twins, triplets, or just a single child. Uses the [2D age-dependent data](#2d-age-dependent-data) format, with the number of children produced on the columns. Each row should sum to one (or zero if no births allowed at that age).
 </dd>
 
 <dt>

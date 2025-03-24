@@ -8,186 +8,399 @@ markdown: kramdown
 
 These are all the configuration options supported by Valipop.
 
-<code>
+-[Locations](#locations)
+    - [`run_purpose`](#run_purpose)
+    - [`results_save_location`](#results_save_location)
+    - [`summary_results_save_location`](#summary_results_save_location)
+    - [`var_data_files`](#var_data_files)
+- [Dates and Periods](#dates-and-periods)
+    - [`tS`](#tS)
+    - [`t0`](#t0)
+    - [`tE`](#tE)
+    - [`simulation_time_step`](#simulation_time_step)
+    - [`min_birth_spacing`](#min_birth_spacing)
+    - [`min_gestation_period`](#min_gestation_period)
+    - [`input_width`](#input_width)
+- [Simulation Factors](#simulation-factors)
+    - [`t0_pop_size`](#t0_pop_size)
+    - [`set_up_dr`](#set_up_dr)
+    - [`set_up_br`](#set_up_br)
+    - [`recovery-factor`](#recovery-factor)
+    - [`proportional_recovery_factor`](#proportional_recovery_factor)
+- [Results](#results)
+    - [`output_record_format`](#output_record_format)
+    - [`output_graph_format`](#output_record_format)
+    - [`output_table`](#output_table)
+    - [`ct_tree_stepback`](#ct_tree_stepback)
+    - [`ct_tree_precision`](#ct_tree_precision)
+- [Miscellanious](#miscellanious)
+    - [`deterministic`](#deterministic)
+    - [`seed`](#seed)
+    - [`binomial_sampling`](#binomial_sampling)
+    - [`over_sized_geography_factor`](#over_sized_geography_factor)
+
+## Locations
+
+<dl>
+
+
+<dt>
+<a name="run_purpose">
+<code>run_purpose</code>
+</a>
+</dt>
+
+<dd markdown="1">
+A name used for grouping of runs. Must be a valid name for files and directories. 
+
+Results of a specific run are written to `<results_save_location>/<run_purpose>/<timestamp>`. `timestamp` represents the datetime the runs was executed at in the form `yyyy-mm-ddThh-mm-ss-sss`.
+
+Defaults to `default`
+</dd>
+
+<dt>
+<a name="results_save_location">
+<code>results_save_location</code>
+</a>
+</dt>
+
+<dd markdown="1">
+Path to the root results directory of runs.
+
+Results of a specific run are written to `<results_save_location>/<run_purpose>/<timestamp>`. `timestamp` represents the datetime the runs was executed at in the form `yyyy-mm-ddThh-mm-ss-sss`.
+
+Defaults to `results/`.
+</dd>
+
+<dt>
+<a name="summary_results_save_location">
+<code>summary_results_save_location</code>
+</a>
+</dt>
+
+<dd markdown="1">
+Path to the directory where summarisations of runs are written.
+
+A summary is a CSV file where each run is represented as a run. Each row contains information about the run configuration and results.
+
+There is a global summary file shared by all runs at `<summary_results_save_location>/global-results-summary.csv`.
+
+There is local summary file shared by all runs of the same run purpose at `<summary_results_save_location>/<run_purpose>/<run_purpose>-results-summary.csv`.
+
+Defaults to `results/`.
+</dd>
+
+<dt>
+<a name="var_data_files">
+<code>var_data_files</code>
+</a>
+</dt>
+
+<dd markdown="1">
+Path to the input distribution directory.
 
------------------------------------------
--------------- Locations ----------------
------------------------------------------
+This is required.
+</dd>
 
-run_purpose =
+</dl>
 
-    A name used for grouping of runs. Must be a valid name for files and directories. 
-    Defaults to `default`
-    
-    Results of a specific run are written to `<results_save_location>/<run_purpose>/<timestamp>`. `timestamp` represents the datetime the runs was executed at in the form `yyyy-mm-ddThh-mm-ss-sss`.
+## Dates and Periods
+
+<dl>
 
+<dt>
+<a name="tS">
+<code>tS</code>
+</a>
+</dt>
 
-results_save_location = 
+<dd markdown="1">
+The start date of the initialisation phase, where an initial population is generated and simulated until `t0`. The duration between `t0` and `tS` must be greater than or equal to the greatest age specified in the ordered birth rates distribution.
 
-    Path to the root results directory of runs.
-    Defaults to `results/`.
+At `tS` an initial population is first spawned, of which its size is based on `set_up_br` and `set_up_dr`, and the duration from `t0`. The population is then simulated reguraly until `t0`. 
 
-    Results of a specific run are written to `<results_save_location>/<run_purpose>/<timestamp>`. `timestamp` represents the datetime the runs was executed at in the form `yyyy-mm-ddThh-mm-ss-sss`.
+This is required.
+</dd>
 
+<dt>
+<a name="t0">
+<code>t0</code>
+</a>
+</dt>
 
-summary_results_save_location =
+<dd markdown="1">
+The start date of the main phase, where records of events occuring between `t0` until `tE` will be recoreded.
 
-    Path to the directory where summarisations of runs are written.
-    Defaults to `results/`
-    
-    A summary is a CSV file where each run is represented as a run. Each row contains information about the run configuration and results.
+This is required.
+</dd>
 
-    There is a global summary file shared by all runs at `<summary_results_save_location>/global-results-summary.csv`.
+<dt>
+<a name="tE">
+<code>tE</code>
+</a>
+</dt>
 
-    There is local summary file shared by all runs of the same run purpose at `<summary_results_save_location>/<run_purpose>/<run_purpose>-results-summary.csv`.
+<dd markdown="1">
+The end date of the main phase, and end of the simulation in total.
 
-var_data_files =
+This is required.
+</dd>
 
-    Path to the input distribution directory.
-    This is required.
+<dt>
+<a name="simulation_time_step">
+<code>simulation_time_step</code>
+</a>
+</dt>
 
+<dd markdown="1">
+The time interval used for each simulation step. This is a Java period string of the form `P<year>Y<month>M<day>D`.
 
------------------------------------------
----------- Simulation Factors -----------
------------------------------------------
+Defaults to `P1Y` (1 year).
+</dd>
 
-set_up_dr =
+<dt>
+<a name="min_birth_spacing">
+<code>min_birth_spacing</code>
+</a>
+</dt>
 
-    The flat birth rate used for the initial population between `tS` and `t0`. It represents the percentage increase of the population in one time step as a decimal. 
-    Defaults to `0.133`.
+<dd markdown="1">
+The minimum time interval parents must wait since their last child before having another child. This is a Java period string of the form `P<year>Y<month>M<day>D`.
 
-set_up_br =
+Defaults to `P147D` (147 days).
+</dd>
 
-    The flat death rate used for the initial population between `tS` and `t0`. It represents the percentage decrease of the population in one time step as a decimal. 
-    Defaults to `0.122`.
+<dt>
+<a name="min_gestation_period">
+<code>min_gestation_period</code>
+</a>
+</dt>
 
-recovery_factor =
+<dd markdown="1">
+The minimum time interval the child must have been concieved at before their birth. This is a Java period string of the form `P<year>Y<month>M<day>D`.
 
-    A multiplier determing how strongly the simulation should compensate for deviations from given one dimensional input distributions
-    Defaults to `1`.
+Defaults to `P147D` (147 days).
+</dd>
 
-proportional_recovery_factor =
+<dt>
+<a name="input_width">
+<code>input_width</code>
+</a>
+</dt>
 
-    A multiplier determing how strongly the simulation should compensate for deviations from given two dimensional input distributions
-    Defaults to `1`.
+<dd markdown="1">
+The time intervals for which the given input distributions are divided into between `tS` and `tE`. Input distributions for the same properties over multiple different years are the separated into thier respective time_intervals. This is a Java period string of the form `P<year>Y<month>M<day>D`.
 
------------------------------------------
----------- Dates and Periods ------------
------------------------------------------
+Defaults to `P1Y` (1 year).
+</dd>
 
-tS =
+</dl>
 
-    The start date of the initialisation phase, where an initial population is generated and simulated until `t0`. The duration between `t0` and `tS` must be greater than or equal to the greatest age specified in the ordered birth rates distribution.
-    This is required.
-    
-    At `tS` an initial population is first spawned, of which its size is based on `set_up_br` and `set_up_dr`, and the duration from `t0`. The population is then simulated reguraly until `t0`. 
+## Simulation Factors
 
-t0 =
+<dl>
 
-    The start date of the main phase, where records of events occuring between `t0` until `tE` will be recoreded.
-    This is required.
+<dt>
+<a name="t0_pop_size">
+<code>t0_pop_size</code>
+</a>
+</dt>
 
-tE =
+<dd markdown="1">
+The desired population size at `t0`. The initialisation phase will aim to generate an initial population of this size from `tS` until `t0`.
 
-    The end date of the main phase, and end of the simulation in total.
-    This is required.
+This is required.
+</dd>
 
-simulation_time_step =
 
-    The time interval used for each simulation step. This is a Java period string of the form `P<year>Y<month>M<day>D`.
-    Defaults to `P1Y` (1 year).
+<dt>
+<a name="set_up_dr">
+<code>set_up_dr</code>
+</a>
+</dt>
 
-min_birth_spacing =
+<dd markdown="1">
+The flat birth rate used for the initial population between `tS` and `t0`. It represents the percentage increase of the population in one time step as a decimal. 
 
-    The minimum time interval parents must wait since their last child before having another child. This is a Java period string of the form `P<year>Y<month>M<day>D`.
-    Defaults to `P147D` (147 days).
+Defaults to `0.133`.
+</dd>
 
-min_gestation period =
+<dt>
+<a name="set_up_br">
+<code>set_up_br</code>
+</a>
+</dt>
 
-    The minimum time interval the child must have been concieved at before their birth. This is a Java period string of the form `P<year>Y<month>M<day>D`.
-    Defaults to `P147D` (147 days).
+<dd markdown="1">
+The flat death rate used for the initial population between `tS` and `t0`. It represents the percentage decrease of the population in one time step as a decimal. 
 
-input_width = 
+Defaults to `0.122`.
+</dd>
 
-    The time intervals for which the given input distributions are divided into between `tS` and `tE`. Input distributions for the same properties over multiple different years are the separated into thier respective time_intervals. This is a Java period string of the form `P<year>Y<month>M<day>D`.
-    Defaults to `P1Y` (1 year).
+<dt>
+<a name="recovery_factor">
+<code>recovery_factor</code>
+</a>
+</dt>
 
------------------------------------------
------------- Miscellanious --------------
------------------------------------------
+<dd markdown="1">
+A multiplier determing how strongly the simulation should compensate for deviations from given one dimensional input distributions
 
-output_record_format =
+Defaults to `1`.
+</dd>
 
-    The output format of the target population records. Can be one of:
-    
-    - `NONE`          : Does not generate.
-    - `TD`            : Custom record format created by Tom Dalton.
-    - `DS`            : Record format used by Digitising Scotland.
-    - `EG_SKYE`       : Subset of the `DS`.
-    - `VIS_PROCESSING`: Simplified record format used by Digitising Scotland.
+<dt>
+<a name="proportional_recovery_factor">
+<code>proportional_recovery_factor</code>
+</a>
+</dt>
 
-    Defaults to `NONE`.
+<dd markdown="1">
+A multiplier determing how strongly the simulation should compensate for deviations from given two dimensional input distributions
 
-output_graph_format =
+Defaults to `1`.
+</dd>
 
-    The output format of the target population graphic. Can be one of:
+</dl>
 
-    - `NONE`: Does not generate.
-    - `GRAPHVIZ`: a Graphviz `.dot` file to render a family tree graph
-    - `GEDCOM`: a GEDCOM family tree file
+## Results
 
-    Defaults to `None`.
+<dl>
 
-t0_pop_size =
+<dt>
+<a name="output_record_format">
+<code>output_record_format</code>
+</a>
+</dt>
 
-    The desired population size at `t0`. The initialisation phase will aim to generate an initial population of this size from `tS` until `t0`.
-    This is required.
+<dd markdown="1">
+The output format of the target population records. Can be one of:
 
-deterministic = 
+- `NONE`          : Does not generate.
+- `TD`            : Custom record format created by Tom Dalton.
+- `DS`            : Record format used by Digitising Scotland.
+- `EG_SKYE`       : Subset of the `DS`.
+- `VIS_PROCESSING`: Simplified record format used by Digitising Scotland.
 
-    When `true`, the program seeds its random generator with the value of `seed`. This will yield the same result for every run using the same `seed`.
+Defaults to `NONE`.
+</dd>
 
-    When `false`, it will use the system time. This will likely yield different results on every run.
+<dt>
+<a name="output_graph_format">
+<code>output_grpah_format</code>
+</a>
+</dt>
 
-    Defaults to `false`.
+<dd markdown="1">
+The output format of the target population graphic. Can be one of:
 
+- `NONE`: Does not generate.
+- `GRAPHVIZ`: a Graphviz `.dot` file to render a family tree graph
+- `GEDCOM`: a GEDCOM family tree file
 
-seed =
+Defaults to `None`.
+</dd>
 
-    The value used to seed random generator. This will be ignored if `deterministic = false`.
-    Defaults to `56854687`
+<dt>
+<a name="output_table">
+<code>output_table</code>
+</a>
+</dt>
 
-binomial_sampling =
+<dd markdown="1">
+When `true`, this creates contigency tables required by the population analysis.
 
-    When `true`, counts determined by the given input distributions are sampled from binomial distributions.
+When `false`, the contigency tables are not created and the population analysis is skipped.
 
-    When `false`, counts determined by the given input distributions are sampled from normal distributions.
+A contigency table is a collection of expected and actual frequencies for events. Contigency tables for birth orders, multiple births, partnership, deaths, and separations are generated.
 
-    Defaults to `true`.
+Defaults to `true`.
+</dd>
 
-over_sized_geography_factor =
+<dt>
+<a name="ct_tree_stepback">
+<code>ct_tree_stepback</code>
+</a>
+</dt>
 
-    The multiplier applied when determining the number of house addresses in a given area.
-    Defaults to `1`
+<dd markdown="1">
+The stepback used in the contigency table calculation.
 
-    This is used for determining moving addresses and partnering.
+Defaults to `1`.
+</dd>
 
-output_table =
+<dt>
+<a name="ct_tree_precision">
+<code>ct_tree_precision</code>
+</a>
+</dt>
 
-    When `true`, this creates contigency tables required by the population analysis.
+<dd markdown="1">
+The precision used in the contigency table calculation.
 
-    When `false`, the contigency tables are not created and the population analysis is skipped.
+Defaults to `1E-66`.
+</dd>
 
-    A contigency table is a collection of expected and actual frequencies for events. Contigency tables for birth orders, multiple births, partnership, deaths, and separations are generated.
+</dl>
 
-    Defaults to `true`.
+## Miscellanious
 
+<dl>
 
-ct_tree_stepback = 
+<dt>
+<a name="deterministic">
+<code>deterministic</code>
+</a>
+</dt>
 
-    The stepback used in the contigency table calculation.
+<dd markdown="1">
+When `true`, the program seeds its random generator with the value of `seed`. This will yield the same result for every run using the same `seed`.
 
-ct_tree_precision =
+When `false`, it will use the system time. This will likely yield different results on every run.
 
-    The precision used in the contigency table calculation.
-</code>
+Defaults to `false`.
+</dd>
+
+
+<dt>
+<a name="seed">
+<code>seed</code>
+</a>
+</dt>
+
+<dd markdown="1">
+The value used to seed random generator. This will be ignored if `deterministic = false`.
+
+Defaults to `56854687`.
+</dd>
+
+<dt>
+<a name="binomial_sampling">
+<code>binomial_sampling</code>
+</a>
+</dt>
+
+<dd markdown="1">
+When `true`, counts determined by the given input distributions are sampled from binomial distributions.
+
+When `false`, counts determined by the given input distributions are sampled from normal distributions.
+
+Defaults to `true`.
+</dd>
+
+<dt>
+<a name="over_sized_geography_factor">
+<code>over_sized_geography_factor</code>
+</a>
+</dt>
+
+<dd markdown="1">
+The multiplier applied when determining the number of house addresses in a given area.
+
+This is used for determining moving addresses and partnering.
+
+Defaults to `1`.
+
+</dd>
+
+</dl>
