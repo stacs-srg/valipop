@@ -8,7 +8,9 @@ markdown: kramdown
 
 These are all the configuration options supported by Valipop.
 
--[Locations](#locations)
+**Configuration Options**
+
+- [Locations](#locations)
     - [`run_purpose`](#run_purpose)
     - [`results_save_location`](#results_save_location)
     - [`summary_results_save_location`](#summary_results_save_location)
@@ -23,8 +25,8 @@ These are all the configuration options supported by Valipop.
     - [`input_width`](#input_width)
 - [Simulation Factors](#simulation-factors)
     - [`t0_pop_size`](#t0_pop_size)
-    - [`set_up_dr`](#set_up_dr)
     - [`set_up_br`](#set_up_br)
+    - [`set_up_dr`](#set_up_dr)
     - [`recovery-factor`](#recovery-factor)
     - [`proportional_recovery_factor`](#proportional_recovery_factor)
 - [Results](#results)
@@ -39,6 +41,8 @@ These are all the configuration options supported by Valipop.
     - [`binomial_sampling`](#binomial_sampling)
     - [`over_sized_geography_factor`](#over_sized_geography_factor)
 
+***
+
 ## Locations
 
 <dl>
@@ -51,9 +55,13 @@ These are all the configuration options supported by Valipop.
 </dt>
 
 <dd markdown="1">
-A name used for grouping of runs. Must be a valid name for files and directories. 
+A name used for a grouping of runs. Must be a valid name for files and directories. 
 
-Results of a specific run are written to `<results_save_location>/<run_purpose>/<timestamp>`. `timestamp` represents the datetime the runs was executed at in the form `yyyy-mm-ddThh-mm-ss-sss`.
+Results of a specific run are written to
+
+`<results_save_location>/<run_purpose>/<timestamp>`
+
+`timestamp` represents the datetime the runs was executed at in the form `yyyy-mm-ddThh-mm-ss-sss`.
 
 Defaults to `default`
 </dd>
@@ -67,8 +75,6 @@ Defaults to `default`
 <dd markdown="1">
 Path to the root results directory of runs.
 
-Results of a specific run are written to `<results_save_location>/<run_purpose>/<timestamp>`. `timestamp` represents the datetime the runs was executed at in the form `yyyy-mm-ddThh-mm-ss-sss`.
-
 Defaults to `results/`.
 </dd>
 
@@ -81,11 +87,16 @@ Defaults to `results/`.
 <dd markdown="1">
 Path to the directory where summarisations of runs are written.
 
-A summary is a CSV file where each run is represented as a run. Each row contains information about the run configuration and results.
+A summary is a CSV file where each row is represented as a run. Each row contains information about the run configuration and results.
 
-There is a global summary file shared by all runs at `<summary_results_save_location>/global-results-summary.csv`.
+There is a global summary file shared by all runs at 
 
-There is local summary file shared by all runs of the same run purpose at `<summary_results_save_location>/<run_purpose>/<run_purpose>-results-summary.csv`.
+```<summary_results_save_location>/global-results-summary.csv```
+
+
+There is local summary file shared by all runs of the same run purpose at
+
+ ```<summary_results_save_location>/<run_purpose>/<run_purpose>-results-summary.csv```
 
 Defaults to `results/`.
 </dd>
@@ -117,7 +128,7 @@ This is required.
 <dd markdown="1">
 The start date of the initialisation phase, where an initial population is generated and simulated until `t0`. The duration between `t0` and `tS` must be greater than or equal to the greatest age specified in the ordered birth rates distribution.
 
-At `tS` an initial population is first spawned, of which its size is based on `set_up_br` and `set_up_dr`, and the duration from `t0`. The population is then simulated reguraly until `t0`. 
+At `tS` an initial population is first spawned, of which its size is based on [`set_up_br`](#set_up_br) and [`set_up_dr`](#set_up_dr), and the duration from [`t0`](#t0). The population is then simulated reguraly until [`t0`](#t0). 
 
 This is required.
 </dd>
@@ -129,7 +140,7 @@ This is required.
 </dt>
 
 <dd markdown="1">
-The start date of the main phase, where records of events occuring between `t0` until `tE` will be recoreded.
+The start date of the main phase, where records of events occuring between `t0` until [`tE`](#tE) will be recoreded.
 
 This is required.
 </dd>
@@ -189,7 +200,7 @@ Defaults to `P147D` (147 days).
 </dt>
 
 <dd markdown="1">
-The time intervals for which the given input distributions are divided into between `tS` and `tE`. Input distributions for the same properties over multiple different years are the separated into thier respective time_intervals. This is a Java period string of the form `P<year>Y<month>M<day>D`.
+The time intervals for which the given input distributions are divided into between [`tS`](#tS) and [`tE`](#tE). Input distributions for the same properties over multiple different years are the separated into thier respective time_intervals. This is a Java period string of the form `P<year>Y<month>M<day>D`.
 
 Defaults to `P1Y` (1 year).
 </dd>
@@ -207,23 +218,11 @@ Defaults to `P1Y` (1 year).
 </dt>
 
 <dd markdown="1">
-The desired population size at `t0`. The initialisation phase will aim to generate an initial population of this size from `tS` until `t0`.
+The desired population size at [`t0`](#t0). The initialisation phase will aim to generate an initial population of this size from [`tS`](#tS) until [`t0`](#t0).
 
 This is required.
 </dd>
 
-
-<dt>
-<a name="set_up_dr">
-<code>set_up_dr</code>
-</a>
-</dt>
-
-<dd markdown="1">
-The flat birth rate used for the initial population between `tS` and `t0`. It represents the percentage increase of the population in one time step as a decimal. 
-
-Defaults to `0.133`.
-</dd>
 
 <dt>
 <a name="set_up_br">
@@ -232,7 +231,19 @@ Defaults to `0.133`.
 </dt>
 
 <dd markdown="1">
-The flat death rate used for the initial population between `tS` and `t0`. It represents the percentage decrease of the population in one time step as a decimal. 
+The flat birth rate used for the initial population between [`tS`](#tS) and [`t0`](#t0). It represents the percentage increase of the population in one time step as a decimal. 
+
+Defaults to `0.133`.
+</dd>
+
+<dt>
+<a name="set_up_dr">
+<code>set_up_dr</code>
+</a>
+</dt>
+
+<dd markdown="1">
+The flat death rate used for the initial population between [`tS`](#tS) and [`t0`](t0). It represents the percentage decrease of the population in one time step as a decimal. 
 
 Defaults to `0.122`.
 </dd>
@@ -279,7 +290,7 @@ The output format of the target population records. Can be one of:
 - `NONE`          : Does not generate.
 - `TD`            : Custom record format created by Tom Dalton.
 - `DS`            : Record format used by Digitising Scotland.
-- `EG_SKYE`       : Subset of the `DS`.
+- `EG_SKYE`       : Subset of the `DS` format.
 - `VIS_PROCESSING`: Simplified record format used by Digitising Scotland.
 
 Defaults to `NONE`.
@@ -354,7 +365,7 @@ Defaults to `1E-66`.
 </dt>
 
 <dd markdown="1">
-When `true`, the program seeds its random generator with the value of `seed`. This will yield the same result for every run using the same `seed`.
+When `true`, the program seeds its random generator with the value of [`seed`](#seed). This will yield the same result for every run using the same [`seed`](#seed).
 
 When `false`, it will use the system time. This will likely yield different results on every run.
 
@@ -369,7 +380,7 @@ Defaults to `false`.
 </dt>
 
 <dd markdown="1">
-The value used to seed random generator. This will be ignored if `deterministic = false`.
+The value used to seed random generator. This will be ignored if [`deterministic = false`](#deterministic).
 
 Defaults to `56854687`.
 </dd>
@@ -400,7 +411,6 @@ The multiplier applied when determining the number of house addresses in a given
 This is used for determining moving addresses and partnering.
 
 Defaults to `1`.
-
 </dd>
 
 </dl>
