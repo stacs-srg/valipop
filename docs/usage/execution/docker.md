@@ -10,7 +10,7 @@ markdown: kramdown
 
 You will need to have either [docker](https://www.docker.com/), [podman](https://podman.io/) or any other container management tool installed on your system.
 
-## Donwloading the container
+## Installing the image
 
 To run Valipop with docker, you first you need to run the following command to pull the Docker image
 

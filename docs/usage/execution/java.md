@@ -16,7 +16,7 @@ You will need the following installed on your system to run Valipop:
 You will also need to install the `geepack` R package, which can be done by running the following command:
 
 ```shell
-# In a terminal
+# Open a terminal (Windows/MacOs/Linux)
 
 # Install the geepack R package on your system
 R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'))"

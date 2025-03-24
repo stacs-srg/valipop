@@ -16,11 +16,14 @@ improve data linkage algorithms.
 _ValiPop_'s micro-simulation model is written in Java. The supporting verification analysis 
 and statistical code is written in R.
 
-## Using Valipop 
+## Running Valipop
 
-To learn more about using Valipop, you can read these guides:
+- [How to run Valipop](useage/execution/index.md)
 
-- [How to run Valipop](usage/execution/index.md)
+## Further information on Valipop 
+
+To learn more about using Valipop:
+
 - [How to configure Valipop](usage/configuration/index.md)
 - [How to read the results](usage/results.md)
 
@@ -30,7 +33,3 @@ To learn more about how Valipop works, and how to develop it, you can read the f
 
 - [Valipop execution overview](development/overview.md)
 - [Valipop implementation](development/implementations.md)
-
----
-
-For further information, queries or collaborations please contact Tom Dalton (tsd4@st-andrews.ac.uk)
