@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import net.jcip.annotations.NotThreadSafe;
 import uk.ac.standrews.cs.valipop.implementations.StatsException;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 

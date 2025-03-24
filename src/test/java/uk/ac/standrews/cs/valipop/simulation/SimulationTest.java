@@ -1,14 +1,14 @@
 package uk.ac.standrews.cs.valipop.simulation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -18,83 +18,72 @@ import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 
-import static uk.ac.standrews.cs.utilities.FileManipulation.FILE_CHARSET;
-
 @RunWith(Parameterized.class)
 public class SimulationTest {
-    private Path tableDirectory;
     private Path configFile;
+    private String expectedBirthHash;
+    private String expectedDeathHash;
+    private String expectedMarriageHash;
 
-    private static Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/validation");
-    private static String TABLES_DIR_NAME = "tables";
-    private static String CONFIG_NAME = "config.txt";
+    private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/config");
+    private static final String RECORD_DIR = "records";
 
-    private static String[] TABLE_NAMES = new String[] {
-        "death-CT.csv",
-        "mb-CT.csv",
-        "ob-CT.csv",
-        "part-CT.csv",
-        "sep-CT.csv"
+    private static final String[] RECORD_NAMES = new String[] {
+        "birth_records.csv",
+        "death_records.csv",
+        "marriage_records.csv",
     };
 
-    public SimulationTest(Path tableDirectory, Path configFile) {
-        this.tableDirectory = tableDirectory;
+    public SimulationTest(Path configFile, String expectedBirthHash, String expectedDeathHash, String expectedMarriageHash) {
         this.configFile = configFile;
+        this.expectedBirthHash = expectedBirthHash;
+        this.expectedDeathHash = expectedDeathHash;
+        this.expectedMarriageHash = expectedMarriageHash;
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> getTestCases() {
-        // Creates two paths, [<test_dir>/<RECORDS_DIR_NAME>, <test_dir>/<CONFIG_NAME>]
         return Arrays
-            .asList(new Path[] {
-                TEST_RESOURCE_DIR.resolve("test1"),
-                TEST_RESOURCE_DIR.resolve("test2"),
-                TEST_RESOURCE_DIR.resolve("test3"),
-                TEST_RESOURCE_DIR.resolve("test4"),
-                TEST_RESOURCE_DIR.resolve("test5"),
-                TEST_RESOURCE_DIR.resolve("test6"),
-                TEST_RESOURCE_DIR.resolve("test7"),
-                TEST_RESOURCE_DIR.resolve("test8")
-            })
-            .stream()
-            .map((path) -> new Object[] {
-                path.resolve(TABLES_DIR_NAME),
-                path.resolve(CONFIG_NAME)
-            })
-            .toList();
+            .asList(new Object[][] {
+                new Object[] { TEST_RESOURCE_DIR.resolve("config-1.txt"), "+wEc08pgIweIC4advvfcIw==", "DWj48GAsFtJS/PX4c+59dA==", "D0jUpvTWOpCVGYPRbc4dQw==" },
+                new Object[] { TEST_RESOURCE_DIR.resolve("config-2.txt"), "mEkjBgtyHFMqTZz02r9H4w==", "fhE/MQV8AkzKMtaLcA7rQA==", "jjcDTaoYW4OizssyCtRnTA==" },
+                new Object[] { TEST_RESOURCE_DIR.resolve("config-3.txt"), "VJw8XWYYWzyn3OCs5/wcgA==", "3nKYMFhMxJ1rLhfNYEv/zA==", "QKw8S3qci40qr/ofUNvoJg==" },
+                new Object[] { TEST_RESOURCE_DIR.resolve("config-4.txt"), "FdGj7mPJh9jBk9LGZuhGCA==", "9wdMQtsoGhVGTDH/T49QpQ==", "FxXNt+HHl+xek5Qw6kozsA==" },
+                new Object[] { TEST_RESOURCE_DIR.resolve("config-5.txt"), "tH6c5imlN3nv/vp0ZhmCVw==", "Owol4GIFt32ObEncvdfiRg==", "if9r3nzExsMTQE+PgF4FAw==" },
+                new Object[] { TEST_RESOURCE_DIR.resolve("config-6.txt"), "U31QuVvgN6kKOzWlCyGrrw==", "O3PZzHiBHuK1asQ2zkjxZg==", "gKHm0hFySLLlHi4SCKOyIg==" },
+                new Object[] { TEST_RESOURCE_DIR.resolve("config-7.txt"), "GuD6akCQtgAa/ZoCziBvDg==", "Is89232rJo7izldr1nppOA==", "hcV9bi58JUkDaJl+Ioe3mw==" }
+            });
     }
 
     @Test
-    public void test() throws IOException {
-        System.out.println("Testing with " + tableDirectory + ", " + configFile);
+    public void test() throws IOException, NoSuchAlgorithmException {
+        System.out.println("Testing with " +  configFile.toString());
 
         Config config = new Config(configFile);
         OBDModel model = new OBDModel(config);
         model.runSimulation();
-        model.analyseAndOutputPopulation(false, 5);
+        model.analyseAndOutputPopulation(true, 5);
 
-        // Ensure the actual tables are the same as the expected
-        for (String tableName : TABLE_NAMES) {
-            Path expectedPath = tableDirectory.resolve(tableName);
-            Path actualPath = config.getRunPath().resolve(TABLES_DIR_NAME).resolve(tableName);
+        // Calculate MD5 hash of output records and compare
+        for (String record : RECORD_NAMES) {
+            Path recordPath = config.getRunPath().resolve(RECORD_DIR).resolve(record);
+            byte[] bytes = Files.readAllBytes(recordPath);
 
-            assertThatFilesHaveSameContent(expectedPath, actualPath);
-        }
-        System.out.println(Thread.currentThread().getName());
-    }
+            String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(bytes));
 
-    private static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {
-
-        try (BufferedReader reader1 = Files.newBufferedReader(path1, FILE_CHARSET); BufferedReader reader2 = Files.newBufferedReader(path2, FILE_CHARSET)) {
-
-            String line1;
-
-            while ((line1 = reader1.readLine()) != null) {
-                String line2 = reader2.readLine();
-                assertEquals(line1, line2);
+            switch (record) {
+                case "birth_records.csv":
+                    assertEquals("Comparing " + record + " of " + configFile.getFileName(), expectedBirthHash, actualHash);
+                    break;
+                case "death_records.csv":
+                    assertEquals("Comparing " + record + " of " + configFile.getFileName(), expectedDeathHash, actualHash);
+                    break;
+                case "marriage_records.csv":
+                    assertEquals("Comparing " + record + " of " + configFile.getFileName(), expectedMarriageHash, actualHash);
+                    break;
             }
-
-            assertNull(reader2.readLine());
         }
+
+        System.out.println(Thread.currentThread().getName());
     }
 }
