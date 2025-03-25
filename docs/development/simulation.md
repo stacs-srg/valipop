@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Valipop Overview
+title: Valipop Simulation
 markdown: kramdown
 ---
 
@@ -66,4 +66,24 @@ Currently, the `OccupationChangeModel` uses the latter model, however this can b
 
 #### Geography
 
-Valipop divides the geogrpahy of the population into `Areas`. An `Area` represents an area on the map wheres people can inhabit. Multiple abodes can exist in an `Area` and an `Area` usually represents a street, or a section of a street. A bounding box must be defined for the area in latitude and longitude and Valipop will determine how many abodes it can fit into the area. The array of all `Area`s, including the area address and bounding box are provided by the [`annotations/geography`](../usage/configuration/input-reference.md#annotationsgeography) file.
+Valipop divides the geogrpahy of the population into `Areas`. An `Area` represents an area on the map wheres people can inhabit. Multiple abodes can exist in an `Area` and an `Area` usually represents a street, or a section of a street. A bounding box must be defined for the area in latitude and longitude and Valipop will determine how many abodes it can fit into the area. The array of all `Area`s, including the area address and bounding box are provided by the [`annotations/geography`](../usage/configuration/input-reference.md#annotationsgeography) file. Addresses are created from `Area`s and represent a single abode within the `Area`. Two separate familes cannot share the same address.
+
+After partnering, partners will move from to an address together, which is determined by the following logic:
+
+- If both male and female do not have an address, they move to a random new address.
+
+- If the male does not have an address, but the female does, they move to a new address at a random distance from the female address
+
+- If the male has an address but the female does not, they move to a new address at a random distance from the male address
+
+- If both male and female have an adress, one of their addresses is picked and they move to a new address at at a random distance from that address.
+
+If the partners of a partnership had children before hand, those children will move together to the new address, however parents and siblings will remain in the old address. Children born will inherit the address of their parents and will move with their parents where necessary until they find themselves a partner.
+
+On the separation of a partnership, there is an equal chance for either partner to keep the children and keep the address. If one partner keeps the address, the other partner will move to a new random address. Whomever keeps the children have their children live at their new address.
+
+### Migration
+
+Valipop always tries to balance migration to minimise the affect it could have on skewing the population statistics. All migration is handled by the `MigrationModel` class at each time step, which determines the number of people to migrate using the [`annotations/migration/rate`](../usage/configuration/input-reference.md#annotationsmigrationrate) distribution. Based on the number of people to migrate, the model will try to emmigrate and immigrate an equal number of people to keep the population balanced.
+
+Newly immigrated people are given random forenames based on the [`annotaitons/migration/male_forename`](../usage/configuration/input-reference.md#annotationsmigrationmale_forename) and [`annotaitons/migration/female_forename`](../usage/configuration/input-reference.md#annotationsmigrationfemale_forename) distributions and are given random surnames based on the [`annotations/migration/surname`](../usage/configuration/input-reference.md#annotationsmigrationsurname) distribution. The newly immigrated people are also designed to mimic the properties of emmigrated people or families to preserve the structure of the population.
