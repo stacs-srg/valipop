@@ -18,7 +18,7 @@ and statistical code is written in R.
 
 ## Running Valipop
 
-- [How to run Valipop](useage/execution/index.md)
+- [How to run Valipop](usage/execution/index.md)
 
 ## Further information on Valipop 
 
