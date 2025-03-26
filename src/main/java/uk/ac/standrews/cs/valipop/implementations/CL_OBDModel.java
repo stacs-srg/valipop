@@ -6,6 +6,7 @@ import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
 
@@ -21,21 +22,16 @@ public class CL_OBDModel {
         String[] pArgs = ProcessArgs.process(args, "STANDARD");
 
         if (ProcessArgs.check(pArgs, "STANDARD")) {
-
-            //SparkConf conf = new SparkConf().setAppName("valipop");
-            //JavaSparkContext sc = new JavaSparkContext(conf);
-            //sc.parallelize(Arrays.asList(pArgs[0]))
-                //.foreach(CL_OBDModel::runOBDModel);
-            //sc.close();
-            runOBDModel(Paths.get(pArgs[0]).toString());
+            runOBDModel(Paths.get(pArgs[0]));
         } else {
             System.err.println("Incorrect arguments given");
         }
     }
 
-    public static void runOBDModel(String pathToConfigFile) throws IOException, PreEmptiveOutOfMemoryWarning, StatsException {
+    public static void runOBDModel(Path pathToConfigFile) throws IOException, PreEmptiveOutOfMemoryWarning, StatsException {
 
-        Config config = new Config(Paths.get(pathToConfigFile));
+        Config config = new Config(pathToConfigFile);
+        System.out.println("Running simulation with " + pathToConfigFile.toAbsolutePath());
 
         OBDModel model = new OBDModel( config);
         model.runSimulation();
@@ -55,6 +51,16 @@ public class CL_OBDModel {
         int value = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
 
         double v = RCaller.getGeeglmV(config.getRunPath(), value);
+
+        // This gives a human readable score
+        String score = "good";
+        if (v > 0 && v <= 10) {
+            score = "okay";
+        } else if (v > 30) {
+            score = "bad";
+        }
+
+        System.out.println("Validation score: " + v + " (" + score + ")");
 
         model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
         model.getSummaryRow().setV(v);

@@ -193,6 +193,7 @@ public class OBDModel {
     public void analyseAndOutputPopulation(final boolean outputSummaryRow, final int stepBack) {
 
         if (config.getOutputTables()) {
+            System.out.println("Writing contigency tables");
             // the 5 year step back is to combat the kick in the early stages of the CTtables for STAT - run in RStudio with no cleaning to see - potential bug in CTtree?
             ContingencyTableFactory.generateContingencyTables(population.getPeople(), desired, config, summary);
         }
@@ -200,10 +201,12 @@ public class OBDModel {
         final ProgramTimer recordTimer = new ProgramTimer();
 
         if (config.getOutputRecordFormat() != RecordFormat.NONE) {
+            System.out.println("Writing records");
             RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), config.getRecordsDirPath(), population.getPeople(), population.getPeople().getPartnerships(), config.getT0());
         }
 
         if (config.getOutputGraphFormat() != ExportFormat.NONE) {
+            System.out.println("Writing graph");
             outputToGraph(config.getOutputGraphFormat(), population.getPeople(), config.getGraphsDirPath());
         }
 

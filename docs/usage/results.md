@@ -6,7 +6,35 @@ markdown: kramdown
 
 # Valipop Results
 
-All results of running Valipop are written to a single directory. The directory is saved in the following path structure
+## Validation Results
+
+Running Valipop with [`output_tables=true`](configuration/config-reference.md#output_tables) will enable the validation phase of Valipop. This will analyse the simulated target population to determine how similar it is to given input distributions. The result of the validation is written to the terminal output as the `Validation score`. The lower the score, the more similar the population is to the given input distributions, which is desired. 0 is the best achievable score. 
+
+The following text shows sample terminal output from running Valipop with Validation:
+
+```
+Validation score: 0.0 (good)
+Running simulation with /app/src/test/resources/valipop/config/config-1.txt
+Writing contigency tables
+Writing records
+2025/03/26 15:03:54.292 :: Generating birth records
+Elapsed time: 00:00:00
+2025/03/26 15:03:54.332 :: Generating death records
+Elapsed time: 00:00:00
+2025/03/26 15:03:54.367 :: Generating marriage records
+Elapsed time: 00:00:00
+Writing graph
+Running validation with command: Rscript /app/results/test/2025-03-26T14-26-12-324/analysis.R /app/results/test/2025-03-26T14-26-12-324 50
+Warning message:
+In value[[3L]](cond) : Population size too small for partnering analysis
+Validation score: 0.0 (good)
+```
+
+Notably, there may be warning messages, like in the terminal output above, that say the population is too small for some types of analysis. This means that some types of analysis may not be included in the validation score due to the lack of data to draw a meaningful conclusion. Generally population sizes of 10,000 and above are enough for all types of analysis.
+
+## Simulation Results
+
+All simulation results of running Valipop are written to a single directory. The directory is saved in the following path structure
 
 ```
 <results_save_location>/<run_purpose>/<datetime>/
@@ -16,7 +44,7 @@ All results of running Valipop are written to a single directory. The directory 
 
 Valipop will create the directory structure for the results if it does not exist already.
 
-## Result Structure
+### Result Structure
 
 The directory structure of the results of running valipop looks like the following:
 
