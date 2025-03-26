@@ -81,8 +81,6 @@ public class OBDModel {
     }
 
     private final Geography geography;
-    @SuppressWarnings("unused")
-    private static final int BIRTH_ADJUSTMENT_BOUND = 1000000;
 
     private final Config config;
     private SummaryRow summary;
@@ -1078,16 +1076,8 @@ public class OBDModel {
         return !currentTime.isAfter(endOfInitPeriod);
     }
 
-    private boolean simulationStarted() {
-        return currentTime.isAfter(config.getT0());
-    }
-
     private boolean simulationFinished() {
         return currentTime.isAfter(config.getTE());
-    }
-
-    private boolean timeFromInitialisationStartIsWholeTimeUnit() {
-        return DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS());
     }
 
     // TODO adjust this to also permit age variations

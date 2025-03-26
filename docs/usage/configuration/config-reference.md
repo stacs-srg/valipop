@@ -126,7 +126,7 @@ This is required.
 </dt>
 
 <dd markdown="1">
-The start date of the initialisation phase, where an initial population is generated and simulated until `t0`. The duration between `t0` and `tS` must be greater than or equal to the greatest age specified in the ordered birth rates distribution.
+The start date of the initialisation phase, where an initial population is generated and simulated until `t0`. The period between `tS` and `t0` must be at least 150 years to allow enough time for the preliminary population to settle.
 
 At `tS` an initial population is first spawned, of which its size is based on [`set_up_br`](#set_up_br) and [`set_up_dr`](#set_up_dr), and the duration from [`t0`](#t0). The population is then simulated reguraly until [`t0`](#t0). 
 
