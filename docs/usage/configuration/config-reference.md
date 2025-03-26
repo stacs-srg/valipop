@@ -308,6 +308,7 @@ The output format of the target population graphic. Can be one of:
 - `NONE`: Does not generate.
 - `GRAPHVIZ`: a Graphviz `.dot` file to render a family tree graph
 - `GEDCOM`: a GEDCOM family tree file
+- `GEOJSON`: a Geojoson file showing the birth adresses of each person
 
 Defaults to `None`.
 </dd>

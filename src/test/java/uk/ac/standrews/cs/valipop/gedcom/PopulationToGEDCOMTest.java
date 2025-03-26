@@ -25,30 +25,25 @@ import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationAdapter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static uk.ac.standrews.cs.utilities.FileManipulation.FILE_CHARSET;
-
 /**
- * Tests of GEDCOM export.
+ * E2£ tests of GEDCOM export.
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public class PopulationToGEDCOMTest extends AbstractExporterTest {
 
-    static final String INTENDED_SUFFIX = "_intended.ged";
+    static final String INTENDED_SUFFIX = ".ged";
     private static final int POPULATION_SIZE_LIMIT_FOR_EXPENSIVE_TESTS = 1000;
 
     @Before
     public void setup() throws IOException {
 
-        actual_output = Files.createTempFile(null, ".ged");
+        actual_output = Files.createTempFile(null, INTENDED_SUFFIX);
         intended_output = Paths.get(TEST_DIRECTORY_PATH_STRING, "gedcom", file_name_root + INTENDED_SUFFIX);
     }
 
@@ -57,7 +52,6 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         super(population, file_name);
     }
 
-    //@Ignore
     @Test
     public void GEDCOMExportIsAsExpected() throws Exception {
 
@@ -105,20 +99,5 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
     private boolean testingSmallPopulation() {
 
         return Integer.parseInt(population.toString()) <= POPULATION_SIZE_LIMIT_FOR_EXPENSIVE_TESTS;
-    }
-
-    private static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {
-
-        try (BufferedReader reader1 = Files.newBufferedReader(path1, FILE_CHARSET); BufferedReader reader2 = Files.newBufferedReader(path2, FILE_CHARSET)) {
-
-            String line1;
-
-            while ((line1 = reader1.readLine()) != null) {
-                String line2 = reader2.readLine();
-                assertEquals(line1, line2);
-            }
-
-            assertNull(reader2.readLine());
-        }
     }
 }

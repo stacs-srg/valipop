@@ -24,13 +24,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Generates test cases for  export.
+ * Generates test cases for graphviz export.
  *
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
+ * @author Daniel Brathagen (dbrathagen@gmail.com)
  */
 public class GraphvizTestCaseRecorder extends AbstractTestCaseRecorder {
 
-    // The generated GEDCOM files can be checked for validity at: http://ged-inline.elasticbeanstalk.com
+    // The generated DOT files can be checked for validity at: https://magjac.com/graphviz-visual-editor/
 
     public static void main(final String[] args) throws Exception {
 

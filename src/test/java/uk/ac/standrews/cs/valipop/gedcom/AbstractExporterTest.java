@@ -23,6 +23,12 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
+import static uk.ac.standrews.cs.utilities.FileManipulation.FILE_CHARSET;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -78,7 +84,7 @@ public abstract class AbstractExporterTest {
 
     private static Object[] makeTestConfiguration(final int population_size, final String file_name_root) {
 
-        String purpose = "DETERMINISTIC-TESTING";
+        String purpose = "graph-test";
 
         Config config = new Config(
                 LocalDate.of(1599, 1, 1),
@@ -103,6 +109,21 @@ public abstract class AbstractExporterTest {
 
     private static String makeFileNameRoot(final int population_size) {
 
-        return "file" + population_size;
+        return "file" + population_size + "_intended";
+    }
+
+    protected static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {
+
+        try (BufferedReader reader1 = Files.newBufferedReader(path1, FILE_CHARSET); BufferedReader reader2 = Files.newBufferedReader(path2, FILE_CHARSET)) {
+
+            String line1;
+
+            while ((line1 = reader1.readLine()) != null) {
+                String line2 = reader2.readLine();
+                assertEquals(line1, line2);
+            }
+
+            assertNull(reader2.readLine());
+        }
     }
 }

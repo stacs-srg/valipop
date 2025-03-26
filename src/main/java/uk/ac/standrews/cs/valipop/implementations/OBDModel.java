@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.valipop.export.ExportFormat;
 import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.PopulationConverter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
+import uk.ac.standrews.cs.valipop.export.geojson.GeojsonPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.graphviz.GraphvizPopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.*;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.*;
@@ -238,6 +239,10 @@ public class OBDModel {
                 case GRAPHVIZ:
                     Path graphvizPath = outputDir.resolve("graph.dot");
                     populationWriter = new GraphvizPopulationWriter(people, graphvizPath);
+                    break;
+                case GEOJSON:
+                    Path geojsonPath = outputDir.resolve("graph.geojson");
+                    populationWriter = new GeojsonPopulationWriter(geojsonPath);
                     break;
                 default:
                     return;
