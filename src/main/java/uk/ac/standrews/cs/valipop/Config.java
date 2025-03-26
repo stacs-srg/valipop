@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -212,7 +213,7 @@ public class Config implements Serializable {
     private LocalDate tS;
     private LocalDate t0;
     private LocalDate tE;
-    private int t0PopulationSize;
+    private Integer t0PopulationSize;
 
     private Map<String, Processor> processors;
 
@@ -753,8 +754,14 @@ public class Config implements Serializable {
 
                 String[] split = line.split("=");
 
+                if (split.length < 2) {
+                    throw new IllegalArgumentException("Illegal line '" + line + "' read in config file. Each line should be of the format '<option> = <value>'");
+                }
+
                 final String key = split[0].trim();
-                final String value = split[1].trim();
+
+                // Join remaining equals together if any, in case they were part of the value
+                final String value = String.join("=", Arrays.copyOfRange(split, 1, split.length)).trim();
 
                 Processor processor = processors.get(key);
                 if (processor == null) {
@@ -769,6 +776,24 @@ public class Config implements Serializable {
     }
 
     private void validateOptions() {
+        // Ensure required options are set
+        if (tS == null) {
+            throw new IllegalArgumentException("`tS` is required");
+        }
+        if (t0 == null) {
+            throw new IllegalArgumentException("`t0` is required");
+        }
+        if (tE == null) {
+            throw new IllegalArgumentException("`tE` is required");
+        }
+        if (t0PopulationSize == null) {
+            throw new IllegalArgumentException("`t0_pop_size` is required");
+        }
+        if (varPath == null) {
+            throw new IllegalArgumentException("`var_data_files` is required");
+        }
+
+        // Ensure ordering of dates
         if (tS.isAfter(t0) ) {
             throw new IllegalArgumentException("`tS` cannot be after `t0`");
         }

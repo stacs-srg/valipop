@@ -57,7 +57,13 @@ public class ConfigTest {
             new Object[] { TEST_RESOURCE_DIR.resolve("config-7.txt"), "recovery_factor" },
             new Object[] { TEST_RESOURCE_DIR.resolve("config-8.txt"), "over_sized_geography_factor" },
             new Object[] { TEST_RESOURCE_DIR.resolve("config-9.txt"), "output_record_format" },
-            new Object[] { TEST_RESOURCE_DIR.resolve("config-10.txt"), "output_graph_format" }
+            new Object[] { TEST_RESOURCE_DIR.resolve("config-10.txt"), "output_graph_format" },
+            new Object[] { TEST_RESOURCE_DIR.resolve("config-11.txt"), "tS" },
+            new Object[] { TEST_RESOURCE_DIR.resolve("config-12.txt"), "t0" },
+            new Object[] { TEST_RESOURCE_DIR.resolve("config-13.txt"), "tE" },
+            new Object[] { TEST_RESOURCE_DIR.resolve("config-14.txt"), "t0_pop_size" },
+            new Object[] { TEST_RESOURCE_DIR.resolve("config-15.txt"), "var_data_files" },
+            new Object[] { TEST_RESOURCE_DIR.resolve("config-16.txt"), "Illegal line" },
         });
     } 
 
