@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 Digitising Scotland project:
+ * <http://digitisingscotland.cs.st-andrews.ac.uk/>
+ *
+ * This file is part of the module population_model.
+ *
+ * population_model is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * population_model is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with population_model. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
 package uk.ac.standrews.cs.valipop.simulation;
 
 import static org.junit.Assert.assertEquals;
@@ -18,14 +34,19 @@ import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 
+/**
+ * E2E tests which compares Valipop generated record checksums 
+ *
+ * @author Daniel Brathagen (dbrathagen@gmail.com)
+ */
 @RunWith(Parameterized.class)
 public class SimulationTest {
-    private Path configFile;
+    private Path configPath;
     private String expectedBirthHash;
     private String expectedDeathHash;
     private String expectedMarriageHash;
 
-    private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/config");
+    private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/config/simulation");
     private static final String RECORD_DIR = "records";
 
     private static final String[] RECORD_NAMES = new String[] {
@@ -34,8 +55,8 @@ public class SimulationTest {
         "marriage_records.csv",
     };
 
-    public SimulationTest(Path configFile, String expectedBirthHash, String expectedDeathHash, String expectedMarriageHash) {
-        this.configFile = configFile;
+    public SimulationTest(Path configPath, String expectedBirthHash, String expectedDeathHash, String expectedMarriageHash) {
+        this.configPath = configPath;
         this.expectedBirthHash = expectedBirthHash;
         this.expectedDeathHash = expectedDeathHash;
         this.expectedMarriageHash = expectedMarriageHash;
@@ -57,9 +78,9 @@ public class SimulationTest {
 
     @Test
     public void test() throws IOException, NoSuchAlgorithmException {
-        System.out.println("Testing with " +  configFile.toString());
+        System.out.println("Testing with " +  configPath.toString());
 
-        Config config = new Config(configFile);
+        Config config = new Config(configPath);
         OBDModel model = new OBDModel(config);
         model.runSimulation();
         model.analyseAndOutputPopulation(true, 5);
@@ -73,17 +94,15 @@ public class SimulationTest {
 
             switch (record) {
                 case "birth_records.csv":
-                    assertEquals("Comparing " + record + " of " + configFile.getFileName(), expectedBirthHash, actualHash);
+                    assertEquals("Comparing " + record + " of " + configPath.getFileName(), expectedBirthHash, actualHash);
                     break;
                 case "death_records.csv":
-                    assertEquals("Comparing " + record + " of " + configFile.getFileName(), expectedDeathHash, actualHash);
+                    assertEquals("Comparing " + record + " of " + configPath.getFileName(), expectedDeathHash, actualHash);
                     break;
                 case "marriage_records.csv":
-                    assertEquals("Comparing " + record + " of " + configFile.getFileName(), expectedMarriageHash, actualHash);
+                    assertEquals("Comparing " + record + " of " + configPath.getFileName(), expectedMarriageHash, actualHash);
                     break;
             }
         }
-
-        System.out.println(Thread.currentThread().getName());
     }
 }

@@ -14,43 +14,42 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.gedcom;
+package uk.ac.standrews.cs.valipop.export;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
-import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
-import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
+import uk.ac.standrews.cs.valipop.export.graphviz.GraphvizPopulationWriter;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Generates test cases for GEDCOM export.
+ * Generates test cases for graphviz export.
  *
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
+ * @author Daniel Brathagen (dbrathagen@gmail.com)
  */
-public class GEDCOMTestCaseRecorder extends AbstractTestCaseRecorder {
+public class GraphvizTestCaseRecorder extends AbstractTestCaseRecorder {
 
-    // The generated GEDCOM files can be checked for validity at: http://ged-inline.elasticbeanstalk.com
+    // The generated DOT files can be checked for validity at: https://magjac.com/graphviz-visual-editor/
 
     public static void main(final String[] args) throws Exception {
 
-        new GEDCOMTestCaseRecorder().recordTestCase();
+        new GraphvizTestCaseRecorder().recordTestCase();
     }
 
     @Override
     protected IPopulationWriter getPopulationWriter(final Path path, final IPersonCollection population) throws IOException {
 
-        return new GEDCOMPopulationWriter(path);
+        return new GraphvizPopulationWriter(population, path);
     }
 
     @Override
     protected String getIntendedOutputFileSuffix() {
 
-        return PopulationToGEDCOMTest.INTENDED_SUFFIX;
+        return ".dot";
     }
 
     @Override
     protected String getDirectoryName() {
-        return "gedcom";
+        return "graphviz";
     }
 }

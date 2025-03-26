@@ -14,13 +14,11 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.gedcom;
+package uk.ac.standrews.cs.valipop.export;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
-import uk.ac.standrews.cs.valipop.export.PopulationConverter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationAdapter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
@@ -31,7 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * E2£ tests of GEDCOM export.
+ * E2E tests of GEDCOM export.
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
