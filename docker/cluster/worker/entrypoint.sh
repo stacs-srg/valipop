@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ -z $1 ]; then
-    MASTER_URL="localhost"
+    MASTER_URL="localhost:23177"
 else
     MASTER_URL=$1
 fi

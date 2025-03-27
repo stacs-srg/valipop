@@ -13,7 +13,6 @@ Running Valipop with [`output_tables=true`](configuration/config-reference.md#ou
 The following text shows sample terminal output from running Valipop with Validation:
 
 ```
-Validation score: 0.0 (good)
 Running simulation with /app/src/test/resources/valipop/config/config-1.txt
 Writing contigency tables
 Writing records

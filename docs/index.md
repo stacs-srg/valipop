@@ -26,6 +26,7 @@ To learn more about using Valipop:
 
 - [How to configure Valipop](usage/configuration/index.md)
 - [How to read the results](usage/results.md)
+- [How to tune Valipop](usage/factor-search.md)
 
 ## Developing Valipop
 

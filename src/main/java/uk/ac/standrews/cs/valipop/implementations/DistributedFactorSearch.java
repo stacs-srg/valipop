@@ -47,7 +47,6 @@ public class DistributedFactorSearch {
         Path dataFiles = Paths.get(pArgs[0]);
         int seedSize = Integer.valueOf(pArgs[1]);
         String runPurpose = pArgs[2];
-        System.out.println(pArgs[3]);
         int numberOfRunsPerSim = Integer.valueOf(pArgs[3]);
 
         String rfsArg = pArgs[4];
@@ -72,7 +71,7 @@ public class DistributedFactorSearch {
         if (!inputs.isEmpty()) {
             ModelInput i = inputs.get(0);
 
-            // FIXME Create a config for the sole purpose of creating the directory structure
+            // Creates a config for the sole purpose of creating the directory structure
             new Config(i.tS, i.t0, i.tE, i.size, Path.of(i.dataFiles), Path.of(i.summaryResultsLocation), i.runPurpose, Path.of(i.summaryResultsLocation));
         }
 
@@ -170,8 +169,6 @@ public class DistributedFactorSearch {
         config.setProportionalRecoveryFactor(i.prf);
         config.setInputWidth(i.input_width);
         config.setMinBirthSpacing(i.minBirthSpacing);
-        config.setDeterministic(true);
-        config.setSeed(123);
         config.setProjectPath(Paths.get(i.projectPath));
 
         OBDModel model = new OBDModel(config);
@@ -243,7 +240,6 @@ public class DistributedFactorSearch {
         List<ModelInput> inputs = new ArrayList<>();
 
         for (double precision : precisions) {
-
             for (int size : t0_pop_sizes) {
                 for (double recovery_factor : recovery_factors) {
                     for (double proportional_recovery_factor : proportional_recovery_factors) {

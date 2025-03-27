@@ -1,6 +1,6 @@
 ---
 layout: default
-title: ValiPop Configuration
+title: Valipop Configuration
 markdown: kramdown
 ---
 

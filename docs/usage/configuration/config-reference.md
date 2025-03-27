@@ -15,6 +15,7 @@ These are all the configuration options supported by Valipop. Options suffixed w
     - [`results_save_location`](#results_save_location)
     - [`summary_results_save_location`](#summary_results_save_location)
     - [`var_data_files`*](#var_data_files)
+    - [`project_location`*](#project_location)
 - [Dates and Periods](#dates-and-periods)
     - [`tS`*](#tS)
     - [`t0`*](#t0)
@@ -111,6 +112,18 @@ Defaults to `results/`.
 Path to the input distribution directory.
 
 This is required.
+</dd>
+
+<dt>
+<a name="project_location">
+<code>project_location</code>
+</a>
+</dt>
+
+<dd markdown="1">
+Path to the project directory.
+
+Defaults to `.` (current directory).
 </dd>
 
 </dl>

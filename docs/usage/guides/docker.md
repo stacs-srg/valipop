@@ -81,20 +81,20 @@ docker run -v ./src:/app/src -v ./results:/app/results ghcr.io/daniel5055/valipo
 By default, this will run Valipop will a starting population size of 1000 between the years 1855 to 1973. This will usually take under 5 minutes to run, and should eventually print something like the following:
 
 ```
-2025/03/24 16:31:39.343 :: Generating birth records
+Running simulation with /app/src/main/resources/valipop/config/scot/config.txt
+Writing contigency tables
+Writing records
+2025/03/26 15:03:54.292 :: Generating birth records
 Elapsed time: 00:00:00
-2025/03/24 16:31:39.374 :: Generating death records
+2025/03/26 15:03:54.332 :: Generating death records
 Elapsed time: 00:00:00
-2025/03/24 16:31:39.405 :: Generating marriage records
+2025/03/26 15:03:54.367 :: Generating marriage records
 Elapsed time: 00:00:00
-Running command: Rscript results/default/2025-03-24T16-30-28-046/analysis.R /cs/home/db255/Documents/dev/valipop/results/default/2025-03-24T16-30-28-046 55
-Error in geeglm(formula, id = idvar, data = in.data, corstr = constr) : 
-  Model matrix is rank deficient; geeglm can not proceed
-
-Error in geeglm(formula, id = idvar, data = in.data, corstr = constr) : 
-  Model matrix is rank deficient; geeglm can not proceed
-
-Result: 0
+Writing graph
+Running validation with command: Rscript /app/results/example/2025-03-24T10-50-39-702/analysis.R /app/results/example/2025-03-24T10-50-39-702 50
+Warning message:
+In value[[3L]](cond) : Population size too small for partnering analysis
+Validation score: 0.0 (good)
 ```
 
 In the same directory as the Valipop directory, there should also now exist a `results/` directory with the generated population records. This specific run should be located in a directory like
