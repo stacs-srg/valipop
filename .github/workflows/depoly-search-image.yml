@@ -3,13 +3,16 @@ name: Publish ValiPop factor search images
 # Configures this workflow to run every time a change is pushed to the branch called `master`.
 on:
   push:
-    branches: ['develop']
+    push:
+      branches: [ "master" ]
+    pull_request:
+      branches: [ "master" ]
 
 env:
   REGISTRY: ghcr.io
-  LEADER_IMAGE_NAME: ${{ github.repository_owner }}/valiPop-leader
-  WORKER_IMAGE_NAME: ${{ github.repository_owner }}/valiPop-worker
-  SEARCH_IMAGE_NAME: ${{ github.repository_owner }}/valiPop-search
+  LEADER_IMAGE_NAME: ${{ github.repository_owner }}/valipop-leader
+  WORKER_IMAGE_NAME: ${{ github.repository_owner }}/valipop-worker
+  SEARCH_IMAGE_NAME: ${{ github.repository_owner }}/valipop-search
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
@@ -73,7 +76,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.WORKER_IMAGE_NAME }}
 
-      - name: Build and push the valiPop worker image
+      - name: Build and push the ValiPop worker image
         id: push-worker
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:

@@ -24,8 +24,8 @@ public class MinimaSearchTest {
 
         Config config = new Config(
                 LocalDate.of(1,1,1),
-                LocalDate.of(100,1,1),
                 LocalDate.of(200,1,1),
+                LocalDate.of(300,1,1),
                 0,
                 Paths.get("src/test/resources/valipop/test-pop"),
                 Config.DEFAULT_RESULTS_SAVE_PATH, "MINIMA_SEARCH_TEST",
