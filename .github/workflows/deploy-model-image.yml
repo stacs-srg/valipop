@@ -1,4 +1,4 @@
-name: Publish Valipop model image
+name: Publish ValiPop model image
 
 # Configures this workflow to run every time a change is pushed to the branch called `master`.
 on:
@@ -36,15 +36,15 @@ jobs:
             sudo apt-get -y install docker-compose
             docker-compose build base
 
-      # Generate metadata for the main valipop image
-      - name: Extract metadata (tags, labels) for Valipop image
+      # Generate metadata for the main valiPop image
+      - name: Extract metadata (tags, labels) for ValiPop image
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # Builds and pushes the main Valipop image
-      - name: Build and push the valipop image
+      # Builds and pushes the main ValiPop image
+      - name: Build and push the valiPop image
         id: push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:

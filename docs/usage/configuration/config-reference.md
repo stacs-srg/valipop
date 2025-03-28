@@ -4,9 +4,9 @@ title: ValiPop Configuration Reference
 markdown: kramdown
 ---
 
-# Valipop Configuration Reference
+# ValiPop Configuration Reference
 
-These are all the configuration options supported by Valipop. Options suffixed with a '*' are required.
+These are all the configuration options supported by ValiPop. Options suffixed with a '*' are required.
 
 **Configuration Options**
 
@@ -36,7 +36,7 @@ These are all the configuration options supported by Valipop. Options suffixed w
     - [`output_table`](#output_table)
     - [`ct_tree_stepback`](#ct_tree_stepback)
     - [`ct_tree_precision`](#ct_tree_precision)
-- [Miscellanious](#miscellanious)
+- [Miscellaneous](#miscellanious)
     - [`deterministic`](#deterministic)
     - [`seed`](#seed)
     - [`binomial_sampling`](#binomial_sampling)
@@ -141,7 +141,7 @@ Defaults to `.` (current directory).
 <dd markdown="1">
 The start date of the initialisation phase, where an initial population is generated and simulated until `t0`. The period between `tS` and `t0` must be at least 150 years to allow enough time for the preliminary population to settle.
 
-At `tS` an initial population is first spawned, of which its size is based on [`set_up_br`](#set_up_br) and [`set_up_dr`](#set_up_dr), and the duration from [`t0`](#t0). The population is then simulated reguraly until [`t0`](#t0). 
+At `tS` an initial population is first spawned, of which its size is based on [`set_up_br`](#set_up_br) and [`set_up_dr`](#set_up_dr), and the duration from [`t0`](#t0). The population is then simulated regularly until [`t0`](#t0). 
 
 This is required.
 </dd>
@@ -153,7 +153,7 @@ This is required.
 </dt>
 
 <dd markdown="1">
-The start date of the main phase, where records of events occuring between `t0` until [`tE`](#tE) will be recoreded.
+The start date of the main phase, where records of events occurring between `t0` until [`tE`](#tE) will be recorded.
 
 This is required.
 </dd>
@@ -201,7 +201,7 @@ Defaults to `P147D` (147 days).
 </dt>
 
 <dd markdown="1">
-The minimum time interval the child must have been concieved at before their birth. This is a Java period string of the form `P<year>Y<month>M<day>D`.
+The minimum time interval the child must have been conceived at before their birth. This is a Java period string of the form `P<year>Y<month>M<day>D`.
 
 Defaults to `P147D` (147 days).
 </dd>
@@ -213,7 +213,7 @@ Defaults to `P147D` (147 days).
 </dt>
 
 <dd markdown="1">
-The time intervals for which the given input distributions are divided into between [`tS`](#tS) and [`tE`](#tE). Input distributions for the same properties over multiple different years are the separated into thier respective time_intervals. This is a Java period string of the form `P<year>Y<month>M<day>D`.
+The time intervals for which the given input distributions are divided into between [`tS`](#tS) and [`tE`](#tE). Input distributions for the same properties over multiple different years are the separated into their respective time_intervals. This is a Java period string of the form `P<year>Y<month>M<day>D`.
 
 Defaults to `P1Y` (1 year).
 </dd>
@@ -268,7 +268,7 @@ Defaults to `0.122`.
 </dt>
 
 <dd markdown="1">
-A multiplier determing how strongly the simulation should compensate for deviations from given one dimensional input distributions
+A multiplier determining how strongly the simulation should compensate for deviations from given one dimensional input distributions
 
 Defaults to `1`.
 </dd>
@@ -280,7 +280,7 @@ Defaults to `1`.
 </dt>
 
 <dd markdown="1">
-A multiplier determing how strongly the simulation should compensate for deviations from given two dimensional input distributions
+A multiplier determining how strongly the simulation should compensate for deviations from given two dimensional input distributions
 
 Defaults to `1`.
 </dd>
@@ -311,7 +311,7 @@ Defaults to `NONE`.
 
 <dt>
 <a name="output_graph_format">
-<code>output_grpah_format</code>
+<code>output_graph_format</code>
 </a>
 </dt>
 
@@ -333,11 +333,11 @@ Defaults to `None`.
 </dt>
 
 <dd markdown="1">
-When `true`, this creates contigency tables required by the population analysis.
+When `true`, this creates contingency tables required by the population analysis.
 
-When `false`, the contigency tables are not created and the population analysis is skipped.
+When `false`, the contingency tables are not created and the population analysis is skipped.
 
-A contigency table is a collection of expected and actual frequencies for events. Contigency tables for birth orders, multiple births, partnership, deaths, and separations are generated.
+A contingency table is a collection of expected and actual frequencies for events. Contingency tables for birth orders, multiple births, partnership, deaths, and separations are generated.
 
 Defaults to `true`.
 </dd>
@@ -349,7 +349,7 @@ Defaults to `true`.
 </dt>
 
 <dd markdown="1">
-The stepback used in the contigency table calculation.
+The stepback used in the contingency table calculation.
 
 Defaults to `1`.
 </dd>
@@ -361,14 +361,14 @@ Defaults to `1`.
 </dt>
 
 <dd markdown="1">
-The precision used in the contigency table calculation.
+The precision used in the contingency table calculation.
 
 Defaults to `1E-66`.
 </dd>
 
 </dl>
 
-## Miscellanious
+## Miscellaneous
 
 <dl>
 

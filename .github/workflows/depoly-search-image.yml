@@ -1,4 +1,4 @@
-name: Publish Valipop factor search images
+name: Publish ValiPop factor search images
 
 # Configures this workflow to run every time a change is pushed to the branch called `master`.
 on:
@@ -7,9 +7,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  LEADER_IMAGE_NAME: ${{ github.repository_owner }}/valipop-leader
-  WORKER_IMAGE_NAME: ${{ github.repository_owner }}/valipop-worker
-  SEARCH_IMAGE_NAME: ${{ github.repository_owner }}/valipop-search
+  LEADER_IMAGE_NAME: ${{ github.repository_owner }}/valiPop-leader
+  WORKER_IMAGE_NAME: ${{ github.repository_owner }}/valiPop-worker
+  SEARCH_IMAGE_NAME: ${{ github.repository_owner }}/valiPop-search
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
@@ -32,7 +32,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build valipop-base, which is a dependency of multiple images
+      # Build valiPop-base, which is a dependency of multiple images
       - name: Build base
         run: |
             sudo apt-get update
@@ -41,13 +41,13 @@ jobs:
 
       # Deploying the leader image for creating clusters
 
-      - name: Extract metadata (tags, labels) for Valipop leader image
+      - name: Extract metadata (tags, labels) for ValiPop leader image
         id: meta-leader
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.LEADER_IMAGE_NAME }}
 
-      - name: Build and push the valipop leader image
+      - name: Build and push the valiPop leader image
         id: push-leader
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
@@ -58,7 +58,7 @@ jobs:
           labels: ${{ steps.meta-leader.outputs.labels }}
           ulimit: nofile=65536:65536
       
-      - name: Generate artifact attestation for valipop leader image
+      - name: Generate artifact attestation for valiPop leader image
         uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.LEADER_IMAGE_NAME}}
@@ -67,13 +67,13 @@ jobs:
 
       # Deploying the worker image for creating clusters
 
-      - name: Extract metadata (tags, labels) for Valipop worker image
+      - name: Extract metadata (tags, labels) for ValiPop worker image
         id: meta-worker
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.WORKER_IMAGE_NAME }}
 
-      - name: Build and push the valipop worker image
+      - name: Build and push the valiPop worker image
         id: push-worker
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
@@ -84,7 +84,7 @@ jobs:
           labels: ${{ steps.meta-worker.outputs.labels }}
           ulimit: nofile=65536:65536
       
-      - name: Generate artifact attestation for valipop worker image
+      - name: Generate artifact attestation for valiPop worker image
         uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.WORKER_IMAGE_NAME}}
@@ -93,14 +93,14 @@ jobs:
 
       # Deploy the factor search image
 
-      - name: Extract metadata (tags, labels) for Valipop search image
+      - name: Extract metadata (tags, labels) for ValiPop search image
         id: meta-search
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.SEARCH_IMAGE_NAME }}
 
-      # Builds and pushes the Valipop search image
-      - name: Build and push the valipop search image
+      # Builds and pushes the ValiPop search image
+      - name: Build and push the ValiPop search image
         id: push-search
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
@@ -111,8 +111,8 @@ jobs:
           labels: ${{ steps.meta-search.outputs.labels }}
           ulimit: nofile=65536:65536
       
-      # Generates artifact attestation for the valipop search image
-      - name: Generate artifact attestation for valipop search image
+      # Generates artifact attestation for the ValiPop search image
+      - name: Generate artifact attestation for ValiPop search image
         uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.SEARCH_IMAGE_NAME}}

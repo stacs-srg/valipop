@@ -191,7 +191,7 @@ public class OBDModel {
     public void analyseAndOutputPopulation(final boolean outputSummaryRow, final int stepBack) {
 
         if (config.getOutputTables()) {
-            System.out.println("Writing contigency tables");
+            System.out.println("Writing contingency tables");
             // the 5 year step back is to combat the kick in the early stages of the CTtables for STAT - run in RStudio with no cleaning to see - potential bug in CTtree?
             ContingencyTableFactory.generateContingencyTables(population.getPeople(), desired, config, summary);
         }

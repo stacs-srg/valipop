@@ -1,22 +1,22 @@
 ---
 layout: default
-title: Valipop Factor Search
+title: ValiPop Factor Search
 markdown: kramdown
 ---
 
-# Tuning Valipop with Factor Search
+# Tuning ValiPop with Factor Search
 
-This explains how to use Valipop Factor Search in the case that population your validation score is too high.
+This explains how to use ValiPop Factor Search in the case that population your validation score is too high.
 
 ## Recovery Factors
 
-Once the target population has been simulated, the validation phase will determine how similar it is to the input distributions. Due to the inherent randomness of population simulation, sometimes the population may differ noticably from the input distributions, indicated by a high validation score.
+Once the target population has been simulated, the validation phase will determine how similar it is to the input distributions. Due to the inherent randomness of population simulation, sometimes the population may differ noticeably from the input distributions, indicated by a high validation score.
 
-Fortunately, Valipop provides two configuration options which dynamically compensates for deviations from the input distributions during the simulation runtime. [`recovery_factor`](configuration/config-reference.md#recovery_factor) compensates for deviations from one dimensional input distributions. [`proportional_recovery_factor`](configuration/config-reference.md#proportional_recovery_factor) compensates for deviations from two dimensional input distributions. The larger the value, the more strictly Valipop corrects deviations, where `0` means no corrections are done during the simulation. The default values for both these factors is `1`, which is typically enough to ensure most populations remain close to the input distributions.
+Fortunately, ValiPop provides two configuration options which dynamically compensates for deviations from the input distributions during the simulation runtime. [`recovery_factor`](configuration/config-reference.md#recovery_factor) compensates for deviations from one dimensional input distributions. [`proportional_recovery_factor`](configuration/config-reference.md#proportional_recovery_factor) compensates for deviations from two dimensional input distributions. The larger the value, the more strictly ValiPop corrects deviations, where `0` means no corrections are done during the simulation. The default values for both these factors is `1`, which is typically enough to ensure most populations remain close to the input distributions.
 
 ## Factor search
 
-In the unlikely case where more fine tuned recovery factors are needed, the Valipop repository provides a factor search program to identify effective values for [`recovery_factor`](configuration/config-reference.md#recovery_factor) and [`proportional_recovery_factor`](configuration/config-reference.md#proportional_recovery_factor).
+In the unlikely case where more fine tuned recovery factors are needed, the ValiPop repository provides a factor search program to identify effective values for [`recovery_factor`](configuration/config-reference.md#recovery_factor) and [`proportional_recovery_factor`](configuration/config-reference.md#proportional_recovery_factor).
 
 The factor search program takes a series of configuration properties, and a list of recovery factors to test, and will generate configurations to simulate the population with. It will then attempt to simulate each population in parallel using [Apache Spark](https://spark.apache.org/). The validation scores of each combination of factors can then be observed in the results summary file to determine the best combination.
 
@@ -30,14 +30,14 @@ The program accepts 10 arguments:
 6. A comma separated list of the proportional recovery factors to test  (Such as `0,0.5,1.0`)
 7. The results directory ([`results_save_location`](configuration/config-reference.md#results_save_location))
 8. The summary results directory ([`summary_results_save_location`](configuration/config-reference.md#summaryresults_save_location))
-9. A comma separated list of contigency table precisions to test ([`ct_tree_precision`](configuration/config-reference.md#ct_tree_precision))
+9. A comma separated list of contingency table precisions to test ([`ct_tree_precision`](configuration/config-reference.md#ct_tree_precision))
 10. The project path ([`project_location`](configuration/config-reference.md#project_location))
 
 ### Running with Java
 
-Factor search can be run on your local computer using the [Valipop Jar](execution/java.md#installing-the-jar-file). It will require the [dependencies of the Valipop JAR](execution/java.md#dependencies), and will additionally require [Apache Spark](https://spark.apache.org/) installed.
+Factor search can be run on your local computer using the [ValiPop Jar](execution/java.md#installing-the-jar-file). It will require the [dependencies of the ValiPop JAR](execution/java.md#dependencies), and will additionally require [Apache Spark](https://spark.apache.org/) installed.
 
-The JAR may then be passed to the `spark-submit` included with the Spark installation with the reqiured argument
+The JAR may then be passed to the `spark-submit` included with the Spark installation with the required argument
 
 `--class uk.ac.standrews.cs.valipop.implementations.DistributedFactorSearch`
 
@@ -78,7 +78,7 @@ Alternatively, an the address of a Spark compatible cluster manager can be given
 
 [Read about the supported cluster manager types](https://spark.apache.org/docs/latest/cluster-overview.html#cluster-manager-types).
 
-The Valipop repository provides some preconfigured Docker images to create a standalone Spark cluster. This includes a leader and worker image which contain the dependencies needed to run Valipop. These images can be installed by running the following commands
+The ValiPop repository provides some pre-configured Docker images to create a standalone Spark cluster. This includes a leader and worker image which contain the dependencies needed to run ValiPop. These images can be installed by running the following commands
 
 ```sh
 # Windows/MacOs/Linux terminal
@@ -120,7 +120,7 @@ These can be overwritten during container execution using the `-e` option with `
 
 ### Running with Docker
 
-The Valipop repisitory also provides a Docker image to run the factor search. This can be installed with the following command
+The ValiPop repository also provides a Docker image to run the factor search. This can be installed with the following command
 
 ```sh
 docker pull ghcr.io/daniel5055/valipop-search:master

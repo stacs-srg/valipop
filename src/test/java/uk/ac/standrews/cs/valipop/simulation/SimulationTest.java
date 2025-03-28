@@ -35,7 +35,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 
 /**
- * E2E tests which compares Valipop generated record checksums 
+ * E2E tests which compares ValiPop generated record checksums 
  *
  * @author Daniel Brathagen (dbrathagen@gmail.com)
  */

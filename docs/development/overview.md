@@ -1,12 +1,12 @@
 ---
 layout: default
-title: Valipop Overview
+title: ValiPop Overview
 markdown: kramdown
 ---
 
-# Valipop Overview
+# ValiPop Overview
 
-Valipop has there main stages during execution, population simulation, validation, and result generation.
+ValiPop has there main stages during execution, population simulation, validation, and result generation.
 
 ### Population Simulation
 

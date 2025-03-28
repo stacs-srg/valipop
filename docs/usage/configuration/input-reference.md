@@ -4,7 +4,7 @@ title: ValiPop Input Distribution Reference
 markdown: kramdown
 ---
 
-# Valipop Input Distribution Reference
+# ValiPop Input Distribution Reference
 
 ## Input Distribution Format
 
@@ -19,7 +19,7 @@ DATA
 ...
 ```
 
-Each meta field and value must be separated by a tab character. You may include your own fields, but only the following are read by Valipop:
+Each meta field and value must be separated by a tab character. You may include your own fields, but only the following are read by ValiPop:
 
 - `YEAR` specifies what year the distribution applies to. 
 - `POPULATION` specifies what population the distribution is based on.
@@ -34,7 +34,7 @@ Notably, ranges can be used to represent several positive integer values within 
 
 ### Single Input Data
 
-The data is separated into a 'year' and 'value' column. Each row specifies the value for the given year. For any time, Valipop will use the value of the nearest given year. The `YEAR` meta field is ignored by Valipop here as the data represents the values across multiple years.
+The data is separated into a 'year' and 'value' column. Each row specifies the value for the given year. For any time, ValiPop will use the value of the nearest given year. The `YEAR` meta field is ignored by ValiPop here as the data represents the values across multiple years.
 
 The following shows an input distribution for the property [`birth/ratio_birth`](#birthratio_birth) (proportion of births born male), which uses single input data.
 
@@ -50,7 +50,7 @@ DATA
 
 ### Name Data
 
-The data is separated into a 'name' and 'probability' column. Each row specifies the probability for a name. The sum of the probabilites should sum to one.
+The data is separated into a 'name' and 'probability' column. Each row specifies the probability for a name. The sum of the probabilities should sum to one.
 
 The following shows the name data for the property [`annotations/female_forename/`](#annotationsfemale_forename) (probability of female forenames).
 
@@ -88,7 +88,7 @@ DATA
 
 ### 2D Doubly Enumerated Data
 
-The data is a 2D table with both row and columns representing enumerated values. The first column specifies the enumerated value for each rows and the `LABELS` meta field specifies the enumerated value of each column. The values represent probabilites and each row should sum to one.
+The data is a 2D table with both row and columns representing enumerated values. The first column specifies the enumerated value for each rows and the `LABELS` meta field specifies the enumerated value of each column. The values represent probabilities and each row should sum to one.
 
 The following shows 2D enumerated data for the property [`annotations/occupation/change/male/`](#annotationsoccupationchangemale) (proportion of occupations males change to for each current occupation).
 
@@ -130,7 +130,7 @@ DATA
 
 The data is a 2D table with age or age ranges for each row, and some numerical value or value range for each column. The first column specifies the age or age range for each row, and the `LABELS` meta field specifies the value or value range for each column.
 
-The following shows 2D double age-depedent data for the property [`birth/ordered_birth/`](#birthordered_birth) (probabilites of having some number of children for each age).
+The following shows 2D double age-dependent data for the property [`birth/ordered_birth/`](#birthordered_birth) (probabilities of having some number of children for each age).
 
 ```
 LABELS	0	1	2	3	4	5+
@@ -328,7 +328,7 @@ The probability of each surname a newly immigrated person could have. Uses the [
 </dt>
 
 <dd markdown="1">
-The proportion of illegitimate births among all births. Uses the [1D age-depedent data](#1d-age-dependent-data) format.
+The proportion of illegitimate births among all births. Uses the [1D age-dependent data](#1d-age-dependent-data) format.
 </dd>
 
 <dt>
@@ -338,7 +338,7 @@ The proportion of illegitimate births among all births. Uses the [1D age-depeden
 </dt>
 
 <dd markdown="1">
-The proportion of maternaties producing a given number of childrens. For example, whether a pregnancy results in twins, triplets, or just a single child. Uses the [2D age-dependent data](#2d-age-dependent-data) format, with the number of children produced on the columns. Each row should sum to one (or zero if no births allowed at that age).
+The proportion of maternities producing a given number of children. For example, whether a pregnancy results in twins, triplets, or just a single child. Uses the [2D age-dependent data](#2d-age-dependent-data) format, with the number of children produced on the columns. Each row should sum to one (or zero if no births allowed at that age).
 </dd>
 
 <dt>
@@ -437,7 +437,7 @@ Out of the total number of marriages with children, how many divorce in a given 
 
 Each end directory (directory without sub directories) represents a property of the population. Within an end directory is any number of input distribution files for that property, often for different years. The files can have any name, but must be located in the correct end directory.
 
-In the following example, the marriage property (which defines the proportion of parents that are married), contains three input distributions from different years. (The different years must be specified in the `YEAR` meta field for Valipop to understand).
+In the following example, the marriage property (which defines the proportion of parents that are married), contains three input distributions from different years. (The different years must be specified in the `YEAR` meta field for ValiPop to understand).
 
 ```
 └───relationships/
@@ -447,7 +447,7 @@ In the following example, the marriage property (which defines the proportion of
         └───marriage_1973.txt
 ```
 
-Each input distribution of a property will apply for a period of time during the simulation. The length of the period is defined by the [`input_width`](config-reference#input_width) option in the config file. Valipop will divide the given input distributions into these equal periods based on which input distribution is closest to the end time of that period.
+Each input distribution of a property will apply for a period of time during the simulation. The length of the period is defined by the [`input_width`](config-reference#input_width) option in the config file. ValiPop will divide the given input distributions into these equal periods based on which input distribution is closest to the end time of that period.
 
 For example, using the input distributions defined above in a simulation running from years 1900 to 2000 with an input width of 10 years. The input distributions will be divided over the following periods.
 

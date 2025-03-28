@@ -1,4 +1,4 @@
-# Valipop
+# ValiPop
 
 _ValiPop_ is a micro-simulation model for generating synthetic genealogical populations
 from a set of desired statistics. _ValiPop_ also verifies that the 
@@ -10,13 +10,11 @@ improve data linkage algorithms.
 _ValiPop_'s micro-simulation model is written in Java. The supporting verification analysis 
 and statistical code is written in R.
 
-## Installing Valipop
-
-## Running Valipop
+## Running ValiPop
 
 ### Via Java
 
-To run Valipop with its JAR file, you will need to have installed:
+To run ValiPop with its JAR file, you will need to have installed:
 
 - [R 4.4.2 or greater](https://cran.r-project.org/)
 - [Java 21](https://www.oracle.com/uk/java/)
@@ -36,7 +34,7 @@ java -jar valipop.jar <valipop-args>
 
 ### Via Docker
 
-To run valipop as a docker container, you will need to have [docker](https://www.docker.com/) installed.
+To run valiPop as a docker container, you will need to have [docker](https://www.docker.com/) installed.
 
 Then you can follow these steps to run the project
 
@@ -51,9 +49,9 @@ docker run ghcr.io/daniel5055/valipop:develop <valipop-args>
 [Learn more about running with Docker.](https://daniel5055.github.io/valipop/usage/execution/docker.html)
 
 
-## Building Valipop from source
+## Building ValiPop from source
 
-To build Valipop, you will need to have installed:
+To build ValiPop, you will need to have installed:
 
 - [Git](https://git-scm.com/)
 - [Java 21](https://www.oracle.com/uk/java/)

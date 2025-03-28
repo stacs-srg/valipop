@@ -4,17 +4,17 @@ title: ValiPop Results
 markdown: kramdown
 ---
 
-# Valipop Results
+# ValiPop Results
 
 ## Validation Results
 
-Running Valipop with [`output_tables=true`](configuration/config-reference.md#output_tables) will enable the validation phase of Valipop. This will analyse the simulated target population to determine how similar it is to given input distributions. The result of the validation is written to the terminal output as the `Validation score`. The lower the score, the more similar the population is to the given input distributions, which is desired. 0 is the best achievable score. 
+Running ValiPop with [`output_tables=true`](configuration/config-reference.md#output_tables) will enable the validation phase of ValiPop. This will analyse the simulated target population to determine how similar it is to given input distributions. The result of the validation is written to the terminal output as the `Validation score`. The lower the score, the more similar the population is to the given input distributions, which is desired. 0 is the best achievable score. 
 
-The following text shows sample terminal output from running Valipop with Validation:
+The following text shows sample terminal output from running ValiPop with Validation:
 
 ```
 Running simulation with /app/src/test/resources/valipop/config/config-1.txt
-Writing contigency tables
+Writing contingency tables
 Writing records
 2025/03/26 15:03:54.292 :: Generating birth records
 Elapsed time: 00:00:00
@@ -33,19 +33,19 @@ Notably, there may be warning messages, like in the terminal output above, that 
 
 ## Simulation Results
 
-All simulation results of running Valipop are written to a single directory. The directory is saved in the following path structure
+All simulation results of running ValiPop are written to a single directory. The directory is saved in the following path structure
 
 ```
 <results_save_location>/<run_purpose>/<datetime>/
 ```
 
-[`results_save_location`](configuration/config-reference.md#results_save_location) and [`run_purpose`](configuration/config-reference.md#run_purpose) can be specified in the [config file](configuration/index.md) and `datetime` represents the datetime when valipop was executed in the form  `yyyy-mm-ddThh-mm-ss-sss`.
+[`results_save_location`](configuration/config-reference.md#results_save_location) and [`run_purpose`](configuration/config-reference.md#run_purpose) can be specified in the [config file](configuration/index.md) and `datetime` represents the datetime when valiPop was executed in the form  `yyyy-mm-ddThh-mm-ss-sss`.
 
-Valipop will create the directory structure for the results if it does not exist already.
+ValiPop will create the directory structure for the results if it does not exist already.
 
 ### Result Structure
 
-The directory structure of the results of running valipop looks like the following:
+The directory structure of the results of running valiPop looks like the following:
 
 ```
 <results_path>/<run_purpose>/<datetime>/
@@ -144,7 +144,7 @@ The records directory contains any records generated once the model and analysis
 </dt>
 
 <dd markdown="1">
-The tables directory contains contigency tables on birth, death, partnership, and separation. They are used by the analysis to validate the simulated population with the given statistics.
+The tables directory contains contingency tables on birth, death, partnership, and separation. They are used by the analysis to validate the simulated population with the given statistics.
 </dd>
 
 </dl>

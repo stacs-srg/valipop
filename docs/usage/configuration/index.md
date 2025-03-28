@@ -1,18 +1,18 @@
 ---
 layout: default
-title: Valipop Configuration
+title: ValiPop Configuration
 markdown: kramdown
 ---
 
-# Valipop Configuration
+# ValiPop Configuration
 
 ## The config File
 
-The main source of configuration for Valipop is the config file. This a `.txt` file containing a collection of configuration options per line. A configuration option is of the form 
+The main source of configuration for ValiPop is the config file. This a `.txt` file containing a collection of configuration options per line. A configuration option is of the form 
 
 ```<option> = <value>```
 
-where `option` is the name of the configuration option and `value` is the value given. Comments are prefixed with `#` and are ignored by Valipop.
+where `option` is the name of the configuration option and `value` is the value given. Comments are prefixed with `#` and are ignored by ValiPop.
 
 This is an example of a minimal configuration file:
 
@@ -30,6 +30,6 @@ See the [config reference](config-reference.md) for all possible configuration o
 
 ## The Input Distributions
 
-Input distributions provide the probablities used to simulate all properties of the population. The collection of input distributions for a population should be contained within a single directory. The path to this directory can be passed to Valipop with the [`var_data_files`](config-reference#var_data_files) option in the config file.
+Input distributions provide the probabilities used to simulate all properties of the population. The collection of input distributions for a population should be contained within a single directory. The path to this directory can be passed to ValiPop with the [`var_data_files`](config-reference#var_data_files) option in the config file.
 
 See the [input distribution reference](input-reference.md) for the structure and format of all input distributions.

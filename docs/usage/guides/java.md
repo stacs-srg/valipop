@@ -4,9 +4,9 @@ title: Running with Java
 markdown: kramdown
 ---
 
-# Valipop with Java Guide
+# ValiPop with Java Guide
 
-This guide will walk you through installing and running Valipop in Java with some sample configurations. This guide will also demonstrate how to interpret the results of running Valipop and how to configure it further.
+This guide will walk you through installing and running ValiPop in Java with some sample configurations. This guide will also demonstrate how to interpret the results of running ValiPop and how to configure it further.
 
 ## 1. Prerequisites
 
@@ -27,11 +27,11 @@ R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'
 
 ## 2. Installation
 
-To run Valipop with Java, you only need the Valipop JAR file. However we will be running Valipop with some sample configuration which needs to be installed separately.
+To run ValiPop with Java, you only need the ValiPop JAR file. However we will be running ValiPop with some sample configuration which needs to be installed separately.
 
 ### 2.1. Installing the JAR file
 
-You can install the latest Valipop JAR file from [the releases page](https://github.com/Daniel5055/valipop/releases).
+You can install the latest ValiPop JAR file from [the releases page](https://github.com/Daniel5055/valipop/releases).
 
 To verify that the JAR file is working, navigate to the directory it is in and run the following command
 
@@ -50,7 +50,7 @@ Incorrect arguments given
 
 ### 2.2. Installing the configuration
 
-We will use the config and input files from the [Valipop repository](https://github.com/stacs-srg/population-model). To install the repository in the same directory as the valipop JAR file, run the following command
+We will use the config and input files from the [ValiPop repository](https://github.com/stacs-srg/population-model). To install the repository in the same directory as the valiPop JAR file, run the following command
 
 ```shell
 # In a terminal (Windows/MacOs/Linux)
@@ -64,7 +64,7 @@ Within the repository, we will use the following config file
 
 ### 3. Execution
 
-To run Valipop with the configuration file, run the following command
+To run ValiPop with the configuration file, run the following command
 
 ```shell
 # In a terminal (Windows/MacOs/Linux)
@@ -72,11 +72,11 @@ To run Valipop with the configuration file, run the following command
 java -jar valipop.jar src/main/resources/valipop/config/scot/config.txt
 ```
 
-By default, this will run Valipop will a starting population size of 1000 between the years 1855 to 1973. This will usually take under 5 minutes to run, and should eventually print something like the following:
+By default, this will run ValiPop will a starting population size of 1000 between the years 1855 to 1973. This will usually take under 5 minutes to run, and should eventually print something like the following:
 
 ```
 Running simulation with src/main/resources/valipop/config/scot/config.txt
-Writing contigency tables
+Writing contingency tables
 Writing records
 2025/03/26 15:03:54.292 :: Generating birth records
 Elapsed time: 00:00:00
@@ -91,7 +91,7 @@ In value[[3L]](cond) : Population size too small for partnering analysis
 Validation score: 0.0 (good)
 ```
 
-In the same directory as the Valipop directory, there should also now exist a `results/` directory with the generated population records. This specific run should be located in a directory like
+In the same directory as the ValiPop directory, there should also now exist a `results/` directory with the generated population records. This specific run should be located in a directory like
 
 ```
 results/example/2025-03-24T10-50-39-702/
@@ -99,7 +99,7 @@ results/example/2025-03-24T10-50-39-702/
 
 but the datetime may be different.
 
-[Read more about Valipop results.](../results.md)
+[Read more about ValiPop results.](../results.md)
 
 ### 3.1. Customisation
 
@@ -121,13 +121,13 @@ results_save_location = results
 run_purpose = example
 ```
 
-You can make the following changes to the configuration file to alter Valipop's behaviour
+You can make the following changes to the configuration file to alter ValiPop's behaviour
 
 - Change the starting population size with [`t0_pop_size`](../configuration/config-reference.md#t0_pop_size).
 - Change the start and end data (as written in the record files) with [`t0`](../configuration/config-reference.md#t0) and [`tE`](../configuration/config-reference.md#tE).
 - Change input distributions used with [`var_data_files`](../configuration/config-reference.md#var_data_files). [Read more about input distributions.](../configuration/input-reference.md).
 - Change output record format with [`output_record_format`](../configuration/config-reference.md#output_record_format).
-- To disable the analysis portion of valipop, set [`output_tables`](../configuration/config-reference.md#output_tables) to `false`.
+- To disable the analysis portion of valiPop, set [`output_tables`](../configuration/config-reference.md#output_tables) to `false`.
 - Change the location of the result directory with [`results_save_location`](../configuration/config-reference.md#results_save_location).
 - Change the name of the run within the result directory with [`run_purpose`](../configuration/config-reference.md#run_purpose).
 
