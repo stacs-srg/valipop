@@ -20,7 +20,5 @@ deterministic = false
 binomial_sampling = true
 run_purpose = initial-runs
 output_tables = true
-birth_factor = 0.0
-death_factor = 0.0
 simulation_time_step = P1Y
 over_sized_geography_factor=1.0

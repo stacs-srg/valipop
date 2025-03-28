@@ -4,11 +4,11 @@ title: Running with Java
 markdown: kramdown
 ---
 
-# Running Valipop with Java
+# Running ValiPop with Java
 
 ## Dependencies
 
-You will need the following installed on your system to run Valipop:
+You will need the following installed on your system to run ValiPop:
 
 - [R 4.4.2 or greater](https://cran.r-project.org/)
 - [Java 21 or greater](https://www.oracle.com/uk/java/)
@@ -16,7 +16,7 @@ You will need the following installed on your system to run Valipop:
 You will also need to install the `geepack` R package, which can be done by running the following command:
 
 ```shell
-# In a terminal
+# Open a terminal (Windows/MacOs/Linux)
 
 # Install the geepack R package on your system
 R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'))"
@@ -24,11 +24,11 @@ R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'
 
 ## Installing the JAR file
 
-Valipop can be run with Java using its JAR file. To install the latest valipop JAR file, you can visit [the releases page](https://github.com/Daniel5055/valipop/releases).
+ValiPop can be run with Java using its JAR file. To install the latest valiPop JAR file, you can visit [the releases page](https://github.com/stacs-srg/population-model/releases).
 
-## Running Valipop
+## Running ValiPop
 
-Run the following command to run Valipop:
+Run the following command to run ValiPop:
 
 ```shell
 java -jar valipop.jar
@@ -50,7 +50,7 @@ Then you can follow these steps to build the JAR:
 # Open a terminal
 
 # Clone the repository
-git clone https://github.com/Daniel5055/valipop
+git clone https://github.com/stacs-srg/population-model
 
 # Navigate to the project repository
 cd valipop

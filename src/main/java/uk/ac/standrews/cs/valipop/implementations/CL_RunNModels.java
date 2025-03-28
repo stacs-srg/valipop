@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 public class CL_RunNModels {
 
     public static void main(String[] args) throws IOException, StatsException {
-
         CL_RunNModels.runNModels(args);
     }
 
@@ -34,7 +33,7 @@ public class CL_RunNModels {
 
         for (int n = 0; n < nRuns; n++) {
 
-            CL_OBDModel.runOBDModel(pathToConfigFile.toString());
+            CL_OBDModel.runOBDModel(pathToConfigFile);
             System.gc();
         }
     }

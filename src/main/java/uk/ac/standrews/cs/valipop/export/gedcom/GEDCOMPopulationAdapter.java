@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Provides abstract interface to a population represented in a GEDCOM file.
@@ -43,7 +44,7 @@ public class GEDCOMPopulationAdapter implements IPersonCollection {
     private final GedcomParser parser;
     private String description;
 
-    static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
+    static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.UK);
 
     /**
      * Initialises the adapter for a given GEDCOM file.

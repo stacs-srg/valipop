@@ -1,0 +1,6 @@
+# Config 13 - No tE
+
+tS = 1687-01-01
+t0 = 1855-01-01
+t0_pop_size = 1000
+var_data_files = src/test/resources/valipop/test-pop

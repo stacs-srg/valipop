@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import net.jcip.annotations.NotThreadSafe;
 import uk.ac.standrews.cs.valipop.implementations.StatsException;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 
@@ -16,7 +15,7 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ * @author Daniel Brathagen (dbrathagen@gmail.com)
  */
 @RunWith(Parameterized.class)
 public class ValidationTest {
