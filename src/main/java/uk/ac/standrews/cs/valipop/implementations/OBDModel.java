@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.valipop.export.ExportFormat;
 import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.PopulationConverter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
+import uk.ac.standrews.cs.valipop.export.geojson.GeojsonPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.graphviz.GraphvizPopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.*;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.*;
@@ -80,8 +81,6 @@ public class OBDModel {
     }
 
     private final Geography geography;
-    @SuppressWarnings("unused")
-    private static final int BIRTH_ADJUSTMENT_BOUND = 1000000;
 
     private final Config config;
     private SummaryRow summary;
@@ -192,6 +191,7 @@ public class OBDModel {
     public void analyseAndOutputPopulation(final boolean outputSummaryRow, final int stepBack) {
 
         if (config.getOutputTables()) {
+            System.out.println("Writing contingency tables");
             // the 5 year step back is to combat the kick in the early stages of the CTtables for STAT - run in RStudio with no cleaning to see - potential bug in CTtree?
             ContingencyTableFactory.generateContingencyTables(population.getPeople(), desired, config, summary);
         }
@@ -199,10 +199,12 @@ public class OBDModel {
         final ProgramTimer recordTimer = new ProgramTimer();
 
         if (config.getOutputRecordFormat() != RecordFormat.NONE) {
+            System.out.println("Writing records");
             RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), config.getRecordsDirPath(), population.getPeople(), population.getPeople().getPartnerships(), config.getT0());
         }
 
         if (config.getOutputGraphFormat() != ExportFormat.NONE) {
+            System.out.println("Writing graph");
             outputToGraph(config.getOutputGraphFormat(), population.getPeople(), config.getGraphsDirPath());
         }
 
@@ -238,6 +240,10 @@ public class OBDModel {
                 case GRAPHVIZ:
                     Path graphvizPath = outputDir.resolve("graph.dot");
                     populationWriter = new GraphvizPopulationWriter(people, graphvizPath);
+                    break;
+                case GEOJSON:
+                    Path geojsonPath = outputDir.resolve("graph.geojson");
+                    populationWriter = new GeojsonPopulationWriter(geojsonPath);
                     break;
                 default:
                     return;
@@ -1070,16 +1076,8 @@ public class OBDModel {
         return !currentTime.isAfter(endOfInitPeriod);
     }
 
-    private boolean simulationStarted() {
-        return currentTime.isAfter(config.getT0());
-    }
-
     private boolean simulationFinished() {
         return currentTime.isAfter(config.getTE());
-    }
-
-    private boolean timeFromInitialisationStartIsWholeTimeUnit() {
-        return DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS());
     }
 
     // TODO adjust this to also permit age variations

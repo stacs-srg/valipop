@@ -1,4 +1,4 @@
-# Valipop
+# ValiPop
 
 _ValiPop_ is a micro-simulation model for generating synthetic genealogical populations
 from a set of desired statistics. _ValiPop_ also verifies that the 
@@ -10,13 +10,11 @@ improve data linkage algorithms.
 _ValiPop_'s micro-simulation model is written in Java. The supporting verification analysis 
 and statistical code is written in R.
 
-## Installing Valipop
-
-## Running Valipop
+## Running ValiPop
 
 ### Via Java
 
-To run Valipop with its JAR file, you will need to have installed:
+To run ValiPop with its JAR file, you will need to have installed:
 
 - [R 4.4.2 or greater](https://cran.r-project.org/)
 - [Java 21](https://www.oracle.com/uk/java/)
@@ -31,29 +29,29 @@ R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'
 java -jar valipop.jar <valipop-args>
 ```
 
-[Learn more about running with Java.](https://daniel5055.github.io/valipop/usage/execution/java.html)
+[Learn more about running with Java.](https://stacs-srg.github.io/population-model/usage/execution/java.html)
 
 
 ### Via Docker
 
-To run valipop as a docker container, you will need to have [docker](https://www.docker.com/) installed.
+To run valiPop as a docker container, you will need to have [docker](https://www.docker.com/) installed.
 
 Then you can follow these steps to run the project
 
 ```shell
 # Pull the container
-docker pull ghcr.io/daniel5055/valipop:develop
+docker pull ghcr.io/stacs-srg/valipop:master
 
 # Run the container
-docker run ghcr.io/daniel5055/valipop:develop <valipop-args>
+docker run ghcr.io/stacs-srg/valipop:master <valipop-args>
 ```
 
-[Learn more about running with Docker.](https://daniel5055.github.io/valipop/usage/execution/docker.html)
+[Learn more about running with Docker.](https://stacs-srg.github.io/population-model/usage/execution/docker.html)
 
 
-## Building Valipop from source
+## Building ValiPop from source
 
-To build Valipop, you will need to have installed:
+To build ValiPop, you will need to have installed:
 
 - [Git](https://git-scm.com/)
 - [Java 21](https://www.oracle.com/uk/java/)
@@ -65,7 +63,7 @@ Then you can follow these steps to build the project:
 # Open a terminal
 
 # Clone the repository
-git clone https://github.com/Daniel5055/valipop
+git clone https://github.com/stacs-srg/population-model
 
 # Navigate to the project repository
 cd valipop

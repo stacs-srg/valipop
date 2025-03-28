@@ -23,13 +23,14 @@ spark/bin/spark-submit \
     --conf spark.driver.bindAddress=0.0.0.0 \
     --conf spark.driver.port=5055 \
     valipop.jar \
-    /app/src/main/resources/valipop/inputs/synthetic-scotland/ \
-    10000 \
-    distributed \
-    1 \
-    "0,0.5,1" \
-    "0,0.5,1" \
-    /app/results \
-    /app/results \
-    1E-66 \
-    /app
+    $3 \  #/app/src/main/resources/valipop/inputs/synthetic-scotland/ \
+    $4 \  #10000 \
+    $5 \  #distributed \
+    $6 \  #1 \
+    $7 \  #"0,0.5,1" \
+    $8 \  #"0,0.5,1" \
+    $9 \  #/app/results \
+    $10 \  #/app/results \
+    $11 \  #1E-66 \
+    $12 \  #/app
+    

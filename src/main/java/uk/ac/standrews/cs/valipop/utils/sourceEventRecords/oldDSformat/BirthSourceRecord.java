@@ -86,7 +86,7 @@ public class BirthSourceRecord extends IndividualSourceRecord {
     protected String informant_did_not_sign;
     protected String adoption;
 
-    protected int parents_partnership_id;
+    protected int parents_partnership_id = -1;
 
     public BirthSourceRecord(final IPerson person) {
 

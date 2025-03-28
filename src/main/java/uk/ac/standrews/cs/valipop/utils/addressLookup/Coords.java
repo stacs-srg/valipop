@@ -34,7 +34,7 @@ public class Coords implements Serializable {
     }
 
     public String toString() {
-        return String.valueOf(lat) + ", " + String.valueOf(lon);
+        return String.valueOf(lon) + ", " + String.valueOf(lat);
     }
 
 }

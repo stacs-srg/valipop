@@ -1,0 +1,29 @@
+# Config 5 - Medium population with no binomial sampling
+
+tS = 1700-01-01
+t0 = 1850-01-01
+tE = 2000-01-01
+t0_pop_size = 100000
+set_up_br = 0.0133
+set_up_dr = 0.0133
+
+min_birth_spacing = P147D
+min_gestation_period = P147D
+input_width = P10Y
+
+recovery_factor = 0.5
+proportional_recovery_factor = 0.5
+
+output_record_format = TD
+output_graph_format = NONE
+binomial_sampling = false
+output_tables = false
+simulation_time_step = P1Y
+over_sized_geography_factor=1
+
+results_save_location = /tmp/results
+var_data_files = src/test/resources/valipop/test-pop
+run_purpose = test
+
+deterministic = true
+seed = 23234

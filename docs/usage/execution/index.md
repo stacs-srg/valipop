@@ -1,29 +1,37 @@
 ---
 layout: default
-title: Running Valipop
+title: Running ValiPop
 markdown: kramdown
 ---
 
-# Running Valipop
+# Running ValiPop
 
-Valipop can either be run locally with Java or within a Docker container.
+ValiPop can either be run locally with Java or within a Docker container.
 
 ## Why Java?
 
-- Valipop is run directly on your machine
+- ValiPop is run directly on your machine
 - Makes handling the input and result files easier
-- But requies you to install the correct versions of Java and R
+- But requires you to install the correct versions of Java and R
 
 ---
 
-[To install and run it with Java](https://daniel5055.github.io/valipop/usage/execution/java.html)
+[ValiPop with Java guide](../guides/java.md)
+
+---
+
+[ValiPop with Java reference](java.md)
 
 ## Why Docker?
 
-- Valipop is run inside a docker container on your machine
+- ValiPop is run inside a docker container on your machine
 - Only requires any version of Docker (or Podman) to run
-- But requires you to configure the containers access to folders for input and results
+- But requires you to configure container access to folders for input and results
 
 ---
 
-[To run it with Docker](https://daniel5055.github.io/valipop/usage/execution/docker.html)
+[ValiPop with Docker guide](../guides/docker.md)
+
+---
+
+[ValiPop with Docker reference](docker.md)

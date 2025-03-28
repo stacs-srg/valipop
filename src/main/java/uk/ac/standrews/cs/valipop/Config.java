@@ -32,13 +32,15 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.*;
 
@@ -110,7 +112,7 @@ public class Config implements Serializable {
     private static final String femaleOccupationChangeSubFile = "occupation/change/female";
 
     private static final Logger log = Logger.getLogger(Config.class.getName());
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS", Locale.UK);
     private static Level logLevel = DEFAULT_LOG_LEVEL;
     public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
     private final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
@@ -212,7 +214,7 @@ public class Config implements Serializable {
     private LocalDate tS;
     private LocalDate t0;
     private LocalDate tE;
-    private int t0PopulationSize;
+    private Integer t0PopulationSize;
 
     private Map<String, Processor> processors;
 
@@ -222,7 +224,6 @@ public class Config implements Serializable {
 
     // Initialise configuration programmatically
     public Config(LocalDate tS, LocalDate t0, LocalDate tE, int t0PopulationSize, Path varPath, Path resultsDir, String runPurpose, Path summaryResultsDir) {
-
         this.tS = tS;
         this.t0 = t0;
         this.tE = tE;
@@ -232,6 +233,7 @@ public class Config implements Serializable {
         this.runPurpose = runPurpose;
         this.summaryResultsDirPath = summaryResultsDir;
 
+        validateOptions();
         setUpFileStructure();
         configureLogging();
         initialiseVarPaths();
@@ -240,10 +242,10 @@ public class Config implements Serializable {
 
     // Initialise configuration from file
     public Config(Path pathToConfigFile) {
-
         configureFileProcessors();
         readConfigFile(pathToConfigFile);
 
+        validateOptions();
         setUpFileStructure();
         configureLogging();
         initialiseVarPaths();
@@ -647,50 +649,103 @@ public class Config implements Serializable {
         processors.put("results_save_location", value -> resultsSavePath = Paths.get(value));
         processors.put("summary_results_save_location", value -> summaryResultsDirPath = Paths.get(value));
         processors.put("project_location", value -> projectPath = Paths.get(value));
-//        processors.put("geography_file_location", value -> geographyFilePath = Paths.get(value));
 
-        processors.put("simulation_time_step", value -> simulationTimeStep = Period.parse(value));
-        processors.put("input_width", value -> inputWidth = Period.parse(value));
-        processors.put("min_birth_spacing", value -> minBirthSpacing = Period.parse(value));
-        processors.put("min_gestation_period", value -> minGestationPeriod = Period.parse(value));
+        processors.put("simulation_time_step", value -> simulationTimeStep = parsePeriod(value, "simulation_time_step"));
+        processors.put("input_width", value -> inputWidth = parsePeriod(value, "input_width"));
+        processors.put("min_birth_spacing", value -> minBirthSpacing = parsePeriod(value, "min_birth_spacing"));
+        processors.put("min_gestation_period", value -> minGestationPeriod = parsePeriod(value, "min_gestation_period"));
 
-        processors.put("tS", value -> tS = LocalDate.parse(value));
-        processors.put("t0", value -> t0 = LocalDate.parse(value));
-        processors.put("tE", value -> tE = LocalDate.parse(value));
+        processors.put("tS", value -> tS = parseDate(value, "tS"));
+        processors.put("t0", value -> t0 = parseDate(value, "t0"));
+        processors.put("tE", value -> tE = parseDate(value, "tE"));
 
-        processors.put("t0_pop_size", value -> t0PopulationSize = Integer.parseInt(value));
-        processors.put("seed", value -> seed = Integer.parseInt(value));
-        processors.put("ct_tree_stepback", value -> ctTreeStepback = Integer.parseInt(value));
-        processors.put("ct_tree_precision", value -> ctTreePrecision = Double.parseDouble(value));
+        processors.put("t0_pop_size", value -> t0PopulationSize = parsePositiveInteger(value, "t0_pop_size"));
+        processors.put("seed", value -> seed = parseInteger(value, "seed"));
+        processors.put("ct_tree_stepback", value -> ctTreeStepback = parsePositiveInteger(value, "ct_tree_stepback"));
+        processors.put("ct_tree_precision", value -> ctTreePrecision = parseDouble(value, "ct_tree_precision"));
 
-        processors.put("set_up_br", value -> setUpBR = Double.parseDouble(value));
-        processors.put("set_up_dr", value -> setUpDR = Double.parseDouble(value));
-        processors.put("recovery_factor", value -> recoveryFactor = Double.parseDouble(value));
-        processors.put("proportional_recovery_factor", value -> proportionalRecoveryFactor = Double.parseDouble(value));
-        processors.put("over_sized_geography_factor", value -> overSizedGeographyFactor = parseOversizedGeographyFactor(value));
+        processors.put("set_up_br", value -> setUpBR = parseDouble(value, "set_up_br"));
+        processors.put("set_up_dr", value -> setUpDR = parseDouble(value, "set_up_dr"));
+        processors.put("recovery_factor", value -> recoveryFactor = parseDouble(value, "recovery_factor"));
+        processors.put("proportional_recovery_factor", value -> proportionalRecoveryFactor = parseDouble(value, "recovery_factor"));
+        processors.put("over_sized_geography_factor", value -> overSizedGeographyFactor = parseOversizedGeographyFactor(value, "over_sized_geography_factor"));
 
         processors.put("binomial_sampling", value -> binomialSampling = value.toLowerCase().equals("true"));
         processors.put("output_tables", value -> outputTables = value.toLowerCase().equals("true"));
         processors.put("deterministic", value -> deterministic = value.toLowerCase().equals("true"));
 
-        processors.put("output_record_format", value -> outputRecordFormat = RecordFormat.valueOf(value));
-        processors.put("output_graph_format", value -> outputGraphFormat = ExportFormat.valueOf(value));
+        processors.put("output_record_format", value -> {
+            try {
+                outputRecordFormat = RecordFormat.valueOf(value);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("'" + value + "' not a valid option for `output_record_format`");
+            }
+        });
+        processors.put("output_graph_format", value -> {
+            try {
+                outputGraphFormat = ExportFormat.valueOf(value);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("'" + value + "' not a valid option for `output_graph_format`");
+            }
+        });
         processors.put("log_level", value -> logLevel = Level.parse(value));
         processors.put("run_purpose", value -> runPurpose = value);
     }
 
-    public double parseOversizedGeographyFactor(String value) {
-        double v = Double.parseDouble(value);
+    private LocalDate parseDate(String value, String option) {
+        try {
+            return LocalDate.parse(value);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("`" + option + "` must a parseable date, not '" + value + "'");
+        }
+    }
+
+    private Period parsePeriod(String value, String option) {
+        try {
+            return Period.parse(value);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("`" + option + "` must be a period of the format 'P<years>Y<months>M<days>D', not '" + value + "'");
+        }
+    }
+
+    private int parseInteger(String value, String option) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("`" + option + "` must be an integer, not '" + value + "'");
+        }
+
+    }
+
+    private int parsePositiveInteger(String value, String option) {
+        int val = parseInteger(value, option);
+        if (val < 0) {
+            throw new IllegalArgumentException("`" + option + "` cannot be a negative number");
+        }
+        return val;
+    }
+
+    private double parseDouble(String value, String option) {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("`" + option + "` must be a floating point number, not '" + value + "'");
+        }
+
+    }
+
+    public double parseOversizedGeographyFactor(String value, String option) {
+        double v = parseDouble(value, option);
 
         if(v < 1) {
-            throw new InvalidParameterException("Oversized Geography Factor must be larger than 1");
+            throw new IllegalArgumentException("`" + option + "` cannot be less than 1");
         }
 
         return v;
     }
 
     public void setOverSizedGeographyFactor(String value) {
-        overSizedGeographyFactor = parseOversizedGeographyFactor(value);
+        overSizedGeographyFactor = parseOversizedGeographyFactor(value, "over_sized_geography_factor");
     }
 
     private void readConfigFile(Path pathToConfigFile) {
@@ -700,8 +755,14 @@ public class Config implements Serializable {
 
                 String[] split = line.split("=");
 
+                if (split.length < 2) {
+                    throw new IllegalArgumentException("Illegal line '" + line + "' read in config file. Each line should be of the format '<option> = <value>'");
+                }
+
                 final String key = split[0].trim();
-                final String value = split[1].trim();
+
+                // Join remaining equals together if any, in case they were part of the value
+                final String value = String.join("=", Arrays.copyOfRange(split, 1, split.length)).trim();
 
                 Processor processor = processors.get(key);
                 if (processor == null) {
@@ -712,6 +773,38 @@ public class Config implements Serializable {
         } catch (IOException e) {
             log.severe("error reading config: " + e.getMessage());
             throw new RuntimeException(e);
+        }
+    }
+
+    private void validateOptions() {
+        // Ensure required options are set
+        if (tS == null) {
+            throw new IllegalArgumentException("`tS` is required");
+        }
+        if (t0 == null) {
+            throw new IllegalArgumentException("`t0` is required");
+        }
+        if (tE == null) {
+            throw new IllegalArgumentException("`tE` is required");
+        }
+        if (t0PopulationSize == null) {
+            throw new IllegalArgumentException("`t0_pop_size` is required");
+        }
+        if (varPath == null) {
+            throw new IllegalArgumentException("`var_data_files` is required");
+        }
+
+        // Ensure ordering of dates
+        if (tS.isAfter(t0) ) {
+            throw new IllegalArgumentException("`tS` cannot be after `t0`");
+        }
+        if (t0.isAfter(tE)) {
+            throw new IllegalArgumentException("`t0` cannot be after `tE`");
+        }
+
+        // This allows the simulation enough time to burn in
+        if (t0.getYear() - tS.getYear() < 150) {
+            throw new IllegalArgumentException("`tS` must be at least 150 years before `t0`");
         }
     }
 

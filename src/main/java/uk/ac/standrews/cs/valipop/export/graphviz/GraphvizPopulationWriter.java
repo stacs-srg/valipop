@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * Writes a representation of the population to file in Graphviz format.
@@ -58,7 +59,7 @@ public class GraphvizPopulationWriter extends AbstractFilePopulationWriter {
         super(path);
         this.population = population;
 
-        formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.UK);
     }
 
     @Override

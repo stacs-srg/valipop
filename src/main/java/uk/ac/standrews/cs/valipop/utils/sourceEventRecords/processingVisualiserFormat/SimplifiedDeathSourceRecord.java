@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecor
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 
@@ -36,7 +37,7 @@ import java.util.Random;
 public class SimplifiedDeathSourceRecord extends IndividualSourceRecord {
 
     private static final int FIRST_YEAR_DOB_PRESENT = 1966;
-    private static final DateTimeFormatter DOB_DATE_FORMAT =  DateTimeFormatter.ofPattern("ddMMyyyy");
+    private static final DateTimeFormatter DOB_DATE_FORMAT =  DateTimeFormatter.ofPattern("ddMMyyyy", Locale.UK);
 
     private LocalDate death_date;
 

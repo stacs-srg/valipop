@@ -6,31 +6,31 @@ markdown: kramdown
 
 # _ValiPop_
 
-_ValiPop_ is a micro-simulation model for generating synthetic genealogical populations, 
-taking as input a set of desired summary statistics. _ValiPop_ also verifies that the 
-desired properties exist in the generated populations. _ValiPop_ is highly scalable and 
+ValiPop is a micro-simulation model for generating synthetic genealogical populations, 
+taking as input a set of desired summary statistics. ValiPop also verifies that the 
+desired properties exist in the generated populations. ValiPop is highly scalable and 
 customisable, it is able to create populations for a wide range of purposes.  The focus 
 of our research is the use of many synthetic genealogical populations to evaluate and 
 improve data linkage algorithms.
 
-_ValiPop_'s micro-simulation model is written in Java. The supporting verification analysis 
+ValiPop's micro-simulation model is written in Java. The supporting verification analysis 
 and statistical code is written in R.
 
-## Using Valipop 
+## Running ValiPop
 
-To learn more about using Valipop, you can read these guides:
+- [How to run ValiPop](usage/execution/index.md)
 
-- [How to run Valipop](/usage/execution/index.md)
-- [How to configure Valipop](/usage/config.md)
-- [How to read the results](/usage/results.md)
+## Further information on ValiPop 
 
-## Developing Valipop
+To learn more about using ValiPop:
 
-To learn more about how Valipop works, and how to develop it, you can read the following:
+- [How to configure ValiPop](usage/configuration/index.md)
+- [How to read the results](usage/results.md)
+- [How to tune ValiPop](usage/factor-search.md)
 
-- [Valipop execution overview](/development/overview.md)
-- [Valipop implementation](/development/implementations.md)
+## Developing ValiPop
 
----
+To learn more about how ValiPop works, and how to develop it, you can read the following:
 
-For further information, queries or collaborations please contact Tom Dalton (tsd4@st-andrews.ac.uk)
+- [ValiPop execution overview](development/overview.md)
+- [ValiPop implementation](development/implementations.md)

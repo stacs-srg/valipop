@@ -79,7 +79,7 @@ public class RCaller {
         String[] params = {runDirPath.toAbsolutePath().toString(), String.valueOf(maxBirthingAge)};
         String[] commands = joinArrays(new String[]{ "Rscript", rScriptPath.toString()}, params);
 
-        System.out.println("Running command:");
+        System.out.print("Running validation with command: ");
         System.out.println(String.join(" ", commands));
         ProcessBuilder pb = new ProcessBuilder(commands);
         return pb.start();
@@ -122,14 +122,12 @@ public class RCaller {
             .orElse(0);
 
         // Print out any errors
-        stderr.lines().forEach(System.out::println);
+        stderr.lines().forEach(System.err::println);
 
         // Clean up
         stdout.close();
         stderr.close();
         outputFileWrtier.close();
-
-        System.out.println("Result: " + v);
 
         return v;
     }
