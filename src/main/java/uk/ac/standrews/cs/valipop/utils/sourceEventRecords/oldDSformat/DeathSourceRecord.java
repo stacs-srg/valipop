@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecor
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * A representation of a Death Record in the form used by the Digitising Scotland Project.
@@ -81,7 +82,7 @@ import java.time.format.DateTimeFormatter;
 public class DeathSourceRecord extends IndividualSourceRecord {
 
     private static final long FIRST_YEAR_DOB_PRESENT = 1966;
-    private static final DateTimeFormatter DOB_DATE_FORMAT =  DateTimeFormatter.ofPattern("ddMMyyyy");
+    private static final DateTimeFormatter DOB_DATE_FORMAT =  DateTimeFormatter.ofPattern("ddMMyyyy", Locale.UK);
 
     private LocalDate death_date;
 

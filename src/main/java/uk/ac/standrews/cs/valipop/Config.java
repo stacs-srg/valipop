@@ -40,6 +40,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.*;
 
@@ -111,7 +112,7 @@ public class Config implements Serializable {
     private static final String femaleOccupationChangeSubFile = "occupation/change/female";
 
     private static final Logger log = Logger.getLogger(Config.class.getName());
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS", Locale.UK);
     private static Level logLevel = DEFAULT_LOG_LEVEL;
     public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
     private final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
