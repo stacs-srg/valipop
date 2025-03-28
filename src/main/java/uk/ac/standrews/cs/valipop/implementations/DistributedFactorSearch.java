@@ -36,6 +36,11 @@ import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 
+/**
+ * Searches for recovery factors in parallel using Apache Spark 
+ * 
+ * @author Daniel Brathagen (dbrathagen@gmail.com)
+ */
 public class DistributedFactorSearch {
     public static void main(String[] args) throws InterruptedException {
         String[] pArgs = ProcessArgs.process(args, "FACTOR_SEARCH_PRECISION");

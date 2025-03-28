@@ -15,7 +15,7 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ * @author Daniel Brathagen (dbrathagen@gmail.com)
  */
 @RunWith(Parameterized.class)
 public class ValidationTest {
