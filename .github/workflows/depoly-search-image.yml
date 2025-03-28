@@ -3,10 +3,9 @@ name: Publish ValiPop factor search images
 # Configures this workflow to run every time a change is pushed to the branch called `master`.
 on:
   push:
-    push:
-      branches: [ "master" ]
-    pull_request:
-      branches: [ "master" ]
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 env:
   REGISTRY: ghcr.io
