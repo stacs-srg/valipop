@@ -29,7 +29,7 @@ R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'
 java -jar valipop.jar <valipop-args>
 ```
 
-[Learn more about running with Java.](https://daniel5055.github.io/valipop/usage/execution/java.html)
+[Learn more about running with Java.](https://stacs-srg.github.io/population-model/usage/execution/java.html)
 
 
 ### Via Docker
@@ -40,13 +40,13 @@ Then you can follow these steps to run the project
 
 ```shell
 # Pull the container
-docker pull ghcr.io/daniel5055/valipop:develop
+docker pull ghcr.io/stacs-srg/valipop:master
 
 # Run the container
-docker run ghcr.io/daniel5055/valipop:develop <valipop-args>
+docker run ghcr.io/stacs-srg/valipop:master <valipop-args>
 ```
 
-[Learn more about running with Docker.](https://daniel5055.github.io/valipop/usage/execution/docker.html)
+[Learn more about running with Docker.](https://stacs-srg.github.io/population-model/usage/execution/docker.html)
 
 
 ## Building ValiPop from source
@@ -63,7 +63,7 @@ Then you can follow these steps to build the project:
 # Open a terminal
 
 # Clone the repository
-git clone https://github.com/Daniel5055/valipop
+git clone https://github.com/stacs-srg/population-model
 
 # Navigate to the project repository
 cd valipop

@@ -26,7 +26,7 @@ You can install the latest valiPop image by running the following command
 ```sh
 # In a terminal (Windows/MacOs/Linux)
 
-docker pull ghcr.io/daniel5055/valipop:master
+docker pull ghcr.io/stacs-srg/valipop:master
 ```
 
 To verify you have installed the image correctly, you can run the following command
@@ -34,7 +34,7 @@ To verify you have installed the image correctly, you can run the following comm
 ```shell
 # In a terminal (Windows/MacOs/Linux)
 
-docker run ghcr.io/daniel5055/valipop:master
+docker run ghcr.io/stacs-srg/valipop:master
 ```
 
 which should print the following message
@@ -73,10 +73,10 @@ Therefore we can run the container with the following command to bind the direct
 
 ```sh
 # For Windows
-docker run -v .\src:/app/src -v .\results:/app/results ghcr.io/daniel5055/valipop:master /app/src/main/resources/valipop/config/scot/config.txt
+docker run -v .\src:/app/src -v .\results:/app/results ghcr.io/stacs-srg/valipop:master /app/src/main/resources/valipop/config/scot/config.txt
 
 # For MacOs/Linux
-docker run -v ./src:/app/src -v ./results:/app/results ghcr.io/daniel5055/valipop:master /app/src/main/resources/valipop/config/scot/config.txt
+docker run -v ./src:/app/src -v ./results:/app/results ghcr.io/stacs-srg/valipop:master /app/src/main/resources/valipop/config/scot/config.txt
 ```
 By default, this will run ValiPop will a starting population size of 1000 between the years 1855 to 1973. This will usually take under 5 minutes to run, and should eventually print something like the following:
 

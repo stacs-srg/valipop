@@ -31,7 +31,7 @@ To run ValiPop with Java, you only need the ValiPop JAR file. However we will be
 
 ### 2.1. Installing the JAR file
 
-You can install the latest ValiPop JAR file from [the releases page](https://github.com/Daniel5055/valipop/releases).
+You can install the latest ValiPop JAR file from [the releases page](https://github.com/stacs-srg/population-model/releases).
 
 To verify that the JAR file is working, navigate to the directory it is in and run the following command
 

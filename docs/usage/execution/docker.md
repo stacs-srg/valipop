@@ -15,7 +15,7 @@ You will need to have either [docker](https://www.docker.com/), [podman](https:/
 To run ValiPop with docker, you first you need to run the following command to pull the Docker image
 
 ```sh
-docker pull ghcr.io/daniel5055/valipop:master
+docker pull ghcr.io/stacs-srg/valipop:master
 ```
 
 ## Running ValiPop
@@ -23,7 +23,7 @@ docker pull ghcr.io/daniel5055/valipop:master
 To run valiPop, you will need to specify which directories you want the ValiPop container to access while running. This can be done with the following command template
 
 ```sh
-docker run -v <absolute-path-on-your-computer>:<absolute-path-in-container> ghcr.io/daniel5055/valipop:master <valipop-args>
+docker run -v <absolute-path-on-your-computer>:<absolute-path-in-container> ghcr.io/stacs-srg/valipop:master <valipop-args>
 ```
 
 `absolute-path-on-your-computer` is the absolute path to a directory you want to give access to.
@@ -35,9 +35,9 @@ docker run -v <absolute-path-on-your-computer>:<absolute-path-in-container> ghcr
 The following are examples of running valiPop with docker:
 
 ```sh
-docker run -v /home/user/configs:/app/configs ghcr.io/daniel5055/valipop:master configs/config.txt
+docker run -v /home/user/configs:/app/configs ghcr.io/stacs-srg/valipop:master configs/config.txt
 ```
 
 ```sh
-docker run -v C:\\Users\\user\\Documents\\configs:/app/configs -v C:\\Users\\user\\Documents\\inputs:/app/inputs ghcr.io/daniel5055/valipop:master configs/config.txt
+docker run -v C:\\Users\\user\\Documents\\configs:/app/configs -v C:\\Users\\user\\Documents\\inputs:/app/inputs ghcr.io/stacs-srg/valipop:master configs/config.txt
 ```

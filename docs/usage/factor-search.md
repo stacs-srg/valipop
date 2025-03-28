@@ -83,8 +83,8 @@ The ValiPop repository provides some pre-configured Docker images to create a st
 ```sh
 # Windows/MacOs/Linux terminal
 
-docker pull ghcr.io/daniel5055/valipop-leader:master
-docker pull ghcr.io/daniel5055/valipop-worker:master
+docker pull ghcr.io/stacs-srg/valipop-leader:master
+docker pull ghcr.io/stacs-srg/valipop-worker:master
 ```
 
 The leader image takes two arguments when run:
@@ -103,10 +103,10 @@ These images may then be launched on different machines on the same network to e
 # Windows/MacOs/Linux terminal
 
 # To run the leader
-docker run ghcr.io/daniel5055/valipop-leader:master
+docker run ghcr.io/stacs-srg/valipop-leader:master
 
 # To run the worker
-docker run ghcr.io/daniel5055/valipop-worker:master
+docker run ghcr.io/stacs-srg/valipop-worker:master
 ```
 
 The worker additionally runs with the following environmental variables set:
@@ -123,7 +123,7 @@ These can be overwritten during container execution using the `-e` option with `
 The ValiPop repository also provides a Docker image to run the factor search. This can be installed with the following command
 
 ```sh
-docker pull ghcr.io/daniel5055/valipop-search:master
+docker pull ghcr.io/stacs-srg/valipop-search:master
 ```
 
 The factor search image takes 12 arguments, the first two relate to the cluster management:
@@ -136,7 +136,7 @@ The remaining 10 arguments are passed to the factor search and are described [ea
 The image may be run with the following command
 
 ```sh
-docker run ghcr.io/daniel5055/valipop-search:master
+docker run ghcr.io/stacs-srg/valipop-search:master
 ```
 
 As docker runs isolated from you local machine, you may need to mount directories to give Docker access to them. [Read more about working with Docker](execution/docker.md#running-valipop).
