@@ -3,7 +3,9 @@ name: Publish ValiPop model image
 # Configures this workflow to run every time a change is pushed to the branch called `master`.
 on:
   push:
-    branches: ['develop']
+    branches: ['master']
+  pull_request:
+    branches: ['master']
 
 env:
   REGISTRY: ghcr.io
