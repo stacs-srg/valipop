@@ -30,7 +30,7 @@ To download and run ValiPop:
 
 ```shell
 # Download the JAR file.
-curl https://github.com/stacs-srg/valipop/releases/latest/download/valipop.jar
+wget https://github.com/stacs-srg/valipop/releases/latest/download/valipop.jar
 
 # Run the simulation.
 java -jar valipop.jar <valipop-args>
