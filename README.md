@@ -14,7 +14,7 @@ and statistical code is written in R.
 
 ### Via Java
 
-To run ValiPop with its JAR file, the following need to be installed:
+To run ValiPop from the release JAR file, the following need to be installed:
 
 - Java 21 or higher
 - [R 4.4.2 or higher](https://cran.r-project.org/)
@@ -26,11 +26,14 @@ To install _geepack_:
 # Install the geepack R package.
 R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'))"
 ```
-To run ValiPop:
+To download and run ValiPop:
 
 ```shell
+# Download the JAR file.
+curl https://github.com/stacs-srg/valipop/releases/latest/download/valipop.jar
+
 # Run the simulation.
-java -jar valipop.jar &lt;valipop-args&gt;
+java -jar valipop.jar <valipop-args>
 ```
 
 [Learn more about running with Java](https://stacs-srg.github.io/population-model/usage/execution/java.html)
@@ -49,7 +52,7 @@ To run ValiPop:
 docker pull ghcr.io/stacs-srg/valipop:main
 
 # Run the container.
-docker run ghcr.io/stacs-srg/valipop:main &lt;valipop-args&gt;
+docker run ghcr.io/stacs-srg/valipop:main <valipop-args>
 ```
 
 [Learn more about running with Docker](https://stacs-srg.github.io/population-model/usage/execution/docker.html)
