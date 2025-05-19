@@ -1,11 +1,11 @@
 name: Publish ValiPop model image
 
-# Configures this workflow to run every time a change is pushed to the branch called `master`.
+# Configures this workflow to run every time a change is pushed to the branch called `main`.
 on:
   push:
-    branches: ['master']
+    branches: ['main']
   pull_request:
-    branches: ['master']
+    branches: ['main']
 
 env:
   REGISTRY: ghcr.io
@@ -38,7 +38,7 @@ jobs:
             sudo apt-get -y install docker-compose
             docker-compose build base
 
-      # Generate metadata for the main valiPop image
+      # Generate metadata for the main ValiPop image
       - name: Extract metadata (tags, labels) for ValiPop image
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
@@ -46,7 +46,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       # Builds and pushes the main ValiPop image
-      - name: Build and push the valiPop image
+      - name: Build and push the ValiPop image
         id: push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
@@ -57,8 +57,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           ulimit: nofile=65536:65536
       
-      # Generates artifact attestation for the main valipop image
-      - name: Generate artifact attestation for valipop image
+      # Generates artifact attestation for the main ValiPop image
+      - name: Generate artifact attestation for ValiPop image
         uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
