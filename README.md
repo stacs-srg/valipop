@@ -36,7 +36,7 @@ wget https://github.com/stacs-srg/valipop/releases/latest/download/valipop.jar
 java -jar valipop.jar <valipop-args>
 ```
 
-[Learn more about running with Java](https://stacs-srg.github.io/population-model/usage/execution/java.html)
+[Learn more about running with Java](https://stacs-srg.github.io/valipop/usage/execution/java.html)
 
 
 ### Via Docker
@@ -55,7 +55,7 @@ docker pull ghcr.io/stacs-srg/valipop:main
 docker run ghcr.io/stacs-srg/valipop:main <valipop-args>
 ```
 
-[Learn more about running with Docker](https://stacs-srg.github.io/population-model/usage/execution/docker.html)
+[Learn more about running with Docker](https://stacs-srg.github.io/valipop/usage/execution/docker.html)
 
 
 ## Building ValiPop from source

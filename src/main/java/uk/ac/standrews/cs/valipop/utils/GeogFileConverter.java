@@ -27,8 +27,8 @@ public class GeogFileConverter {
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        convert("/Users/tdalton/tom/phd/repos/population-model/src/main/resources/valipop/inputs/scotland_test_population_no_mig/annotations/geography/scotland-residential-ways.ser",
-                "/Users/tdalton/tom/phd/repos/population-model/src/main/resources/valipop/inputs/scotland_test_population/annotations/geography/scotland-residential-ways.json");
+        convert("valipop/src/main/resources/valipop/inputs/scotland_test_population_no_mig/annotations/geography/scotland-residential-ways.ser",
+                "valipop/src/main/resources/valipop/inputs/scotland_test_population/annotations/geography/scotland-residential-ways.json");
     }
 
 }
