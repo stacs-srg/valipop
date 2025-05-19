@@ -53,9 +53,9 @@ Incorrect arguments given
 We will use the config and input files from the [ValiPop repository](https://github.com/stacs-srg/population-model). To install the repository in the same directory as the valiPop JAR file, run the following command
 
 ```shell
-# In a terminal (Windows/MacOs/Linux)
+# In a terminal (Windows/macOS/Linux)
 
-git clone https://github.com/stacs-srg/population-model.git .
+git clone https://github.com/stacs-srg/population-model.git
 ```
 
 Within the repository, we will use the following config file

@@ -16,8 +16,8 @@ and statistical code is written in R.
 
 To run ValiPop with its JAR file, you will need to have installed:
 
-- [R 4.4.2 or greater](https://cran.r-project.org/)
-- [Java 21](https://www.oracle.com/uk/java/)
+- [R 4.4.2 or higher](https://cran.r-project.org/)
+- Java 21 or higher
 
 Then you can follow these steps to run the project
 
@@ -34,7 +34,7 @@ java -jar valipop.jar <valipop-args>
 
 ### Via Docker
 
-To run valiPop as a docker container, you will need to have [docker](https://www.docker.com/) installed.
+To run ValiPop as a docker container, you will need to have [docker](https://www.docker.com/) installed.
 
 Then you can follow these steps to run the project
 
@@ -54,7 +54,7 @@ docker run ghcr.io/stacs-srg/valipop:master <valipop-args>
 To build ValiPop, you will need to have installed:
 
 - [Git](https://git-scm.com/)
-- [Java 21](https://www.oracle.com/uk/java/)
+- Java 21 or higher
 - [Maven](https://maven.apache.org/)
 
 Then you can follow these steps to build the project:
@@ -71,5 +71,5 @@ cd valipop
 # Installing dependencies, compiling, and packaging into JARs
 mvn clean package -Dmaven.test.skip -Dmaven.repo.local=repository
 
-# The build should be in `target/`, including the runnable JARs
+# The build should be created in `target/`, including the runnable JARs
 ```
