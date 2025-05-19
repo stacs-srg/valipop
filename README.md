@@ -2,9 +2,9 @@
 
 _ValiPop_ is a micro-simulation model for generating synthetic genealogical populations
 from a set of desired statistics. _ValiPop_ also verifies that the 
-desired properties exist in the generated populations. _ValiPop_ is highly scalable and 
-customisable, it is able to create populations for a wide range of purposes.  The focus 
-of our research is the use of many synthetic genealogical populations to evaluate and 
+desired properties exist in the generated populations. It is reasonably scalable and 
+customisable, and able to create populations for a wide range of purposes.  The focus 
+of our research is the use of multiple synthetic genealogical populations to evaluate and 
 improve data linkage algorithms.
 
 _ValiPop_'s micro-simulation model is written in Java. The supporting verification analysis 
@@ -30,7 +30,7 @@ To run ValiPop:
 
 ```shell
 # Run the simulation.
-java -jar valipop.jar \<valipop-args\>
+java -jar valipop.jar &lt;valipop-args&gt;
 ```
 
 [Learn more about running with Java](https://stacs-srg.github.io/population-model/usage/execution/java.html)
@@ -49,7 +49,7 @@ To run ValiPop:
 docker pull ghcr.io/stacs-srg/valipop:main
 
 # Run the container.
-docker run ghcr.io/stacs-srg/valipop:main \<valipop-args\>
+docker run ghcr.io/stacs-srg/valipop:main &lt;valipop-args&gt;
 ```
 
 [Learn more about running with Docker](https://stacs-srg.github.io/population-model/usage/execution/docker.html)
