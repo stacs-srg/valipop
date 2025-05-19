@@ -33,11 +33,5 @@ jobs:
         r-version: '4.4.2'
     - name: Install R package
       run: R -e "install.packages('geepack', repos = c(CRAN = 'https://cloud.r-project.org'))"
-    #- name: Install R package
-      #uses: r-lib/actions/setup-r-dependencies@813ef1cb62cf0b4b51a044419024c37807fa8095
-      #with:
-        #cache-version: 2
-        #extra-packages: |
-          #any::geepack
     - name: Build and test with Maven
       run: mvn -B package --file pom.xml
