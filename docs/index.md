@@ -30,7 +30,7 @@ To learn more about using ValiPop:
 
 ## Developing ValiPop
 
-To learn more about how ValiPop works, and how to develop it, you can read the following:
+To learn more about how ValiPop works, and how to develop it, see:
 
 - [ValiPop execution overview](development/overview.md)
 - [ValiPop implementation](development/implementations.md)
