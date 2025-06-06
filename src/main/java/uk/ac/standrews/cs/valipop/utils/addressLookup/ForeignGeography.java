@@ -16,7 +16,7 @@ public class ForeignGeography {
             "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana",
             "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon", "Canada",
             "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros",
-            "Democratic Republic of the Congo", "Republic of the Congo", "Costa Rica", "Côte d’Ivoire", "Croatia",
+            "Democratic Republic of the Congo", "Republic of the Congo", "Costa Rica", "Cote d'Ivoire", "Croatia",
             "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic",
             "East Timor", "Ecuador", "Egypt", "El Salvador", "England", "Equatorial Guinea", "Eritrea", "Estonia",
             "Ethiopia", "Fiji", "Finland", "France", "Gabon", "The Gambia", "Georgia", "Germany", "Ghana", "Greece",
@@ -37,21 +37,19 @@ public class ForeignGeography {
             "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United States", "Uruguay", "Uzbekistan", "Vanuatu",
             "Vatican City", "Venezuela", "Vietnam", "Wales", "Yemen", "Zambia", "Zimbabwe"};
 
-    private ArrayList<Address> forignAddresses = new ArrayList<>();
-    private RandomGenerator randomNumberGenerator;
+    private final ArrayList<Address> foreignAddresses = new ArrayList<>();
+    private final RandomGenerator randomNumberGenerator;
 
     public ForeignGeography(RandomGenerator randomNumberGenerator) {
 
-        for(String country : countries) {
-            forignAddresses.add(new Address(country));
+        for (String country : countries) {
+            foreignAddresses.add(new Address(country));
         }
 
         this.randomNumberGenerator = randomNumberGenerator;
-
     }
 
     public Address getCountry() {
-        return forignAddresses.get(randomNumberGenerator.nextInt(forignAddresses.size()));
+        return foreignAddresses.get(randomNumberGenerator.nextInt(foreignAddresses.size()));
     }
-
 }

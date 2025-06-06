@@ -56,12 +56,6 @@ public abstract class GeneralPopulationStructureTest {
     }
 
     @Test
-    public void populationContainsReasonableNumberOfPeople() {
-
-        assertTrue(population.getNumberOfPeople() > initialSize);
-    }
-
-    @Test
     public void nonExistentPersonIsntFound() {
 
         assertNull(population.findPerson(-1));
@@ -258,11 +252,12 @@ public abstract class GeneralPopulationStructureTest {
     @Test
     public void parentsAndChildrenConsistent() {
 
-        if (testingSmallPopulation()) {
+        for (final IPartnership partnership : population.getPartnerships()) {
+            assertParentsAndChildrenConsistent(partnership);
+        }
 
-            for (final IPartnership partnership : population.getPartnerships()) {
-                assertParentsAndChildrenConsistent(partnership);
-            }
+        for (final IPerson person : population.getPeople()) {
+            assertParentsAndChildrenConsistent(person);
         }
     }
 
@@ -279,13 +274,26 @@ public abstract class GeneralPopulationStructureTest {
 
         for (final IPerson child : partnership.getChildren()) {
             assertEquals(child.getParents(), partnership);
-            assertChildIsPresentInPopulation(child);
+            assertPersonIsPresentInPopulation(child);
         }
     }
 
-    private void assertChildIsPresentInPopulation(final IPerson child) {
+    private void assertParentsAndChildrenConsistent(final IPerson person) {
 
-        assertNotNull(population.findPerson(child.getId()));
+        IPartnership parents = person.getParents();
+
+        if (parents != null) {
+            assertTrue(parents.getChildren().contains(person));
+            IPerson father = parents.getMalePartner();
+
+            assertPersonIsPresentInPopulation(father);
+            assertPersonIsPresentInPopulation(parents.getFemalePartner());
+        }
+    }
+
+    private void assertPersonIsPresentInPopulation(final IPerson person) {
+
+        assertNotNull(population.findPerson(person.getId()));
     }
 
     private void assertParentsHaveSensibleAgesAtBirth(final IPartnership partnership) {

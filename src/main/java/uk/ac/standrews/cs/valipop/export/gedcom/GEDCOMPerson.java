@@ -43,11 +43,11 @@ public class GEDCOMPerson implements IPerson {
     protected Surname surname;
     protected SexOption sex;
     private LocalDate birth_date;
-    private String birth_place;
+    private String birth_place = "";
     private LocalDate death_date;
-    private String death_place;
-    protected String death_cause;
-    protected String occupation;
+    private String death_place = "";
+    protected String death_cause = "";
+    protected String occupation = "";
     private List<Integer> partnership_ids;
     private int parent_id;
 
@@ -175,14 +175,14 @@ public class GEDCOMPerson implements IPerson {
             switch (event.type) {
 
                 case BIRTH:
-                    birth_date = LocalDate.parse(event.date.toString(), GEDCOMPopulationAdapter.FORMATTER);
+                    birth_date = LocalDate.parse(event.date.toString(), GEDCOMPopulationWriter.FORMAT);
                     if (event.place != null) {
                         birth_place = event.place.placeName;
                     }
                     break;
 
                 case DEATH:
-                    death_date = LocalDate.parse(event.date.toString(), GEDCOMPopulationAdapter.FORMATTER);
+                    death_date = LocalDate.parse(event.date.toString(), GEDCOMPopulationWriter.FORMAT);
                     if (event.place != null) {
                         death_place = event.place.placeName;
                     }
@@ -264,14 +264,16 @@ public class GEDCOMPerson implements IPerson {
 
         List<IPartnership> partnerships = new ArrayList<>();
         for (int id : partnership_ids) {
-            partnerships.add(adapter.findPartnership(id));
+            IPartnership partnership = adapter.findPartnership(id);
+            if (partnership != null)
+                partnerships.add(partnership);
         }
         return partnerships;
     }
 
     @Override
     public IPartnership getParents() {
-        return adapter.findPartnership(parent_id);
+        return parent_id == -1 ? null : adapter.findPartnership(parent_id);
     }
 
     @Override

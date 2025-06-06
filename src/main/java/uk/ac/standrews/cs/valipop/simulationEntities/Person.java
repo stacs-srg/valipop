@@ -65,6 +65,7 @@ public class Person implements IPerson {
             IPerson m = parents.getMalePartner();
 
             if ((f.hasEmigrated() && f.getEmigrationDate().isBefore(birthDate)) || (m.hasEmigrated() && m.getEmigrationDate().isBefore(birthDate))) {
+                // TODO ???
                 System.out.print("");
             }
         }
@@ -80,7 +81,6 @@ public class Person implements IPerson {
         representation = firstName + " " + surname + " (" + id + ") " + birthDate;
 
         setOccupation(birthDate, statistics.getOccupation(Year.of(birthDate.getYear()), sex).getDistributionForAge(0).getSample());
-
     }
 
     public String toString() {
@@ -170,6 +170,7 @@ public class Person implements IPerson {
 
     @Override
     public void setOccupation(LocalDate onDate, String occupation) {
+        if (occupation.isBlank()) occupation = "";
         occupationHistory.put(onDate, occupation);
     }
 
@@ -256,7 +257,6 @@ public class Person implements IPerson {
             if(getAddress(onDate) != null)
                 removed = getAddress(onDate).removeInhabitant(this);
 
-
             // if children get shuttled around before birth then remove old addresses
             if(addressHistory.get(onDate) != null) { // this is different to the above if as it looks for values at the exact key rather than taking the value at the floor of the key!
 //                removed = addressHistory.get(onDate).removeInhabitant(this);
@@ -269,8 +269,6 @@ public class Person implements IPerson {
                     addressHistory.remove(addressHistory.ceilingKey(onDate));
                 }
             }
-
-
         }
 
         address.addInhabitant(this);
@@ -345,7 +343,6 @@ public class Person implements IPerson {
                 returnFamilyToHouse(family, previousAddress);
             }
         }
-
     }
 
     private void returnFamilyToHouse(Collection<IPerson> family, Address previousAddress) {

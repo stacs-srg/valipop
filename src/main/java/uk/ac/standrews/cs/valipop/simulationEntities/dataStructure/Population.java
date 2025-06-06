@@ -30,6 +30,8 @@ import java.time.Period;
  */
 public class Population {
 
+    // TODO rationalise Population, PersonCollection, PeopleCollection, IPersonCollection.
+
     private PeopleCollection livingPeople;
     private PeopleCollection deadPeople;
 
@@ -39,6 +41,7 @@ public class Population {
 
     public Population(final Config config) {
 
+        // TODO avoid statics.
         Person.resetIds();
         Partnership.resetIds();
 

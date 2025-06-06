@@ -27,11 +27,9 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Provides abstract interface to a population represented in a GEDCOM file.
@@ -41,10 +39,10 @@ import java.util.Locale;
  */
 public class GEDCOMPopulationAdapter implements IPersonCollection {
 
+    // TODO update to GEDCOM 7
+
     private final GedcomParser parser;
     private String description;
-
-    static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.UK);
 
     /**
      * Initialises the adapter for a given GEDCOM file.
@@ -100,6 +98,8 @@ public class GEDCOMPopulationAdapter implements IPersonCollection {
 
     @Override
     public IPartnership findPartnership(final int id) {
+
+        if (id == -1) return null;
 
         for (final IPartnership partnership : getPartnerships()) {
             if (partnership.getId() == id) {

@@ -25,8 +25,11 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 
 /**
  * Implementation of population export to GEDCOM format file.
@@ -68,7 +71,34 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
     private static final String FAMILY_AS_SPOUSE_TAG = "FAMS";
     private static final String FAMILY_AS_CHILD_TAG = "FAMC";
 
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.UK);
+    public static final DateTimeFormatter FORMAT;
+
+    static {
+        final Map<Long, String> MONTH_ABBREVIATIONS = new HashMap<>();
+
+        MONTH_ABBREVIATIONS.put(1L, "JAN");
+        MONTH_ABBREVIATIONS.put(2L, "FEB");
+        MONTH_ABBREVIATIONS.put(3L, "MAR");
+        MONTH_ABBREVIATIONS.put(4L, "APR");
+        MONTH_ABBREVIATIONS.put(5L, "MAY");
+        MONTH_ABBREVIATIONS.put(6L, "JUN");
+        MONTH_ABBREVIATIONS.put(7L, "JUL");
+        MONTH_ABBREVIATIONS.put(8L, "AUG");
+        MONTH_ABBREVIATIONS.put(9L, "SEP");
+        MONTH_ABBREVIATIONS.put(10L, "OCT");
+        MONTH_ABBREVIATIONS.put(11L, "NOV");
+        MONTH_ABBREVIATIONS.put(12L, "DEC");
+
+        DateTimeFormatterBuilder formatterBuilder = new DateTimeFormatterBuilder();
+
+        formatterBuilder.appendValue(ChronoField.DAY_OF_MONTH, 2);
+        formatterBuilder.appendLiteral(" ");
+        formatterBuilder.appendText(ChronoField.MONTH_OF_YEAR, MONTH_ABBREVIATIONS);
+        formatterBuilder.appendLiteral(" ");
+        formatterBuilder.appendValue(ChronoField.YEAR, 4);
+
+        FORMAT = formatterBuilder.toFormatter();
+    }
 
     private int level = 0;
 
@@ -247,7 +277,7 @@ public class GEDCOMPopulationWriter extends AbstractFilePopulationWriter {
 
     private void checkAndWrite(final String tag, final String data) {
 
-        if (data != null) {
+        if (data != null && !data.isBlank()) {
             write(tag, data);
         }
     }
