@@ -26,10 +26,10 @@ public class RCaller {
 
     // Constants
 
-    private static Path R_SCRIPT_LOCATION = Path.of("analysis.R");
-    private static Path R_SCRIPT_OUTPUT_LOCATION = Path.of("analysis.out");
+    private static final Path R_SCRIPT_LOCATION = Path.of("analysis.R");
+    private static final Path R_SCRIPT_OUTPUT_LOCATION = Path.of("analysis.out");
 
-    private static String[] R_SCRIPT_PATHS = new String[]{
+    private static final String[] R_SCRIPT_PATHS = new String[]{
         "valipop/analysis-r/geeglm/process-data-functions.R",
         "valipop/analysis-r/geeglm/id-funtions.R",
         "valipop/analysis-r/geeglm/geeglm-functions.R",
@@ -76,13 +76,11 @@ public class RCaller {
      * @return the executing process
      */
     public static Process runRScript(Path runDirPath, Path rScriptPath, int maxBirthingAge) throws IOException {
+
         String[] params = {runDirPath.toAbsolutePath().toString(), String.valueOf(maxBirthingAge)};
         String[] commands = joinArrays(new String[]{ "Rscript", rScriptPath.toString()}, params);
 
-        System.out.print("Running validation with command: ");
-        System.out.println(String.join(" ", commands));
-        ProcessBuilder pb = new ProcessBuilder(commands);
-        return pb.start();
+        return new ProcessBuilder(commands).start();
     }
 
     /**
@@ -98,22 +96,19 @@ public class RCaller {
 
         // The file the output of the R script is written to
         File outputFile = new File(outputPath.toString());
-        FileWriter outputFileWrtier = new FileWriter(outputFile, false);
+        FileWriter outputFileWriter = new FileWriter(outputFile, false);
         outputFile.createNewFile();
 
         // Filter relevant lines, calculate v per line and sum together
-        int v = stdout
-            .lines()
+        int v = stdout.lines()
             // Writing lines to file
-            .map((l) -> {
+            .peek((l) -> {
                 try {
-                    outputFileWrtier.write(l);
-                    outputFileWrtier.append("\n");
+                    outputFileWriter.write(l);
+                    outputFileWriter.append("\n");
                 } catch (IOException e) {
                     System.err.println("Unable to write results of analysis to file " + outputPath.toString());
                 }
-
-                return l;
             })
             .filter(RCaller::filterAnalysis)
             .map(RCaller::countV)
@@ -127,7 +122,7 @@ public class RCaller {
         // Clean up
         stdout.close();
         stderr.close();
-        outputFileWrtier.close();
+        outputFileWriter.close();
 
         return v;
     }
@@ -165,7 +160,7 @@ public class RCaller {
         for (int starNumber = MAX_STARS; starNumber > 0; starNumber--) {
             starCounts[starNumber - 1] = 0;
 
-            if (line.indexOf("*".repeat(starNumber) + " ".repeat(MAX_STARS - starNumber)) != -1) {
+            if (line.contains("*".repeat(starNumber) + " ".repeat(MAX_STARS - starNumber))) {
                 starCounts[starNumber - 1]++;
                 break;
             }

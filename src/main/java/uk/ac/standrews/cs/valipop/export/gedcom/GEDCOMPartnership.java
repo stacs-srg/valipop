@@ -105,7 +105,7 @@ public class GEDCOMPartnership implements IPartnership {
         for (final FamilyEvent event : family.events) {
 
             if (event.type == FamilyEventType.MARRIAGE) {
-                marriage_date = LocalDate.parse(event.date.toString(), GEDCOMPopulationAdapter.FORMATTER);
+                marriage_date = LocalDate.parse(event.date.toString(), GEDCOMPopulationWriter.FORMAT);
                 if (event.place != null) {
                     marriage_place = event.place.placeName;
                 }

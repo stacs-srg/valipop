@@ -36,6 +36,9 @@ public abstract class AbstractFilePopulationWriter implements IPopulationWriter 
 
     private static final NumberFormat FORMATTER;
 
+    private static final String PERSON_PREFIX = "P";
+    private static final String FAMILY_PREFIX = "M";
+
     protected abstract void outputHeader(PrintWriter writer);
 
     protected abstract void outputTrailer(PrintWriter writer);
@@ -72,11 +75,13 @@ public abstract class AbstractFilePopulationWriter implements IPopulationWriter 
     }
 
     protected static String individualLabel(final int person_id) {
-        return 'p' + padId(person_id);
+
+        return PERSON_PREFIX + padId(person_id);
     }
 
     protected static String familyLabel(final int partnership_id) {
-        return 'm' + padId(partnership_id);
+
+        return FAMILY_PREFIX + padId(partnership_id);
     }
 
     private static String padId(final int index) {

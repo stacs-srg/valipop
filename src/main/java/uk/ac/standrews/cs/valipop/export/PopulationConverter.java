@@ -21,9 +21,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Converts a population from one representation to another.
@@ -71,13 +69,41 @@ public class PopulationConverter implements AutoCloseable {
      */
     public void convert() {
 
-        for (final IPerson person : sort(population.getPeople())) {
+        List<IPerson> people = new ArrayList<>();
+        for (IPerson p : population.getPeople()) people.add(p);
+
+        Set<IPerson> immigrantParentsToAdd = new HashSet<>();
+
+        List<IPartnership> partnerships = new ArrayList<>();
+        for (IPartnership p : population.getPartnerships()) partnerships.add(p);
+
+        Set<IPartnership> immigrantParentPartnershipsToAdd = new HashSet<>();
+
+        for (final IPerson person : people) {
+
+            IPartnership parents = person.getParents();
+
+            if (parents != null) {
+                IPerson mother = parents.getFemalePartner();
+                IPerson father = parents.getMalePartner();
+
+                if (!people.contains(mother)) immigrantParentsToAdd.add(mother);
+                if (!people.contains(father)) immigrantParentsToAdd.add(father);
+
+                if (!partnerships.contains(parents)) immigrantParentPartnershipsToAdd.add(parents);
+            }
+        }
+
+        people.addAll(immigrantParentsToAdd);
+        partnerships.addAll(immigrantParentPartnershipsToAdd);
+
+        for (final IPerson person : sort(people)) {
 
             population_writer.recordPerson(person);
             progressStep();
         }
 
-        for (final IPartnership partnership : sort(population.getPartnerships())) {
+        for (final IPartnership partnership : sort(partnerships)) {
 
             population_writer.recordPartnership(partnership);
             progressStep();

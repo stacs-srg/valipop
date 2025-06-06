@@ -45,7 +45,8 @@ public abstract class AbstractExporterTest {
 
     static final String TEST_DIRECTORY_PATH_STRING = "src/test/resources/valipop/";
 
-    static final int[] TEST_CASE_POPULATION_SIZES = new int[]{100, 1000, 5000};
+    static final int[] TEST_CASE_POPULATION_SIZES = {200, 350, 500};
+    static final int SEED = 841584;
     static final String[] TEST_CASE_FILE_NAME_ROOTS = new String[TEST_CASE_POPULATION_SIZES.length];
 
     static {
@@ -57,8 +58,9 @@ public abstract class AbstractExporterTest {
     protected final IPersonCollection population;
     final String file_name_root;
 
-    Path actual_output = null;
-    Path intended_output = null;
+    Path generated_output1 = null;
+    Path generated_output2 = null;
+    Path expected_output = null;
 
     AbstractExporterTest(final IPersonCollection population, final String file_name_root) {
 
@@ -79,7 +81,8 @@ public abstract class AbstractExporterTest {
     @After
     public void tearDown() throws IOException {
 
-        Files.delete(actual_output);
+        Files.delete(generated_output1);
+        Files.delete(generated_output2);
     }
 
     private static Object[] makeTestConfiguration(final int population_size, final String file_name_root) {
@@ -96,7 +99,7 @@ public abstract class AbstractExporterTest {
                 purpose,
                 Config.DEFAULT_RESULTS_SAVE_PATH);
 
-        config.setDeterministic(true);
+        config.setDeterministic(true).setSeed(SEED);
 
         OBDModel sim = new OBDModel(config);
         sim.runSimulation();

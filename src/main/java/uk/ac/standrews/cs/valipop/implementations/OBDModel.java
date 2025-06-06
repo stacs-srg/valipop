@@ -68,6 +68,8 @@ public class OBDModel {
 
     // TODO use more informative class name
 
+    private static final boolean ENABLE_MIGRATION = false;
+
     private static final int MINIMUM_POPULATION_SIZE = 100;
     private static final int EARLIEST_AGE_OF_MARRIAGE = 16;
     private static final int MAX_ATTEMPTS = 1;
@@ -261,6 +263,7 @@ public class OBDModel {
     }
 
     private void runSimulationAttempt() {
+
         initialisePopulation();
         simulatePopulationUntilStart();
         simulatePopulationUntilEnd();
@@ -318,7 +321,7 @@ public class OBDModel {
             final int shortFallInBirths = adjustPopulationNumbers(numberBorn);
             final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
 
-            migrationModel.performMigration(currentTime, this);
+            if (ENABLE_MIGRATION) migrationModel.performMigration(currentTime, this);
             occupationChangeModel.performOccupationChange(currentTime);
 
             logTimeStep(numberBorn, shortFallInBirths, numberDying);
@@ -338,7 +341,7 @@ public class OBDModel {
             final int numberBorn = createBirths();
             final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
 
-            migrationModel.performMigration(currentTime, this);
+            if (ENABLE_MIGRATION) migrationModel.performMigration(currentTime, this);
             occupationChangeModel.performOccupationChange(currentTime);
 
             logTimeStep(numberBorn, 0, numberDying);
@@ -355,7 +358,7 @@ public class OBDModel {
             final int numberBorn = createBirths();
             final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
 
-            migrationModel.performMigration(currentTime, this);
+            if (ENABLE_MIGRATION) migrationModel.performMigration(currentTime, this);
             occupationChangeModel.performOccupationChange(currentTime);
 
             logTimeStep(numberBorn, 0, numberDying);
@@ -444,12 +447,10 @@ public class OBDModel {
         // TODO why is this a loop? Seems to try to remove n people n times...
         for (int i = 0; i < numberOfMalesToRemove; i++) {
             population.getLivingPeople().removeMales(numberOfMalesToRemove, currentTime, timeStep, true, geography, moveDistanceSelector, config);
-//            population.getLivingPeople().getMales().removeNPersons(numberOfMalesToRemove, currentTime, timeStep, true);
         }
 
         for (int i = 0; i < numberOfFemalesToRemove; i++) {
             population.getLivingPeople().removeFemales(numberOfFemalesToRemove, currentTime, timeStep, true, geography, moveDistanceSelector, config);
-//            population.getLivingPeople().getFemales().removeNPersons(numberOfFemalesToRemove, currentTime, timeStep, true);
         }
     }
 
@@ -1056,10 +1057,6 @@ public class OBDModel {
         return person.getBirthDate().plus(EARLIEST_AGE_OF_MARRIAGE, ChronoUnit.YEARS);
     }
 
-
-
-
-
     private boolean populationTooSmall() {
 
         return population.getLivingPeople().getPeople().size() < MINIMUM_POPULATION_SIZE;
@@ -1481,7 +1478,6 @@ public class OBDModel {
         summary.setSimRunTime(simTimer.getRunTimeSeconds());
         summary.setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
         MemoryUsageAnalysis.reset();
-
     }
 
     private void recordSummary() {

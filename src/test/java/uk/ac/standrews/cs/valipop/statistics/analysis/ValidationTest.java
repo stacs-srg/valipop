@@ -19,10 +19,11 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(Parameterized.class)
 public class ValidationTest {
-    private Path tableDirectory;
-    private double expectedV;
 
-    private static Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/validation");
+    private final Path tableDirectory;
+    private final double expectedV;
+
+    private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/validation");
 
     public ValidationTest(Path tableDirectory, double expectedV) {
         this.tableDirectory = tableDirectory;
@@ -38,12 +39,17 @@ public class ValidationTest {
             { TEST_RESOURCE_DIR.resolve("test4"), 0.0 },
             { TEST_RESOURCE_DIR.resolve("test5"), 0.0 },
             { TEST_RESOURCE_DIR.resolve("test6"), 61.0 },
-            { TEST_RESOURCE_DIR.resolve("test7"), 0 },
             { TEST_RESOURCE_DIR.resolve("test8"), 16.0 },
         });
     }
 
-    // Given model results, the R program should always generate the same V vlaue
+    public static Collection<Object[]> longRunningTestData() {
+        return Arrays.asList(new Object[][] {
+            { TEST_RESOURCE_DIR.resolve("test7"), 0 },
+        });
+    }
+
+    // Given model results, the R program should always generate the same V value
     @Test
     public void test() throws IOException, StatsException {
         int maxBirthingAge = 55;

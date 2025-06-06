@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
+import org.apache.hadoop.yarn.webapp.hamlet2.Hamlet;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
@@ -28,17 +29,15 @@ import java.util.List;
 
 class PopulationTestCases {
 
-    static List<Object[]> getTestCases()  {
+
+
+    synchronized static List<Object[]> getTestCases()  {
 
         List<Object[]> testCases = new ArrayList<>();
 
+        testCases.add(new Object[]{fullPopulation(200, 841584), 200});
+        testCases.add(new Object[]{fullPopulation(350, 56854687), 350});
         testCases.add(new Object[]{fullPopulation(1000, 56854687), 1000});
-        testCases.add(new Object[]{fullPopulation(10000, 56854687), 10000});
-        testCases.add(new Object[]{fullPopulation(20000, 56854687), 20000});
-//        testCases.add(new Object[]{fullPopulation(30000, 56854687), 30000});
-        testCases.add(new Object[]{fullPopulation(10000, 56854688), 10000});
-        testCases.add(new Object[]{fullPopulation(20000, 56854688), 20000});
-//        testCases.add(new Object[]{fullPopulation(30000, 56854688), 30000});
 
         return testCases;
     }

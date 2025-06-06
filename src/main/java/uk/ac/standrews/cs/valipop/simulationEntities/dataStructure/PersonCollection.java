@@ -34,6 +34,8 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
  */
 public abstract class PersonCollection implements Iterable<IPerson> {
 
+    // TODO rationalise with PeopleCollection
+
     private LocalDate startDate;
     private LocalDate endDate;
     private Period divisionSize;

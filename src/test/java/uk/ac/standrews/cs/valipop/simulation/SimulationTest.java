@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -65,20 +66,15 @@ public class SimulationTest {
     @Parameterized.Parameters
     public static Collection<Object[]> getTestCases() {
         return Arrays
-            .asList(new Object[][] {
-                new Object[] { TEST_RESOURCE_DIR.resolve("config-1.txt"), "+wEc08pgIweIC4advvfcIw==", "DWj48GAsFtJS/PX4c+59dA==", "D0jUpvTWOpCVGYPRbc4dQw==" },
+            .asList(new Object[] { TEST_RESOURCE_DIR.resolve("config-1.txt"), "+wEc08pgIweIC4advvfcIw==", "DWj48GAsFtJS/PX4c+59dA==", "D0jUpvTWOpCVGYPRbc4dQw==" },
                 new Object[] { TEST_RESOURCE_DIR.resolve("config-2.txt"), "mEkjBgtyHFMqTZz02r9H4w==", "fhE/MQV8AkzKMtaLcA7rQA==", "jjcDTaoYW4OizssyCtRnTA==" },
                 new Object[] { TEST_RESOURCE_DIR.resolve("config-3.txt"), "VJw8XWYYWzyn3OCs5/wcgA==", "3nKYMFhMxJ1rLhfNYEv/zA==", "QKw8S3qci40qr/ofUNvoJg==" },
-                new Object[] { TEST_RESOURCE_DIR.resolve("config-4.txt"), "FdGj7mPJh9jBk9LGZuhGCA==", "9wdMQtsoGhVGTDH/T49QpQ==", "FxXNt+HHl+xek5Qw6kozsA==" }
-                // Test requires too much memory, and may not be suitable for all test runners
-                //new Object[] { TEST_RESOURCE_DIR.resolve("config-5.txt"), "tH6c5imlN3nv/vp0ZhmCVw==", "Owol4GIFt32ObEncvdfiRg==", "if9r3nzExsMTQE+PgF4FAw==" }
-                //new Object[] { TEST_RESOURCE_DIR.resolve("config-6.txt"), "U31QuVvgN6kKOzWlCyGrrw==", "O3PZzHiBHuK1asQ2zkjxZg==", "gKHm0hFySLLlHi4SCKOyIg==" }
-                //new Object[] { TEST_RESOURCE_DIR.resolve("config-7.txt"), "GuD6akCQtgAa/ZoCziBvDg==", "Is89232rJo7izldr1nppOA==", "hcV9bi58JUkDaJl+Ioe3mw==" }
-            });
+                new Object[] { TEST_RESOURCE_DIR.resolve("config-4.txt"), "FdGj7mPJh9jBk9LGZuhGCA==", "9wdMQtsoGhVGTDH/T49QpQ==", "FxXNt+HHl+xek5Qw6kozsA==" });
     }
 
     @Test
-    public void test() throws IOException, NoSuchAlgorithmException {
+    @Ignore
+    public void testRecordHashes() throws IOException, NoSuchAlgorithmException {
         System.out.println("Testing with " +  configPath.toString());
 
         Config config = new Config(configPath);

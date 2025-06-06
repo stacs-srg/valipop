@@ -110,8 +110,8 @@ public class BalancedMigrationModel {
         // create immigrants by approximately mimicing the emigrants
         for(List<IPerson> household : peopleToMigrate) {
 
-            if(household.size() == 1) {
-                IPerson toMimic = household.get(0);
+            if (household.size() == 1) {
+                IPerson toMimic = household.getFirst();
                 IPerson mimic = mimicPerson(toMimic, null, new HashMap<>());
 
                 immigratePerson(mimic, toMimic);
@@ -121,16 +121,16 @@ public class BalancedMigrationModel {
                 Map<IPartnership, IPartnership> mimicLookup = new HashMap<>();
                 Map<IPerson, IPerson> mimicPersonLookup = new HashMap<>();
 
-                household.sort((o1, o2) -> o1.getBirthDate().isBefore(o2.getBirthDate()) ? 1 : -1);
+                household.sort((o1, o2) -> -o1.getBirthDate().compareTo(o2.getBirthDate()));
 
                 Address newHouse = geography.getRandomEmptyAddress();
                 Address oldCountry = foreignGeography.getCountry();
 
-                for(IPerson p : household) {
+                for (IPerson p : household) {
 
                     IPerson mimic = mimicPersonLookup.get(p);
 
-                    if(mimic == null) {
+                    if (mimic == null) {
 
                         IPartnership mimicParents = mimicLookup.get(p.getParents());
 
@@ -139,11 +139,11 @@ public class BalancedMigrationModel {
 
                             mimicLookup.put(p.getParents(), mimic.getParents());
 
-                            if(p.getParents() != null) {
-                                if(p.getParents().getMalePartner() != null)
+                            if (p.getParents() != null) {
+                                if (p.getParents().getMalePartner() != null)
                                     mimicPersonLookup.put(p.getParents().getMalePartner(), mimic.getParents().getMalePartner());
 
-                                if(p.getParents().getFemalePartner() != null)
+                                if (p.getParents().getFemalePartner() != null)
                                     mimicPersonLookup.put(p.getParents().getFemalePartner(), mimic.getParents().getFemalePartner());
                             }
 
@@ -153,32 +153,31 @@ public class BalancedMigrationModel {
 
                     } else {
 
-                        if(mimic.getParents() == null) {
-                            mimic.setParents(mimicParents(p, mimicPersonLookup));
+                        if (mimic.getParents() == null) {
+                            IPartnership parents = mimicParents(p, mimicPersonLookup);
+                            mimic.setParents(parents);
+                            if (parents != null) {
+                                parents.addChildren(List.of(mimic));
+                            }
                         }
-
                     }
 
-                    population.getLivingPeople().add(mimic);
                     LocalDate arrivalDate = p.getEmigrationDate().isBefore(mimic.getBirthDate()) ? mimic.getBirthDate() : p.getEmigrationDate();
 
                     mimic.setImmigrationDate(arrivalDate);
 
-                    if(arrivalDate.isAfter(mimic.getBirthDate())) {
+                    if (arrivalDate.isAfter(mimic.getBirthDate())) {
                         mimic.setAddress(mimic.getBirthDate(), oldCountry);
                     }
 
                     mimic.setAddress(arrivalDate, newHouse);
-
                 }
 
-                for(IPerson p : mimicPersonLookup.values()) {
+                for (IPerson p : mimicPersonLookup.values()) {
 
-                    if(!newHouse.getInhabitants().contains(p))
+                    if (!newHouse.getInhabitants().contains(p))
                         p.setPhantom(true);
-
                 }
-
             }
         }
     }
@@ -261,6 +260,7 @@ public class BalancedMigrationModel {
         }
 
         IPerson p = personFactory.makePerson(birthDate, parents, adulterousBirth, true, person.getSex());
+        population.getLivingPeople().add(p);
 
         if(parents != null)
             parents.addChildren(Collections.singleton(p));
@@ -277,8 +277,21 @@ public class BalancedMigrationModel {
             IPerson fatherToMimic = parentsToMimic.getMalePartner();
             IPerson motherToMimic = parentsToMimic.getFemalePartner();
 
-            IPerson mimicedFather = mimicPersonLookup.keySet().contains(fatherToMimic) ? mimicPersonLookup.get(fatherToMimic) : personFactory.makePerson(randomDateInYear(fatherToMimic.getBirthDate()), null, fatherToMimic.isAdulterousBirth(), true, SexOption.MALE);
-            IPerson mimicedMother = mimicPersonLookup.keySet().contains(motherToMimic) ? mimicPersonLookup.get(motherToMimic) : personFactory.makePerson(randomDateInYear(motherToMimic.getBirthDate()), null, motherToMimic.isAdulterousBirth(), true, SexOption.FEMALE);
+            // Record newly created parents in population
+
+            IPerson mimicedFather = mimicPersonLookup.get(fatherToMimic);
+            if (mimicedFather == null) {
+                LocalDate birthDate = randomDateInYear(fatherToMimic.getBirthDate());
+                mimicedFather = personFactory.makePerson(birthDate, null, fatherToMimic.isAdulterousBirth(), true, SexOption.MALE);
+                population.getLivingPeople().add(mimicedFather);
+            }
+
+            IPerson mimicedMother = mimicPersonLookup.get(motherToMimic);
+            if (mimicedMother == null) {
+                LocalDate birthDate = randomDateInYear(motherToMimic.getBirthDate());
+                mimicedMother = personFactory.makePerson(birthDate, null, motherToMimic.isAdulterousBirth(), true, SexOption.FEMALE);
+                population.getLivingPeople().add(mimicedMother);
+            }
 
             parents = new Partnership(mimicedFather, mimicedMother);
             parents.setPartnershipDate(parentsToMimic.getPartnershipDate());
