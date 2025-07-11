@@ -25,32 +25,36 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * E2E tests of Geojson export.
+ * E2E tests of GeoJSON export.
  *
  * @author Daniel Brathagen (dbrathagen@gmail.com)
  */
 @Disabled
-public class PopulationToGeojsonTest extends PopulationExportTest {
+public abstract class GeoJSONTest extends PopulationExportTest {
 
     static final String INTENDED_SUFFIX = ".geojson";
 
     @BeforeEach
     public void setup() throws IOException {
 
-        generated_output_file1 = Files.createTempFile(null, INTENDED_SUFFIX);
+//        generated_output_file1 = Files.createTempFile(temp_dir, null, INTENDED_SUFFIX);
+        generated_output_file1 = Files.createTempFile(Path.of("/Users/gnck/Desktop/temp_dir"), null, INTENDED_SUFFIX);
+        generated_output_file2 = Files.createTempFile(temp_dir,null, INTENDED_SUFFIX);
+
         expected_output_file = Paths.get(TEST_DIRECTORY_PATH_STRING, "geojson", file_name_root + INTENDED_SUFFIX);
     }
 
-    public PopulationToGeojsonTest(final IPersonCollection population, final String file_name) {
+    public GeoJSONTest(final IPersonCollection population) {
 
         super(population);
     }
 
     @Test
-    public void GeojsonExportIsAsExpected() throws Exception {
+    public void GeoJSONExportIsAsExpected() throws Exception {
 
         final IPopulationWriter population_writer = new GeojsonPopulationWriter(generated_output_file1);
 

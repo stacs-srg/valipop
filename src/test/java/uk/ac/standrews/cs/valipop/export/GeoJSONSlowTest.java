@@ -17,41 +17,23 @@
  */
 package uk.ac.standrews.cs.valipop.export;
 
-import uk.ac.standrews.cs.valipop.config.AbstractTestCaseRecorder;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedClass;
+import org.junit.jupiter.params.provider.MethodSource;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
-import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 /**
- * Generates test cases for GEDCOM export.
+ * E2E tests of GEDCOM export.
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public class GEDCOMTestCaseRecorder extends AbstractTestCaseRecorder {
+@ParameterizedClass
+@MethodSource("getSlowTestCases")
+@Tag("slow")
+public class GeoJSONSlowTest extends GeoJSONTest {
 
-    // The generated GEDCOM files can be checked for validity at: http://ged-inline.elasticbeanstalk.com
+    public GeoJSONSlowTest(final IPersonCollection population) {
 
-    public static void main(final String[] args) throws Exception {
-
-        new GEDCOMTestCaseRecorder().recordTestCase();
-    }
-
-    @Override
-    protected IPopulationWriter getPopulationWriter(final Path path, final IPersonCollection population) throws IOException {
-
-        return new GEDCOMPopulationWriter(path);
-    }
-
-    @Override
-    protected String getIntendedOutputFileSuffix() {
-
-        return GEDCOMTest.INTENDED_SUFFIX;
-    }
-
-    @Override
-    protected String getDirectoryName() {
-        return "gedcom";
+        super(population);
     }
 }
