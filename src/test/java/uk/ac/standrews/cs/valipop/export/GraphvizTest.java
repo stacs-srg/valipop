@@ -18,13 +18,14 @@
 package uk.ac.standrews.cs.valipop.export;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import uk.ac.standrews.cs.valipop.export.graphviz.GraphvizPopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -32,19 +33,21 @@ import java.nio.file.Paths;
  *
  * @author Daniel Brathagen (dbrathagen@gmail.com)
  */
-@Disabled
-public class PopulationToGraphvizTest extends PopulationExportTest {
+public abstract class GraphvizTest extends PopulationExportTest {
+
+    // Files can be checked for validity at: https://magjac.com/graphviz-visual-editor/
 
     static final String INTENDED_SUFFIX = ".dot";
 
     @BeforeEach
     public void setup() throws IOException {
 
-        generated_output_file1 = Files.createTempFile(null, INTENDED_SUFFIX);
+        generated_output_file1 = Files.createTempFile(temp_dir, null, INTENDED_SUFFIX);
+//        generated_output_file1 = Files.createTempFile(Path.of("/Users/gnck/Desktop/"), null, INTENDED_SUFFIX);
         expected_output_file = Paths.get(TEST_DIRECTORY_PATH_STRING, "graphviz", file_name_root + INTENDED_SUFFIX);
     }
 
-    public PopulationToGraphvizTest(final IPersonCollection population, final String file_name) {
+    public GraphvizTest(final IPersonCollection population) {
 
         super(population);
     }
@@ -54,7 +57,7 @@ public class PopulationToGraphvizTest extends PopulationExportTest {
 
         final IPopulationWriter population_writer = new GraphvizPopulationWriter(population, generated_output_file1);
 
-        try (PopulationConverter converter = new PopulationConverter(population, population_writer)) {
+        try (final PopulationConverter converter = new PopulationConverter(population, population_writer)) {
             converter.convert();
         }
 
