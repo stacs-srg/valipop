@@ -17,21 +17,21 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableInstances;
 
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTable;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ContingencyTree;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class CTtableDeath extends CTtable {
+public class DeathContingencyTable extends ContingencyTable {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTtableDeath(CTtree tree) {
+    public DeathContingencyTable(final ContingencyTree tree) {
 
-        for (Node n : tree.getLeafNodes()) {
-            CTRow leaf = n.toCTRow();
+        for (final Node node : tree.getLeafNodes()) {
+            final ContingencyTableRow leaf = node.toCTRow();
 
             if (leaf != null && leaf.getCount() != null) {
 
@@ -46,19 +46,17 @@ public class CTtableDeath extends CTtable {
                     leaf.deleteVariable("Separated");
                     leaf.deleteVariable("NPA");
 
-                    CTRow h = table.get(leaf.hash());
+                    final ContingencyTableRow row = table.get(leaf.hash());
 
-                    if (h == null) {
+                    if (row == null)
                         table.put(leaf.hash(), leaf);
-                    } else {
-                        h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
-                    }
+                    else
+                        row.setCount(row.combineCount(row.getCount(), leaf.getCount()));
 
-                } catch (RuntimeException e) {
+                } catch (final RuntimeException ignore) {
                     // Unfilled row - thus pass
                 }
             }
         }
     }
-
 }

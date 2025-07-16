@@ -21,9 +21,8 @@ import uk.ac.standrews.cs.valipop.implementations.Randomness;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.Utilities;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.MarriageSourceRecord;
 
 import java.time.LocalDate;
@@ -94,14 +93,14 @@ public class TDMarriageSourceRecord extends MarriageSourceRecord {
         GROOM_BIRTH_RECORD_IDENTITY = String.valueOf(groomID);
         BRIDE_BIRTH_RECORD_IDENTITY = String.valueOf(brideID);
 
-        final int brideImmigrantGen = PersonCharacteristicsIdentifier.getImmigrantGeneration(partnership.getFemalePartner());
+        final int brideImmigrantGen = Utilities.getImmigrantGeneration(partnership.getFemalePartner());
 
         if(brideImmigrantGen == -1)
             BRIDE_IMMIGRATION_GENERATION = "NA";
         else
             BRIDE_IMMIGRATION_GENERATION = String.valueOf(brideImmigrantGen);
 
-        final int groomImmigrantGen = PersonCharacteristicsIdentifier.getImmigrantGeneration(partnership.getMalePartner());
+        final int groomImmigrantGen = Utilities.getImmigrantGeneration(partnership.getMalePartner());
 
         if (groomImmigrantGen == -1)
             GROOM_IMMIGRATION_GENERATION = "NA";

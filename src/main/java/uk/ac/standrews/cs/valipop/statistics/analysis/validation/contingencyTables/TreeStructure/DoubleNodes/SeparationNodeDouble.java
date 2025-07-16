@@ -19,10 +19,10 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.Utilities;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SeparationOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.PartneringStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.SeparationStatsKey;
@@ -61,11 +61,11 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
         incCountByOne();
 
-        IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
+        IPartnership activePartnership = Utilities.getActivePartnership(person, currentDate);
 
         Integer newPartnerAge = null;
 
-        if (activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, Year.of(currentDate.getYear()))) {
+        if (activePartnership != null && Utilities.startedInYear(activePartnership, Year.of(currentDate.getYear()))) {
             IPerson partner = activePartnership.getPartnerOf(person);
             newPartnerAge = ageOnDate(partner, activePartnership.getPartnershipDate());
         }
@@ -110,7 +110,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
             double numberOfFemales = getCount();
             Period timePeriod = Period.ofYears(1);
 
-            MultipleDeterminedCountByIR mDC = (MultipleDeterminedCountByIR) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
+            MultipleDeterminedCountByIntegerRange mDC = (MultipleDeterminedCountByIntegerRange) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
             // getting the age range labels
             Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
@@ -143,7 +143,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
         Year currentDate = getYearAtAge(yob, age);
 
-        if (!died && currentDate.isBefore( Year.of(getEndDate().getYear())) && diedN.getCount() > CTtree.NODE_MIN_COUNT) {
+        if (!died && currentDate.isBefore( Year.of(getEndDate().getYear())) && diedN.getCount() > ContingencyTree.NODE_MIN_COUNT) {
 
             SexNodeDouble s = (SexNodeDouble) getAncestor(new SexNodeDouble());
 
@@ -279,7 +279,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                     double numberOfFemales = getCount();
                     Period timePeriod = Period.ofYears(1);
 
-                    MultipleDeterminedCountByIR mDC = (MultipleDeterminedCountByIR) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
+                    MultipleDeterminedCountByIntegerRange mDC = (MultipleDeterminedCountByIntegerRange) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
                     Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
 

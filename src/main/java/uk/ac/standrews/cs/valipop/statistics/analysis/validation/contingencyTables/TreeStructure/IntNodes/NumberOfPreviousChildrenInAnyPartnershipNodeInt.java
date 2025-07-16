@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.Utilities;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
@@ -42,14 +42,14 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeInt extends IntNode<Int
 
         incCountByOne();
 
-        final IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
+        final IPartnership activePartnership = Utilities.getActivePartnership(person, currentDate);
 
         Boolean option;
 
         if (activePartnership == null) {
             option = false;
         } else {
-            option = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, Year.of(currentDate.getYear())) != 0;
+            option = Utilities.getChildrenBirthedInYear(activePartnership, Year.of(currentDate.getYear())) != 0;
         }
 
         try {

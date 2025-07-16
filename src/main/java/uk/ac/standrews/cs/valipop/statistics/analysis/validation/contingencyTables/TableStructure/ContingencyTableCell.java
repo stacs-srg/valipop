@@ -20,12 +20,12 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class CTCell {
+public class ContingencyTableCell {
 
-    private String variable;
+    private final String variable;
     private String value;
 
-    public CTCell(String variable, String value) {
+    public ContingencyTableCell(final String variable, final String value) {
         this.variable = variable;
         this.value = value;
     }
@@ -38,8 +38,7 @@ public class CTCell {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
-
 }

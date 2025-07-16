@@ -27,36 +27,37 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class CTtree extends Node<String, SourceType, Number, Number> {
+public class ContingencyTree extends Node<String, SourceType, Number, Number> {
 
-    public static final Logger log = Logger.getLogger(CTtree.class.getName());
+    public static final Logger log = Logger.getLogger(ContingencyTree.class.getName());
 
-    private final LinkedList<RunnableNode> deathTasks = new LinkedList<>();
-    private final LinkedList<RunnableNode> ageTasks = new LinkedList<>();
-    private final LinkedList<RunnableNode> nciyTasks = new LinkedList<>();
-    private final LinkedList<RunnableNode> nciapTasks = new LinkedList<>();
-    private final LinkedList<RunnableNode> sepTasks = new LinkedList<>();
+    private final List<RunnableNode> deathTasks = new LinkedList<>();
+    private final List<RunnableNode> ageTasks = new LinkedList<>();
+    private final List<RunnableNode> numberOfChildrenInYearTasks = new LinkedList<>();
+    private final List<RunnableNode> numberOfPreviousChildrenTasks = new LinkedList<>();
+    private final List<RunnableNode> separationTasks = new LinkedList<>();
 
     public static double NODE_MIN_COUNT = 1E-66;
 
-    private PopulationStatistics expected;
+    private PopulationStatistics expectedStatistics;
 
     private LocalDate endDate;
     private LocalDate startDate;
 
-    private SourceNodeInt simNode;
-    private SourceNodeDouble statNode = null;
+    private SourceNodeInt observedNode;
+    private SourceNodeDouble expectedNode = null;
 
-    public CTtree(final Iterable<IPerson> population, final PopulationStatistics expected, final LocalDate startDate, final LocalDate zeroDate, final LocalDate endDate, final int startStepBack, final double precision) {
+    public ContingencyTree(final Iterable<IPerson> population, final PopulationStatistics expectedStatistics, final LocalDate startDate, final LocalDate zeroDate, final LocalDate endDate, final int startStepBack, final double precision) {
 
-        CTtree.NODE_MIN_COUNT = precision;
+        ContingencyTree.NODE_MIN_COUNT = precision;
 
-        this.expected = expected;
+        this.expectedStatistics = expectedStatistics;
         this.startDate = startDate;
         this.endDate = endDate.minusYears(1);
 
@@ -85,7 +86,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
         log.info("CTree --- Tree completed");
     }
 
-    public CTtree() {
+    public ContingencyTree() {
     }
 
     @SuppressWarnings("rawtypes")
@@ -93,8 +94,8 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
 
         final Collection<Node> childNodes = new ArrayList<>();
 
-        childNodes.addAll(simNode.getLeafNodes());
-        childNodes.addAll(statNode.getLeafNodes());
+        childNodes.addAll(observedNode.getLeafNodes());
+        childNodes.addAll(expectedNode.getLeafNodes());
 
         return childNodes;
     }
@@ -113,18 +114,18 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
     }
 
     public PopulationStatistics getInputStats() {
-        return expected;
+        return expectedStatistics;
     }
 
     @SuppressWarnings("rawtypes")
     private Node addChildA(final SourceType childOption) {
 
         if (childOption == SourceType.SIM) {
-            simNode = new SourceNodeInt(childOption, this);
-            return simNode;
+            observedNode = new SourceNodeInt(childOption, this);
+            return observedNode;
         } else {
-            statNode = new SourceNodeDouble(childOption, this);
-            return statNode;
+            expectedNode = new SourceNodeDouble(childOption, this);
+            return expectedNode;
         }
     }
 
@@ -132,11 +133,11 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
     public Node getChild(final SourceType option) throws ChildNotFoundException {
 
         if (option == SourceType.SIM)
-            if (simNode != null) return simNode;
+            if (observedNode != null) return observedNode;
             else throw new ChildNotFoundException();
 
         else
-            if (statNode != null) return statNode;
+            if (expectedNode != null) return expectedNode;
             else throw new ChildNotFoundException();
     }
 
@@ -148,11 +149,11 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
         } else if (node instanceof AgeNodeDouble) {
             ageTasks.add(node);
         } else if (node instanceof NumberOfChildrenInYearNodeDouble) {
-            nciyTasks.add(node);
+            numberOfChildrenInYearTasks.add(node);
         } else if (node instanceof NumberOfPreviousChildrenInAnyPartnershipNodeDouble) {
-            nciapTasks.add(node);
+            numberOfPreviousChildrenTasks.add(node);
         } else if (node instanceof SeparationNodeDouble) {
-            sepTasks.add(node);
+            separationTasks.add(node);
         }
     }
 
@@ -162,35 +163,26 @@ public class CTtree extends Node<String, SourceType, Number, Number> {
 
         while (!deathTasks.isEmpty()) {
 
-            final RunnableNode n = deathTasks.removeFirst();
-            n.run();
+            deathTasks.removeFirst().run();
         }
 
-        while (nciyTasks.size() + sepTasks.size() + nciapTasks.size() + ageTasks.size() != 0) {
+        while (numberOfChildrenInYearTasks.size() + separationTasks.size() + numberOfPreviousChildrenTasks.size() + ageTasks.size() > 0) {
 
-            while (nciyTasks.size() + sepTasks.size() + nciapTasks.size() != 0) {
+            while (numberOfChildrenInYearTasks.size() + separationTasks.size() + numberOfPreviousChildrenTasks.size() > 0) {
 
-                while (!sepTasks.isEmpty()) {
+                while (!separationTasks.isEmpty())
+                    separationTasks.removeFirst().run();
 
-                    final RunnableNode n = sepTasks.removeFirst();
-                    n.run();
-                }
-
-                while (!nciapTasks.isEmpty()) {
-
-                    final RunnableNode n = nciapTasks.removeFirst();
-                    n.run();
-                }
+                while (!numberOfPreviousChildrenTasks.isEmpty())
+                    numberOfPreviousChildrenTasks.removeFirst().run();
             }
 
             for (int i = 0; i < 2; i++) {
                 if (ageTasks.isEmpty()) break;
 
-                final RunnableNode n = ageTasks.removeFirst();
-                final AgeNodeDouble a = (AgeNodeDouble) n;
-                final YOBNodeDouble y = (YOBNodeDouble) a.getAncestor(new YOBNodeDouble());
-                log.info("CTree --- Creating nodes for year: " + y.getOption().toString());
-                n.run();
+                final RunnableNode node = ageTasks.removeFirst();
+                log.info("CTree --- Creating nodes for year: " + ((YOBNodeDouble) ((AgeNodeDouble) node).getAncestor(new YOBNodeDouble())).getOption());
+                node.run();
             }
         }
     }

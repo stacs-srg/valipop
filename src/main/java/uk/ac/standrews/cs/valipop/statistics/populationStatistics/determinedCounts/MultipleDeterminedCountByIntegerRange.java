@@ -26,17 +26,17 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledVa
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class MultipleDeterminedCountByIR extends MultipleDeterminedCount<IntegerRange, Integer, Integer> {
+public class MultipleDeterminedCountByIntegerRange extends MultipleDeterminedCount<IntegerRange, Integer, Integer> {
 
-    public MultipleDeterminedCountByIR(StatsKey<Integer, Integer> key, LabelledValueSet<IntegerRange, Integer> determinedCount,
-                                   LabelledValueSet<IntegerRange, Double> rawCorrectedCount,
-                                   LabelledValueSet<IntegerRange, Double> rawUncorrectedCount) {
+    public MultipleDeterminedCountByIntegerRange(final StatsKey<Integer, Integer> key, final LabelledValueSet<IntegerRange, Integer> determinedCount,
+                                                 final LabelledValueSet<IntegerRange, Double> rawCorrectedCount,
+                                                 final LabelledValueSet<IntegerRange, Double> rawUncorrectedCount) {
 
         super(key, determinedCount, rawCorrectedCount, rawUncorrectedCount);
     }
 
     @Override
-    public LabelledValueSet<IntegerRange, Integer> getZeroedCountsTemplate(RandomGenerator random) {
+    public LabelledValueSet<IntegerRange, Integer> getZeroedCountsTemplate(final RandomGenerator random) {
         return new IntegerRangeToIntegerSet(determinedCount.getLabels(), 0, random);
     }
 }

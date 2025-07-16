@@ -22,11 +22,11 @@ import java.util.Collection;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class CTRowInt extends CTRow<Integer> {
+public class CTRowInt extends ContingencyTableRow<Integer> {
 
     public CTRowInt() {}
 
-    public CTRowInt(Collection<CTCell> cells) {
+    public CTRowInt(Collection<ContingencyTableCell> cells) {
         this.cells = cells;
     }
 

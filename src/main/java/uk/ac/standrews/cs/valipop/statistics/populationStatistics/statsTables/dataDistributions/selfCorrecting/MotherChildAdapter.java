@@ -20,7 +20,7 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.d
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
@@ -88,9 +88,9 @@ public class MotherChildAdapter implements SelfCorrectingProportionalDistributio
     }
 
     @Override
-    public MultipleDeterminedCountByIR determineCount(StatsKey<Integer, Integer> key, Config config, RandomGenerator random) {
+    public MultipleDeterminedCountByIntegerRange determineCount(StatsKey<Integer, Integer> key, Config config, RandomGenerator random) {
 
-        MultipleDeterminedCountByIR childNumbers = distribution.determineCount(key, config, random);
+        MultipleDeterminedCountByIntegerRange childNumbers = distribution.determineCount(key, config, random);
 
         LabelledValueSet<IntegerRange, Double> rawCorrectedMotherNumbers = new IntegerRangeToDoubleSet(childNumbers.getRawCorrectedCount(), random).divisionOfValuesByLabels();
         LabelledValueSet<IntegerRange, Double> rawUncorrectedMotherNumbers = new IntegerRangeToDoubleSet(childNumbers.getRawUncorrectedCount(), random).divisionOfValuesByLabels();
@@ -98,10 +98,10 @@ public class MotherChildAdapter implements SelfCorrectingProportionalDistributio
         try {
             LabelledValueSet<IntegerRange, Integer> motherNumbers = new IntegerRangeToIntegerSet(childNumbers.getDeterminedCount(), random).divisionOfValuesByLabels().controlledRoundingMaintainingSumProductOfLabelValues();
 
-            return new MultipleDeterminedCountByIR(key, motherNumbers, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);
+            return new MultipleDeterminedCountByIntegerRange(key, motherNumbers, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);
 
         } catch (NullPointerException e) {
-            return new MultipleDeterminedCountByIR(key, null, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);
+            return new MultipleDeterminedCountByIntegerRange(key, null, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);
         }
     }
 

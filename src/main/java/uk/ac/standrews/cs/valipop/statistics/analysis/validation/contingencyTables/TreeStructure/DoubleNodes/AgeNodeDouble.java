@@ -18,7 +18,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.*;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
@@ -124,13 +124,13 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, Boolean> implements 
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTRow<Double> toCTRow() {
+    public ContingencyTableRow<Double> toCTRow() {
 
         if (initNode) {
             return null;
         } else {
 
-            CTRow r = getParent().toCTRow();
+            ContingencyTableRow r = getParent().toCTRow();
             if (r != null) {
                 r.setVariable(getVariableName(), getOption().toString());
             }

@@ -18,7 +18,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ControlChildrenNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNode;
@@ -58,8 +58,8 @@ public class YOBNodeDouble extends DoubleNode<Year, SexOption> implements Contro
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTRow<Double> toCTRow() {
-        CTRow r = getParent().toCTRow();
+    public ContingencyTableRow<Double> toCTRow() {
+        ContingencyTableRow r = getParent().toCTRow();
         r.setVariable(getVariableName(), Integer.toString(getOption().getValue()));
         return r;
     }

@@ -1,23 +1,41 @@
+#
+# valipop - <https://github.com/stacs-srg/valipop>
+# Copyright © 2025 Systems Research Group, University of St Andrews (graham.kirby@st-andrews.ac.uk)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
 run_dir_path <- commandArgs(TRUE)[1]
 max_birthing_age <- as.integer(commandArgs(TRUE)[2])
 
 death <- clean_death_data(
-  read_in_data(paste(run_dir_path, "/tables/death-CT.csv", sep = ""))
+  read_in_data(paste(run_dir_path, "/tables/death-contingency-table.csv", sep = ""))
 )
 
 mbirth <- clean_mb_data(
-  read_in_data(paste(run_dir_path, "/tables/mb-CT.csv", sep = "")),
+  read_in_data(paste(run_dir_path, "/tables/multiple-birth-contingency-table.csv", sep = "")),
   max_birthing_age,
   round = TRUE
 )
 
 obirth <- clean_ob_data(
-  read_in_data(paste(run_dir_path, "/tables/ob-CT.csv", sep = "")),
+  read_in_data(paste(run_dir_path, "/tables/birth-contingency-table.csv", sep = "")),
   max_birthing_age
 )
 
 part <- clean_part_data(
-  read_in_data(paste(run_dir_path, "/tables/part-CT.csv", sep = "")),
+  read_in_data(paste(run_dir_path, "/tables/partnership-contingency-table.csv", sep = "")),
   round = TRUE
 )
 

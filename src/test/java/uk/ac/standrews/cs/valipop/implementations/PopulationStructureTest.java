@@ -40,9 +40,6 @@ import static uk.ac.standrews.cs.valipop.implementations.OBDModel.MAXIMUM_AGE_AT
  */
 public abstract class PopulationStructureTest {
 
-    public static final List<Integer> FAST_TEST_CASE_INITIAL_POPULATION_SIZES = List.of(200, 300);
-    public static final List<Integer> SLOW_TEST_CASE_INITIAL_POPULATION_SIZES = List.of(1000, 10000);
-
     private static final int MAX_REASONABLE_FAMILY_SIZE = 20;
     private static final int MINIMUM_MOTHER_AGE_AT_CHILDBIRTH = 12;
     private static final int MAXIMUM_MOTHER_AGE_AT_CHILDBIRTH = 55;
@@ -55,16 +52,6 @@ public abstract class PopulationStructureTest {
     PopulationStructureTest(final IPersonCollection population) {
 
         this.population = population;
-    }
-
-    static List<Arguments> getFastTestCases()  {
-
-        return getTestConfigurations(FAST_TEST_CASE_INITIAL_POPULATION_SIZES);
-    }
-
-    static List<Arguments> getSlowTestCases()  {
-
-        return getTestConfigurations(SLOW_TEST_CASE_INITIAL_POPULATION_SIZES);
     }
 
     @Test

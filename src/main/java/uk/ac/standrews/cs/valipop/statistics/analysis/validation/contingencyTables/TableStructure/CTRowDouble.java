@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class CTRowDouble extends CTRow<Double> {
+public class CTRowDouble extends ContingencyTableRow<Double> {
 
     @Override
     public Double combineCount(Double a, Double b) {

@@ -18,11 +18,11 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ControlSelfNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.PartneringStatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 
@@ -74,7 +74,7 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
             double numberOfFemales = getParent().getCount();
             Period timePeriod = Period.ofYears(1);
 
-            MultipleDeterminedCountByIR mDC = (MultipleDeterminedCountByIR) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
+            MultipleDeterminedCountByIntegerRange mDC = (MultipleDeterminedCountByIntegerRange) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
             if (getOption().getValue() == null) {
 
@@ -108,8 +108,8 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTRow<Double> toCTRow() {
-        CTRow r = getParent().toCTRow();
+    public ContingencyTableRow<Double> toCTRow() {
+        ContingencyTableRow r = getParent().toCTRow();
 
         if (r != null) {
             if (getOption() == null) {

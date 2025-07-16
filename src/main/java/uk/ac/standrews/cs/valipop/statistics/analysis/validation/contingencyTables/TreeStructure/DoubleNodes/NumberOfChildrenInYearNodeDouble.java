@@ -20,7 +20,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
@@ -86,7 +86,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     public void advanceCount() {
 
         // Should we be restricting this so much?
-        if (getCount() > CTtree.NODE_MIN_COUNT && getOption() != 0) {
+        if (getCount() > ContingencyTree.NODE_MIN_COUNT && getOption() != 0) {
 
             Year yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
             int age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
@@ -140,7 +140,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
 
             LocalDate currentDate = getDateAtAge(yob, age);
 
-            MultipleDeterminedCountByIR mDC = (MultipleDeterminedCountByIR) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(), Period.ofYears(1), currentDate), null);
+            MultipleDeterminedCountByIntegerRange mDC = (MultipleDeterminedCountByIntegerRange) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(), Period.ofYears(1), currentDate), null);
 
             LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 

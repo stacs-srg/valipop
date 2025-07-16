@@ -17,31 +17,29 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableInstances;
 
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTable;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ContingencyTree;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
-
-import java.util.Objects;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class CTtableSep extends CTtable {
+public class SeparationContingencyTable extends ContingencyTable {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTtableSep(CTtree tree) {
+    public SeparationContingencyTable(final ContingencyTree tree) {
 
-        for (Node n : tree.getLeafNodes()) {
-            CTRow leaf = n.toCTRow();
+        for (final Node node : tree.getLeafNodes()) {
+            final ContingencyTableRow leaf = node.toCTRow();
 
             if (leaf != null && leaf.getCount() != null) {
                 try {
                     leaf.addDateVariable();
 
-                    if (Objects.equals(leaf.getVariable("Sex").getValue(), "F")) {
-                        leaf.deleteVariable("Sex");
+                    if (leaf.getVariable("Sex").getValue().equals("F")) {
 
+                        leaf.deleteVariable("Sex");
                         leaf.deleteVariable("Died");
                         leaf.deleteVariable("PNCIP");
                         leaf.deleteVariable("NPCIAP");
@@ -49,16 +47,15 @@ public class CTtableSep extends CTtable {
                         leaf.deleteVariable("NPA");
                         leaf.deleteVariable("Age");
 
-                        CTRow h = table.get(leaf.hash());
+                        final ContingencyTableRow row = table.get(leaf.hash());
 
-                        if (h == null) {
+                        if (row == null)
                             table.put(leaf.hash(), leaf);
-                        } else {
-                            h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
-                        }
+                        else
+                            row.setCount(row.combineCount(row.getCount(), leaf.getCount()));
                     }
 
-                } catch (RuntimeException e) {
+                } catch (final RuntimeException ignore) {
                     // Unfilled row - thus pass
                 }
             }

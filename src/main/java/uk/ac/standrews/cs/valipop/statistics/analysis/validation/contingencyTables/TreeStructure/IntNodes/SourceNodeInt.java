@@ -18,7 +18,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRowInt;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.*;
 
@@ -34,7 +34,7 @@ public class SourceNodeInt extends IntNode<SourceType, Year> {
     @SuppressWarnings("rawtypes")
     private Node parent;
 
-    public SourceNodeInt(final SourceType option, final CTtree parent) {
+    public SourceNodeInt(final SourceType option, final ContingencyTree parent) {
         super(option, parent);
         this.parent = parent;
     }
@@ -83,8 +83,8 @@ public class SourceNodeInt extends IntNode<SourceType, Year> {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTRow<Integer> toCTRow() {
-        final CTRow r = new CTRowInt();
+    public ContingencyTableRow<Integer> toCTRow() {
+        final ContingencyTableRow r = new CTRowInt();
         r.setVariable(getVariableName(), getOption().toString());
         return r;
     }

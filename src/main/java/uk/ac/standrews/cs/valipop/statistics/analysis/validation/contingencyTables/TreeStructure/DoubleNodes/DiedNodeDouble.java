@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
@@ -65,7 +65,7 @@ public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements
 
         Year currentDate = getYearAtAge(yob, age);
 
-        if (!getOption() && currentDate.isBefore(Year.of(getEndDate().getYear())) && getCount() > CTtree.NODE_MIN_COUNT) {
+        if (!getOption() && currentDate.isBefore(Year.of(getEndDate().getYear())) && getCount() > ContingencyTree.NODE_MIN_COUNT) {
 
             SexNodeDouble sN = (SexNodeDouble) getAncestor(new SexNodeDouble());
             IntegerRange ageR = new IntegerRange(age + 1);
@@ -209,8 +209,8 @@ public class DiedNodeDouble extends DoubleNode<Boolean, IntegerRange> implements
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTRow<Double> toCTRow() {
-        CTRow r = getParent().toCTRow();
+    public ContingencyTableRow<Double> toCTRow() {
+        ContingencyTableRow r = getParent().toCTRow();
 
         if (r != null) {
             r.setVariable(getVariableName(), getOption().toString());
