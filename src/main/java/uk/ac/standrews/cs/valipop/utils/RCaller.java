@@ -153,6 +153,8 @@ public class RCaller {
         if (process.exitValue() != 0)
             throw new RuntimeException("RScript execution failed");
 
+        process.destroy();
+
         return v;
     }
 
