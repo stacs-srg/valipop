@@ -45,6 +45,7 @@ import java.util.logging.*;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
+@SuppressWarnings("UnusedReturnValue")
 public class Config implements Serializable {
 
     // ---- Constants ----
@@ -252,7 +253,7 @@ public class Config implements Serializable {
         final Iterator<Path> it = getVarGeographyPaths().iterator();
         setGeographyFilePath(it.next());
 
-        if(it.hasNext())
+        if (it.hasNext())
             throw new UnsupportedOperationException("Only one geography file is supported for each simulation - please remove surplus files from input data structure or write more code...");
     }
 
@@ -424,12 +425,6 @@ public class Config implements Serializable {
         return runPurpose;
     }
 
-    public Config setRunPurpose(final String runPurpose) {
-
-        this.runPurpose = runPurpose;
-        return this;
-    }
-
     public Period getInputWidth() {
         return inputWidth;
     }
@@ -480,6 +475,12 @@ public class Config implements Serializable {
         return this;
     }
 
+    public Config setRunPurpose(final String runPurpose) {
+
+        this.runPurpose = runPurpose;
+        return this;
+    }
+
     public Config setSetupBirthRate(final double setUpBR) {
 
         this.setUpBR = setUpBR;
@@ -523,6 +524,7 @@ public class Config implements Serializable {
     }
 
     public Config setProjectPath(final Path projectPath) {
+
         this.projectPath = projectPath;
         return this;
     }
@@ -623,12 +625,12 @@ public class Config implements Serializable {
     }
 
     // Filter method to exclude dot files from data file directory streams
-    private DirectoryStream.Filter<Path> filter = file -> {
+    private final DirectoryStream.Filter<Path> filter = file -> {
 
         Path path = file.getFileName();
-        if (path != null) {
+        if (path != null)
             return !path.toString().matches("^\\..+");
-        }
+
         throw new IOException("Failed to get Filename");
     };
 
@@ -991,6 +993,10 @@ public class Config implements Serializable {
         this.graphsPath                       =Path.of(config.graphsPath);
         this.contingencyTablesPath            =Path.of(config.contingencyTablesPath);
         this.runPath                          =Path.of(config.runPath);
+        this.summaryResultsDirPath            =Path.of(config.summaryResultsDirPath);
+        this.resultsSavePath                  =Path.of(config.resultsSavePath);
+        this.geographyFilePath                =Path.of(config.geographyFilePath);
+        this.projectPath                      =Path.of(config.projectPath);
         this.setUpBR                          =config.setUpBR;
         this.setUpDR                          =config.setUpDR;
         this.recoveryFactor                   =config.recoveryFactor;
@@ -1002,10 +1008,6 @@ public class Config implements Serializable {
         this.minBirthSpacing                  =config.minBirthSpacing;
         this.minGestationPeriod               =config.minGestationPeriod;
         this.inputWidth                       =config.inputWidth;
-        this.summaryResultsDirPath            =Path.of(config.summaryResultsDirPath);
-        this.resultsSavePath                  =Path.of(config.resultsSavePath);
-        this.geographyFilePath                =Path.of(config.geographyFilePath);
-        this.projectPath                      =Path.of(config.projectPath);
         this.seed                             =config.seed;
         this.overSizedGeographyFactor         =config.overSizedGeographyFactor;
         this.ctTreeStepback                   =config.ctTreeStepback;

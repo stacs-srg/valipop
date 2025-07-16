@@ -33,7 +33,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
@@ -541,7 +541,7 @@ public class OBDModel {
 
         final PartneringStatsKey key = new PartneringStatsKey(age, mothersNeedingPartners.size(), config.getSimulationTimeStep(), currentDate);
 
-        final MultipleDeterminedCountByIR determinedCounts = (MultipleDeterminedCountByIR) desiredStatistics.getDeterminedCount(key, config);
+        final MultipleDeterminedCountByIntegerRange determinedCounts = (MultipleDeterminedCountByIntegerRange) desiredStatistics.getDeterminedCount(key, config);
 
         final OperableLabelledValueSet<IntegerRange, Integer> partnerCounts = new IntegerRangeToIntegerSet(determinedCounts.getDeterminedCount(), Randomness.getRandomGenerator());
         final LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0, Randomness.getRandomGenerator());
@@ -567,7 +567,7 @@ public class OBDModel {
         return 0;
     }
 
-    private Map<Integer, List<IPerson>> getPartneredFemalesByChildren(final MultipleDeterminedCountByIR determinedCounts, final List<ProposedPartnership> proposedPartnerships) {
+    private Map<Integer, List<IPerson>> getPartneredFemalesByChildren(final MultipleDeterminedCountByIntegerRange determinedCounts, final List<ProposedPartnership> proposedPartnerships) {
 
         final LabelledValueSet<IntegerRange, Integer> returnPartnerCounts = determinedCounts.getZeroedCountsTemplate(Randomness.getRandomGenerator());
         final Map<Integer, List<IPerson>> partneredFemalesByChildren = new HashMap<>();
@@ -1027,7 +1027,7 @@ public class OBDModel {
 
         final int ageOfMothers = ageOnDate(females.getFirst(), currentDate);
 
-        final MultipleDeterminedCountByIR requiredBirths = calcNumberOfPregnanciesOfMultipleBirth(ageOfMothers, numberOfChildren);
+        final MultipleDeterminedCountByIntegerRange requiredBirths = calcNumberOfPregnanciesOfMultipleBirth(ageOfMothers, numberOfChildren);
         final LabelledValueSet<IntegerRange, Integer> motherCountsByMaternities = new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0, Randomness.getRandomGenerator());
         final OperableLabelledValueSet<IntegerRange, Integer> remainingMothersToFind = new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().clone(), Randomness.getRandomGenerator());
 
@@ -1039,7 +1039,7 @@ public class OBDModel {
         }
     }
 
-    private MothersNeedingPartners getMothersNeedingPartners(final List<IPerson> females, final int numberOfChildren, final MultipleDeterminedCountByIR requiredBirths,
+    private MothersNeedingPartners getMothersNeedingPartners(final List<IPerson> females, final int numberOfChildren, final MultipleDeterminedCountByIntegerRange requiredBirths,
                                                              final LabelledValueSet<IntegerRange, Integer> motherCountsByMaternities, final OperableLabelledValueSet<IntegerRange, Integer> remainingMothersToFind) {
 
         CollectionUtils.shuffle(females, Randomness.getRandomGenerator());
@@ -1106,10 +1106,10 @@ public class OBDModel {
         }
     }
 
-    private MultipleDeterminedCountByIR calcNumberOfPregnanciesOfMultipleBirth(final int ageOfMothers, final int numberOfChildren) {
+    private MultipleDeterminedCountByIntegerRange calcNumberOfPregnanciesOfMultipleBirth(final int ageOfMothers, final int numberOfChildren) {
 
         final MultipleBirthStatsKey key = new MultipleBirthStatsKey(ageOfMothers, numberOfChildren, config.getSimulationTimeStep(), currentDate);
-        return (MultipleDeterminedCountByIR) desiredStatistics.getDeterminedCount(key, config);
+        return (MultipleDeterminedCountByIntegerRange) desiredStatistics.getDeterminedCount(key, config);
     }
 
     private boolean eligible(final IPerson potentialMother) {

@@ -18,7 +18,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 import java.time.LocalDate;
@@ -85,8 +85,8 @@ public abstract class Node<Op extends Comparable<Op>, cOp extends Comparable<cOp
     }
 
     @SuppressWarnings("unchecked")
-    public CTRow<Count> toCTRow() {
-        CTRow<Count> r = (CTRow<Count>) getParent().toCTRow();
+    public ContingencyTableRow<Count> toCTRow() {
+        ContingencyTableRow<Count> r = (ContingencyTableRow<Count>) getParent().toCTRow();
         if (r != null) {
             r.setVariable(getVariableName(), getOption().toString());
         }
@@ -141,15 +141,15 @@ public abstract class Node<Op extends Comparable<Op>, cOp extends Comparable<cOp
     }
 
     public PopulationStatistics getInputStats() {
-        return getAncestor(new CTtree()).getInputStats();
+        return getAncestor(new ContingencyTree()).getInputStats();
     }
 
     public LocalDate getStartDate() {
-        return getAncestor(new CTtree()).getStartDate();
+        return getAncestor(new ContingencyTree()).getStartDate();
     }
 
     public LocalDate getEndDate() {
-        return getAncestor(new CTtree()).getEndDate();
+        return getAncestor(new ContingencyTree()).getEndDate();
     }
 
     @SuppressWarnings({ "unused", "rawtypes" })

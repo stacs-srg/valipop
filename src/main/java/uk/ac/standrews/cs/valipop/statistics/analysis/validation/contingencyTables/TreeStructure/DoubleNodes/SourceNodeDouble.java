@@ -18,7 +18,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRowDouble;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.*;
 
@@ -81,8 +81,8 @@ public class SourceNodeDouble extends DoubleNode<SourceType, Year> {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTRow<Double> toCTRow() {
-        CTRow r = new CTRowDouble();
+    public ContingencyTableRow<Double> toCTRow() {
+        ContingencyTableRow r = new CTRowDouble();
         r.setVariable(getVariableName(), getOption().toString());
         return r;
     }

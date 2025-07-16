@@ -20,12 +20,10 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.tdFormat;
 import uk.ac.standrews.cs.valipop.implementations.Randomness;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.Utilities;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 /**
@@ -124,7 +122,7 @@ public class TDBirthSourceRecord extends BirthSourceRecord {
             MARRIAGE_RECORD_IDENTITY8 = String.valueOf(marriages.get(7).getId());
 
 
-        final int immigantGen = PersonCharacteristicsIdentifier.getImmigrantGeneration(person);
+        final int immigantGen = Utilities.getImmigrantGeneration(person);
 
         if(immigantGen == -1)
             IMMIGRATION_GENERATION = "NA";

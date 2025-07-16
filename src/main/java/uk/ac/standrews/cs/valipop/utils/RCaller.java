@@ -17,26 +17,18 @@
  */
 package uk.ac.standrews.cs.valipop.utils;
 
-import uk.ac.standrews.cs.valipop.implementations.StatsException;
+import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-
 /**
  * For extracting, invoking, and reading the results of the R analysis scripts.
- * 
+ *
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  * @author Daniel Brathagen (db255@st-andrews.ac.uk)
  */
 public class RCaller {
@@ -48,7 +40,7 @@ public class RCaller {
 
     private static final String[] R_SCRIPT_PATHS = {
         "valipop/analysis-r/geeglm/process-data-functions.R",
-        "valipop/analysis-r/geeglm/id-funtions.R",
+        "valipop/analysis-r/geeglm/id-functions.R",
         "valipop/analysis-r/geeglm/geeglm-functions.R",
         "valipop/analysis-r/geeglm/analysis.R"
     };
@@ -102,7 +94,7 @@ public class RCaller {
     }
 
     /**
-     * Outputs the standard otuput and error of the R analysis to {@code outputPath} and returns the calculated v value.
+     * Outputs the standard output and error of the R analysis to {@code outputPath} and returns the calculated v value.
      * 
      * @param process the executing R analysis process
      * @param outputPath the path of the process output and error streams
@@ -158,12 +150,11 @@ public class RCaller {
         final Process process = runRScript(runDirPath, rScriptPath, maxBirthingAge);
         final double v = getRScriptResult(process, runDirPath.resolve(R_SCRIPT_OUTPUT_LOCATION));
 
-        process.destroy();
+        if (process.exitValue() != 0)
+            throw new RuntimeException("RScript execution failed");
 
         return v;
     }
-
-    // Private methods
 
     private static boolean filterAnalysis(final String line) {
         // Only STATS interactions are significant;
@@ -171,8 +162,9 @@ public class RCaller {
     }
 
     private static double countV(final String line) {
+
         final int MAX_STARS = 3;
-        final double[] STAR_VALUES = new double[]{ 2, 3, 4 };
+        final double[] STAR_VALUES = { 2, 3, 4 };
 
         // Scan for sequences stars
         // Start from max star count to prevent lower star counts from identifying first

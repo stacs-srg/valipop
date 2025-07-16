@@ -19,8 +19,14 @@ package uk.ac.standrews.cs.valipop.export;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedClass;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
+
+import java.util.List;
+
+import static uk.ac.standrews.cs.valipop.config.TestCases.SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS;
+import static uk.ac.standrews.cs.valipop.config.TestCases.getTestConfigurations;
 
 /**
  * E2E tests of GEDCOM export.
@@ -28,12 +34,17 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 @ParameterizedClass
-@MethodSource("getSlowTestCases")
+@MethodSource("getTestCases")
 @Tag("slow")
 public class GEDCOMSlowTest extends GEDCOMTest {
 
     public GEDCOMSlowTest(final IPersonCollection population) {
 
         super(population);
+    }
+
+    static List<Arguments> getTestCases()  {
+
+        return getTestConfigurations(SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS);
     }
 }

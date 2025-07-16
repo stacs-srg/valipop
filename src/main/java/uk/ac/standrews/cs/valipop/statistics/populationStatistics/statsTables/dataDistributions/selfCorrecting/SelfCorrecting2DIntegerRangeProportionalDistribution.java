@@ -21,7 +21,7 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.d
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
@@ -66,7 +66,7 @@ public class SelfCorrecting2DIntegerRangeProportionalDistribution implements Sel
         }
     }
 
-    public MultipleDeterminedCountByIR determineCount(StatsKey<Integer, Integer> key, Config config, RandomGenerator random) {
+    public MultipleDeterminedCountByIntegerRange determineCount(StatsKey<Integer, Integer> key, Config config, RandomGenerator random) {
 
         int age = key.getYLabel();
 
@@ -76,7 +76,7 @@ public class SelfCorrecting2DIntegerRangeProportionalDistribution implements Sel
 
         } catch (InvalidRangeException e) {
             // If no stats in distribution for the given key then return a zero count object
-            return new MultipleDeterminedCountByIR(key,
+            return new MultipleDeterminedCountByIntegerRange(key,
                     new IntegerRangeToIntegerSet(Collections.singleton(new IntegerRange(1)), 0, random),
                     new IntegerRangeToDoubleSet(Collections.singleton(new IntegerRange(1)), 0.0, random),
                     new IntegerRangeToDoubleSet(Collections.singleton(new IntegerRange(1)), 0.0, random));
@@ -109,10 +109,10 @@ public class SelfCorrecting2DIntegerRangeProportionalDistribution implements Sel
         try {
             retValues = new IntegerRangeToDoubleSet(rawCorrectedValues, random).controlledRoundingMaintainingSum();
         } catch (ValuesDoNotSumToWholeNumberException e) {
-            return new MultipleDeterminedCountByIR(key, null, rawCorrectedValues, rawUncorrectedValues);
+            return new MultipleDeterminedCountByIntegerRange(key, null, rawCorrectedValues, rawUncorrectedValues);
         }
 
-        return new MultipleDeterminedCountByIR(key, retValues, rawCorrectedValues, rawUncorrectedValues);
+        return new MultipleDeterminedCountByIntegerRange(key, retValues, rawCorrectedValues, rawUncorrectedValues);
     }
 
     public void returnAchievedCount(DeterminedCount<LabelledValueSet<IntegerRange, Integer>, LabelledValueSet<IntegerRange, Double>, Integer, Integer> achievedCount, RandomGenerator random) {

@@ -28,7 +28,36 @@ import java.util.List;
 
 public abstract class TestCases {
 
-    private static final int SEED = 841584;
+    public static final int SEED_FOR_DETERMINISTIC_RUN = 841584;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Eventual population sizes: 113, 188.
+    public static final List<Integer> FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS = List.of(200, 300);
+
+    // Eventual population sizes: 19065.
+    public static final List<Integer> SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS = List.of(1000);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final List<Integer> FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEOJSON_TESTS = FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS;
+
+    // Eventual population sizes: 19065, 86033.
+    public static final List<Integer> SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEOJSON_TESTS = List.of(1000, 5000);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final List<Integer> FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GRAPHVIZ_TESTS = FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS;
+    public static final List<Integer> SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GRAPHVIZ_TESTS = SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEOJSON_TESTS;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static final List<Integer> FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_STRUCTURE_TESTS = FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS;
+
+    // Eventual population sizes: 19065, ?.
+    public static final List<Integer> SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_STRUCTURE_TESTS = List.of(1000, 10000);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static List<Arguments> getTestConfigurations(final List<Integer> initialPopulationSizes) {
 
@@ -52,13 +81,13 @@ public abstract class TestCases {
             "testing",
             Config.DEFAULT_RESULTS_SAVE_PATH);
 
-        config.setDeterministic(true).setSeed(SEED);
+        config.setDeterministic(true).setSeed(SEED_FOR_DETERMINISTIC_RUN);
 
         final OBDModel model = new OBDModel(config);
         model.runSimulation();
 
         final IPersonCollection population = model.getPopulation().getPeople();
-        population.setDescription("initial size=" + initialPopulationSize + ", seed=" + SEED);
+        population.setDescription("initial size=" + initialPopulationSize + ", seed=" + SEED_FOR_DETERMINISTIC_RUN);
         return population;
     }
 }

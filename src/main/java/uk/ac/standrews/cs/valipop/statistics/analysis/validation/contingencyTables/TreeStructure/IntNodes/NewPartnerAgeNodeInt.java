@@ -18,7 +18,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
@@ -53,8 +53,8 @@ public class NewPartnerAgeNodeInt extends IntNode<IntegerRange, String> {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTRow<Integer> toCTRow() {
-        CTRow r = getParent().toCTRow();
+    public ContingencyTableRow<Integer> toCTRow() {
+        ContingencyTableRow r = getParent().toCTRow();
 
         if(getOption() == null) {
             r.setVariable(getVariableName(), "na");

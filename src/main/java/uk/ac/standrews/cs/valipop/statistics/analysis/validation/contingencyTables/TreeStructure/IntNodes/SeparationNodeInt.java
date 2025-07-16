@@ -19,11 +19,11 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.Utilities;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SeparationOption;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.PartneringStatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRangeException;
@@ -31,7 +31,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.InvalidRan
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.Year;
-import java.util.Collection;
 import java.util.Set;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.ageOnDate;
@@ -50,36 +49,16 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
 
         incCountByOne();
 
-        final IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
-
-        Integer newPartnerAge = null;
-
-        if (activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, Year.of(currentDate.getYear()))) {
-            final IPerson partner = activePartnership.getPartnerOf(person);
-            newPartnerAge = ageOnDate(partner, activePartnership.getPartnershipDate());
-        }
-
-        // check if the partner falls into one of the child ranges
+        final Integer newPartnerAge = getAgeOfPartnerInActivePartnership(person, currentDate);
 
         for (final Node<IntegerRange, ?, Integer, ?> node : getChildren()) {
 
-            Boolean in = null;
+            final IntegerRange range = node.getOption();
+            final Boolean withinRange = isWithinRange(range, newPartnerAge);
 
-            if (newPartnerAge != null)
-                try {
-                    in = node.getOption().contains(newPartnerAge);
-                } catch (final InvalidRangeException e) {
-                    in = null;
-                }
-
-            // if partners age is in the considered range then process this person using this NPA range and return
-            if (in != null && in) {
-                node.processPerson(person, currentDate);
-                return;
-            }
-
-            // if in is null due to range being 'na' and there is no new partner (thus NPA == null) then process this person using the current NPA range (na)
-            if (newPartnerAge == null) {
+            // if there is no new partner (thus newPartnerAge == null), or if new partner age is in the considered range,
+            // then process this person  and return
+            if (newPartnerAge == null || (withinRange != null && withinRange)) {
                 node.processPerson(person, currentDate);
                 return;
             }
@@ -100,10 +79,10 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
             final double numberOfFemales = getCount();
             final Period timePeriod = Period.ofYears(1);
 
-            final MultipleDeterminedCountByIR mDC = (MultipleDeterminedCountByIR) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
+            final MultipleDeterminedCountByIntegerRange counts = (MultipleDeterminedCountByIntegerRange) getInputStats().getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
             // getting the age range labels
-            final Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
+            final Set<IntegerRange> options = counts.getRawUncorrectedCount().getLabels();
 
             // finding which the persons partner is in and creating it
             for (final IntegerRange o : options) {
@@ -113,6 +92,31 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
                 }
             }
         }
+    }
+
+    private static Boolean isWithinRange(final IntegerRange range, final Integer newPartnerAge) {
+
+        if (newPartnerAge == null) return null;
+
+        try {
+            return range.contains(newPartnerAge);
+        } catch (final InvalidRangeException e) {
+            return null;
+        }
+    }
+
+    private static Integer getAgeOfPartnerInActivePartnership(final IPerson person, final LocalDate currentDate) {
+
+        final IPartnership activePartnership = Utilities.getActivePartnership(person, currentDate);
+
+        if (activePartnership != null && Utilities.startedInYear(activePartnership, Year.of(currentDate.getYear()))) {
+
+            final IPerson partner = activePartnership.getPartnerOf(person);
+            final LocalDate partnershipDate = activePartnership.getPartnershipDate();
+
+            return ageOnDate(partner, partnershipDate);
+        }
+        else return null;
     }
 
     @Override

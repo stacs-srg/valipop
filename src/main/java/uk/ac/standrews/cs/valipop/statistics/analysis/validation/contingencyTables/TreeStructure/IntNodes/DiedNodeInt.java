@@ -19,8 +19,8 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.Utilities;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
@@ -29,7 +29,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRan
 
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -49,8 +48,8 @@ public class DiedNodeInt extends IntNode<Boolean, IntegerRange> {
 
         if (person.getSex() == SexOption.FEMALE) {
 
-            final IPartnership partnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
-            final int numberOfChildren = partnership != null ? PersonCharacteristicsIdentifier.getChildrenBirthedBeforeDate(partnership, currentDate) : 0;
+            final IPartnership partnership = Utilities.getActivePartnership(person, currentDate);
+            final int numberOfChildren = partnership != null ? Utilities.getChildrenBirthedBeforeDate(partnership, currentDate) : 0;
 
             final IntegerRange range = resolveToChildRange(numberOfChildren);
 
@@ -97,9 +96,9 @@ public class DiedNodeInt extends IntNode<Boolean, IntegerRange> {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTRow<Integer> toCTRow() {
+    public ContingencyTableRow<Integer> toCTRow() {
 
-        final CTRow r = getParent().toCTRow();
+        final ContingencyTableRow r = getParent().toCTRow();
         r.setVariable(getVariableName(), getOption().toString());
         r.setCount(getCount());
         return r;

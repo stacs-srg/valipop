@@ -80,6 +80,9 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <version>5.0.0</version>
                 <configuration>
+                    <mapping>
+                        <R>SCRIPT_STYLE</R>
+                    </mapping>
                     <properties>
                         <project.description>&lt;https://github.com/stacs-srg/valipop&gt;</project.description>
                         <year>2025</year>
@@ -99,6 +102,12 @@
                                 <exclude>**/*.pom</exclude>
                                 <exclude>**/*.repositories</exclude>
                             </excludes>
+                        </licenseSet>
+                        <licenseSet>
+                            <header>com/mycila/maven/plugin/license/templates/GPL-3.txt</header>
+                            <includes>
+                                <include>src/main/resources/valipop/analysis-r/geeglm/**</include>
+                            </includes>
                         </licenseSet>
                     </licenseSets>
                 </configuration>

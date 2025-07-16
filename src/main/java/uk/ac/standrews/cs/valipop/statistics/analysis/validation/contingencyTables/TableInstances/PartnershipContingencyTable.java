@@ -17,54 +17,46 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableInstances;
 
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTableRow;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.ContingencyTable;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ContingencyTree;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
-
-import java.util.Objects;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class CTtableMB extends CTtable {
+public class PartnershipContingencyTable extends ContingencyTable {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CTtableMB(CTtree tree) {
+    public PartnershipContingencyTable(final ContingencyTree tree) {
 
-        for (Node n : tree.getLeafNodes()) {
+        for (final Node node : tree.getLeafNodes()) {
+            final ContingencyTableRow leaf = node.toCTRow();
 
-            CTRow leaf = n.toCTRow();
-
-            if (leaf != null) {
-
+            if (leaf != null && leaf.getCount() != null) {
                 try {
-                    if(leaf.getVariable("Source").getValue().equals("SIM"))
-                        leaf.addDateVariable();
-                    else
-                        leaf.addDateVariable(-1);
+                    leaf.addDateVariable();
 
-                    if (Objects.equals(leaf.getVariable("Sex").getValue(), "F")) {
+                    if (leaf.getVariable("Sex").getValue().equals("F")) {
+
                         leaf.deleteVariable("Sex");
-
                         leaf.deleteVariable("Died");
                         leaf.deleteVariable("PNCIP");
                         leaf.deleteVariable("NPCIAP");
                         leaf.deleteVariable("CIY");
                         leaf.deleteVariable("NCIP");
                         leaf.deleteVariable("Separated");
-                        leaf.deleteVariable("NPA");
+                        leaf.deleteVariable("NCIY");
 
-                        CTRow h = table.get(leaf.hash());
+                        final ContingencyTableRow row = table.get(leaf.hash());
 
-                        if (h == null) {
+                        if (row == null)
                             table.put(leaf.hash(), leaf);
-                        } else {
-                            h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
-                        }
+                        else
+                            row.setCount(row.combineCount(row.getCount(), leaf.getCount()));
                     }
 
-                } catch (RuntimeException e) {
+                } catch (final RuntimeException ignore) {
                     // Unfilled row - thus pass
                 }
             }

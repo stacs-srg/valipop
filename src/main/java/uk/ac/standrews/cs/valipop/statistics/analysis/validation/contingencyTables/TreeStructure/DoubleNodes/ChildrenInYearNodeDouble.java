@@ -19,13 +19,13 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.Utilities;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ControlChildrenNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ControlSelfNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIR;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
@@ -64,14 +64,14 @@ public class ChildrenInYearNodeDouble extends DoubleNode<Boolean, Integer> imple
 
         incCountByOne();
 
-        IPartnership activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
+        IPartnership activePartnership = Utilities.getActivePartnership(person, currentDate);
 
         int option;
 
         if (activePartnership == null) {
             option = 0;
         } else {
-            option = PersonCharacteristicsIdentifier.getChildrenBirthedInYear(activePartnership, Year.of(currentDate.getYear()));
+            option = Utilities.getChildrenBirthedInYear(activePartnership, Year.of(currentDate.getYear()));
         }
 
         try {
@@ -110,7 +110,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<Boolean, Integer> imple
 
         double numberOfChildren = sDC.getRawUncorrectedCount();
 
-        MultipleDeterminedCountByIR mDc = (MultipleDeterminedCountByIR) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, numberOfChildren, timePeriod, currentDate), null);
+        MultipleDeterminedCountByIntegerRange mDc = (MultipleDeterminedCountByIntegerRange) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, numberOfChildren, timePeriod, currentDate), null);
 
         double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
 
@@ -160,7 +160,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<Boolean, Integer> imple
 
             LocalDate currentDate = getDateAtAge(yob, age);
 
-            MultipleDeterminedCountByIR mDC = (MultipleDeterminedCountByIR) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, getCount(), Period.ofYears(1), currentDate), null);
+            MultipleDeterminedCountByIntegerRange mDC = (MultipleDeterminedCountByIntegerRange) getInputStats().getDeterminedCount(new MultipleBirthStatsKey(age, getCount(), Period.ofYears(1), currentDate), null);
 
             LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 

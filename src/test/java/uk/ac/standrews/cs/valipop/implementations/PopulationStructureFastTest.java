@@ -18,8 +18,13 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import org.junit.jupiter.params.ParameterizedClass;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
+
+import java.util.List;
+
+import static uk.ac.standrews.cs.valipop.config.TestCases.*;
 
 /**
  * Tests of properties of abstract population interface that should hold for all populations.
@@ -28,11 +33,16 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 @ParameterizedClass
-@MethodSource("getFastTestCases")
+@MethodSource("getTestCases")
 public class PopulationStructureFastTest extends PopulationStructureTest {
 
     PopulationStructureFastTest(final IPersonCollection population) {
 
         super(population);
+    }
+
+    static List<Arguments> getTestCases()  {
+
+        return getTestConfigurations(FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_STRUCTURE_TESTS);
     }
 }
