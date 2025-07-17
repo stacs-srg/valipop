@@ -66,7 +66,7 @@ public class CL_OBDModel {
 
         final int value = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
 
-        final double v = RCaller.getGeeglmV(config.getRunPath(), value);
+        final double v = RCaller.getGeeglmV(config.getRunPath(), value, config.getT0().toString(), config.getTE().toString());
 
         // This gives a human readable score
         String score = "good";

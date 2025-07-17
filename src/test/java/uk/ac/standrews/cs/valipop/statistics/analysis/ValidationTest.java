@@ -62,7 +62,9 @@ public class ValidationTest {
 
         final double v = RCaller.getGeeglmV(
             tableDirectory,
-            maxBirthingAge
+            maxBirthingAge,
+            "1855-01-01",  // t0 from test configs
+            "2015-01-01"   // tE from test configs
         );
 
         assertEquals(v, expectedV, 1e-10);

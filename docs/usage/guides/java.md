@@ -87,7 +87,7 @@ Elapsed time: 00:00:00
 2025/03/26 15:03:54.367 :: Generating marriage records
 Elapsed time: 00:00:00
 Writing graph
-Running validation with command: Rscript results/example/2025-03-24T10-50-39-702/analysis.R results/example/2025-03-24T10-50-39-702 50
+Running validation with command: Rscript results/example/2025-03-24T10-50-39-702/analysis.R results/example/2025-03-24T10-50-39-702 50 1855-01-01 1973-01-01
 Warning message:
 In value[[3L]](cond) : Population size too small for partnering analysis
 Validation score: 0.0 (good)

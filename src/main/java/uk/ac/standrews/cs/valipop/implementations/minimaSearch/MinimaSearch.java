@@ -175,7 +175,7 @@ public class MinimaSearch {
 
     public static double getV(Minimise minimiseFor, int maxBirthingAge, Control controlBy, Config config) throws IOException, StatsException {
         if (Objects.requireNonNull(minimiseFor) == Minimise.GEEGLM) {
-            return RCaller.getGeeglmV(config.getRunPath(), maxBirthingAge);
+            return RCaller.getGeeglmV(config.getRunPath(), maxBirthingAge, config.getT0().toString(), config.getTE().toString());
         }
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
     }

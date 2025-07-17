@@ -18,25 +18,41 @@
 
 run_dir_path <- commandArgs(TRUE)[1]
 max_birthing_age <- as.integer(commandArgs(TRUE)[2])
+t0 <- commandArgs(TRUE)[3]
+tE <- commandArgs(TRUE)[4]
+
+# Convert date strings to years for the clean functions
+t0_year <- as.integer(substr(t0, 1, 4))
+tE_year <- as.integer(substr(tE, 1, 4))
 
 death <- clean_death_data(
-  read_in_data(paste(run_dir_path, "/tables/death-contingency-table.csv", sep = ""))
+  read_in_data(paste(run_dir_path, "/tables/death-contingency-table.csv", sep = "")),
+  round = TRUE,
+  start = t0_year,
+  end = tE_year
 )
 
 mbirth <- clean_mb_data(
   read_in_data(paste(run_dir_path, "/tables/multiple-birth-contingency-table.csv", sep = "")),
   max_birthing_age,
-  round = TRUE
+  round = TRUE,
+  start = t0_year,
+  end = tE_year
 )
 
 obirth <- clean_ob_data(
   read_in_data(paste(run_dir_path, "/tables/birth-contingency-table.csv", sep = "")),
-  max_birthing_age
+  max_birthing_age,
+  round = TRUE,
+  start = t0_year,
+  end = tE_year
 )
 
 part <- clean_part_data(
   read_in_data(paste(run_dir_path, "/tables/partnership-contingency-table.csv", sep = "")),
-  round = TRUE
+  round = TRUE,
+  start = t0_year,
+  end = tE_year
 )
 
 death_ids <- add_cohort_ids_death(death)

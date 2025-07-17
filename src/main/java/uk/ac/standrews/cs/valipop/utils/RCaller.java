@@ -86,12 +86,14 @@ public class RCaller {
      * @param runDirPath the path of the current run directory
      * @param rScriptPath the path of the R analysis script
      * @param maxBirthingAge the maximum birthing age of the population model
+     * @param t0 the start date of the main simulation phase
+     * @param tE the end date of the main simulation phase
      * 
      * @return the executing process
      */
-    public static Process runRScript(final Path runDirPath, final Path rScriptPath, final int maxBirthingAge) throws IOException {
+    public static Process runRScript(final Path runDirPath, final Path rScriptPath, final int maxBirthingAge, final String t0, final String tE) throws IOException {
 
-        final String[] params = {runDirPath.toAbsolutePath().toString(), String.valueOf(maxBirthingAge)};
+        final String[] params = {runDirPath.toAbsolutePath().toString(), String.valueOf(maxBirthingAge), t0, tE};
         final String[] commands = joinArrays(new String[]{ "Rscript", rScriptPath.toString()}, params);
 
         return new ProcessBuilder(commands).start();
@@ -147,11 +149,13 @@ public class RCaller {
      * 
      * @param runDirPath the path of the run directory 
      * @param maxBirthingAge the maximum birthing age of the population model
+     * @param t0 the start date of the main simulation phase
+     * @param tE the end date of the main simulation phase
      */
-    public static double getGeeglmV(final Path runDirPath, final int maxBirthingAge) throws IOException {
+    public static double getGeeglmV(final Path runDirPath, final int maxBirthingAge, final String t0, final String tE) throws IOException {
 
         final Path rScriptPath = extractRScript(runDirPath.resolve(R_SCRIPT_LOCATION));
-        final Process process = runRScript(runDirPath, rScriptPath, maxBirthingAge);
+        final Process process = runRScript(runDirPath, rScriptPath, maxBirthingAge, t0, tE);
         final double v = getRScriptResult(process, runDirPath.resolve(R_SCRIPT_OUTPUT_LOCATION));
 
 //        process.destroy();

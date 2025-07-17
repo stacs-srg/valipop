@@ -9,3 +9,4 @@ results
 *.log
 .vscode
 **/.DS_Store
+.history/

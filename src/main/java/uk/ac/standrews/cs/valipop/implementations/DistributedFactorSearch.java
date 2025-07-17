@@ -203,7 +203,7 @@ public class DistributedFactorSearch {
         SummaryRow summaryRow = new SummaryRow(result.summaryRow);
 
         ProgramTimer statsTimer = new ProgramTimer();
-        double v = RCaller.getGeeglmV(config.getRunPath(), maxBirthingAge);
+        double v = RCaller.getGeeglmV(config.getRunPath(), maxBirthingAge, config.getT0().toString(), config.getTE().toString());
 
         summaryRow.setV(v);
         summaryRow.setStatsRunTime(statsTimer.getRunTimeSeconds());
