@@ -17,7 +17,6 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
@@ -31,6 +30,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  * @author Daniel Brathagen (dbrathagen@gmail.com)
  */
 public class ValidationTest {

@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * For extracting, invoking, and reading the results of the R analysis scripts.
@@ -44,6 +45,9 @@ public class RCaller {
         "valipop/analysis-r/geeglm/geeglm-functions.R",
         "valipop/analysis-r/geeglm/analysis.R"
     };
+
+    public static final int NORMAL_EXIT_CODE = 0;
+    public static final int R_PROCESS_TIMEOUT_IN_MINUTES = 10;
 
     // Public Methods
 
@@ -150,10 +154,21 @@ public class RCaller {
         final Process process = runRScript(runDirPath, rScriptPath, maxBirthingAge);
         final double v = getRScriptResult(process, runDirPath.resolve(R_SCRIPT_OUTPUT_LOCATION));
 
-        if (process.exitValue() != 0)
-            throw new RuntimeException("RScript execution failed");
+//        process.destroy();
+//
+//        if (process.exitValue() != 0)
+//            throw new RuntimeException("RScript execution failed");
 
-        process.destroy();
+        final boolean timedOut;
+        try {
+            timedOut = !process.waitFor(R_PROCESS_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
+        }
+        catch (final InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (timedOut || process.exitValue() != NORMAL_EXIT_CODE)
+            throw new RuntimeException("RScript execution failed");
 
         return v;
     }
