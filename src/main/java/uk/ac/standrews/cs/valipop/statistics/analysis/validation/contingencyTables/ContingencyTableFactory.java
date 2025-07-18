@@ -18,7 +18,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.implementations.MemoryUsageAnalysis;
+import uk.ac.standrews.cs.valipop.population.MemoryUsageAnalysis;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableInstances.*;

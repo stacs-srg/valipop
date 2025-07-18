@@ -18,8 +18,7 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserFormat;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.implementations.Randomness;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
+import uk.ac.standrews.cs.valipop.population.Randomness;
 
 import java.io.IOException;
 import java.io.PrintStream;

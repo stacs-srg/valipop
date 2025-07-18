@@ -18,16 +18,16 @@
 package uk.ac.standrews.cs.valipop.utils;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.implementations.OBDModel;
-import uk.ac.standrews.cs.valipop.implementations.StatsException;
-import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Control;
-import uk.ac.standrews.cs.valipop.implementations.minimaSearch.MinimaSearch;
+import uk.ac.standrews.cs.valipop.population.OBDModel;
+import uk.ac.standrews.cs.valipop.population.StatsException;
+import uk.ac.standrews.cs.valipop.population.minimaSearch.Control;
+import uk.ac.standrews.cs.valipop.population.minimaSearch.MinimaSearch;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 
 import java.io.IOException;
 import java.time.Year;
 
-import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.GEEGLM;
+import static uk.ac.standrews.cs.valipop.population.minimaSearch.Minimise.GEEGLM;
 
 /**
  * Invokes R analysis code in an asynchronous thread.

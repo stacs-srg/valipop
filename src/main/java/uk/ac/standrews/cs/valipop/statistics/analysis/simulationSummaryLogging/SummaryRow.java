@@ -18,7 +18,7 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.implementations.SerializableSummaryRow;
+import uk.ac.standrews.cs.valipop.population.SerializableSummaryRow;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 
 import java.io.IOException;

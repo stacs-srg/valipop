@@ -31,6 +31,8 @@ import java.time.Period;
 import java.time.Year;
 import java.util.List;
 
+import static uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.NewPartnerAgeNodeInt.PARTNER_AGE_LABEL;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -126,6 +128,6 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
 
     @Override
     public String getVariableName() {
-        return "NPA";
+        return PARTNER_AGE_LABEL;
     }
 }

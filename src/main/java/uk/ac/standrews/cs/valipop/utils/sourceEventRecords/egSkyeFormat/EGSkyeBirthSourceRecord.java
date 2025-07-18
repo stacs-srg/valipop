@@ -17,9 +17,8 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
-import uk.ac.standrews.cs.valipop.implementations.Randomness;
+import uk.ac.standrews.cs.valipop.population.Randomness;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
 
 import java.time.LocalDate;

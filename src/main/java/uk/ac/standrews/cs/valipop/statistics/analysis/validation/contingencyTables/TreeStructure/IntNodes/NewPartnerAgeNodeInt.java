@@ -31,6 +31,8 @@ import java.util.List;
  */
 public class NewPartnerAgeNodeInt extends IntNode<IntegerRange, String> {
 
+    public static final String PARTNER_AGE_LABEL = "PartnerAge";
+
     public NewPartnerAgeNodeInt(IntegerRange option, SeparationNodeInt parentNode, Integer initCount) {
         super(option, parentNode, initCount);
     }
@@ -69,6 +71,6 @@ public class NewPartnerAgeNodeInt extends IntNode<IntegerRange, String> {
 
     @Override
     public String getVariableName() {
-        return "NPA";
+        return PARTNER_AGE_LABEL;
     }
 }

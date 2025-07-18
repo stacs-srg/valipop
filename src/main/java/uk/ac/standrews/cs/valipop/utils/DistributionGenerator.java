@@ -17,9 +17,8 @@
  */
 package uk.ac.standrews.cs.valipop.utils;
 
-import uk.ac.standrews.cs.valipop.implementations.Randomness;
+import uk.ac.standrews.cs.valipop.population.Randomness;
 import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightException;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 

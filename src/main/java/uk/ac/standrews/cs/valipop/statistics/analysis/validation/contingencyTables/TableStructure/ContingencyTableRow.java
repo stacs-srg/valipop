@@ -19,6 +19,8 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTab
 
 import java.util.*;
 
+import static uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.NewPartnerAgeNodeInt.PARTNER_AGE_LABEL;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -34,21 +36,6 @@ public abstract class ContingencyTableRow<Count extends Number> {
         this.count = count;
     }
 
-//    ContingencyTableCell[] c = {
-//            new ContingencyTableCell("Source", ""),
-//            new ContingencyTableCell("YOB", ""),
-//            new ContingencyTableCell("Sex", ""),
-//            new ContingencyTableCell("Age", ""),
-//            new ContingencyTableCell("Died", ""),
-//            new ContingencyTableCell("PNCIP", "0"),
-//            new ContingencyTableCell("NPCIAP", "0"),
-//            new ContingencyTableCell("CIY", "NO"),
-//            new ContingencyTableCell("NCIY", "0"),
-//            new ContingencyTableCell("NCIP", "0"),
-//            new ContingencyTableCell("Separated", "NA"),
-//            new ContingencyTableCell("NPA", "na")
-//    };
-
     // New ArrayList to make mutable.
     protected Collection<ContingencyTableCell> cells = new ArrayList<>(List.of(
         new ContingencyTableCell("Source", ""),
@@ -62,7 +49,7 @@ public abstract class ContingencyTableRow<Count extends Number> {
         new ContingencyTableCell("NCIY", "0"),
         new ContingencyTableCell("NCIP", "0"),
         new ContingencyTableCell("Separated", "NA"),
-        new ContingencyTableCell("NPA", "na")
+        new ContingencyTableCell(PARTNER_AGE_LABEL, "na")
     ));
 
     public Collection<ContingencyTableCell> getCells() {

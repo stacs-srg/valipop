@@ -17,7 +17,6 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities;
 
-import uk.ac.standrews.cs.valipop.implementations.Randomness;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
