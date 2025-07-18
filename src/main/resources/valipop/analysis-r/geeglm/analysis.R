@@ -324,13 +324,13 @@ start_year <- as.integer(commandArgs(TRUE)[3])
 end_year <- as.integer(commandArgs(TRUE)[4])
 
 death_data <- clean_death_data(
-  read_in_data(paste(run_dir_path, "/tables/death-contingency-table.csv", sep = "")),
+  read_in_data(paste(run_dir_path, "/death-contingency-table.csv", sep = "")),
   start_year = start_year,
   end_year = end_year
 )
 
 multiple_birth_data <- clean_multiple_birth_data(
-  read_in_data(paste(run_dir_path, "/tables/multiple-birth-contingency-table.csv", sep = "")),
+  read_in_data(paste(run_dir_path, "/multiple-birth-contingency-table.csv", sep = "")),
   max_mother_birth_age,
   round = TRUE,
   start_year = start_year,
@@ -338,14 +338,14 @@ multiple_birth_data <- clean_multiple_birth_data(
 )
 
 birth_data <- clean_birth_data(
-  read_in_data(paste(run_dir_path, "/tables/birth-contingency-table.csv", sep = "")),
+  read_in_data(paste(run_dir_path, "/birth-contingency-table.csv", sep = "")),
   max_mother_birth_age,
   start_year = start_year,
   end_year = end_year
 )
 
 partnership_data <- clean_partnership_data(
-  read_in_data(paste(run_dir_path, "/tables/partnership-contingency-table.csv", sep = "")),
+  read_in_data(paste(run_dir_path, "/partnership-contingency-table.csv", sep = "")),
   round = TRUE,
   start_year = start_year,
   end_year = end_year

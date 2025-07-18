@@ -22,7 +22,7 @@ simulation_time_step = P1Y
 over_sized_geography_factor=1
 
 results_save_location = /tmp/results
-var_data_files = src/test/resources/valipop/test-pop
+var_data_files = src/test/resources/valipop/distributions
 run_purpose = test
 
 deterministic = true

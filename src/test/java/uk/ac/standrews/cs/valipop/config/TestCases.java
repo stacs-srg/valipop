@@ -76,7 +76,7 @@ public abstract class TestCases {
             LocalDate.of(1855, 1, 1),
             LocalDate.of(2016, 1, 1),
             initialPopulationSize,
-            Paths.get("src/test/resources/valipop/test-pop"),
+            Paths.get("src/test/resources/valipop/distributions"),
             Config.DEFAULT_RESULTS_SAVE_PATH,
             "testing",
             Config.DEFAULT_RESULTS_SAVE_PATH);

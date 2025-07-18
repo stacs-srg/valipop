@@ -20,6 +20,7 @@ package uk.ac.standrews.cs.valipop.utils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,72 +33,93 @@ import java.util.concurrent.TimeUnit;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  * @author Daniel Brathagen (db255@st-andrews.ac.uk)
  */
-public class RCaller {
+public class ContingencyTableValidator {
 
-    private static final Path R_SCRIPT_LOCATION = Path.of("analysis.R");
-    private static final Path R_SCRIPT_OUTPUT_LOCATION = Path.of("analysis.out");
+    private static final String CONTINGENCY_TABLES_DIRECTORY_NAME = "tables";
+    private static final String ANALYSIS_SCRIPT_FILENAME = "analysis.R";
+    private static final String ANALYSIS_OUTPUT_FILENAME = "analysis.out";
+
     private static final int NORMAL_EXIT_CODE = 0;
     private static final int R_PROCESS_TIMEOUT_IN_MINUTES = 10;
 
-    private static final String[] R_SCRIPT_PATHS = {
-        "valipop/analysis-r/geeglm/analysis.R"
-    };
+    // Relative to src/main/resources.
+    private static final Path ANALYSIS_SCRIPT_SOURCE_DIRECTORY = Path.of("valipop/analysis-r/geeglm/");
 
-    /**
-     * Runs the R analysis on the population model and returns the analysis result
-     *
-     * @param runDirPath the path of the run directory
-     * @param maxBirthingAge the maximum birthing age of the population model
-     */
-    public static double getValidationScore(final Path runDirPath, final int maxBirthingAge) throws IOException {
+    private static final boolean DELETE_ANALYSIS_OUTPUT_FILE = true;
 
-        final Path rScriptPath = runDirPath.resolve(R_SCRIPT_LOCATION);
-        extractRScript(rScriptPath);
+    private final Path workingDirectoryPath;
+    private final int maxMotherBirthAge;
+    private final int startYear;
+    private final int endYear;
 
-        final Process process = runRScript(runDirPath, rScriptPath, maxBirthingAge, 1854, 2012);
-        final double v = getRScriptResult(process, runDirPath.resolve(R_SCRIPT_OUTPUT_LOCATION));
+    public ContingencyTableValidator(final Path workingDirectoryPath, final int maxMotherBirthAge, final int startYear, final int endYear) {
 
-        final boolean timedOut;
+        this.workingDirectoryPath = workingDirectoryPath;
+        this.maxMotherBirthAge = maxMotherBirthAge;
+        this.startYear = startYear;
+        this.endYear = endYear;
+    }
+
+    public synchronized double getValidationScore() throws IOException {
+
+        // Synchronized since method creates and deletes files in the parent directory.
+
+        final Path analysisScriptSource = ANALYSIS_SCRIPT_SOURCE_DIRECTORY.resolve(ANALYSIS_SCRIPT_FILENAME);
+        final Path analysisScriptTempCopy = workingDirectoryPath.resolve(ANALYSIS_SCRIPT_FILENAME);
+        final Path contingencyTablesDirectoryPath = workingDirectoryPath.resolve(CONTINGENCY_TABLES_DIRECTORY_NAME);
+        final Path analysisOutputFile = workingDirectoryPath.resolve(ANALYSIS_OUTPUT_FILENAME);
+
+        makeTempCopyOfRScript(analysisScriptSource, analysisScriptTempCopy);
+
+        final Process process = runRScript(contingencyTablesDirectoryPath, analysisScriptTempCopy, maxMotherBirthAge, startYear, endYear);
+        final double score = getRScriptResult(process, analysisOutputFile);
+
         try {
-            timedOut = !process.waitFor(R_PROCESS_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
+            checkExitStatus(process);
+        }
+        finally {
+            Files.delete(analysisScriptTempCopy);
+            if (DELETE_ANALYSIS_OUTPUT_FILE) Files.delete(analysisOutputFile);
+        }
+
+        return score;
+    }
+
+    private static void checkExitStatus(final Process process) {
+
+        try {
+            final boolean timedOut = !process.waitFor(R_PROCESS_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
+
+            if (timedOut || process.exitValue() != NORMAL_EXIT_CODE)
+                throw new RuntimeException("Execution of analysis script failed");
         }
         catch (final InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        if (timedOut || process.exitValue() != NORMAL_EXIT_CODE)
-            throw new RuntimeException("RScript execution failed");
-
-        return v;
     }
 
     /**
-     * Extracts and concatenates the R analysis scripts into a file.
-     * 
-     * @param combinedScriptFilePath the full path to extract the scripts to
+     * Make a temporary copy of the R analysis script in the local directory. Needed in the case of running from
+     * a jar, and harmless otherwise.
      */
-    private static void extractRScript(final Path combinedScriptFilePath) throws IOException {
+    private static void makeTempCopyOfRScript(final Path analysisScriptSource, final Path analysisScriptTempCopy) throws IOException {
 
-        // The file the R is written to
-        final File rScriptFile = combinedScriptFilePath.toFile();
-
-        // This overwrites any existing file of the same name
-        final FileWriter rScriptFileWriter = new FileWriter(rScriptFile, false);
-        rScriptFileWriter.close();
-
-        for (final String script : R_SCRIPT_PATHS) {
-            try (
-                // Retrieving the R files as streams in case they are in a jar
-                final InputStream stream = RCaller.class.getClassLoader().getResourceAsStream(script);
-                final OutputStream output = new FileOutputStream(rScriptFile, true)
-            ) {
-                IOUtils.copy(stream, output);
-            }
+        try (
+            // Retrieve the R file as a stream in case it's in a jar.
+            final InputStream stream = ContingencyTableValidator.class.getClassLoader().getResourceAsStream(analysisScriptSource.toString());
+            final OutputStream output = new FileOutputStream(analysisScriptTempCopy.toFile())
+        ) {
+            IOUtils.copy(stream, output);
         }
     }
 
+    private static void deleteTempCopyOfRScript(final Path combinedScriptFilePath) throws IOException {
+
+        Files.delete(combinedScriptFilePath);
+    }
+
     /**
-     * Executes the R analysis script and returns the running process. The process must be destroyed separately.
+     * Executes the R analysis script and returns the running process.
      * 
      * @param runDirPath the path of the current run directory
      * @param rScriptPath the path of the R analysis script
@@ -133,7 +155,7 @@ public class RCaller {
         // Filter relevant lines, calculate v per line and sum together
         final int v = stdout.lines()
             // Writing lines to file
-            .filter(RCaller::filterAnalysis)
+            .filter(ContingencyTableValidator::filterAnalysis)
             .peek((l) -> {
                 try {
                     outputFileWriter.write(l);
@@ -142,8 +164,8 @@ public class RCaller {
                     System.err.println("Unable to write results of analysis to file " + outputPath);
                 }
             })
-            .filter(RCaller::filterAnalysis)
-            .map(RCaller::getLineScore)
+            .filter(ContingencyTableValidator::filterAnalysis)
+            .map(ContingencyTableValidator::getLineScore)
             .reduce(Double::sum)
             .map((res) -> (int) Math.floor(res))
             .orElse(0);
