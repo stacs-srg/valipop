@@ -18,7 +18,7 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.implementations.Randomness;
+import uk.ac.standrews.cs.valipop.population.Randomness;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.distributions.EnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.distributions.InconsistentWeightException;

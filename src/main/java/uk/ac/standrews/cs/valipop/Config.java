@@ -18,7 +18,7 @@
 package uk.ac.standrews.cs.valipop;
 
 import uk.ac.standrews.cs.valipop.export.ExportFormat;
-import uk.ac.standrews.cs.valipop.implementations.SerializableConfig;
+import uk.ac.standrews.cs.valipop.population.SerializableConfig;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.utils.InputFileReader;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;

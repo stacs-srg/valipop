@@ -39,7 +39,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>uk.ac.standrews.cs.valipop.implementations.CL_OBDModel</mainClass>
+                            <mainClass>uk.ac.standrews.cs.valipop.population.CL_OBDModel</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

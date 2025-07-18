@@ -1,4 +1,4 @@
-Source,YOB,Age,NPA,Date,freq
+Source,YOB,Age,PartnerAge,Date,freq
 SIM,1930,26,45-49,1956,4
 SIM,1896,0,na,1896,3683
 STAT,1868,71,na,1939,1288.4708499023152

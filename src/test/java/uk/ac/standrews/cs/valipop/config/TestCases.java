@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.config;
 
 import org.junit.jupiter.params.provider.Arguments;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.implementations.OBDModel;
+import uk.ac.standrews.cs.valipop.population.OBDModel;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.nio.file.Paths;

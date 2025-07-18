@@ -39,7 +39,7 @@ Factor search can be run on your local computer using the [ValiPop Jar](executio
 
 The JAR may then be passed to the `spark-submit` included with the Spark installation with the required argument
 
-`--class uk.ac.standrews.cs.valipop.implementations.DistributedFactorSearch`
+`--class uk.ac.standrews.cs.valipop.population.DistributedFactorSearch`
 
 The following demonstrates this with additional machine-specific Spark configuration
 
@@ -48,7 +48,7 @@ The following demonstrates this with additional machine-specific Spark configura
 # (Windows may require all arguments to be on the same line)
 
 spark/bin/spark-submit \
-    --class uk.ac.standrews.cs.valipop.implementations.DistributedFactorSearch \
+    --class uk.ac.standrews.cs.valipop.population.DistributedFactorSearch \
     --master "local[*]" \
     --driver-memory 24G \
     --conf spark.driver.host=localhost \

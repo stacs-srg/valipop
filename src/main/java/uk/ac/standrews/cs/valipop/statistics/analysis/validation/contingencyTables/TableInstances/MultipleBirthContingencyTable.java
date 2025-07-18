@@ -22,6 +22,8 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.ContingencyTree;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Node;
 
+import static uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.NewPartnerAgeNodeInt.PARTNER_AGE_LABEL;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -51,7 +53,7 @@ public class MultipleBirthContingencyTable extends ContingencyTable {
                         leaf.deleteVariable("CIY");
                         leaf.deleteVariable("NCIP");
                         leaf.deleteVariable("Separated");
-                        leaf.deleteVariable("NPA");
+                        leaf.deleteVariable(PARTNER_AGE_LABEL);
 
                         final ContingencyTableRow row = table.get(leaf.hash());
 
