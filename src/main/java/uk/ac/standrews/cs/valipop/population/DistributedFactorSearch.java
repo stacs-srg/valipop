@@ -35,7 +35,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
-import uk.ac.standrews.cs.valipop.utils.RCaller;
+import uk.ac.standrews.cs.valipop.utils.ContingencyTableValidator;
 
 /**
  * Searches for recovery factors in parallel using Apache Spark 
@@ -43,38 +43,38 @@ import uk.ac.standrews.cs.valipop.utils.RCaller;
  * @author Daniel Brathagen (dbrathagen@gmail.com)
  */
 public class DistributedFactorSearch {
-    public static void main(String[] args) throws InterruptedException {
-        String[] pArgs = ProcessArgs.process(args, "FACTOR_SEARCH_PRECISION");
+    public static void main(final String[] args) throws InterruptedException {
+        final String[] pArgs = ProcessArgs.process(args, "FACTOR_SEARCH_PRECISION");
         if (!ProcessArgs.check(pArgs, "FACTOR_SEARCH_PRECISION")) {
             System.err.println("Incorrect arguments given");
             throw new Error("Incorrect arguments given");
         }
 
-        Path dataFiles = Paths.get(pArgs[0]);
-        int seedSize = Integer.valueOf(pArgs[1]);
-        String runPurpose = pArgs[2];
-        int numberOfRunsPerSim = Integer.valueOf(pArgs[3]);
+        final Path dataFiles = Paths.get(pArgs[0]);
+        final int seedSize = Integer.valueOf(pArgs[1]);
+        final String runPurpose = pArgs[2];
+        final int numberOfRunsPerSim = Integer.valueOf(pArgs[3]);
 
-        String rfsArg = pArgs[4];
-        String prfsArg = pArgs[5];
+        final String rfsArg = pArgs[4];
+        final String prfsArg = pArgs[5];
 
-        Path resultsDir = Paths.get(pArgs[6]);
-        Path summaryResultsDir = Paths.get(pArgs[7]);
+        final Path resultsDir = Paths.get(pArgs[6]);
+        final Path summaryResultsDir = Paths.get(pArgs[7]);
 
-        double[] precisions = toDoubleArray(pArgs[8]);
+        final double[] precisions = toDoubleArray(pArgs[8]);
 
-        Path projectPath = Paths.get(pArgs[9]);
+        final Path projectPath = Paths.get(pArgs[9]);
 
-        double[] rfs = toDoubleArray(rfsArg);
-        double[] prfs = toDoubleArray(prfsArg);
+        final double[] rfs = toDoubleArray(rfsArg);
+        final double[] prfs = toDoubleArray(prfsArg);
 
-        SparkConf conf = new SparkConf().setAppName("valipop");
-        JavaSparkContext sc = new JavaSparkContext(conf);
+        final SparkConf conf = new SparkConf().setAppName("valipop");
+        final JavaSparkContext sc = new JavaSparkContext(conf);
 
-        List<ModelInput> inputs = generateInputs(seedSize, rfs, prfs, precisions, dataFiles, numberOfRunsPerSim, runPurpose, resultsDir, summaryResultsDir, projectPath);
+        final List<ModelInput> inputs = generateInputs(seedSize, rfs, prfs, precisions, dataFiles, numberOfRunsPerSim, runPurpose, resultsDir, summaryResultsDir, projectPath);
 
         if (!inputs.isEmpty()) {
-            ModelInput i = inputs.get(0);
+            final ModelInput i = inputs.get(0);
 
             // Creates a config for the sole purpose of creating the directory structure
             new Config(i.tS, i.t0, i.tE, i.size, Path.of(i.dataFiles), Path.of(i.summaryResultsLocation), i.runPurpose, Path.of(i.summaryResultsLocation));
@@ -82,7 +82,7 @@ public class DistributedFactorSearch {
 
         System.out.println("Generated " + inputs.size() + " configs");
 
-        JavaRDD<ModelInput> df = sc.parallelize(
+        final JavaRDD<ModelInput> df = sc.parallelize(
             inputs,
             inputs.size()
         );
@@ -116,23 +116,23 @@ public class DistributedFactorSearch {
         public Period minBirthSpacing;
         
         public ModelInput(
-            LocalDate tS,
-            LocalDate t0,
-            LocalDate tE,
-            int size,
-            String dataFiles,
-            String resultLocation,
-            String runPurpose,
-            String summaryResultsLocation,
-            String projectPath,
-            
-            double precision,
-            double set_up_br,
-            double set_up_dr,
-            double rf,
-            double prf,
-            Period input_width,
-            Period minBirthSpacing
+            final LocalDate tS,
+            final LocalDate t0,
+            final LocalDate tE,
+            final int size,
+            final String dataFiles,
+            final String resultLocation,
+            final String runPurpose,
+            final String summaryResultsLocation,
+            final String projectPath,
+
+            final double precision,
+            final double set_up_br,
+            final double set_up_dr,
+            final double rf,
+            final double prf,
+            final Period input_width,
+            final Period minBirthSpacing
         ) {
             this.tS               = tS;
             this.t0               = t0;
@@ -157,15 +157,15 @@ public class DistributedFactorSearch {
         public int age;
         public SerializableSummaryRow summaryRow;
 
-        ModelOutput(int age, SerializableSummaryRow summaryRow) {
+        ModelOutput(final int age, final SerializableSummaryRow summaryRow) {
             this.age = age;
             this.summaryRow = summaryRow;
         }
     }
 
     // --- Distributed Operations ---
-    private static ModelOutput runModel(ModelInput i) {
-        Config config = new Config(i.tS, i.t0, i.tE, i.size, Paths.get(i.dataFiles), Paths.get(i.resultLocation), i.runPurpose, Paths.get(i.summaryResultsLocation));
+    private static ModelOutput runModel(final ModelInput i) {
+        final Config config = new Config(i.tS, i.t0, i.tE, i.size, Paths.get(i.dataFiles), Paths.get(i.resultLocation), i.runPurpose, Paths.get(i.summaryResultsLocation));
 
         config.setCTtreePrecision(i.precision);
         config.setSetupBirthRate(i.set_up_br);
@@ -176,7 +176,7 @@ public class DistributedFactorSearch {
         config.setMinBirthSpacing(i.minBirthSpacing);
         config.setProjectPath(Paths.get(i.projectPath));
 
-        OBDModel model = new OBDModel(config);
+        final OBDModel model = new OBDModel(config);
 
         try {
             System.out.println("Simulating the model");
@@ -184,53 +184,55 @@ public class DistributedFactorSearch {
             System.out.println("Analysing the model");
             model.analyseAndOutputPopulation(false);
             System.out.println("Complete for rf: " +config.getRecoveryFactor() + ", rpf: " + config.getProportionalRecoveryFactor());
-        } catch(Exception e) {
+        } catch(final Exception e) {
             System.out.println("Given rf: " + config.getRecoveryFactor() + ", rpf: " + config.getProportionalRecoveryFactor());
 
             throw e;
         }
 
-        SummaryRow summaryRow = model.getSummaryRow();
-        int maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
+        final SummaryRow summaryRow = model.getSummaryRow();
+        final int maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
 
         return new ModelOutput(maxBirthingAge, summaryRow.toSerialized());
     }
 
-    private static SerializableSummaryRow validateModel(ModelOutput result) throws PreEmptiveOutOfMemoryWarning, IOException, StatsException {
+    private static SerializableSummaryRow validateModel(final ModelOutput result) throws PreEmptiveOutOfMemoryWarning, IOException, StatsException {
 
-        Config config = new Config(result.summaryRow.config);
-        int maxBirthingAge = result.age;
-        SummaryRow summaryRow = new SummaryRow(result.summaryRow);
+        final Config config = new Config(result.summaryRow.config);
+        final int maxMotherBirthAge = result.age;
+        final int startYear = config.getT0().getYear();
+        final int endYear = config.getTE().getYear();
 
-        ProgramTimer statsTimer = new ProgramTimer();
-        double v = RCaller.getValidationScore(config.getRunPath(), maxBirthingAge);
+        final SummaryRow summaryRow = new SummaryRow(result.summaryRow);
 
-        summaryRow.setV(v);
+        final ProgramTimer statsTimer = new ProgramTimer();
+        final double score = new ContingencyTableValidator(config.getRunPath(), maxMotherBirthAge, startYear, endYear).getValidationScore();
+
+        summaryRow.setV(score);
         summaryRow.setStatsRunTime(statsTimer.getRunTimeSeconds());
 
         return summaryRow.toSerialized();
     }
 
-    private static void outputSummary(SerializableSummaryRow sr) {
-        SummaryRow summaryRow = new SummaryRow(sr);
+    private static void outputSummary(final SerializableSummaryRow sr) {
+        final SummaryRow summaryRow = new SummaryRow(sr);
         summaryRow.outputSummaryRowToFile();
     }
 
-    private static double[] toDoubleArray(String rfsArg) {
+    private static double[] toDoubleArray(final String rfsArg) {
 
-        String[] split = rfsArg.split(",");
-        double[] ret = new double[split.length];
+        final String[] split = rfsArg.split(",");
+        final double[] ret = new double[split.length];
 
         int c = 0;
 
-        for (String s : split) {
-            ret[c++] = Double.valueOf(s);
-        }
+        for (final String s : split)
+            ret[c++] = Double.parseDouble(s);
 
         return ret;
     }
 
-    private static List<ModelInput> generateInputs(int size0, double[] recovery_factors, double[] proportional_recovery_factors, double[] precisions, Path dataFiles, int numberOfRunsPerSim, String runPurpose, Path resultsDir, Path summaryResultsDir, Path projectPath) throws InterruptedException {
+    private static List<ModelInput> generateInputs(final int size0, final double[] recovery_factors, final double[] proportional_recovery_factors, final double[] precisions, final Path dataFiles, final int numberOfRunsPerSim, final String runPurpose, final Path resultsDir, final Path summaryResultsDir, final Path projectPath) throws InterruptedException {
         final LocalDate tS = LocalDate.of(1599, 1, 1);
         final LocalDate t0 = LocalDate.of(1855, 1, 1);
         final LocalDate tE = LocalDate.of(2015, 1, 1);
@@ -242,16 +244,16 @@ public class DistributedFactorSearch {
         final Period[] minBirthSpacings = new Period[]{Period.ofDays(147)};
         final int[] t0_pop_sizes = new int[]{size0};
 
-        List<ModelInput> inputs = new ArrayList<>();
+        final List<ModelInput> inputs = new ArrayList<>();
 
-        for (double precision : precisions) {
-            for (int size : t0_pop_sizes) {
-                for (double recovery_factor : recovery_factors) {
-                    for (double proportional_recovery_factor : proportional_recovery_factors) {
-                        for (Period input_width : input_widths) {
-                            for (Period minBirthSpacing : minBirthSpacings) {
+        for (final double precision : precisions) {
+            for (final int size : t0_pop_sizes) {
+                for (final double recovery_factor : recovery_factors) {
+                    for (final double proportional_recovery_factor : proportional_recovery_factors) {
+                        for (final Period input_width : input_widths) {
+                            for (final Period minBirthSpacing : minBirthSpacings) {
                                 for (int n = 0; n < numberOfRunsPerSim; n++) {
-                                    ModelInput input = new ModelInput(
+                                    final ModelInput input = new ModelInput(
                                         tS,
                                         t0,
                                         tE,

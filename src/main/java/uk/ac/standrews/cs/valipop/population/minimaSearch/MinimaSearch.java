@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.population.*;
 import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
-import uk.ac.standrews.cs.valipop.utils.RCaller;
+import uk.ac.standrews.cs.valipop.utils.ContingencyTableValidator;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -67,34 +67,34 @@ public class MinimaSearch {
 
     private static double nanAsemtote = 1E6;
 
-    public static void main(String[] args) throws StatsException, IOException {
+    public static void main(final String[] args) throws StatsException, IOException {
 
-        String[] pArgs = ProcessArgs.process(args, "MINIMA_SEARCH");
+        final String[] pArgs = ProcessArgs.process(args, "MINIMA_SEARCH");
         if (!ProcessArgs.check(pArgs, "MINIMA_SEARCH")) {
             System.err.println("Incorrect arguments given");
             throw new Error("Incorrect arguments given");
         }
 
-        Path dataFiles = Paths.get(pArgs[0]);
-        int seedSize = Integer.valueOf(pArgs[1]);
-        String runPurpose = pArgs[2];
-        Minimise minimise = Minimise.resolve(pArgs[3]);
-        Control control = Control.resolve(pArgs[4]);
-        double startFactor = Double.valueOf(pArgs[5]);
-        double step = Double.valueOf(pArgs[6]);
-        int repeats = Integer.valueOf(pArgs[7]);
+        final Path dataFiles = Paths.get(pArgs[0]);
+        final int seedSize = Integer.valueOf(pArgs[1]);
+        final String runPurpose = pArgs[2];
+        final Minimise minimise = Minimise.resolve(pArgs[3]);
+        final Control control = Control.resolve(pArgs[4]);
+        final double startFactor = Double.valueOf(pArgs[5]);
+        final double step = Double.valueOf(pArgs[6]);
+        final int repeats = Integer.valueOf(pArgs[7]);
 
         try {
             runSearch(seedSize, dataFiles, startFactor, step, runPurpose, repeats, minimise, control);
 
-        } catch (SpaceExploredException e) {
+        } catch (final SpaceExploredException e) {
             System.out.println("Space explored - check the results logs!");
-        } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
+        } catch (final PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
             System.out.println("Ran out of memory - not enough memory for 0 factor - increase JVM heap size using -Xmx argument");
         }
     }
 
-    private static void runSearch(int populationSize, Path dataFiles, double startFactor, double step, String runPurpose, int repeatRuns, Minimise minimiseFor, Control controlBy) throws IOException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning {
+    private static void runSearch(final int populationSize, final Path dataFiles, final double startFactor, final double step, final String runPurpose, final int repeatRuns, final Minimise minimiseFor, final Control controlBy) throws IOException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning {
 
         MinimaSearch.startFactor = startFactor;
         MinimaSearch.step = step;
@@ -115,20 +115,20 @@ public class MinimaSearch {
 
                 for (; n < repeatRuns; n++) {
 
-                    Config config = new Config(tS, t0, tE, populationSize, dataFiles, Config.DEFAULT_RESULTS_SAVE_PATH, runPurpose, Config.DEFAULT_RESULTS_SAVE_PATH);
+                    final Config config = new Config(tS, t0, tE, populationSize, dataFiles, Config.DEFAULT_RESULTS_SAVE_PATH, runPurpose, Config.DEFAULT_RESULTS_SAVE_PATH);
                     config.setDeterministic(true);
                     config.setSeed(123);
 
                     config.setRecoveryFactor(recoveryFactor);
                     config.setProportionalRecoveryFactor(proportionalRecoveryFactor);
 
-                    OBDModel model = new OBDModel(config);
+                    final OBDModel model = new OBDModel(config);
 
                     try {
                         model.runSimulation();
                         model.analyseAndOutputPopulation(false);
 
-                        int maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
+                        final int maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
                         double v = getV(minimiseFor, maxBirthingAge, controlBy, config);
 
                         // Failed population run may get a NaN from the V calc
@@ -144,16 +144,16 @@ public class MinimaSearch {
 
                         totalV += v;
 
-                    } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
+                    } catch (final PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
 
                         handleRecoveryFromOutOfMemory(getControllingFactor(controlBy), model);
                         break;
                     }
                 }
 
-                Double avgV = totalV / n;
+                final double avgV = totalV / n;
 
-                if (!avgV.isNaN()) {
+                if (!Double.isNaN(avgV)) {
                     logFactortoV(getControllingFactor(controlBy), avgV);
                     inMinima(getControllingFactor(controlBy));
 
@@ -161,25 +161,29 @@ public class MinimaSearch {
                     logFactortoV(getControllingFactor(controlBy), nanAsemtote);
                 }
             }
-        } catch (IOException e) {
-            String message = "Model failed due to Input/Output exception, check that this program has " +
+        } catch (final IOException e) {
+            final String message = "Model failed due to Input/Output exception, check that this program has " +
                     "permission to read or write on disk. Also, check supporting input files are present at location " +
                     "specified in config setup code : " + e.getMessage();
             throw new IOException(message, e);
-        } catch (StatsException e) {
-            String message = "Stats failure - could not execute RScript command - do you have R installed?";
+        } catch (final StatsException e) {
+            final String message = "Stats failure - could not execute RScript command - do you have R installed?";
             throw new StatsException(message);
         }
     }
 
-    public static double getV(Minimise minimiseFor, int maxBirthingAge, Control controlBy, Config config) throws IOException, StatsException {
+    public static double getV(final Minimise minimiseFor, final int maxBirthingAge, final Control controlBy, final Config config) throws IOException, StatsException {
+
         if (Objects.requireNonNull(minimiseFor) == Minimise.GEEGLM) {
-            return RCaller.getValidationScore(config.getRunPath(), maxBirthingAge);
+            final int startYear = config.getT0().getYear();
+            final int endYear = config.getTE().getYear();
+
+            return new ContingencyTableValidator(config.getRunPath(), maxBirthingAge, startYear, endYear).getValidationScore();
         }
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
     }
 
-    public static double getControllingFactor(Control controlBy) {
+    public static double getControllingFactor(final Control controlBy) {
 
         return switch (controlBy) {
             case RF -> recoveryFactor;
@@ -187,7 +191,7 @@ public class MinimaSearch {
         };
     }
 
-    public static void setControllingFactor(Control controlBy, double startFactor) {
+    public static void setControllingFactor(final Control controlBy, final double startFactor) {
 
         switch (controlBy) {
 
@@ -200,7 +204,7 @@ public class MinimaSearch {
         }
     }
 
-    private static void handleRecoveryFromOutOfMemory(double factor, OBDModel model) {
+    private static void handleRecoveryFromOutOfMemory(final double factor, final OBDModel model) {
 
         hardLimitBottomBoundFactor = factor + 0.1;
         bottomSearchBoundFactor = hardLimitBottomBoundFactor;
@@ -226,7 +230,7 @@ public class MinimaSearch {
 
         step = initStep;
 
-        int options = Double.valueOf((topSearchBoundFactor - bottomSearchBoundFactor) / (initStep / 2.0)).intValue();
+        final int options = Double.valueOf((topSearchBoundFactor - bottomSearchBoundFactor) / (initStep / 2.0)).intValue();
 
         double chosenFactor;
 
@@ -242,7 +246,7 @@ public class MinimaSearch {
             System.out.println(bottomSearchBoundFactor);
             System.out.println(initStep);
             System.out.println(options);
-            int chosen = randomGenerator.nextInt(options);
+            final int chosen = randomGenerator.nextInt(options);
 
             chosenFactor = chosen * (initStep / 2) + bottomSearchBoundFactor;
 
@@ -252,20 +256,20 @@ public class MinimaSearch {
 
         jumpingPhase = false;
 
-        FVPoint nearestFactor = getNearestPoint(chosenFactor);
+        final FVPoint nearestFactor = getNearestPoint(chosenFactor);
         points.remove(nearestFactor);
         points.addLast(nearestFactor);
 
         return chosenFactor;
     }
 
-    private static FVPoint getNearestPoint(double chosenFactor) {
+    private static FVPoint getNearestPoint(final double chosenFactor) {
 
         double minDistance = Double.MAX_VALUE;
         FVPoint nearest = null;
 
-        for (FVPoint p : points) {
-            double distance = Math.abs(p.x_f - chosenFactor);
+        for (final FVPoint p : points) {
+            final double distance = Math.abs(p.x_f - chosenFactor);
             if (distance < minDistance) {
                 minDistance = distance;
                 nearest = p;
@@ -275,23 +279,23 @@ public class MinimaSearch {
         return nearest;
     }
 
-    private static Double inMinima(double currentFactor) {
+    private static Double inMinima(final double currentFactor) {
 
         if (points.size() >= pointsInMinima) {
             // get two nearest neighbours on either side
-            ArrayList<FVPoint> consideredPoints = getNearestFactorNeigbours(pointsInMinima - 1, currentFactor);
-            ArrayList<FVPoint> returns = new ArrayList<>();
+            final ArrayList<FVPoint> consideredPoints = getNearestFactorNeigbours(pointsInMinima - 1, currentFactor);
+            final ArrayList<FVPoint> returns = new ArrayList<>();
 
             for (int i = 0; i < pointsInMinima; i++) {
 
-                List<FVPoint> l;
+                final List<FVPoint> l;
                 if (i + pointsInMinima - 1 < consideredPoints.size()) {
                     l = consideredPoints.subList(i, i + pointsInMinima);
                 } else {
                     break;
                 }
 
-                FVPoint ret = constitutesMinima(l);
+                final FVPoint ret = constitutesMinima(l);
 
                 if (ret != null) {
                     returns.add(ret);
@@ -301,7 +305,7 @@ public class MinimaSearch {
             if (returns.size() == 0) {
                 return null;
             } else {
-                FVPoint minima = orderByV(returns).get(0);
+                final FVPoint minima = orderByV(returns).get(0);
                 System.out.println("Minima found at: " + minima.x_f + " --- v/M: " + minima.y_v);
                 return minima.x_f;
             }
@@ -311,22 +315,22 @@ public class MinimaSearch {
     }
 
     // returns factor of minima
-    private static FVPoint constitutesMinima(List<FVPoint> potentialMinimaSet) {
+    private static FVPoint constitutesMinima(final List<FVPoint> potentialMinimaSet) {
 
         if (potentialMinimaSet.size() != pointsInMinima) {
             return null;
         }
 
-        double factorWidth = Math.abs(potentialMinimaSet.get(0).x_f - potentialMinimaSet.get(pointsInMinima - 1).x_f);
+        final double factorWidth = Math.abs(potentialMinimaSet.get(0).x_f - potentialMinimaSet.get(pointsInMinima - 1).x_f);
 
         if (factorWidth < minimumMeaningfulStep * minimaSize) {
 
-            ArrayList<FVPoint> orderedByV = orderByV(potentialMinimaSet);
+            final ArrayList<FVPoint> orderedByV = orderByV(potentialMinimaSet);
 
-            double avg = averageV(orderedByV);
+            final double avg = averageV(orderedByV);
 
-            double lowerBound = avg * (1 - intervalBoundV);
-            double upperBound = avg * (1 + intervalBoundV);
+            final double lowerBound = avg * (1 - intervalBoundV);
+            final double upperBound = avg * (1 + intervalBoundV);
 
             if (lowerBound < orderedByV.get(0).y_v && orderedByV.get(pointsInMinima - 1).y_v < upperBound) {
                 System.out.println("Minima identified - setting jumpingPhase = true");
@@ -338,27 +342,27 @@ public class MinimaSearch {
         return null;
     }
 
-    private static double averageV(List<FVPoint> in) {
+    private static double averageV(final List<FVPoint> in) {
 
         double sum = 0.0;
 
-        for (FVPoint p : in) {
+        for (final FVPoint p : in) {
             sum += p.y_v;
         }
 
         return sum / in.size();
     }
 
-    private static ArrayList<FVPoint> orderByFactor(List<FVPoint> in) {
-        ArrayList<FVPoint> ordering = new ArrayList<>(in.size());
+    private static ArrayList<FVPoint> orderByFactor(final List<FVPoint> in) {
+        final ArrayList<FVPoint> ordering = new ArrayList<>(in.size());
 
-        for (FVPoint p : in) {
+        for (final FVPoint p : in) {
 
             if (ordering.size() == 0) {
                 ordering.add(p);
             } else {
                 int i = 0;
-                for (FVPoint o : ordering) {
+                for (final FVPoint o : ordering) {
                     if (p.x_f < o.x_f) {
                         ordering.add(i, p);
                         break;
@@ -373,16 +377,16 @@ public class MinimaSearch {
         return ordering;
     }
 
-    private static ArrayList<FVPoint> orderByV(List<FVPoint> in) {
-        ArrayList<FVPoint> ordering = new ArrayList<>(in.size());
+    private static ArrayList<FVPoint> orderByV(final List<FVPoint> in) {
+        final ArrayList<FVPoint> ordering = new ArrayList<>(in.size());
 
-        for (FVPoint p : in) {
+        for (final FVPoint p : in) {
 
             if (ordering.size() == 0) {
                 ordering.add(p);
             } else {
                 int i = 0;
-                for (FVPoint o : ordering) {
+                for (final FVPoint o : ordering) {
                     if (p.y_v < o.y_v) {
                         ordering.add(i, p);
                         break;
@@ -398,13 +402,13 @@ public class MinimaSearch {
         return ordering;
     }
 
-    private static ArrayList<FVPoint> getNearestFactorNeigbours(int width, double factor) {
-        ArrayList<FVPoint> selected = new ArrayList<>(width * 2 + 1);
+    private static ArrayList<FVPoint> getNearestFactorNeigbours(final int width, final double factor) {
+        final ArrayList<FVPoint> selected = new ArrayList<>(width * 2 + 1);
 
-        ArrayList<FVPoint> ordering = orderByFactor(points);
+        final ArrayList<FVPoint> ordering = orderByFactor(points);
 
         int c = 0;
-        for (FVPoint p : ordering) {
+        for (final FVPoint p : ordering) {
 
             if (p.x_f == factor) {
 
@@ -441,7 +445,7 @@ public class MinimaSearch {
     public static double getNextFactorValue() throws SpaceExploredException {
 
         if (jumpingPhase) {
-            double nextFactor = jumpOut();
+            final double nextFactor = jumpOut();
             return nextFactor;
         }
 
@@ -451,14 +455,14 @@ public class MinimaSearch {
             return startFactor + step;
         } else {
 
-            FVPoint penultimatePoint = points.get(points.size() - 2);
-            FVPoint lastPoint = points.get(points.size() - 1);
+            final FVPoint penultimatePoint = points.get(points.size() - 2);
+            final FVPoint lastPoint = points.get(points.size() - 1);
 
-            double dyOverdx = (lastPoint.y_v - penultimatePoint.y_v) / (lastPoint.x_f - penultimatePoint.x_f);
+            final double dyOverdx = (lastPoint.y_v - penultimatePoint.y_v) / (lastPoint.x_f - penultimatePoint.x_f);
 
             double newFactor;
 
-            double direction = dyOverdx / Math.abs(dyOverdx);
+            final double direction = dyOverdx / Math.abs(dyOverdx);
 
             if (!DoubleComparer.equal(0, dyOverdx, 0.0000001)) {
                 // if sloped
@@ -473,7 +477,7 @@ public class MinimaSearch {
                 step = step / 2;
             }
 
-            FVPoint match = containsValue(points, newFactor);
+            final FVPoint match = containsValue(points, newFactor);
 
             if (match != null) {
 
@@ -525,9 +529,9 @@ public class MinimaSearch {
         }
     }
 
-    private static FVPoint containsValue(LinkedList<FVPoint> points, double newFactor) {
+    private static FVPoint containsValue(final LinkedList<FVPoint> points, final double newFactor) {
 
-        for (FVPoint point : points) {
+        for (final FVPoint point : points) {
             if (DoubleComparer.equal(point.x_f, newFactor, 0.000000001)) {
                 return point;
             }
@@ -538,7 +542,7 @@ public class MinimaSearch {
 
     private static LinkedList<FVPoint> points = new LinkedList<>();
 
-    public static void logFactortoV(double factor, double v) {
+    public static void logFactortoV(final double factor, final double v) {
 
         points.addLast(new FVPoint(factor, v));
     }

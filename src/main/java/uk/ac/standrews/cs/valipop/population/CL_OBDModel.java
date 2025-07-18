@@ -20,7 +20,7 @@ package uk.ac.standrews.cs.valipop.population;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
-import uk.ac.standrews.cs.valipop.utils.RCaller;
+import uk.ac.standrews.cs.valipop.utils.ContingencyTableValidator;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -64,21 +64,15 @@ public class CL_OBDModel {
 
         final ProgramTimer statsTimer = new ProgramTimer();
 
-        final int value = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
+        final int maxMotherBirthAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
+        final int startYear = config.getT0().getYear();
+        final int endYear = config.getTE().getYear();
 
-        final double v = RCaller.getValidationScore(config.getRunPath(), value);
+        final double score = new ContingencyTableValidator(config.getRunPath(), maxMotherBirthAge, startYear, endYear).getValidationScore();
 
-        // This gives a human readable score
-        String score = "good";
-        if (v > 0 && v <= 10) {
-            score = "okay";
-        } else if (v > 30) {
-            score = "bad";
-        }
-
-        System.out.println("Validation score: " + v + " (" + score + ")");
+        System.out.println("Validation score: " + score + ")");
 
         model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
-        model.getSummaryRow().setV(v);
+        model.getSummaryRow().setV(score);
     }
 }

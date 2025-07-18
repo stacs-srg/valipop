@@ -43,7 +43,7 @@ public class MinimaSearchTest {
                 LocalDate.of(200,1,1),
                 LocalDate.of(300,1,1),
                 0,
-                Paths.get("src/test/resources/valipop/test-pop"),
+                Paths.get("src/test/resources/valipop/distributions"),
                 Config.DEFAULT_RESULTS_SAVE_PATH, "MINIMA_SEARCH_TEST",
                 Config.DEFAULT_RESULTS_SAVE_PATH).setDeterministic( true);
 

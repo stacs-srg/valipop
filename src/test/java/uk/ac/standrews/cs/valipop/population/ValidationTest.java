@@ -17,10 +17,12 @@
  */
 package uk.ac.standrews.cs.valipop.population;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
-import uk.ac.standrews.cs.valipop.utils.RCaller;
+import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.utils.ContingencyTableValidator;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -39,29 +41,45 @@ public class ValidationTest {
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/validation");
     public static final double DELTA = 1e-10;
 
-    private static List<Arguments> configurations = List.of(
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test4"), 60.0)
+    @SuppressWarnings("unused")
+    private static final List<Arguments> configurations = List.of(
+        Arguments.of(TEST_RESOURCE_DIR.resolve("test4"), 59.0)
     );
 
-    private static List<Arguments> longRunningConfigurations = List.of(
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test1"), 16.0),
+    @SuppressWarnings("unused")
+    private static final List<Arguments> slowConfigurations = List.of(
+        Arguments.of(TEST_RESOURCE_DIR.resolve("test1"), 3.0),
         Arguments.of(TEST_RESOURCE_DIR.resolve("test2"), 0.0),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test3"), 33.0),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test7"), 0),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("test3"), 64.0),
         Arguments.of(TEST_RESOURCE_DIR.resolve("test5"), 25.0),
         Arguments.of(TEST_RESOURCE_DIR.resolve("test6"), 0.0),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test8"), 13.0)
+        Arguments.of(TEST_RESOURCE_DIR.resolve("test7"), 65.0),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("test8"), 14.0)
     );
 
-    // Given model results, the R program should always generate the same V value
     @ParameterizedTest
     @FieldSource("configurations")
-    public void runValidation(final Path tableDirectory, final double expectedV) throws IOException, StatsException {
+    public void runFastValidation(final Path workingDirectory, final double expectedScore) throws IOException {
 
-        final int maxBirthingAge = 55;
+        runValidation(workingDirectory, expectedScore);
+    }
 
-        final double v = RCaller.getValidationScore(tableDirectory, maxBirthingAge);
+    @ParameterizedTest
+    @FieldSource("slowConfigurations")
+    @Tag("slow")
+    public void runSlowValidation(final Path workingDirectory, final double expectedScore) throws IOException {
 
-        assertEquals(expectedV, v, DELTA);
+        runValidation(workingDirectory, expectedScore);
+    }
+
+    private static void runValidation(final Path workingDirectory, final double expectedScore) throws IOException {
+
+        final Config config = new Config(workingDirectory.resolve("config.txt"));
+        final int startYear = config.getT0().getYear();
+        final int endYear = config.getTE().getYear();
+
+        final double score = new ContingencyTableValidator(workingDirectory, 55, startYear, endYear).getValidationScore();
+
+        assertEquals(expectedScore, score, DELTA);
     }
 }
