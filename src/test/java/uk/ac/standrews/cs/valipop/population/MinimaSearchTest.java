@@ -23,6 +23,9 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.population.minimaSearch.Control;
 import uk.ac.standrews.cs.valipop.population.minimaSearch.MinimaSearch;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 
@@ -38,14 +41,24 @@ public class MinimaSearchTest {
     @BeforeEach
     public void setup() {
 
+        final Path tempDir;
+        try {
+            tempDir = Files.createTempDirectory("valipopTests");
+        }
+        catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+
         Config config = new Config(
                 LocalDate.of(1,1,1),
                 LocalDate.of(200,1,1),
                 LocalDate.of(300,1,1),
                 0,
                 Paths.get("src/test/resources/valipop/distributions"),
-                Config.DEFAULT_RESULTS_SAVE_PATH, "MINIMA_SEARCH_TEST",
-                Config.DEFAULT_RESULTS_SAVE_PATH).setDeterministic( true);
+                tempDir, "MINIMA_SEARCH_TEST",
+                tempDir);
+
+        config.setDeterministic( true);
 
         model = new OBDModel(config);
     }

@@ -35,6 +35,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ContingencyTableValidator {
 
+    // TODO add option generate contingency tables from config file if not already present.
+
     private static final String CONTINGENCY_TABLES_DIRECTORY_NAME = "tables";
     private static final String ANALYSIS_SCRIPT_FILENAME = "analysis.R";
     private static final String ANALYSIS_OUTPUT_FILENAME = "analysis.out";

@@ -129,7 +129,7 @@ public class MinimaSearch {
                         model.analyseAndOutputPopulation(false);
 
                         final int maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
-                        double v = getV(minimiseFor, maxBirthingAge, controlBy, config);
+                        double v = getScore(minimiseFor, maxBirthingAge, controlBy, config);
 
                         // Failed population run may get a NaN from the V calc
                         if (Double.isNaN(v)) {
@@ -172,7 +172,7 @@ public class MinimaSearch {
         }
     }
 
-    public static double getV(final Minimise minimiseFor, final int maxBirthingAge, final Control controlBy, final Config config) throws IOException, StatsException {
+    public static double getScore(final Minimise minimiseFor, final int maxBirthingAge, final Control controlBy, final Config config) throws IOException, StatsException {
 
         if (Objects.requireNonNull(minimiseFor) == Minimise.GEEGLM) {
             final int startYear = config.getT0().getYear();

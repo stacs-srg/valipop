@@ -28,6 +28,9 @@ import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PersonNotFoun
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
@@ -43,20 +46,31 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class PeopleCollectionTest {
 
-    private PopulationStatistics ps;
+    private PopulationStatistics populationStatistics;
 
     @BeforeEach
     public void setUpPopulationStatistics() {
+
+        final Path tempDir;
+        try {
+            tempDir = Files.createTempDirectory("valipopTests");
+        }
+        catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+
         final Config config = new Config(
                 LocalDate.of(1, 1, 1),
                 LocalDate.of(200, 1, 1),
                 LocalDate.of(300, 1, 1),
                 0,
                 Paths.get("src/test/resources/valipop/distributions"),
-                Config.DEFAULT_RESULTS_SAVE_PATH, "PEOPLE_COLLECTION_TEST",
-                Config.DEFAULT_RESULTS_SAVE_PATH).setDeterministic(true);
+                tempDir, "PEOPLE_COLLECTION_TEST",
+                tempDir);
 
-        ps = new PopulationStatistics(config);
+        config.setDeterministic(true);
+
+        populationStatistics = new PopulationStatistics(config);
     }
 
     @Test
@@ -74,15 +88,15 @@ public class PeopleCollectionTest {
         final LocalDate b3 = LocalDate.of(1900, 12, 31);
         final LocalDate b4 = LocalDate.of(1901, 1, 1);
 
-        final Person m1 = new Person(SexOption.MALE, b1, null, ps, false);
-        final Person m2 = new Person(SexOption.MALE, b2, null, ps, false);
-        final Person m3 = new Person(SexOption.MALE, b3, null, ps, false);
-        final Person m4 = new Person(SexOption.MALE, b4, null, ps, false);
+        final Person m1 = new Person(SexOption.MALE, b1, null, populationStatistics, false);
+        final Person m2 = new Person(SexOption.MALE, b2, null, populationStatistics, false);
+        final Person m3 = new Person(SexOption.MALE, b3, null, populationStatistics, false);
+        final Person m4 = new Person(SexOption.MALE, b4, null, populationStatistics, false);
 
-        final Person f1 = new Person(SexOption.FEMALE, b1, null, ps, false);
-        final Person f2 = new Person(SexOption.FEMALE, b2, null, ps, false);
-        final Person f3 = new Person(SexOption.FEMALE, b3, null, ps, false);
-        final Person f4 = new Person(SexOption.FEMALE, b4, null, ps, false);
+        final Person f1 = new Person(SexOption.FEMALE, b1, null, populationStatistics, false);
+        final Person f2 = new Person(SexOption.FEMALE, b2, null, populationStatistics, false);
+        final Person f3 = new Person(SexOption.FEMALE, b3, null, populationStatistics, false);
+        final Person f4 = new Person(SexOption.FEMALE, b4, null, populationStatistics, false);
 
         living.add(m1);
         living.add(m2);
@@ -120,13 +134,13 @@ public class PeopleCollectionTest {
 
         final LocalDate start = LocalDate.of(1600, 1, 1);
 
-        final Person m1 = new Person(SexOption.MALE, start, null, ps, false);
-        final Person m2 = new Person(SexOption.MALE, start, null, ps, false);
-        final Person m3 = new Person(SexOption.MALE, start, null, ps, false);
+        final Person m1 = new Person(SexOption.MALE, start, null, populationStatistics, false);
+        final Person m2 = new Person(SexOption.MALE, start, null, populationStatistics, false);
+        final Person m3 = new Person(SexOption.MALE, start, null, populationStatistics, false);
 
-        final Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
-        final Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
-        final Person f3 = new Person(SexOption.FEMALE, start, null, ps, false);
+        final Person f1 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
+        final Person f2 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
+        final Person f3 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
 
         living.add(m1);
         living.add(m2);
@@ -154,13 +168,13 @@ public class PeopleCollectionTest {
 
         final LocalDate start = LocalDate.of(1600, 1, 1);
 
-        final Person m1 = new Person(SexOption.MALE, start, null, ps, false);
-        final Person m2 = new Person(SexOption.MALE, start, null, ps, false);
-        final Person m3 = new Person(SexOption.MALE, start, null, ps, false);
+        final Person m1 = new Person(SexOption.MALE, start, null, populationStatistics, false);
+        final Person m2 = new Person(SexOption.MALE, start, null, populationStatistics, false);
+        final Person m3 = new Person(SexOption.MALE, start, null, populationStatistics, false);
 
-        final Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
-        final Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
-        final Person f3 = new Person(SexOption.FEMALE, start, null, ps, false);
+        final Person f1 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
+        final Person f2 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
+        final Person f3 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
 
         living.add(m1);
         living.add(m2);
@@ -195,13 +209,13 @@ public class PeopleCollectionTest {
 
         final LocalDate start = LocalDate.of(1600, 1, 1);
 
-        final Person m1 = new Person(SexOption.MALE, start, null, ps, false);
-        final Person m2 = new Person(SexOption.MALE, start, null, ps, false);
-        final Person m3 = new Person(SexOption.MALE, start, null, ps, false);
+        final Person m1 = new Person(SexOption.MALE, start, null, populationStatistics, false);
+        final Person m2 = new Person(SexOption.MALE, start, null, populationStatistics, false);
+        final Person m3 = new Person(SexOption.MALE, start, null, populationStatistics, false);
 
-        final Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
-        final Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
-        final Person f3 = new Person(SexOption.FEMALE, start, null, ps, false);
+        final Person f1 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
+        final Person f2 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
+        final Person f3 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
 
         living.add(m1);
         living.add(m2);
@@ -243,13 +257,13 @@ public class PeopleCollectionTest {
 
         final LocalDate start = LocalDate.of(1600, 1, 1);
 
-        final Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
+        final Person f1 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
 
-        final Person m1 = new Person(SexOption.MALE, start, null, ps, false);
+        final Person m1 = new Person(SexOption.MALE, start, null, populationStatistics, false);
 
-        final Person c1 = new Person(SexOption.MALE, start.plus(19, ChronoUnit.YEARS), null, ps, false);
-        final Person c2 = new Person(SexOption.FEMALE, start.plus(25, ChronoUnit.YEARS), null, ps, false);
-        final Person c3 = new Person(SexOption.MALE, start.plus(32, ChronoUnit.YEARS), null, ps, false);
+        final Person c1 = new Person(SexOption.MALE, start.plus(19, ChronoUnit.YEARS), null, populationStatistics, false);
+        final Person c2 = new Person(SexOption.FEMALE, start.plus(25, ChronoUnit.YEARS), null, populationStatistics, false);
+        final Person c3 = new Person(SexOption.MALE, start.plus(32, ChronoUnit.YEARS), null, populationStatistics, false);
 
         living.add(f1);
 
@@ -314,7 +328,7 @@ public class PeopleCollectionTest {
 
             final LocalDate start = LocalDate.of(1600, 1, 1);
 
-            final Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
+            final Person f1 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
             living.remove(f1);
         });
     }
@@ -331,8 +345,8 @@ public class PeopleCollectionTest {
 
             final LocalDate start = LocalDate.of(1600, 1, 1);
 
-            final Person f1 = new Person(SexOption.FEMALE, start, null, ps, false);
-            final Person f2 = new Person(SexOption.FEMALE, start, null, ps, false);
+            final Person f1 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
+            final Person f2 = new Person(SexOption.FEMALE, start, null, populationStatistics, false);
 
             living.add(f2);
             living.remove(f1);
@@ -351,7 +365,7 @@ public class PeopleCollectionTest {
 
             final LocalDate start = LocalDate.of(1600, 1, 1);
 
-            final Person m1 = new Person(SexOption.MALE, start, null, ps, false);
+            final Person m1 = new Person(SexOption.MALE, start, null, populationStatistics, false);
             living.remove(m1);
         });
     }
@@ -368,8 +382,8 @@ public class PeopleCollectionTest {
 
             final LocalDate start = LocalDate.of(1600, 1, 1);
 
-            final Person m1 = new Person(SexOption.MALE, start, null, ps, false);
-            final Person m2 = new Person(SexOption.MALE, start, null, ps, false);
+            final Person m1 = new Person(SexOption.MALE, start, null, populationStatistics, false);
+            final Person m2 = new Person(SexOption.MALE, start, null, populationStatistics, false);
 
             living.add(m2);
             living.remove(m1);

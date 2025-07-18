@@ -36,15 +36,15 @@ import static uk.ac.standrews.cs.valipop.population.minimaSearch.Minimise.GEEGLM
  */
 public class AnalysisThread extends Thread {
 
-    private int maxBirthingAge;
-    private SummaryRow summaryRow;
+    private final int maxBirthingAge;
+    private final SummaryRow summaryRow;
 
     @SuppressWarnings("unused")
     private int threadCount;
 
     private final Config config;
 
-    public AnalysisThread(OBDModel model, Config config, int threadCount) {
+    public AnalysisThread(final OBDModel model, final Config config, final int threadCount) {
 
         this.config = config;
         this.threadCount = threadCount;
@@ -58,19 +58,17 @@ public class AnalysisThread extends Thread {
 
         threadCount++;
 
-        ProgramTimer statsTimer = new ProgramTimer();
+        final ProgramTimer statsTimer = new ProgramTimer();
 
         double v = 99999;
         try {
-            v = MinimaSearch.getV(GEEGLM, maxBirthingAge, Control.RF, config);
-        } catch (IOException | StatsException e) {
+            v = MinimaSearch.getScore(GEEGLM, maxBirthingAge, Control.RF, config);
+        } catch (final IOException | StatsException e) {
 
             System.err.println("Error in AnalysisThread");
             System.err.println(e.getMessage());
             e.printStackTrace();
         }
-
-//        v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
 
         summaryRow.setV(v);
         summaryRow.setStatsRunTime(statsTimer.getRunTimeSeconds());

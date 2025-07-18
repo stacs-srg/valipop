@@ -22,13 +22,22 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.population.OBDModel;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 
 public abstract class TestCases {
 
+    public static final int T_S = 1599;
+    public static final int T_0 = 1855;
+    public static final int T_E = 2016;
+
     public static final int SEED_FOR_DETERMINISTIC_RUN = 841584;
+
+    public static final Path DISTRIBUTIONS_PATH = Path.of("src/test/resources/valipop/distributions");
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -71,15 +80,23 @@ public abstract class TestCases {
 
     private static IPersonCollection generatePopulation(final int initialPopulationSize)  {
 
+        final Path tempDir;
+        try {
+            tempDir = Files.createTempDirectory("valipopTests");
+        }
+        catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+
         final Config config = new Config(
-            LocalDate.of(1599, 1, 1),
-            LocalDate.of(1855, 1, 1),
-            LocalDate.of(2016, 1, 1),
+            LocalDate.of(T_S, 1, 1),
+            LocalDate.of(T_0, 1, 1),
+            LocalDate.of(T_E, 1, 1),
             initialPopulationSize,
-            Paths.get("src/test/resources/valipop/distributions"),
-            Config.DEFAULT_RESULTS_SAVE_PATH,
+            DISTRIBUTIONS_PATH,
+            tempDir,
             "testing",
-            Config.DEFAULT_RESULTS_SAVE_PATH);
+            tempDir);
 
         config.setDeterministic(true).setSeed(SEED_FOR_DETERMINISTIC_RUN);
 

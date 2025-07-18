@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class ValidationTest {
 
-    // TODO add some actual population validation tests.
+    // TODO add tests that generate contingency tables on the fly.
 
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/validation");
     public static final double DELTA = 1e-10;
