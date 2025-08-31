@@ -145,7 +145,7 @@ jobs:
           ulimit: nofile=65536:65536
 
       - name: Generate artifact attestation for ValiPop image
-        uses: actions/attest-build-provenance@v2.4.0
+        uses: actions/attest-build-provenance@v3.0.0
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
@@ -200,7 +200,7 @@ jobs:
           ulimit: nofile=65536:65536
 
       - name: Generate artifact attestation for ValiPop leader image
-        uses: actions/attest-build-provenance@v2.4.0
+        uses: actions/attest-build-provenance@v3.0.0
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.LEADER_IMAGE_NAME}}
           subject-digest: ${{ steps.push-leader.outputs.digest }}
@@ -224,7 +224,7 @@ jobs:
           ulimit: nofile=65536:65536
 
       - name: Generate artifact attestation for ValiPop worker image
-        uses: actions/attest-build-provenance@v2.4.0
+        uses: actions/attest-build-provenance@v3.0.0
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.WORKER_IMAGE_NAME}}
           subject-digest: ${{ steps.push-worker.outputs.digest }}
@@ -248,7 +248,7 @@ jobs:
           ulimit: nofile=65536:65536
 
       - name: Generate artifact attestation for ValiPop search image
-        uses: actions/attest-build-provenance@v2.4.0
+        uses: actions/attest-build-provenance@v3.0.0
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.SEARCH_IMAGE_NAME}}
           subject-digest: ${{ steps.push-search.outputs.digest }}
