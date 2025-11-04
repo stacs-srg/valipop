@@ -129,7 +129,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for ValiPop image
         id: meta
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v5.9.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
@@ -184,7 +184,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for ValiPop leader image
         id: meta-leader
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v5.9.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.LEADER_IMAGE_NAME }}
 
@@ -208,7 +208,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for ValiPop worker image
         id: meta-worker
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v5.9.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.WORKER_IMAGE_NAME }}
 
@@ -232,7 +232,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for ValiPop search image
         id: meta-search
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v5.9.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.SEARCH_IMAGE_NAME }}
 
