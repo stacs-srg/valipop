@@ -18,7 +18,7 @@ jobs:
       security-events: write
     steps:
       - name: Check out project
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.3
 
       - name: Build and run tests
         uses: ./.github/actions/build-and-test
@@ -35,7 +35,7 @@ jobs:
       contents: read
     steps:
       - name: Check out project
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.3
 
       - name: Build and run tests
         uses: ./.github/actions/build-and-test
@@ -50,7 +50,7 @@ jobs:
       contents: read
     steps:
       - name: Check out project
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.3
 
       - name: Build and run tests
         uses: ./.github/actions/build-and-test
@@ -68,7 +68,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.3
 
       - name: Setup Pages
         uses: actions/configure-pages@v5.0.0
@@ -112,7 +112,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.3
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3.5.0
@@ -167,7 +167,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.3
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3.5.0
