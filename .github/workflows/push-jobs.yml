@@ -18,7 +18,7 @@ jobs:
       security-events: write
     steps:
       - name: Check out project
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: Build and run tests
         uses: ./.github/actions/build-and-test
@@ -35,7 +35,7 @@ jobs:
       contents: read
     steps:
       - name: Check out project
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: Build and run tests
         uses: ./.github/actions/build-and-test
@@ -50,7 +50,7 @@ jobs:
       contents: read
     steps:
       - name: Check out project
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: Build and run tests
         uses: ./.github/actions/build-and-test
@@ -68,10 +68,10 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5.0.0
+        uses: actions/configure-pages@v6.0.0
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1.0.13
@@ -80,7 +80,7 @@ jobs:
           destination: ./_site
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4.0.0
+        uses: actions/upload-pages-artifact@v5.0.0
 
   deploy-pages:
     name: Deploy website
@@ -96,7 +96,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4.0.5
+        uses: actions/deploy-pages@v5.0.0
 
   build-and-push-model-image:
     name: Build Docker image (model)
@@ -112,10 +112,10 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v7.0.0
 
       - name: Log in to the Container registry
-        uses: docker/login-action@v3.5.0
+        uses: docker/login-action@v4.2.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -129,13 +129,13 @@ jobs:
 
       - name: Extract metadata (tags, labels) for ValiPop image
         id: meta
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v6.1.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push the ValiPop image
         id: push
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v7.2.0
         with:
           file: docker/model/Dockerfile
           context: .
@@ -145,7 +145,7 @@ jobs:
           ulimit: nofile=65536:65536
 
       - name: Generate artifact attestation for ValiPop image
-        uses: actions/attest-build-provenance@v3.0.0
+        uses: actions/attest-build-provenance@v4.1.1
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
@@ -167,10 +167,10 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.0
 
       - name: Log in to the Container registry
-        uses: docker/login-action@v3.5.0
+        uses: docker/login-action@v4.2.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -184,13 +184,13 @@ jobs:
 
       - name: Extract metadata (tags, labels) for ValiPop leader image
         id: meta-leader
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v6.1.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.LEADER_IMAGE_NAME }}
 
       - name: Build and push the ValiPop leader image
         id: push-leader
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v7.2.0
         with:
           file: docker/model/Dockerfile
           context: .
@@ -200,7 +200,7 @@ jobs:
           ulimit: nofile=65536:65536
 
       - name: Generate artifact attestation for ValiPop leader image
-        uses: actions/attest-build-provenance@v3.0.0
+        uses: actions/attest-build-provenance@v4.1.1
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.LEADER_IMAGE_NAME}}
           subject-digest: ${{ steps.push-leader.outputs.digest }}
@@ -208,13 +208,13 @@ jobs:
 
       - name: Extract metadata (tags, labels) for ValiPop worker image
         id: meta-worker
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v6.1.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.WORKER_IMAGE_NAME }}
 
       - name: Build and push the ValiPop worker image
         id: push-worker
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v7.2.0
         with:
           file: docker/model/Dockerfile
           context: .
@@ -232,13 +232,13 @@ jobs:
 
       - name: Extract metadata (tags, labels) for ValiPop search image
         id: meta-search
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v6.1.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.SEARCH_IMAGE_NAME }}
 
       - name: Build and push the ValiPop search image
         id: push-search
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v7.2.0
         with:
           file: docker/model/Dockerfile
           context: .
@@ -248,7 +248,7 @@ jobs:
           ulimit: nofile=65536:65536
 
       - name: Generate artifact attestation for ValiPop search image
-        uses: actions/attest-build-provenance@v3.0.0
+        uses: actions/attest-build-provenance@v4.1.1
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.SEARCH_IMAGE_NAME}}
           subject-digest: ${{ steps.push-search.outputs.digest }}

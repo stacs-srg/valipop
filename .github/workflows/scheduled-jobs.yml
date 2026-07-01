@@ -15,7 +15,7 @@ jobs:
       contents: write
     steps:
       - name: Check out project
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v7.0.0
 
       - name: Count recent commits
         run: echo "NEW_COMMIT_COUNT=$(git log --oneline --since '24 hours ago' | wc -l)" >> $GITHUB_ENV
