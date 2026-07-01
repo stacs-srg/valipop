@@ -1,4 +1,4 @@
-FROM spark:3.5.8-scala2.12-java17-ubuntu
+FROM spark:4.1.2-scala2.13-java21-ubuntu
 
 EXPOSE 8080
 
