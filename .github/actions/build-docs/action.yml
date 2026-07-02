@@ -1,0 +1,21 @@
+name: 'Build docs'
+description: 'Build docs composite action'
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v7.0.0
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v6.0.0
+
+    - name: Build with Jekyll
+      uses: actions/jekyll-build-pages@v1.0.13
+      with:
+        source: ./docs
+        destination: ./_site
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v5.0.0
