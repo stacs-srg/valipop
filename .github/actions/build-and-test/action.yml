@@ -23,7 +23,7 @@ runs:
   - name: Set up JDK
     uses: actions/setup-java@v5.4.0
     with:
-      java-version: '25'
+      java-version: '21'
       distribution: 'corretto'
       cache: 'maven'
 
