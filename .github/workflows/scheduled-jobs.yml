@@ -17,8 +17,7 @@ jobs:
       - id: recent-changes
         name: Recent changes
         run: |
-          echo "NEW_COMMIT_COUNT=$(git log --oneline --since '24 hours ago' | wc -l)" >> $GITHUB_ENV;
-          if [[ ${{ env.NEW_COMMIT_COUNT }} > 0 ]]; then exit 0; else exit 1; fi
+          if [[ $(($(git log --oneline --since '24 hours ago' | wc -l))) > 0 ]]; then exit 0; else exit 1; fi
 
   build-and-test-linux:
     name: Build and test (Linux)
