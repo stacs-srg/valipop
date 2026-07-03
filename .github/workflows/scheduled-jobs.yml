@@ -19,10 +19,10 @@ jobs:
       - name: Check out project
         uses: actions/checkout@v7.0.0
 
-      - id: recent-changes
-        name: Recent changes
-        run: |
-          if [[ $(($(git log --oneline --since '24 hours ago' | wc -l))) > 0 ]]; then exit 0; else exit 1; fi
+#      - id: recent-changes
+      # This sets the exit status of the job to successful if there have been commits within the previous 24 hours.
+      - name: Recent changes
+        run: if [[ $(($(git log --oneline --since '24 hours ago' | wc -l))) > 0 ]]; then exit 0; else exit 1; fi
 
   build-and-test-linux:
     name: Build and test (Linux)
