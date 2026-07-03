@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
+#      security-events: write
     steps:
       - name: Check out project
         uses: actions/checkout@v7.0.0
