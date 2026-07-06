@@ -23,8 +23,7 @@ jobs:
       - id: recent-changes
         name: Recent changes
         run: |
-#          if [[ $(($(git log --oneline --since '24 hours ago' | wc -l))) > 0 ]]; then echo "HAVE_BEEN_CHANGES=Y" >> "$GITHUB_OUTPUT"; else echo "HAVE_BEEN_CHANGES=N" >> "$GITHUB_OUTPUT"; fi
-          if [[ $(($(git log --oneline --since '2 minutes ago' | wc -l))) > 0 ]]; then echo "HAVE_BEEN_CHANGES=Y" >> "$GITHUB_OUTPUT"; fi
+          if [[ $(($(git log --oneline --since '24 hours ago' | wc -l))) > 0 ]]; then echo "HAVE_BEEN_CHANGES=Y" >> "$GITHUB_OUTPUT"; else echo "HAVE_BEEN_CHANGES=N" >> "$GITHUB_OUTPUT"; fi
 
   build-and-test-linux:
     name: Build and test (Linux)
@@ -32,8 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-#    env:
-#      TEST_STRING: ${{ needs.check-recent-changes.outputs.test-string }}
     if: needs.check-recent-changes.outputs.have-been-changes == 'Y'
     steps:
       - name: Check out project
@@ -50,7 +47,7 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: read
-    if: needs.check-recent-changes.outputs.status == 'success'
+    if: needs.check-recent-changes.outputs.have-been-changes == 'Y'
     steps:
       - name: Check out project
         uses: actions/checkout@v7.0.0
@@ -66,7 +63,7 @@ jobs:
     runs-on: macos-latest
     permissions:
       contents: read
-    if: needs.check-recent-changes.outputs.status == 'success'
+    if: needs.check-recent-changes.outputs.have-been-changes == 'Y'
     steps:
       - name: Check out project
         uses: actions/checkout@v7.0.0
@@ -88,7 +85,7 @@ jobs:
       packages: write
       attestations: write
       id-token: write
-    if: needs.check-recent-changes.outputs.status == 'success'
+    if: needs.check-recent-changes.outputs.have-been-changes == 'Y'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7.0.0
@@ -144,7 +141,7 @@ jobs:
       packages: write
       attestations: write
       id-token: write
-    if: needs.check-recent-changes.outputs.status == 'success'
+    if: needs.check-recent-changes.outputs.have-been-changes == 'Y'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7.0.0
