@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: test
         env:
-            HAVE_BEEN_CHANGES: ${{ needs.check-recent-changes.outputs.HAVE_BEEN_CHANGES }}
+            HAVE_BEEN_CHANGES: ${{ needs.recent-changes.outputs.HAVE_BEEN_CHANGES }}
         run: |
           echo "changes: $HAVE_BEEN_CHANGES"
 
