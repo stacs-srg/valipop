@@ -44,7 +44,7 @@ jobs:
           HAVE_BEEN_CHANGES: ${{ needs.recent-changes.outputs.HAVE_BEEN_CHANGES }}
           TEST_STRING: ${{ needs.recent-changes.outputs.test-string }}
         run: |
-          echo "changes: $(HAVE_BEEN_CHANGES), $(TEST_STRING) xx"
+          echo "changes: $HAVE_BEEN_CHANGES, $TEST_STRING xx"
 
       - name: Check out project
         uses: actions/checkout@v7.0.0
