@@ -43,7 +43,7 @@ jobs:
         env:
             HAVE_BEEN_CHANGES: ${{ needs.check-recent-changes.outputs.HAVE_BEEN_CHANGES }}
         run: |
-          echo "changes: $HAVE-BEEN-CHANGES"
+          echo "changes: $HAVE_BEEN_CHANGES"
 
       - name: Check out project
         uses: actions/checkout@v7.0.0
