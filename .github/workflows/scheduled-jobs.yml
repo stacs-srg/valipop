@@ -14,19 +14,17 @@ jobs:
     permissions:
       contents: read
     outputs:
-#      status: ${{ steps.recent-changes.conclusion }}
-      test-string: ${{ steps.recent-changes.outputs.HAVE_BEEN_CHANGES }}
+      have-been-changes: ${{ steps.recent-changes.outputs.HAVE_BEEN_CHANGES }}
     steps:
       - name: Check out project
         uses: actions/checkout@v7.0.0
 
-      # This sets the exit status of the job to successful if there have been commits within the previous 24 hours.
+      # This sets the output of the job depending on whether there have been commits within the previous 24 hours.
       - id: recent-changes
         name: Recent changes
         run: |
-          #          if [[ $(($(git log --oneline --since '24 hours ago' | wc -l))) > 0 ]]; then exit 0; else exit 1; fi
-          #          if [[ $(($(git log --oneline --since '5 minutes ago' | wc -l))) > 0 ]]; then exit 0; else exit 1; fi
-          if [[ $(($(git log --oneline --since '2 minutes ago' | wc -l))) > 0 ]]; then echo "HAVE_BEEN_CHANGES=Y" >> "$GITHUB_OUTPUT"; else echo "HAVE_BEEN_CHANGES=N" >> "$GITHUB_OUTPUT"; fi
+#          if [[ $(($(git log --oneline --since '24 hours ago' | wc -l))) > 0 ]]; then echo "HAVE_BEEN_CHANGES=Y" >> "$GITHUB_OUTPUT"; else echo "HAVE_BEEN_CHANGES=N" >> "$GITHUB_OUTPUT"; fi
+          if [[ $(($(git log --oneline --since '2 minutes ago' | wc -l))) > 0 ]]; then echo "HAVE_BEEN_CHANGES=Y" >> "$GITHUB_OUTPUT"; fi
 
   build-and-test-linux:
     name: Build and test (Linux)
@@ -34,21 +32,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    #    env:
-    #      HAVE-BEEN-CHANGES: ${{needs.recent.outputs.have-been-changes}}
-    env:
-      TEST_STRING: ${{ needs.check-recent-changes.outputs.test-string }}
-      DUMMY: fish
-    if: needs.check-recent-changes.outputs.test-string == 'Y'
-    #    if: $HAVE-BEEN-CHANGES == 'Y'
+#    env:
+#      TEST_STRING: ${{ needs.check-recent-changes.outputs.test-string }}
+    if: needs.check-recent-changes.outputs.have-been-changes == 'Y'
     steps:
-      - name: test
-        env:
-          TEST_STRING: ${{ needs.check-recent-changes.outputs.test-string }}
-          DUMMY: fish
-        run: |
-          echo "env: $HAVE_BEEN_CHANGES, $TEST_STRING, $DUMMY"
-
       - name: Check out project
         uses: actions/checkout@v7.0.0
 
