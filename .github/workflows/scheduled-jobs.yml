@@ -23,10 +23,11 @@ jobs:
       # This sets the exit status of the job to successful if there have been commits within the previous 24 hours.
       - id: recent-changes
         name: Recent changes
-        run:
+        run: |
 #          if [[ $(($(git log --oneline --since '24 hours ago' | wc -l))) > 0 ]]; then exit 0; else exit 1; fi
 #          if [[ $(($(git log --oneline --since '30 seconds ago' | wc -l))) > 0 ]]; then exit 0; else exit 1; fi
-          if [[ $(($(git log --oneline --since '30 seconds ago' | wc -l))) > 0 ]]; then echo "have-been-changes=Y" >> "$GITHUB_OUTPUT"; else echo "have-been-changes=N" >> "$GITHUB_OUTPUT"; fi
+#               if [[ $(($(git log --oneline --since '30 seconds ago' | wc -l))) > 0 ]]; then echo "have-been-changes=Y" >> "$GITHUB_OUTPUT"; else echo "have-been-changes=N" >> "$GITHUB_OUTPUT"; fi
+          if [[ $(($(git log --oneline --since '30 seconds ago' | wc -l))) > 0 ]]; then echo "::set-output name=have-been-changes::Y" ; else echo "::set-output name=have-been-changes::N"; fi
 
   build-and-test-linux:
     name: Build and test (Linux)
@@ -34,11 +35,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      HAVE-BEEN-CHANGES: ${{needs.recent.outputs.have-been-changes}}
-#    if: needs.check-recent-changes.outputs.status == 'success'
-    if: needs.check-recent-changes.outputs.have-been-changes == 'Y'
+#    env:
+#      HAVE-BEEN-CHANGES: ${{needs.recent.outputs.have-been-changes}}
+    if: needs.check-recent-changes.outputs.test-string == 'Y'
+#    if: $HAVE-BEEN-CHANGES == 'Y'
     steps:
+#      - name: test
+#        run: |
+#          echo "changes $HAVE-BEEN-CHANGES"
       - name: Check out project
         uses: actions/checkout@v7.0.0
 
