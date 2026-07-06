@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-#    outputs:
+    outputs:
 #      status: ${{ steps.recent-changes.conclusion }}
-#      test-string: ${{ steps.recent-changes.outputs.have-been-changes }}
+      test-string: ${{ steps.recent-changes.outputs.HAVE_BEEN_CHANGES }}
     steps:
       - name: Check out project
         uses: actions/checkout@v7.0.0
@@ -41,9 +41,10 @@ jobs:
     steps:
       - name: test
         env:
-            HAVE_BEEN_CHANGES: ${{ needs.recent-changes.outputs.HAVE_BEEN_CHANGES }}
+          HAVE_BEEN_CHANGES: ${{ needs.recent-changes.outputs.HAVE_BEEN_CHANGES }}
+          TEST_STRING: ${{ needs.recent-changes.outputs.test-string }}
         run: |
-          echo "changes: $HAVE_BEEN_CHANGES"
+          echo "changes: $(HAVE_BEEN_CHANGES), $(TEST_STRING) xx"
 
       - name: Check out project
         uses: actions/checkout@v7.0.0
