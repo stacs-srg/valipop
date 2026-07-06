@@ -24,7 +24,7 @@ jobs:
         name: Recent changes
         run: |
 #          if [[ $(($(git log --oneline --since '24 hours ago' | wc -l))) > 0 ]]; then echo "HAVE_BEEN_CHANGES=Y" >> "$GITHUB_OUTPUT"; else echo "HAVE_BEEN_CHANGES=N" >> "$GITHUB_OUTPUT"; fi
-          if [[ $(($(git log --oneline --since '2 minutes ago' | wc -l))) > 0 ]]; then echo "HAVE_BEEN_CHANGES=Y" >> "$GITHUB_OUTPUT"; fi
+          if [[ $(($(git log --oneline --since '2 minutes ago' | wc -l))) > 0 ]]; echo "HAVE_BEEN_CHANGES=Y" >> "$GITHUB_OUTPUT"; fi
 
   build-and-test-linux:
     name: Build and test (Linux)
