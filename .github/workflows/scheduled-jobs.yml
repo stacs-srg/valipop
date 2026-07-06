@@ -41,10 +41,11 @@ jobs:
     steps:
       - name: test
         env:
-          HAVE_BEEN_CHANGES: ${{ needs.recent-changes.outputs.HAVE_BEEN_CHANGES }}
-          TEST_STRING: ${{ needs.recent-changes.outputs.test-string }}
+          HAVE_BEEN_CHANGES: ${{ needs.check-recent-changes.outputs.HAVE_BEEN_CHANGES }}
+          TEST_STRING: ${{ needs.check-recent-changes.outputs.test-string }}
+          DUMMY: fish
         run: |
-          echo "changes: $HAVE_BEEN_CHANGES, $TEST_STRING xx"
+          echo "env: $HAVE_BEEN_CHANGES, $TEST_STRING, $DUMMY"
 
       - name: Check out project
         uses: actions/checkout@v7.0.0
