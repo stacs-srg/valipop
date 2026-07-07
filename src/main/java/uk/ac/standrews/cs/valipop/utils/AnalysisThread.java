@@ -20,7 +20,6 @@ package uk.ac.standrews.cs.valipop.utils;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.population.OBDModel;
 import uk.ac.standrews.cs.valipop.population.StatsException;
-import uk.ac.standrews.cs.valipop.population.minimaSearch.Control;
 import uk.ac.standrews.cs.valipop.population.minimaSearch.MinimaSearch;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 
@@ -62,7 +61,7 @@ public class AnalysisThread extends Thread {
 
         double v = 99999;
         try {
-            v = MinimaSearch.getScore(GEEGLM, maxBirthingAge, Control.RF, config);
+            v = MinimaSearch.getScore(GEEGLM, maxBirthingAge, config);
         } catch (final IOException | StatsException e) {
 
             System.err.println("Error in AnalysisThread");

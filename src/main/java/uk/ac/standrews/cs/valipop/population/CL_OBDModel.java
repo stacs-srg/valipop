@@ -45,7 +45,7 @@ public class CL_OBDModel {
         }
     }
 
-    public static void runOBDModel(final Path pathToConfigFile) throws IOException, PreEmptiveOutOfMemoryWarning, StatsException {
+    public static void runOBDModel(final Path pathToConfigFile) throws IOException, StatsException {
 
         final Config config = new Config(pathToConfigFile);
         System.out.println("Running simulation with " + pathToConfigFile.toAbsolutePath());
@@ -60,7 +60,7 @@ public class CL_OBDModel {
         model.getSummaryRow().outputSummaryRowToFile();
     }
 
-    private static void performAnalysis(final OBDModel model, final Config config) throws IOException, StatsException {
+    private static void performAnalysis(final OBDModel model, final Config config) throws IOException {
 
         final ProgramTimer statsTimer = new ProgramTimer();
 

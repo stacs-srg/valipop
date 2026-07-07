@@ -1,5 +1,3 @@
-#Properties File - for model v3 - Tom, Graham, Al
-#4.3.16
 var_data_files = src/main/resources/valipop/inputs/synthetic-scotland
 simulation_time_step = P1Y
 input_width = P10Y
@@ -16,5 +14,5 @@ output_record_format = NONE
 deterministic = true
 seed = 232323
 binomial_sampling = true
-run_purpose = aTest
+run_purpose = test7
 output_tables = true

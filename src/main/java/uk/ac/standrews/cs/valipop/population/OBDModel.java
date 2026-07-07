@@ -146,7 +146,7 @@ public class OBDModel {
             log.info("End of Initialisation Period set: " + endOfInitPeriod);
 
             try {
-                summary = new SummaryRow(config, runCommand("git rev-parse HEAD").trim(), runCommand("hostname").trim());
+                summary = new SummaryRow(config, runCommand("git", "rev-parse", "HEAD").trim(), runCommand("hostname").trim());
             } catch (final IOException e) {
                 summary = new SummaryRow(config, "no git install to get version number from", runCommand("hostname").trim());
             }
@@ -156,7 +156,7 @@ public class OBDModel {
         }
     }
 
-    public static String runCommand(final String cmd) throws IOException {
+    private static String runCommand(final String... cmd) throws IOException {
 
         final ProcessBuilder builder = new ProcessBuilder(cmd);
         final Process process = builder.start();
