@@ -70,8 +70,10 @@ jobs:
 
       - name: Build and run tests
         uses: ./.github/actions/build-and-test
+        # Slow tests run out of memory on macos-latest.
         with:
           maven-target: 'test'
+          maven-params: '-DexcludedGroups=slow'
 
   build-and-push-model-image:
     name: Build Docker image (model)

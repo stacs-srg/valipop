@@ -1,6 +1,6 @@
 /*
  * valipop - <https://github.com/stacs-srg/valipop>
- * Copyright © 2025 Systems Research Group, University of St Andrews (graham.kirby@st-andrews.ac.uk)
+ * Copyright © 2026 Systems Research Group, University of St Andrews (graham.kirby@st-andrews.ac.uk)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,14 +146,22 @@ public class OBDModel {
             log.info("End of Initialisation Period set: " + endOfInitPeriod);
 
             try {
-                summary = new SummaryRow(config, JobQueueRunner.execCmd("git rev-parse HEAD").trim(), JobQueueRunner.execCmd("hostname").trim());
+                summary = new SummaryRow(config, runCommand("git rev-parse HEAD").trim(), runCommand("hostname").trim());
             } catch (final IOException e) {
-                summary = new SummaryRow(config, "no git install to get version number from", JobQueueRunner.execCmd("hostname").trim());
+                summary = new SummaryRow(config, "no git install to get version number from", runCommand("hostname").trim());
             }
 
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String runCommand(final String cmd) throws IOException {
+
+        final ProcessBuilder builder = new ProcessBuilder(cmd);
+        final Process process = builder.start();
+
+        return new String(process.getInputStream().readAllBytes());
     }
 
     private static List<Area> readAreaList(final Config config) throws IOException {
