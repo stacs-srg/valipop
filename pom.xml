@@ -129,8 +129,17 @@
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
     </properties>
 
+    <repositories>
+        <!-- Used to load gedinline dependency, which is not in Maven Central. -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
+            <!-- Defines JUnit version in one place. -->
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
@@ -142,10 +151,23 @@
     </dependencyManagement>
 
     <dependencies>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>2.0.18</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.13</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.gedcom4j</groupId>
+            <artifactId>gedcom4j</artifactId>
+            <version>4.0.1</version>
         </dependency>
 
         <dependency>
@@ -166,26 +188,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.13</artifactId>
-            <version>4.1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.gedcom4j</groupId>
-            <artifactId>gedcom4j</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-
-        <!-- Local package dependency (Gedinline)-->
+        <!-- Loads from jitpack.io repository. -->
         <dependency>
             <groupId>com.github.nigel-parker</groupId>
             <artifactId>gedinline</artifactId>
-            <version>4.0.1</version>
-            <!-- It would be preferable to avoid having the jar in this repository by
-                 loading from jitpack.io, but this version of gedinline doesn't build
-                 successfully on jitpack.io. -->
+            <version>v4-main-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
