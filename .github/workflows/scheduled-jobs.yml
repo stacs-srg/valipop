@@ -1,6 +1,6 @@
 # This checks every 24 hours for new commits, and runs a test build (including slow tests) if there are any.
 
-name: Build and test (scheduled)
+name: Build and Test (Scheduled)
 
 on:
   schedule:
