@@ -115,11 +115,6 @@ public class ContingencyTableValidator {
         }
     }
 
-    private static void deleteTempCopyOfRScript(final Path combinedScriptFilePath) throws IOException {
-
-        Files.delete(combinedScriptFilePath);
-    }
-
     /**
      * Executes the R analysis script and returns the running process.
      * 
@@ -131,10 +126,10 @@ public class ContingencyTableValidator {
      */
     private static Process runRScript(final Path runDirPath, final Path rScriptPath, final int maxMotherBirthAge, final int startYear, final int endYear) throws IOException {
 
-        final String[] params = {runDirPath.toAbsolutePath().toString(), String.valueOf(maxMotherBirthAge), String.valueOf(startYear), String.valueOf(endYear)};
-        final String[] commands = joinArrays(new String[]{ "Rscript", rScriptPath.toString()}, params);
+        final String[] command = { "Rscript", rScriptPath.toString(), runDirPath.toAbsolutePath().toString(), String.valueOf(maxMotherBirthAge), String.valueOf(startYear), String.valueOf(endYear)};
 
-        return new ProcessBuilder(commands).start();
+        final ProcessBuilder builder = new ProcessBuilder(command);
+        return builder.start();
     }
 
     /**

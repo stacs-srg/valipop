@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
@@ -45,25 +44,25 @@ public class MinimaSearch {
 
     public static double initStep;
 
-    private static double maxAbsFactor = 4;
+    private static final double maxAbsFactor = 4;
 
     private static double topSearchBoundFactor = maxAbsFactor;
     private static double bottomSearchBoundFactor = -1 * maxAbsFactor;
 
     private static double hardLimitBottomBoundFactor = -1 * Double.MAX_VALUE;
 
-    private static int pointsInMinima = 3;
+    private static final int pointsInMinima = 3;
 
-    private static double minimumMeaningfulStep = 0.04;
-    private static double minimaSize = 5;
-    private static double intervalBoundV = 0.02;
+    private static final double minimumMeaningfulStep = 0.04;
+    private static final double minimaSize = 5;
+    private static final double intervalBoundV = 0.02;
 
-    private static LocalDate tS = LocalDate.of(1691,1,1);
-    private static LocalDate t0 = LocalDate.of(1855,1,1);
-    private static LocalDate tE = LocalDate.of(2015,1,1);
+    private static final LocalDate tS = LocalDate.of(1691,1,1);
+    private static final LocalDate t0 = LocalDate.of(1855,1,1);
+    private static final LocalDate tE = LocalDate.of(2015,1,1);
 
-    private static double recoveryFactor = 0.0;
-    private static double proportionalRecoveryFactor = 0.0;
+    private static double recoveryFactor;
+    private static double proportionalRecoveryFactor;
 
     private static double nanAsemtote = 1E6;
 
@@ -76,13 +75,13 @@ public class MinimaSearch {
         }
 
         final Path dataFiles = Paths.get(pArgs[0]);
-        final int seedSize = Integer.valueOf(pArgs[1]);
+        final int seedSize = Integer.parseInt(pArgs[1]);
         final String runPurpose = pArgs[2];
         final Minimise minimise = Minimise.resolve(pArgs[3]);
         final Control control = Control.resolve(pArgs[4]);
-        final double startFactor = Double.valueOf(pArgs[5]);
-        final double step = Double.valueOf(pArgs[6]);
-        final int repeats = Integer.valueOf(pArgs[7]);
+        final double startFactor = Double.parseDouble(pArgs[5]);
+        final double step = Double.parseDouble(pArgs[6]);
+        final int repeats = Integer.parseInt(pArgs[7]);
 
         try {
             runSearch(seedSize, dataFiles, startFactor, step, runPurpose, repeats, minimise, control);
@@ -129,7 +128,7 @@ public class MinimaSearch {
                         model.analyseAndOutputPopulation(false);
 
                         final int maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
-                        double v = getScore(minimiseFor, maxBirthingAge, controlBy, config);
+                        double v = getScore(minimiseFor, maxBirthingAge, config);
 
                         // Failed population run may get a NaN from the V calc
                         if (Double.isNaN(v)) {
@@ -172,7 +171,7 @@ public class MinimaSearch {
         }
     }
 
-    public static double getScore(final Minimise minimiseFor, final int maxBirthingAge, final Control controlBy, final Config config) throws IOException, StatsException {
+    public static double getScore(final Minimise minimiseFor, final int maxBirthingAge, final Config config) throws IOException, StatsException {
 
         if (Objects.requireNonNull(minimiseFor) == Minimise.GEEGLM) {
             final int startYear = config.getT0().getYear();
@@ -222,8 +221,8 @@ public class MinimaSearch {
         }
     }
 
-    private static boolean jumpingPhase = false;
-    private static RandomGenerator randomGenerator = new JDKRandomGenerator(35255);
+    private static boolean jumpingPhase;
+    private static final RandomGenerator randomGenerator = Randomness.getRandomGenerator();
 
     private static double jumpOut() throws SpaceExploredException {
         // called when minima found
@@ -252,7 +251,7 @@ public class MinimaSearch {
 
             counter++;
 
-        } while (containsValue(points, chosenFactor) != null);
+        } while (containsValue(chosenFactor) != null);
 
         jumpingPhase = false;
 
@@ -279,7 +278,7 @@ public class MinimaSearch {
         return nearest;
     }
 
-    private static Double inMinima(final double currentFactor) {
+    private static void inMinima(final double currentFactor) {
 
         if (points.size() >= pointsInMinima) {
             // get two nearest neighbours on either side
@@ -302,16 +301,11 @@ public class MinimaSearch {
                 }
             }
 
-            if (returns.size() == 0) {
-                return null;
-            } else {
-                final FVPoint minima = orderByV(returns).get(0);
+            if (!returns.isEmpty()) {
+                final FVPoint minima = orderByV(returns).getFirst();
                 System.out.println("Minima found at: " + minima.x_f + " --- v/M: " + minima.y_v);
-                return minima.x_f;
             }
         }
-
-        return null;
     }
 
     // returns factor of minima
@@ -321,7 +315,7 @@ public class MinimaSearch {
             return null;
         }
 
-        final double factorWidth = Math.abs(potentialMinimaSet.get(0).x_f - potentialMinimaSet.get(pointsInMinima - 1).x_f);
+        final double factorWidth = Math.abs(potentialMinimaSet.getFirst().x_f - potentialMinimaSet.get(pointsInMinima - 1).x_f);
 
         if (factorWidth < minimumMeaningfulStep * minimaSize) {
 
@@ -332,10 +326,10 @@ public class MinimaSearch {
             final double lowerBound = avg * (1 - intervalBoundV);
             final double upperBound = avg * (1 + intervalBoundV);
 
-            if (lowerBound < orderedByV.get(0).y_v && orderedByV.get(pointsInMinima - 1).y_v < upperBound) {
+            if (lowerBound < orderedByV.getFirst().y_v && orderedByV.get(pointsInMinima - 1).y_v < upperBound) {
                 System.out.println("Minima identified - setting jumpingPhase = true");
                 jumpingPhase = true;
-                return orderedByV.get(0);
+                return orderedByV.getFirst();
             }
         }
 
@@ -358,7 +352,7 @@ public class MinimaSearch {
 
         for (final FVPoint p : in) {
 
-            if (ordering.size() == 0) {
+            if (ordering.isEmpty()) {
                 ordering.add(p);
             } else {
                 int i = 0;
@@ -382,7 +376,7 @@ public class MinimaSearch {
 
         for (final FVPoint p : in) {
 
-            if (ordering.size() == 0) {
+            if (ordering.isEmpty()) {
                 ordering.add(p);
             } else {
                 int i = 0;
@@ -445,18 +439,17 @@ public class MinimaSearch {
     public static double getNextFactorValue() throws SpaceExploredException {
 
         if (jumpingPhase) {
-            final double nextFactor = jumpOut();
-            return nextFactor;
+            return jumpOut();
         }
 
-        if (points.size() == 0) {
+        if (points.isEmpty()) {
             return startFactor;
         } else if (points.size() == 1) {
             return startFactor + step;
         } else {
 
             final FVPoint penultimatePoint = points.get(points.size() - 2);
-            final FVPoint lastPoint = points.get(points.size() - 1);
+            final FVPoint lastPoint = points.getLast();
 
             final double dyOverdx = (lastPoint.y_v - penultimatePoint.y_v) / (lastPoint.x_f - penultimatePoint.x_f);
 
@@ -477,7 +470,7 @@ public class MinimaSearch {
                 step = step / 2;
             }
 
-            final FVPoint match = containsValue(points, newFactor);
+            final FVPoint match = containsValue(newFactor);
 
             if (match != null) {
 
@@ -491,13 +484,13 @@ public class MinimaSearch {
                     points.addLast(match);
                     newFactor = match.x_f - (step * direction);
 
-                    FVPoint match2 = containsValue(points, newFactor);
+                    FVPoint match2 = containsValue(newFactor);
 
                     while (match2 != null) {
                         // if newFactor has already been used, then split in gap
                         step = step / 2;
                         newFactor = match.x_f - (step * direction);
-                        match2 = containsValue(points, newFactor);
+                        match2 = containsValue(newFactor);
                     }
 
                 } else {
@@ -529,9 +522,9 @@ public class MinimaSearch {
         }
     }
 
-    private static FVPoint containsValue(final LinkedList<FVPoint> points, final double newFactor) {
+    private static FVPoint containsValue(final double newFactor) {
 
-        for (final FVPoint point : points) {
+        for (final FVPoint point : MinimaSearch.points) {
             if (DoubleComparer.equal(point.x_f, newFactor, 0.000000001)) {
                 return point;
             }
@@ -540,7 +533,7 @@ public class MinimaSearch {
         return null;
     }
 
-    private static LinkedList<FVPoint> points = new LinkedList<>();
+    private static final LinkedList<FVPoint> points = new LinkedList<>();
 
     public static void logFactortoV(final double factor, final double v) {
 

@@ -640,7 +640,9 @@ public class Config implements Serializable {
         processors = new HashMap<>();
 
         processors.put("var_data_files", value -> varPath = Paths.get(value));
-        processors.put("results_save_location", value -> resultsSavePath = Paths.get(value));
+        processors.put("results_save_location", value -> {
+            resultsSavePath = Paths.get(value);
+        });
         processors.put("summary_results_save_location", value -> summaryResultsDirPath = Paths.get(value));
         processors.put("project_location", value -> projectPath = Paths.get(value));
 

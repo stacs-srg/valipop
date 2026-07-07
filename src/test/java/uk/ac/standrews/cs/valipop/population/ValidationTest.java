@@ -78,7 +78,8 @@ public class ValidationTest {
         final int startYear = config.getT0().getYear();
         final int endYear = config.getTE().getYear();
 
-        final double score = new ContingencyTableValidator(workingDirectory, 55, startYear, endYear).getValidationScore();
+        final ContingencyTableValidator validator = new ContingencyTableValidator(workingDirectory, 55, startYear, endYear);
+        final double score = validator.getValidationScore();
 
         assertEquals(expectedScore, score, DELTA);
     }

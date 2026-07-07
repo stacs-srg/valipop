@@ -3,15 +3,6 @@ FROM maven:3.9.16-amazoncorretto-21 AS build
 WORKDIR /app
 
 COPY pom.xml ./
-COPY lib ./
-
-# Install Gedinline JAR (local dependency)
-RUN mvn install:install-file \
-  -Dfile=gedinline-4.0.1.jar \
-  -DgroupId=com.github.nigel-parker \
-  -DartifactId=gedinline \
-  -Dversion=4.0.1 \
-  -Dpackaging=jar 
 
 # Copy Java source code and the R analysis
 COPY src/main/java src/main/java
