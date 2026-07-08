@@ -110,28 +110,28 @@ If you navigate to `src/main/resources/valipop/config/scot/config.txt` and open 
 ```
 #Properties File
 
-var_data_files = src/main/resources/valipop/inputs/synthetic-scotland
-tS = 1687-01-01
-t0 = 1855-01-01
-tE = 1973-01-01
-t0_pop_size = 1000
+input_distributions_path = src/main/resources/valipop/inputs/synthetic-scotland
+initialisation_start = 1687-01-01
+simulation_start = 1855-01-01
+simulation_end = 1973-01-01
+target_initial_population_size = 1000
 
-output_record_format = TD
-output_tables = true
+record_export_format = TD
+contingency_table_export = true
 
 results_save_location = results
-run_purpose = example
+group_name = example
 ```
 
 You can make the following changes to the configuration file to alter ValiPop's behaviour
 
-- Change the starting population size with [`t0_pop_size`](../configuration/config-reference.md#t0_pop_size).
-- Change the start and end data (as written in the record files) with [`t0`](../configuration/config-reference.md#t0) and [`tE`](../configuration/config-reference.md#tE).
-- Change input distributions used with [`var_data_files`](../configuration/config-reference.md#var_data_files). [Read more about input distributions.](../configuration/input-reference.md).
-- Change output record format with [`output_record_format`](../configuration/config-reference.md#output_record_format).
-- To disable the analysis portion of ValiPop, set [`output_tables`](../configuration/config-reference.md#output_tables) to `false`.
+- Change the starting population size with [`target_initial_population_size`](../configuration/config-reference.md#target_initial_population_size).
+- Change the start and end data (as written in the record files) with [`simulation_start`](../configuration/config-reference.md#simulation_start) and [`simulation_end`](../configuration/config-reference.md#simulation_end).
+- Change input distributions used with [`input_distributions_path`](../configuration/config-reference.md#input_distributions_path). [Read more about input distributions.](../configuration/input-reference.md).
+- Change output record format with [`record_export_format`](../configuration/config-reference.md#record_export_format).
+- To disable the analysis portion of ValiPop, set [`contingency_table_export`](../configuration/config-reference.md#contingency_table_export) to `false`.
 - Change the location of the result directory with [`results_save_location`](../configuration/config-reference.md#results_save_location).
-- Change the name of the run within the result directory with [`run_purpose`](../configuration/config-reference.md#run_purpose).
+- Change the name of the run within the result directory with [`group_name`](../configuration/config-reference.md#group_name).
 
 You may then save the changes and rerun the following command for different results
 

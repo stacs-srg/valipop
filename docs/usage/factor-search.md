@@ -22,15 +22,15 @@ The factor search program takes a series of configuration properties, and a list
 
 The program accepts 10 arguments:
 
-1. The path to the input distributions ([`var_data_files`](configuration/config-reference.md#var_data_files))
-2. The starting population size ([`t0_pop_size`](configuration/config-reference.md#t0_pop_size))
-3. The run purpose ([`run_purpose`](configuration/config-reference.md#run_purpose))
+1. The path to the input distributions ([`input_distributions_path`](configuration/config-reference.md#input_distributions_path))
+2. The starting population size ([`target_initial_population_size`](configuration/config-reference.md#target_initial_population_size))
+3. The run purpose ([`group_name`](configuration/config-reference.md#group_name))
 4. The number of runs to test per configuration.
 5. A comma separated list of the recovery factors to test  (Such as `0,0.5,1.0`)
 6. A comma separated list of the proportional recovery factors to test  (Such as `0,0.5,1.0`)
 7. The results directory ([`results_save_location`](configuration/config-reference.md#results_save_location))
 8. The summary results directory ([`summary_results_save_location`](configuration/config-reference.md#summaryresults_save_location))
-9. A comma separated list of contingency table precisions to test ([`ct_tree_precision`](configuration/config-reference.md#ct_tree_precision))
+9. A comma separated list of contingency table precisions to test ([`contingency_table_precision`](configuration/config-reference.md#contingency_table_precision))
 10. The project path ([`project_location`](configuration/config-reference.md#project_location))
 
 ### Running with Java

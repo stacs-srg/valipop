@@ -17,9 +17,9 @@
  */
 package uk.ac.standrews.cs.valipop.export;
 
-public enum ExportFormat {
+public enum PopulationExportFormat {
+
     GEDCOM,
     GRAPHVIZ,
-    GEOJSON,
-    NONE,
+    GEOJSON
 }

@@ -49,7 +49,7 @@ public class PeopleCollectionTest {
     private PopulationStatistics populationStatistics;
 
     @BeforeEach
-    public void setUpPopulationStatistics() {
+    public void setUpPopulationStatistics() throws IOException {
 
         final Path tempDir;
         try {

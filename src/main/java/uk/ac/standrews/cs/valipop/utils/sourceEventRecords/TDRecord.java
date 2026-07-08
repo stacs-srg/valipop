@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.tdFormat.TDBirthSourc
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.tdFormat.TDDeathSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.tdFormat.TDMarriageSourceRecord;
 
-public class TDRecord extends Record {
+public class TDRecord extends RecordType {
 
     TDRecord(final Iterable<IPerson> people, final Iterable<IPartnership> partnerships) {
       super(people, partnerships);

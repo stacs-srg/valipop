@@ -17,16 +17,13 @@
  */
 package uk.ac.standrews.cs.valipop;
 
-import uk.ac.standrews.cs.valipop.export.ExportFormat;
+import uk.ac.standrews.cs.valipop.export.PopulationExportFormat;
 import uk.ac.standrews.cs.valipop.population.SerializableConfig;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.utils.InputFileReader;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordExportFormat;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,6 +35,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.*;
 
 /**
@@ -53,26 +51,26 @@ public class Config implements Serializable {
 
     private static final boolean DEFAULT_BINOMIAL_SAMPLING_FLAG = true;
     private static final boolean DEFAULT_DETERMINISTIC_FLAG = false;
-    private static final boolean DEFAULT_OUTPUT_TABLES_FLAG = true;
+    private static final boolean DEFAULT_EXPORT_CONTINGENCY_TABLES_FLAG = false;
+    private static final boolean DEFAULT_EXPORT_RECORDS_FLAG = false;
+    private static final boolean DEFAULT_EXPORT_POPULATION_FLAG = false;
 
-    private static final double DEFAULT_SETUP_BR = 0.0133;
-    private static final double DEFAULT_SETUP_DR = 0.0122;
+    private static final double DEFAULT_INITIALISATION_BIRTH_RATE = 0.0133;
+    private static final double DEFAULT_INITIALISATION_DEATH_RATE = 0.0122;
     private static final double DEFAULT_RECOVERY_FACTOR = 1.0;
     private static final double DEFAULT_PROPORTIONAL_RECOVERY_FACTOR = 1.0;
     private static final double DEFAULT_OVERSIZED_GEOGRAPHY_FACTOR = 1.0;
 
     private static final Period DEFAULT_SIMULATION_TIME_STEP = Period.ofYears(1);
-    private static final Period DEFAULT_INPUT_WIDTH = Period.ofYears(1);
+    private static final Period DEFAULT_DISTRIBUTION_GRANULARITY = Period.ofYears(1);
     private static final Period DEFAULT_MIN_BIRTH_SPACING = Period.ofDays(147);
     private static final Period DEFAULT_MIN_GESTATION_PERIOD = Period.ofDays(147);
 
     private static final int DEFAULT_SEED = 56854687;
-    private static final int DEFAULT_CT_TREE_STEPBACK = 1;
-    private static final double DEFAULT_CT_TREE_PRECISION = 1E-66;
+    private static final int DEFAULT_CONTINGENCY_TABLE_STEPBACK = 1;
+    private static final double DEFAULT_CONTINGENCY_TABLE_PRECISION = 1E-66;
 
-    private static final RecordFormat DEFAULT_OUTPUT_RECORD_FORMAT = RecordFormat.NONE;
-    private static final ExportFormat DEFAULT_OUTPUT_GRAPH_FORMAT = ExportFormat.NONE;
-    private static final String DEFAULT_RUN_PURPOSE = "default";
+    private static final String DEFAULT_GROUP_NAME = "default";
 
     // Input directory structure
     private static final String birthSubFile = "birth";
@@ -110,10 +108,15 @@ public class Config implements Serializable {
 
     private static final Logger log = Logger.getLogger(Config.class.getName());
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS", Locale.UK);
+    public static final String POPULATION_EXPORT_DIR_NAME = "population";
+    public static final String LOG_FILE_NAME = "log.txt";
+
     private static Level logLevel = DEFAULT_LOG_LEVEL;
     public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
     private final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
     private final Path DEFAULT_PROJECT_PATH = Paths.get(".");
+
+    private Path pathToConfigFile;
 
     // ---- Input directory paths ----
 
@@ -147,25 +150,22 @@ public class Config implements Serializable {
 
     // ---- Run result paths ----
 
-    // Path for summary of results for all runs among all run purposes
+    // Path for summary of results for all runs
     private Path globalSummaryPath;
 
-    // Path for summary of results for all runs within the run purpose
+    // Path for summary of results for all runs within the group
     private Path resultsSummaryPath;
 
     // Path for detailed results for the run
     private Path detailedResultsPath;
 
-    // Path for the birth orders dump of a run
-    private Path birthOrdersPath;
-
     // Path for the records of a run
     private Path recordsPath;
 
     // Path for the graphs of a run
-    private Path graphsPath;
+    private Path populationExportPath;
 
-    // Path for the CT tables used in R analysis of a run
+    // Path for the contingency tables used in R analysis of a run
     private Path contingencyTablesPath;
 
     // Path to directory of a run (defaults to the timestamp)
@@ -174,20 +174,22 @@ public class Config implements Serializable {
     // ---- Other configuration options ----
 
     // Factors
-    private double setUpBR = DEFAULT_SETUP_BR;
-    private double setUpDR = DEFAULT_SETUP_DR;
+    private double initialisationBirthRate = DEFAULT_INITIALISATION_BIRTH_RATE;
+    private double initialisationDeathRate = DEFAULT_INITIALISATION_DEATH_RATE;
     private double recoveryFactor = DEFAULT_RECOVERY_FACTOR;
     private double proportionalRecoveryFactor = DEFAULT_PROPORTIONAL_RECOVERY_FACTOR;
 
     private boolean binomialSampling = DEFAULT_BINOMIAL_SAMPLING_FLAG;
     private boolean deterministic = DEFAULT_DETERMINISTIC_FLAG;
-    private boolean outputTables = DEFAULT_OUTPUT_TABLES_FLAG;
+    private boolean exportContingencyTables = DEFAULT_EXPORT_CONTINGENCY_TABLES_FLAG;
+    private boolean exportRecords = DEFAULT_EXPORT_RECORDS_FLAG;
+    private boolean exportPopulation = DEFAULT_EXPORT_POPULATION_FLAG;
 
     // Time steps
     private Period simulationTimeStep = DEFAULT_SIMULATION_TIME_STEP;
     private Period minBirthSpacing = DEFAULT_MIN_BIRTH_SPACING;
     private Period minGestationPeriod = DEFAULT_MIN_GESTATION_PERIOD;
-    private Period inputWidth = DEFAULT_INPUT_WIDTH;
+    private Period distributionGranularity = DEFAULT_DISTRIBUTION_GRANULARITY;
 
     // Locations
     private Path projectPath = DEFAULT_PROJECT_PATH;
@@ -198,36 +200,37 @@ public class Config implements Serializable {
     private int seed = DEFAULT_SEED;
     private double overSizedGeographyFactor = DEFAULT_OVERSIZED_GEOGRAPHY_FACTOR;
 
-    private int ctTreeStepback = DEFAULT_CT_TREE_STEPBACK;
-    private double ctTreePrecision = DEFAULT_CT_TREE_PRECISION;
+    private int contingencyTableStepback = DEFAULT_CONTINGENCY_TABLE_STEPBACK;
+    private double contingencyTablePrecision = DEFAULT_CONTINGENCY_TABLE_PRECISION;
 
-    private String runPurpose = DEFAULT_RUN_PURPOSE;
-    private RecordFormat outputRecordFormat = DEFAULT_OUTPUT_RECORD_FORMAT;
-    private ExportFormat outputGraphFormat = DEFAULT_OUTPUT_GRAPH_FORMAT;
+    private String groupName = DEFAULT_GROUP_NAME;
+    private RecordExportFormat recordExportFormat;
+    private PopulationExportFormat populationExportFormat;
 
-    private LocalDateTime startTime = LocalDateTime.now();
+    private LocalDateTime simulationExecutionStartTime = LocalDateTime.now();
 
     // Simulation period and start size
-    private LocalDate tS;
-    private LocalDate t0;
-    private LocalDate tE;
-    private Integer t0PopulationSize;
+    private LocalDate initialisationStart;
+    private LocalDate simulationStart;
+    private LocalDate simulationEnd;
+    private Integer targetInitialPopulationSize;
 
-    private Map<String, Processor> processors;
+    private Map<String, Consumer<String>> processors;
 
     public static String formatTimeStamp(final LocalDateTime startTime) {
         return startTime.format(FORMATTER);
     }
 
     // Initialise configuration programmatically
-    public Config(final LocalDate tS, final LocalDate t0, final LocalDate tE, final int t0PopulationSize, final Path varPath, final Path resultsDir, final String runPurpose, final Path summaryResultsDir) {
-        this.tS = tS;
-        this.t0 = t0;
-        this.tE = tE;
-        this.t0PopulationSize = t0PopulationSize;
+    public Config(final LocalDate initialisationStart, final LocalDate simulationStart, final LocalDate simulationEnd, final int targetInitialPopulationSize, final Path varPath, final Path resultsDir, final String groupName, final Path summaryResultsDir) throws IOException {
+
+        this.initialisationStart = initialisationStart;
+        this.simulationStart = simulationStart;
+        this.simulationEnd = simulationEnd;
+        this.targetInitialPopulationSize = targetInitialPopulationSize;
         this.varPath = varPath;
         this.resultsSavePath = resultsDir;
-        this.runPurpose = runPurpose;
+        this.groupName = groupName;
         this.summaryResultsDirPath = summaryResultsDir;
 
         validateOptions();
@@ -238,7 +241,8 @@ public class Config implements Serializable {
     }
 
     // Initialise configuration from file
-    public Config(final Path pathToConfigFile) {
+    public Config(final Path pathToConfigFile) throws IOException {
+
         configureFileProcessors();
         readConfigFile(pathToConfigFile);
 
@@ -250,15 +254,16 @@ public class Config implements Serializable {
     }
 
     private void setGeographyPath() {
+
         final Iterator<Path> it = getVarGeographyPaths().iterator();
         setGeographyFilePath(it.next());
 
         if (it.hasNext())
-            throw new UnsupportedOperationException("Only one geography file is supported for each simulation - please remove surplus files from input data structure or write more code...");
+            throw new UnsupportedOperationException("Only one geography file is supported for each simulation");
     }
 
-    public int getCtTreeStepback() {
-        return ctTreeStepback;
+    public int getContingencyTableStepback() {
+        return contingencyTableStepback;
     }
 
     public Path getDetailedResultsPath() {
@@ -269,8 +274,12 @@ public class Config implements Serializable {
         return recordsPath;
     }
 
+    public Path getConfigFilePath() {
+        return pathToConfigFile;
+    }
+
     public Path getGraphsDirPath() {
-        return graphsPath;
+        return populationExportPath;
     }
 
     public Path getContingencyTablesPath() {
@@ -285,12 +294,8 @@ public class Config implements Serializable {
         return resultsSummaryPath;
     }
 
-    public Path getProjectPath() {
-        return projectPath;
-    }
-
-    private static Path pathToLogDir(final String runPurpose, final LocalDateTime startTime, final Path resultPath) {
-        return resultPath.resolve(runPurpose).resolve(formatTimeStamp(startTime)).resolve("log").resolve("trace.txt");
+    private static Path pathToLogDir(final String groupName, final LocalDateTime startTime, final Path resultPath) {
+        return resultPath.resolve(groupName).resolve(formatTimeStamp(startTime)).resolve("log").resolve(LOG_FILE_NAME);
     }
 
     public Path getRunPath() {
@@ -389,44 +394,44 @@ public class Config implements Serializable {
         return getDirectories(varMigrationRatePaths);
     }
 
-    public LocalDate getTS() {
-        return tS;
+    public LocalDate getInitialisationStart() {
+        return initialisationStart;
     }
 
-    public LocalDate getT0() {
-        return t0;
+    public LocalDate getSimulationStart() {
+        return simulationStart;
     }
 
-    public LocalDate getTE() {
-        return tE;
+    public LocalDate getSimulationEnd() {
+        return simulationEnd;
     }
 
     public Period getSimulationTimeStep() {
         return simulationTimeStep;
     }
 
-    public int getT0PopulationSize() {
-        return t0PopulationSize;
+    public int getTargetInitialPopulationSize() {
+        return targetInitialPopulationSize;
     }
 
-    public double getSetUpBR() {
-        return setUpBR;
+    public double getInitialisationBirthRate() {
+        return initialisationBirthRate;
     }
 
-    public double getSetUpDR() {
-        return setUpDR;
+    public double getInitialisationDeathRate() {
+        return initialisationDeathRate;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public LocalDateTime getSimulationExecutionStartTime() {
+        return simulationExecutionStartTime;
     }
 
-    public String getRunPurpose() {
-        return runPurpose;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public Period getInputWidth() {
-        return inputWidth;
+    public Period getDistributionGranularity() {
+        return distributionGranularity;
     }
 
     public boolean getBinomialSampling() {
@@ -445,16 +450,24 @@ public class Config implements Serializable {
         return proportionalRecoveryFactor;
     }
 
-    public RecordFormat getOutputRecordFormat() {
-        return outputRecordFormat;
+    public RecordExportFormat getRecordExportFormat() {
+        return recordExportFormat;
     }
 
-    public ExportFormat getOutputGraphFormat() {
-        return outputGraphFormat;
+    public PopulationExportFormat getPopulationExportFormat() {
+        return populationExportFormat;
     }
 
     public boolean shouldGenerateContingencyTables() {
-        return outputTables;
+        return exportContingencyTables;
+    }
+
+    public boolean shouldExportRecords() {
+        return exportRecords;
+    }
+
+    public boolean shouldExportPopulation() {
+        return exportPopulation;
     }
 
     public Period getMinGestationPeriod() {
@@ -475,21 +488,21 @@ public class Config implements Serializable {
         return this;
     }
 
-    public Config setRunPurpose(final String runPurpose) {
+    public Config setGroupName(final String groupName) {
 
-        this.runPurpose = runPurpose;
+        this.groupName = groupName;
         return this;
     }
 
     public Config setSetupBirthRate(final double setUpBR) {
 
-        this.setUpBR = setUpBR;
+        this.initialisationBirthRate = setUpBR;
         return this;
     }
 
     public Config setSetupDeathRate(final double setUpDR) {
 
-        this.setUpDR = setUpDR;
+        this.initialisationDeathRate = setUpDR;
         return this;
     }
 
@@ -505,9 +518,9 @@ public class Config implements Serializable {
         return this;
     }
 
-    public Config setInputWidth(final Period inputWidth) {
+    public Config setDistributionGranularity(final Period distributionGranularity) {
 
-        this.inputWidth = inputWidth;
+        this.distributionGranularity = distributionGranularity;
         return this;
     }
 
@@ -578,13 +591,13 @@ public class Config implements Serializable {
         varFemaleOccupationChangePaths = annotationsPath.resolve(femaleOccupationChangeSubFile);
     }
 
-    public static void mkBlankFile(final Path blankFilePath) {
+    public static void mkBlankFile(final Path blankFilePath) throws IOException {
 
-        try {
+//        try {
             createFileIfDoesNotExist(blankFilePath);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+//        } catch (final IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     public static void createFileIfDoesNotExist(final Path path) throws IOException {
@@ -602,26 +615,33 @@ public class Config implements Serializable {
             Files.createDirectories(parent_dir);
     }
 
-    private static void mkSummaryFile(final Path summaryFilePath) {
+    private static void mkSummaryFile(final Path summaryFilePath) throws IOException {
 
-        if (summaryFilePath.toFile().exists())
-            return;
+        if (!summaryFilePath.toFile().exists()) {
+//            return;
 
-        try {
-            mkBlankFile(summaryFilePath);
+//        try {
+
+//        try {
+            createFileIfDoesNotExist(summaryFilePath);
+//        } catch (final IOException e) {
+//            throw new RuntimeException(e);
+//        }
             final PrintWriter write = new PrintWriter(summaryFilePath.toFile());
             write.println(SummaryRow.getSeparatedHeadings());
             write.close();
-
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
         }
+
+//        } catch (final IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
-    private static void mkDirs(final Path path) {
+    private static void mkDirs(final Path path) throws IOException {
 
         if (!Files.exists(path))
-            new File(path.toString()).mkdirs();
+            if (!new File(path.toString()).mkdirs())
+                throw new IOException("couldn't create directories for path: " + path);
     }
 
     // Filter method to exclude dot files from data file directory streams
@@ -639,7 +659,7 @@ public class Config implements Serializable {
 
         processors = new HashMap<>();
 
-        processors.put("var_data_files", value -> varPath = Paths.get(value));
+        processors.put("input_distributions_path", value -> varPath = Paths.get(value));
         processors.put("results_save_location", value -> {
             resultsSavePath = Paths.get(value);
         });
@@ -647,45 +667,49 @@ public class Config implements Serializable {
         processors.put("project_location", value -> projectPath = Paths.get(value));
 
         processors.put("simulation_time_step", value -> simulationTimeStep = parsePeriod(value, "simulation_time_step"));
-        processors.put("input_width", value -> inputWidth = parsePeriod(value, "input_width"));
+        processors.put("distribution_granularity", value -> distributionGranularity = parsePeriod(value, "distribution_granularity"));
         processors.put("min_birth_spacing", value -> minBirthSpacing = parsePeriod(value, "min_birth_spacing"));
         processors.put("min_gestation_period", value -> minGestationPeriod = parsePeriod(value, "min_gestation_period"));
 
-        processors.put("tS", value -> tS = parseDate(value, "tS"));
-        processors.put("t0", value -> t0 = parseDate(value, "t0"));
-        processors.put("tE", value -> tE = parseDate(value, "tE"));
+        processors.put("initialisation_start", value -> initialisationStart = parseDate(value, "initialisation_start"));
+        processors.put("simulation_start", value -> simulationStart = parseDate(value, "simulation_start"));
+        processors.put("simulation_end", value -> simulationEnd = parseDate(value, "simulation_end"));
 
-        processors.put("t0_pop_size", value -> t0PopulationSize = parsePositiveInteger(value, "t0_pop_size"));
+        processors.put("target_initial_population_size", value -> targetInitialPopulationSize = parsePositiveInteger(value, "target_initial_population_size"));
         processors.put("seed", value -> seed = parseInteger(value, "seed"));
-        processors.put("ct_tree_stepback", value -> ctTreeStepback = parsePositiveInteger(value, "ct_tree_stepback"));
-        processors.put("ct_tree_precision", value -> ctTreePrecision = parseDouble(value, "ct_tree_precision"));
+        processors.put("contingency_table_stepback", value -> contingencyTableStepback = parsePositiveInteger(value, "contingency_table_stepback"));
+        processors.put("contingency_table_precision", value -> contingencyTablePrecision = parseDouble(value, "contingency_table_precision"));
 
-        processors.put("set_up_br", value -> setUpBR = parseDouble(value, "set_up_br"));
-        processors.put("set_up_dr", value -> setUpDR = parseDouble(value, "set_up_dr"));
+        processors.put("initialisation_birth_rate", value -> initialisationBirthRate = parseDouble(value, "initialisation_birth_rate"));
+        processors.put("initialisation_death_rate", value -> initialisationDeathRate = parseDouble(value, "initialisation_death_rate"));
         processors.put("recovery_factor", value -> recoveryFactor = parseDouble(value, "recovery_factor"));
         processors.put("proportional_recovery_factor", value -> proportionalRecoveryFactor = parseDouble(value, "recovery_factor"));
         processors.put("over_sized_geography_factor", value -> overSizedGeographyFactor = parseOversizedGeographyFactor(value, "over_sized_geography_factor"));
 
         processors.put("binomial_sampling", value -> binomialSampling = value.equalsIgnoreCase("true"));
-        processors.put("output_tables", value -> outputTables = value.equalsIgnoreCase("true"));
+        processors.put("record_export", value -> exportRecords = value.equalsIgnoreCase("true"));
+        processors.put("population_export", value -> exportPopulation = value.equalsIgnoreCase("true"));
+        processors.put("contingency_table_export", value -> exportContingencyTables = value.equalsIgnoreCase("true"));
         processors.put("deterministic", value -> deterministic = value.equalsIgnoreCase("true"));
 
-        processors.put("output_record_format", value -> {
+        processors.put("record_export_format", value -> {
             try {
-                outputRecordFormat = RecordFormat.valueOf(value);
+                recordExportFormat = RecordExportFormat.valueOf(value);
             } catch (final IllegalArgumentException e) {
-                throw new IllegalArgumentException("'" + value + "' not a valid option for `output_record_format`");
+                throw new IllegalArgumentException("'" + value + "' not a valid option for `record_export_format`");
             }
         });
-        processors.put("output_graph_format", value -> {
+
+        processors.put("population_export_format", value -> {
             try {
-                outputGraphFormat = ExportFormat.valueOf(value);
+                populationExportFormat = PopulationExportFormat.valueOf(value);
             } catch (final IllegalArgumentException e) {
-                throw new IllegalArgumentException("'" + value + "' not a valid option for `output_graph_format`");
+                throw new IllegalArgumentException("'" + value + "' not a valid option for `population_export_format`");
             }
         });
+
         processors.put("log_level", value -> logLevel = Level.parse(value));
-        processors.put("run_purpose", value -> runPurpose = value);
+        processors.put("group_name", value -> groupName = value);
     }
 
     private static LocalDate parseDate(final String value, final String option) {
@@ -743,6 +767,8 @@ public class Config implements Serializable {
 
     private void readConfigFile(final Path pathToConfigFile) {
 
+        this.pathToConfigFile = pathToConfigFile;
+
         try {
             for (final String line : InputFileReader.getAllLines(pathToConfigFile)) {
 
@@ -757,11 +783,11 @@ public class Config implements Serializable {
                 // Join remaining equals together if any, in case they were part of the value
                 final String value = String.join("=", Arrays.copyOfRange(split, 1, split.length)).trim();
 
-                final Processor processor = processors.get(key);
+                final Consumer<String> processor = processors.get(key);
                 if (processor == null) {
                     throw new RuntimeException("No configuration processor defined for key: " + key);
                 }
-                processor.set(value);
+                processor.accept(value);
             }
         } catch (final IOException e) {
             log.severe("error reading config: " + e.getMessage());
@@ -771,63 +797,55 @@ public class Config implements Serializable {
 
     private void validateOptions() {
 
-        if (tS == null)
-            throw new IllegalArgumentException("`tS` is required");
+        if (initialisationStart == null)
+            throw new IllegalArgumentException("`initialisation_start` is required");
 
-        if (t0 == null)
-            throw new IllegalArgumentException("`t0` is required");
+        if (simulationStart == null)
+            throw new IllegalArgumentException("`simulation_start` is required");
 
-        if (tE == null)
-            throw new IllegalArgumentException("`tE` is required");
+        if (simulationEnd == null)
+            throw new IllegalArgumentException("`simulation_end` is required");
 
-        if (t0PopulationSize == null)
-            throw new IllegalArgumentException("`t0_pop_size` is required");
+        if (targetInitialPopulationSize == null)
+            throw new IllegalArgumentException("`target_initial_population_size` is required");
 
         if (varPath == null)
-            throw new IllegalArgumentException("`var_data_files` is required");
+            throw new IllegalArgumentException("`input_distributions_path` is required");
 
         // Ensure ordering of dates
-        if (tS.isAfter(t0) )
-            throw new IllegalArgumentException("`tS` cannot be after `t0`");
+        if (initialisationStart.isAfter(simulationStart) )
+            throw new IllegalArgumentException("`initialisation_start` cannot be after `simulation_start`");
 
-        if (t0.isAfter(tE))
-            throw new IllegalArgumentException("`t0` cannot be after `tE`");
+        if (simulationStart.isAfter(simulationEnd))
+            throw new IllegalArgumentException("`simulation_start` cannot be after `simulation_end`");
 
         // This allows the simulation enough time to burn in
-        if (t0.getYear() - tS.getYear() < 150)
-            throw new IllegalArgumentException("`tS` must be at least 150 years before `t0`");
+        if (simulationStart.getYear() - initialisationStart.getYear() < 150)
+            throw new IllegalArgumentException("`initialisation_start` must be at least 150 years before `simulation_start`");
     }
 
-    private void setUpFileStructure() {
+    private void setUpFileStructure() throws IOException {
 
         globalSummaryPath = summaryResultsDirPath.resolve( "global-results-summary.csv");
-        final Path purpose = resultsSavePath.resolve(runPurpose);
-        resultsSummaryPath = summaryResultsDirPath.resolve(runPurpose).resolve( runPurpose + "-results-summary.csv");
-        runPath = purpose.resolve(formatTimeStamp(startTime));
-        detailedResultsPath = runPath.resolve("detailed-results-" + formatTimeStamp(startTime) + ".txt");
-        final Path dumpPath = runPath.resolve("dump");
-        birthOrdersPath = dumpPath.resolve("order.csv");
+        final Path groupPath = resultsSavePath.resolve(groupName);
+        resultsSummaryPath = summaryResultsDirPath.resolve(groupName).resolve( groupName + "-results-summary.csv");
+        runPath = groupPath.resolve(formatTimeStamp(simulationExecutionStartTime));
+        detailedResultsPath = runPath.resolve("statistics.txt");
         recordsPath = runPath.resolve("records");
-        graphsPath = runPath.resolve("graphs");
+        populationExportPath = runPath.resolve(POPULATION_EXPORT_DIR_NAME);
         contingencyTablesPath = runPath.resolve("tables");
         final Path log = runPath.resolve("log");
-        final Path tracePath = log.resolve("trace.txt");
 
         mkDirs(resultsSavePath);
-        mkDirs(purpose);
+        mkDirs(groupPath);
         mkDirs(runPath);
-        mkDirs(dumpPath);
         mkDirs(recordsPath);
-        mkDirs(graphsPath);
+        mkDirs(populationExportPath);
         mkDirs(contingencyTablesPath);
         mkDirs(log);
 
         mkSummaryFile(globalSummaryPath);
         mkSummaryFile(resultsSummaryPath);
-
-        mkBlankFile(detailedResultsPath);
-        mkBlankFile(birthOrdersPath);
-        mkBlankFile(tracePath);
     }
 
     private void configureLogging() {
@@ -841,7 +859,7 @@ public class Config implements Serializable {
                 globalLogger.removeHandler(h);
             }
 
-            final Handler handler = new FileHandler(pathToLogDir(runPurpose, startTime, resultsSavePath).toString());
+            final Handler handler = new FileHandler(pathToLogDir(groupName, simulationExecutionStartTime, resultsSavePath).toString());
             handler.setFormatter(new SimpleFormatter());
 
             globalLogger.addHandler(handler);
@@ -860,10 +878,6 @@ public class Config implements Serializable {
         this.geographyFilePath = geographyFilePath;
     }
 
-    public void setOutputRecordFormat(final RecordFormat output_record_format) {
-        this.outputRecordFormat = output_record_format;
-    }
-
     public Config setSeed(final int seed) {
         this.seed = seed;
         return this;
@@ -873,29 +887,16 @@ public class Config implements Serializable {
         this.simulationTimeStep = timestep;
     }
 
-    public void setBinomialSampling(final boolean binomial_sampling) {
-        this.binomialSampling = binomial_sampling;
-    }
-
-    public void setCTtreeStepBack(final int ct_tree_stepback) {
-        this.ctTreeStepback = ct_tree_stepback;
-    }
-
-    public double getCtTreePrecision() {
-        return ctTreePrecision;
+    public double getContingencyTablePrecision() {
+        return contingencyTablePrecision;
     }
 
     public void setCTtreePrecision(final double precision) {
-        this.ctTreePrecision = precision;
+        this.contingencyTablePrecision = precision;
     }
 
     public double getOverSizedGeographyFactor() {
         return overSizedGeographyFactor;
-    }
-
-    private interface Processor {
-
-        void set(String rep);
     }
 
     public SerializableConfig toSerialized() {
@@ -927,38 +928,37 @@ public class Config implements Serializable {
             globalSummaryPath.toString(),
             resultsSummaryPath.toString(),
             detailedResultsPath.toString(),
-            birthOrdersPath.toString(),
             recordsPath.toString(),
-            graphsPath.toString(),
+            populationExportPath.toString(),
             contingencyTablesPath.toString(),
             runPath.toString(),
-            setUpBR,
-            setUpDR,
+            initialisationBirthRate,
+            initialisationDeathRate,
             recoveryFactor,
             proportionalRecoveryFactor,
             binomialSampling,
             deterministic,
-            outputTables,
+            exportContingencyTables,
             simulationTimeStep,
             minBirthSpacing,
             minGestationPeriod,
-            inputWidth,
+            distributionGranularity,
             summaryResultsDirPath.toString(),
             resultsSavePath.toString(),
             geographyFilePath.toString(),
             projectPath.toString(),
             seed,
             overSizedGeographyFactor,
-            ctTreeStepback,
-            ctTreePrecision,
-            runPurpose,
-            outputRecordFormat,
-            outputGraphFormat,
-            startTime,
-            tS,
-            t0,
-            tE,
-            t0PopulationSize
+            contingencyTableStepback,
+            contingencyTablePrecision,
+            groupName,
+            recordExportFormat,
+            populationExportFormat,
+            simulationExecutionStartTime,
+            initialisationStart,
+            simulationStart,
+            simulationEnd,
+            targetInitialPopulationSize
         );
     }
 
@@ -990,37 +990,36 @@ public class Config implements Serializable {
         this.globalSummaryPath                =Path.of(config.globalSummaryPath);
         this.resultsSummaryPath               =Path.of(config.resultsSummaryPath);
         this.detailedResultsPath              =Path.of(config.detailedResultsPath);
-        this.birthOrdersPath                  =Path.of(config.birthOrdersPath);
         this.recordsPath                      =Path.of(config.recordsPath);
-        this.graphsPath                       =Path.of(config.graphsPath);
+        this.populationExportPath             =Path.of(config.graphsPath);
         this.contingencyTablesPath            =Path.of(config.contingencyTablesPath);
         this.runPath                          =Path.of(config.runPath);
         this.summaryResultsDirPath            =Path.of(config.summaryResultsDirPath);
         this.resultsSavePath                  =Path.of(config.resultsSavePath);
         this.geographyFilePath                =Path.of(config.geographyFilePath);
         this.projectPath                      =Path.of(config.projectPath);
-        this.setUpBR                          =config.setUpBR;
-        this.setUpDR                          =config.setUpDR;
+        this.initialisationBirthRate          =config.initialisationBirthRate;
+        this.initialisationDeathRate          =config.initialisationDeathRate;
         this.recoveryFactor                   =config.recoveryFactor;
         this.proportionalRecoveryFactor       =config.proportionalRecoveryFactor;
         this.binomialSampling                 =config.binomialSampling;
         this.deterministic                    =config.deterministic;
-        this.outputTables                     =config.outputTables;
+        this.exportContingencyTables          =config.outputTables;
         this.simulationTimeStep               =config.simulationTimeStep;
         this.minBirthSpacing                  =config.minBirthSpacing;
         this.minGestationPeriod               =config.minGestationPeriod;
-        this.inputWidth                       =config.inputWidth;
+        this.distributionGranularity          =config.distributionGranularity;
         this.seed                             =config.seed;
         this.overSizedGeographyFactor         =config.overSizedGeographyFactor;
-        this.ctTreeStepback                   =config.ctTreeStepback;
-        this.ctTreePrecision                  =config.ctTreePrecision;
-        this.runPurpose                       =config.runPurpose;
-        this.outputRecordFormat               =config.outputRecordFormat;
-        this.outputGraphFormat                =config.outputGraphFormat;
-        this.startTime                        =config.startTime;
-        this.tS                               =config.tS;
-        this.t0                               =config.t0;
-        this.tE                               =config.tE;
-        this.t0PopulationSize                 =config.t0PopulationSize;
+        this.contingencyTableStepback         =config.contingencyTableStepback;
+        this.contingencyTablePrecision        =config.contingencyTablePrecision;
+        this.groupName                        =config.groupName;
+        this.recordExportFormat               =config.outputRecordFormat;
+        this.populationExportFormat           =config.outputGraphFormat;
+        this.simulationExecutionStartTime     =config.simulationExecutionStartTime;
+        this.initialisationStart              =config.initialisationStart;
+        this.simulationStart                  =config.simulationStart;
+        this.simulationEnd                    =config.simulationEnd;
+        this.targetInitialPopulationSize      =config.targetInitialPopulationSize;
     }
 }

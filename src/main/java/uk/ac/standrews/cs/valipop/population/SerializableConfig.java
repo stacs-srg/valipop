@@ -22,8 +22,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
-import uk.ac.standrews.cs.valipop.export.ExportFormat;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
+import uk.ac.standrews.cs.valipop.export.PopulationExportFormat;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordExportFormat;
 
 public class SerializableConfig implements Serializable {
     public String varPath;
@@ -53,13 +53,12 @@ public class SerializableConfig implements Serializable {
     public String globalSummaryPath;
     public String resultsSummaryPath;
     public String detailedResultsPath;
-    public String birthOrdersPath;
     public String recordsPath;
     public String graphsPath;
     public String contingencyTablesPath;
     public String runPath;
-    public double setUpBR;
-    public double setUpDR;
+    public double initialisationBirthRate;
+    public double initialisationDeathRate;
     public double recoveryFactor;
     public double proportionalRecoveryFactor;
     public boolean binomialSampling;
@@ -68,84 +67,83 @@ public class SerializableConfig implements Serializable {
     public Period simulationTimeStep;
     public Period minBirthSpacing;
     public Period minGestationPeriod;
-    public Period inputWidth;
+    public Period distributionGranularity;
     public String summaryResultsDirPath;
     public String resultsSavePath;
     public String geographyFilePath;
     public String projectPath;
     public int seed;
     public double overSizedGeographyFactor;
-    public int ctTreeStepback;
-    public double ctTreePrecision;
-    public String runPurpose;
-    public RecordFormat outputRecordFormat;
-    public ExportFormat outputGraphFormat;
-    public LocalDateTime startTime;
-    public LocalDate tS;
-    public LocalDate t0;
-    public LocalDate tE;
-    public int t0PopulationSize;
+    public int contingencyTableStepback;
+    public double contingencyTablePrecision;
+    public String groupName;
+    public RecordExportFormat outputRecordFormat;
+    public PopulationExportFormat outputGraphFormat;
+    public LocalDateTime simulationExecutionStartTime;
+    public LocalDate initialisationStart;
+    public LocalDate simulationStart;
+    public LocalDate simulationEnd;
+    public int targetInitialPopulationSize;
 
     public SerializableConfig(
-        String varPath,
-        String varOrderedBirthPaths,
-        String varMaleLifetablePaths,
-        String varMaleDeathCausesPaths,
-        String varFemaleLifetablePaths,
-        String varFemaleDeathCausesPaths,
-        String varMultipleBirthPaths,
-        String varAdulterousBirthPaths,
-        String varPartneringPaths,
-        String varSeparationPaths,
-        String varBirthRatioPaths,
-        String varMaleForenamePaths,
-        String varFemaleForenamePaths,
-        String varMigrantMaleForenamePaths,
-        String varMigrantFemaleForenamePaths,
-        String varMigrantSurnamePaths,
-        String varMigrationRatePaths,
-        String varSurnamePaths,
-        String varMarriagePaths,
-        String varGeographyPaths,
-        String varMaleOccupationPaths,
-        String varFemaleOccupationPaths,
-        String varMaleOccupationChangePaths,
-        String varFemaleOccupationChangePaths,
-        String globalSummaryPath,
-        String resultsSummaryPath,
-        String detailedResultsPath,
-        String birthOrdersPath,
-        String recordsPath,
-        String graphsPath,
-        String contingencyTablesPath,
-        String runPath,
-        double setUpBR,
-        double setUpDR,
-        double recoveryFactor,
-        double proportionalRecoveryFactor,
-        boolean binomialSampling,
-        boolean deterministic,
-        boolean outputTables,
-        Period simulationTimeStep,
-        Period minBirthSpacing,
-        Period minGestationPeriod,
-        Period inputWidth,
-        String summaryResultsDirPath,
-        String resultsSavePath,
-        String geographyFilePath,
-        String projectPath,
-        int seed,
-        double overSizedGeographyFactor,
-        int ctTreeStepback,
-        double ctTreePrecision,
-        String runPurpose,
-        RecordFormat outputRecordFormat,
-        ExportFormat outputGraphFormat,
-        LocalDateTime startTime,
-        LocalDate tS,
-        LocalDate t0,
-        LocalDate tE,
-        int t0PopulationSize
+        final String varPath,
+        final String varOrderedBirthPaths,
+        final String varMaleLifetablePaths,
+        final String varMaleDeathCausesPaths,
+        final String varFemaleLifetablePaths,
+        final String varFemaleDeathCausesPaths,
+        final String varMultipleBirthPaths,
+        final String varAdulterousBirthPaths,
+        final String varPartneringPaths,
+        final String varSeparationPaths,
+        final String varBirthRatioPaths,
+        final String varMaleForenamePaths,
+        final String varFemaleForenamePaths,
+        final String varMigrantMaleForenamePaths,
+        final String varMigrantFemaleForenamePaths,
+        final String varMigrantSurnamePaths,
+        final String varMigrationRatePaths,
+        final String varSurnamePaths,
+        final String varMarriagePaths,
+        final String varGeographyPaths,
+        final String varMaleOccupationPaths,
+        final String varFemaleOccupationPaths,
+        final String varMaleOccupationChangePaths,
+        final String varFemaleOccupationChangePaths,
+        final String globalSummaryPath,
+        final String resultsSummaryPath,
+        final String detailedResultsPath,
+        final String recordsPath,
+        final String graphsPath,
+        final String contingencyTablesPath,
+        final String runPath,
+        final double initialisationBirthRate,
+        final double initialisationDeathRate,
+        final double recoveryFactor,
+        final double proportionalRecoveryFactor,
+        final boolean binomialSampling,
+        final boolean deterministic,
+        final boolean outputTables,
+        final Period simulationTimeStep,
+        final Period minBirthSpacing,
+        final Period minGestationPeriod,
+        final Period distributionGranularity,
+        final String summaryResultsDirPath,
+        final String resultsSavePath,
+        final String geographyFilePath,
+        final String projectPath,
+        final int seed,
+        final double overSizedGeographyFactor,
+        final int contingencyTableStepback,
+        final double contingencyTablePrecision,
+        final String groupName,
+        final RecordExportFormat outputRecordFormat,
+        final PopulationExportFormat outputGraphFormat,
+        final LocalDateTime simulationExecutionStartTime,
+        final LocalDate initialisationStart,
+        final LocalDate simulationStart,
+        final LocalDate simulationEnd,
+        final int targetInitialPopulationSize
     ) {
         this.varPath                          =varPath;
         this.varOrderedBirthPaths             =varOrderedBirthPaths;
@@ -174,13 +172,12 @@ public class SerializableConfig implements Serializable {
         this.globalSummaryPath                =globalSummaryPath;
         this.resultsSummaryPath               =resultsSummaryPath;
         this.detailedResultsPath              =detailedResultsPath;
-        this.birthOrdersPath                  =birthOrdersPath;
         this.recordsPath                      =recordsPath;
         this.graphsPath                       =graphsPath;
         this.contingencyTablesPath            =contingencyTablesPath;
         this.runPath                          =runPath;
-        this.setUpBR                          =setUpBR;
-        this.setUpDR                          =setUpDR;
+        this.initialisationBirthRate = initialisationBirthRate;
+        this.initialisationDeathRate = initialisationDeathRate;
         this.recoveryFactor                   =recoveryFactor;
         this.proportionalRecoveryFactor       =proportionalRecoveryFactor;
         this.binomialSampling                 =binomialSampling;
@@ -189,22 +186,22 @@ public class SerializableConfig implements Serializable {
         this.simulationTimeStep               =simulationTimeStep;
         this.minBirthSpacing                  =minBirthSpacing;
         this.minGestationPeriod               =minGestationPeriod;
-        this.inputWidth                       =inputWidth;
+        this.distributionGranularity = distributionGranularity;
         this.summaryResultsDirPath            =summaryResultsDirPath;
         this.resultsSavePath                  =resultsSavePath;
         this.geographyFilePath                =geographyFilePath;
         this.projectPath                      =projectPath;
         this.seed                             =seed;
         this.overSizedGeographyFactor         =overSizedGeographyFactor;
-        this.ctTreeStepback                   =ctTreeStepback;
-        this.ctTreePrecision                  =ctTreePrecision;
-        this.runPurpose                       =runPurpose;
+        this.contingencyTableStepback = contingencyTableStepback;
+        this.contingencyTablePrecision = contingencyTablePrecision;
+        this.groupName = groupName;
         this.outputRecordFormat               =outputRecordFormat;
         this.outputGraphFormat                =outputGraphFormat;
-        this.startTime                        =startTime;
-        this.tS                               =tS;
-        this.t0                               =t0;
-        this.tE                               =tE;
-        this.t0PopulationSize                 =t0PopulationSize;
+        this.simulationExecutionStartTime = simulationExecutionStartTime;
+        this.initialisationStart = initialisationStart;
+        this.simulationStart = simulationStart;
+        this.simulationEnd = simulationEnd;
+        this.targetInitialPopulationSize = targetInitialPopulationSize;
     }
 }

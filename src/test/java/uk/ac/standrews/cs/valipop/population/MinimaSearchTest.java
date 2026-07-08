@@ -39,7 +39,7 @@ public class MinimaSearchTest {
     OBDModel model;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws IOException {
 
         final Path tempDir;
         try {
@@ -49,7 +49,7 @@ public class MinimaSearchTest {
             throw new RuntimeException(e);
         }
 
-        Config config = new Config(
+        final Config config = new Config(
                 LocalDate.of(1,1,1),
                 LocalDate.of(200,1,1),
                 LocalDate.of(300,1,1),
@@ -66,18 +66,18 @@ public class MinimaSearchTest {
     @Test
     public void nanTesting() throws SpaceExploredException {
 
-        double startingFactor = 0.0;
+        final double startingFactor = 0.0;
 
         MinimaSearch.startFactor = startingFactor;
         MinimaSearch.step = 0.5;
         MinimaSearch.initStep = 0.5;
 
-        Control control = Control.RF;
+        final Control control = Control.RF;
 
         MinimaSearch.setControllingFactor(control, MinimaSearch.startFactor);
         double rf = MinimaSearch.getControllingFactor(control);
 
-        assertEquals(rf, startingFactor, 1E-6);
+        assertEquals(startingFactor, rf, 1E-6);
 
         MinimaSearch.setControllingFactor(control, MinimaSearch.getNextFactorValue());
         rf = MinimaSearch.getControllingFactor(control);

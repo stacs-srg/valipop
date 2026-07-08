@@ -28,18 +28,19 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
-abstract public class Record {
+abstract public class RecordType {
 
-    private static final String BIRTH_RECORDS_PATH = "birth_records.csv";
-    private static final String DEATH_RECORDS_PATH = "death_records.csv";
-    private static final String MARRIAGE_RECORDS_PATH = "marriage_records.csv";
+    public static final String BIRTH_RECORDS_FILENAME = "birth-records.csv";
+    public static final String DEATH_RECORDS_FILENAME = "death-records.csv";
+    public static final String MARRIAGE_RECORDS_FILENAME = "marriage-records.csv";
 
     // TODO allow output file paths to be configured, add -i option to output to console
 
-    private Iterable<IPerson> people;
-    private Iterable<IPartnership> partnerships;
+    private final Iterable<IPerson> people;
+    private final Iterable<IPartnership> partnerships;
 
-    Record(Iterable<IPerson> people, Iterable<IPartnership> partnerships) {
+    RecordType(final Iterable<IPerson> people, final Iterable<IPartnership> partnerships) {
+
         this.people = people;
         this.partnerships = partnerships;
     }
@@ -50,18 +51,18 @@ abstract public class Record {
 
     abstract protected Iterable<? extends SourceRecord> toMarriageRecords(Iterable<IPartnership> partnerships);
 
-    public void exportRecords(Path recordDir) throws IOException {
+    public void exportRecords(final Path recordDir) throws IOException {
 
-        exportRecord(toBirthRecords(people), recordDir.resolve(BIRTH_RECORDS_PATH));
-        exportRecord(toDeathRecords(people), recordDir.resolve(DEATH_RECORDS_PATH));
-        exportRecord(toMarriageRecords(partnerships), recordDir.resolve(MARRIAGE_RECORDS_PATH));
+        exportRecords(toBirthRecords(people), recordDir.resolve(BIRTH_RECORDS_FILENAME));
+        exportRecords(toDeathRecords(people), recordDir.resolve(DEATH_RECORDS_FILENAME));
+        exportRecords(toMarriageRecords(partnerships), recordDir.resolve(MARRIAGE_RECORDS_FILENAME));
     }
 
-    private void exportRecord(final Iterable<? extends SourceRecord> records, Path recordPath) throws IOException {
-        // Generate birth records
-        Config.createParentDirectoryIfDoesNotExist(recordPath);
+    private static void exportRecords(final Iterable<? extends SourceRecord> records, final Path recordsPath) throws IOException {
 
-        try (final PrintWriter writer = new PrintWriter(Files.newBufferedWriter(recordPath, StandardCharsets.UTF_8))) {
+        Config.createParentDirectoryIfDoesNotExist(recordsPath);
+
+        try (final PrintWriter writer = new PrintWriter(Files.newBufferedWriter(recordsPath, StandardCharsets.UTF_8))) {
 
             boolean first = true;
 

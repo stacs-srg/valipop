@@ -8,7 +8,7 @@ markdown: kramdown
 
 ## Contingency Tables
 
-Once the simulation has ended, if the [`output_tables`](../usage/configuration/config-reference.md#output_tables) config options is set to true, ValiPop will generate contingency tables for target population deaths, partnerships, separations, ordered births, and multiple births. A contingency table is a CSV file which contains records of an actual and expected entry for each type of the event that could occur for the property. The following shows a snippet of the deaths contingency table:
+Once the simulation has ended, if the [`contingency_table_export`](../usage/configuration/config-reference.md#contingency_table_export) config options is set to true, ValiPop will generate contingency tables for target population deaths, partnerships, separations, ordered births, and multiple births. A contingency table is a CSV file which contains records of an actual and expected entry for each type of the event that could occur for the property. The following shows a snippet of the deaths contingency table:
 
 ```csv
 Source,YOB,Sex,Age,Died,Date,freq

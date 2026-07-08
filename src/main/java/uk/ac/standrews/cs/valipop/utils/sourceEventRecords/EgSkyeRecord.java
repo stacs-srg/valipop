@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat.EGSkyeDe
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat.EGSkyeMarriageSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
-public class EgSkyeRecord extends Record {
+public class EgSkyeRecord extends RecordType {
 
     EgSkyeRecord(final Iterable<IPerson> people, final Iterable<IPartnership> partnerships) {
       super(people, partnerships);

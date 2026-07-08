@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,45 +36,29 @@ public class RecordGenerationFactory {
 
     public static final Logger log = Logger.getLogger(RecordGenerationFactory.class.getName());
 
-    public static void outputRecords(final RecordFormat recordFormat, final Path recordsOutputDir, final PeopleCollection people, final LocalDate startDate) {
+    public static void outputRecords(final RecordExportFormat recordFormat, final Path recordsOutputDir, final PeopleCollection people, final LocalDate startDate) throws IOException {
 
         final Iterable<IPartnership> partnerships = people.getPartnerships();
         final Iterable<IPerson> filteredPeople = filterPeople(people, startDate);
         final Iterable<IPartnership> filteredPartnerships = filterPartnerships(partnerships, startDate);
 
-        Record record = null;
+        final RecordType record = switch (recordFormat) {
 
-        switch (recordFormat) {
-            case DS:
-                record = new DsRecord(filteredPeople, filteredPartnerships);
-                break;
-            case EG_SKYE:
-                record = new EgSkyeRecord(filteredPeople, filteredPartnerships);
-                break;
-            case TD:
-                record = new TDRecord(filteredPeople, filteredPartnerships);
-                break;
-            case VIS_PROCESSING:
-                record = new SimplifiedRecord(filteredPeople, filteredPartnerships);
-                break;
-            case NONE:
-                break;
-            default:
-                break;
-        }
-
-        if (record == null) {
-            return;
-        }
+            case DS -> new DsRecord(filteredPeople, filteredPartnerships);
+            case EG_SKYE -> new EgSkyeRecord(filteredPeople, filteredPartnerships);
+            case TD -> new TDRecord(filteredPeople, filteredPartnerships);
+            case VIS_PROCESSING -> new SimplifiedRecord(filteredPeople, filteredPartnerships);
+        };
 
         log.info("OBDModel --- Outputting records");
 
         try {
             record.exportRecords(recordsOutputDir);
-        } catch (final Exception e) {
+        } catch (final IOException e) {
+
             log.info("Record generation failed");
-            e.printStackTrace();
             log.info(e.getMessage());
+            throw e;
         }
     }
 

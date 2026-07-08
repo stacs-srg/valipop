@@ -19,17 +19,17 @@ This is an example of a minimal configuration file:
 ```txt
 # Properties File
 
-var_data_files = src/main/resources/valipop/inputs/synthetic-scotland
-tS = 1687-01-01
-t0 = 1855-01-01
-tE = 1973-01-01
-t0_pop_size = 1000
+input_distributions_path = src/main/resources/valipop/inputs/synthetic-scotland
+initialisation_start = 1687-01-01
+simulation_start = 1855-01-01
+simulation_end = 1973-01-01
+target_initial_population_size = 1000
 ```
 
 See the [config reference](config-reference.md) for all possible configuration options.
 
 ## The Input Distributions
 
-Input distributions provide the probabilities used to simulate all properties of the population. The collection of input distributions for a population should be contained within a single directory. The path to this directory can be passed to ValiPop with the [`var_data_files`](config-reference#var_data_files) option in the config file.
+Input distributions provide the probabilities used to simulate all properties of the population. The collection of input distributions for a population should be contained within a single directory. The path to this directory can be passed to ValiPop with the [`input_distributions_path`](config-reference#input_distributions_path) option in the config file.
 
 See the [input distribution reference](input-reference.md) for the structure and format of all input distributions.

@@ -43,7 +43,9 @@ import uk.ac.standrews.cs.valipop.utils.ContingencyTableValidator;
  * @author Daniel Brathagen (dbrathagen@gmail.com)
  */
 public class DistributedFactorSearch {
-    public static void main(final String[] args) throws InterruptedException {
+
+    public static void main(final String[] args) throws InterruptedException, IOException {
+
         final String[] pArgs = ProcessArgs.process(args, "FACTOR_SEARCH_PRECISION");
         if (!ProcessArgs.check(pArgs, "FACTOR_SEARCH_PRECISION")) {
             System.err.println("Incorrect arguments given");
@@ -51,9 +53,9 @@ public class DistributedFactorSearch {
         }
 
         final Path dataFiles = Paths.get(pArgs[0]);
-        final int seedSize = Integer.valueOf(pArgs[1]);
+        final int seedSize = Integer.parseInt(pArgs[1]);
         final String runPurpose = pArgs[2];
-        final int numberOfRunsPerSim = Integer.valueOf(pArgs[3]);
+        final int numberOfRunsPerSim = Integer.parseInt(pArgs[3]);
 
         final String rfsArg = pArgs[4];
         final String prfsArg = pArgs[5];
@@ -77,7 +79,7 @@ public class DistributedFactorSearch {
             final ModelInput i = inputs.get(0);
 
             // Creates a config for the sole purpose of creating the directory structure
-            new Config(i.tS, i.t0, i.tE, i.size, Path.of(i.dataFiles), Path.of(i.summaryResultsLocation), i.runPurpose, Path.of(i.summaryResultsLocation));
+            new Config(i.initialisation_start, i.simulation_start, i.simulation_end, i.size, Path.of(i.dataFiles), Path.of(i.summaryResultsLocation), i.runPurpose, Path.of(i.summaryResultsLocation));
         }
 
         System.out.println("Generated " + inputs.size() + " configs");
@@ -97,9 +99,10 @@ public class DistributedFactorSearch {
     }
 
     private static class ModelInput implements Serializable {
-        public LocalDate tS;
-        public LocalDate t0;
-        public LocalDate tE;
+
+        public LocalDate initialisation_start;
+        public LocalDate simulation_start;
+        public LocalDate simulation_end;
         public int size;
         public String dataFiles;
         public String resultLocation;
@@ -108,17 +111,17 @@ public class DistributedFactorSearch {
         public String projectPath;
         
         public double precision;
-        public double set_up_br;
-        public double set_up_dr;
+        public double initialisation_birth_rate;
+        public double initialisation_death_rate;
         public double rf;
         public double prf;
-        public Period input_width;
+        public Period distribution_granularity;
         public Period minBirthSpacing;
         
         public ModelInput(
-            final LocalDate tS,
-            final LocalDate t0,
-            final LocalDate tE,
+            final LocalDate initialisation_start,
+            final LocalDate simulation_start,
+            final LocalDate simulation_end,
             final int size,
             final String dataFiles,
             final String resultLocation,
@@ -127,16 +130,16 @@ public class DistributedFactorSearch {
             final String projectPath,
 
             final double precision,
-            final double set_up_br,
-            final double set_up_dr,
+            final double initialisation_birth_rate,
+            final double initialisation_death_rate,
             final double rf,
             final double prf,
-            final Period input_width,
+            final Period distribution_granularity,
             final Period minBirthSpacing
         ) {
-            this.tS               = tS;
-            this.t0               = t0;
-            this.tE               = tE;
+            this.initialisation_start               = initialisation_start;
+            this.simulation_start               = simulation_start;
+            this.simulation_end               = simulation_end;
             this.size             = size;
             this.dataFiles        = dataFiles;
             this.resultLocation   = resultLocation;
@@ -144,11 +147,11 @@ public class DistributedFactorSearch {
             this.summaryResultsLocation  = summaryResultsLocation;
             this.projectPath      = projectPath;
             this.precision        = precision;
-            this.set_up_br        = set_up_br;
-            this.set_up_dr        = set_up_dr;
+            this.initialisation_birth_rate        = initialisation_birth_rate;
+            this.initialisation_death_rate        = initialisation_death_rate;
             this.rf               = rf;
             this.prf              = prf;
-            this.input_width      = input_width;
+            this.distribution_granularity      = distribution_granularity;
             this.minBirthSpacing   = minBirthSpacing;
         }
     }
@@ -164,31 +167,26 @@ public class DistributedFactorSearch {
     }
 
     // --- Distributed Operations ---
-    private static ModelOutput runModel(final ModelInput i) {
-        final Config config = new Config(i.tS, i.t0, i.tE, i.size, Paths.get(i.dataFiles), Paths.get(i.resultLocation), i.runPurpose, Paths.get(i.summaryResultsLocation));
+    private static ModelOutput runModel(final ModelInput i) throws IOException {
+
+        final Config config = new Config(i.initialisation_start, i.simulation_start, i.simulation_end, i.size, Paths.get(i.dataFiles), Paths.get(i.resultLocation), i.runPurpose, Paths.get(i.summaryResultsLocation));
 
         config.setCTtreePrecision(i.precision);
-        config.setSetupBirthRate(i.set_up_br);
-        config.setSetupDeathRate(i.set_up_dr);
+        config.setSetupBirthRate(i.initialisation_birth_rate);
+        config.setSetupDeathRate(i.initialisation_death_rate);
         config.setRecoveryFactor(i.rf);
         config.setProportionalRecoveryFactor(i.prf);
-        config.setInputWidth(i.input_width);
+        config.setDistributionGranularity(i.distribution_granularity);
         config.setMinBirthSpacing(i.minBirthSpacing);
         config.setProjectPath(Paths.get(i.projectPath));
 
         final OBDModel model = new OBDModel(config);
 
-        try {
-            System.out.println("Simulating the model");
-            model.runSimulation();
-            System.out.println("Analysing the model");
-            model.analyseAndOutputPopulation(false);
-            System.out.println("Complete for rf: " +config.getRecoveryFactor() + ", rpf: " + config.getProportionalRecoveryFactor());
-        } catch(final Exception e) {
-            System.out.println("Given rf: " + config.getRecoveryFactor() + ", rpf: " + config.getProportionalRecoveryFactor());
-
-            throw e;
-        }
+        System.out.println("Simulating the model");
+        model.runSimulation();
+        System.out.println("Analysing the model");
+        model.analyseAndOutputPopulation(false);
+        System.out.println("Complete for rf: " +config.getRecoveryFactor() + ", rpf: " + config.getProportionalRecoveryFactor());
 
         final SummaryRow summaryRow = model.getSummaryRow();
         final int maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
@@ -200,8 +198,8 @@ public class DistributedFactorSearch {
 
         final Config config = new Config(result.summaryRow.config);
         final int maxMotherBirthAge = result.age;
-        final int startYear = config.getT0().getYear();
-        final int endYear = config.getTE().getYear();
+        final int startYear = config.getSimulationStart().getYear();
+        final int endYear = config.getSimulationEnd().getYear();
 
         final SummaryRow summaryRow = new SummaryRow(result.summaryRow);
 
@@ -233,12 +231,12 @@ public class DistributedFactorSearch {
     }
 
     private static List<ModelInput> generateInputs(final int size0, final double[] recovery_factors, final double[] proportional_recovery_factors, final double[] precisions, final Path dataFiles, final int numberOfRunsPerSim, final String runPurpose, final Path resultsDir, final Path summaryResultsDir, final Path projectPath) throws InterruptedException {
-        final LocalDate tS = LocalDate.of(1599, 1, 1);
-        final LocalDate t0 = LocalDate.of(1855, 1, 1);
-        final LocalDate tE = LocalDate.of(2015, 1, 1);
+        final LocalDate initialisation_start = LocalDate.of(1599, 1, 1);
+        final LocalDate simulation_start = LocalDate.of(1855, 1, 1);
+        final LocalDate simulation_end = LocalDate.of(2015, 1, 1);
 
-        final double set_up_br = 0.0233;
-        final double set_up_dr = 0.0233;
+        final double initialisation_birth_rate = 0.0233;
+        final double initialisation_death_rate = 0.0233;
 
         final Period[] input_widths = new Period[]{Period.ofYears(10)};
         final Period[] minBirthSpacings = new Period[]{Period.ofDays(147)};
@@ -250,13 +248,13 @@ public class DistributedFactorSearch {
             for (final int size : t0_pop_sizes) {
                 for (final double recovery_factor : recovery_factors) {
                     for (final double proportional_recovery_factor : proportional_recovery_factors) {
-                        for (final Period input_width : input_widths) {
+                        for (final Period distribution_granularity : input_widths) {
                             for (final Period minBirthSpacing : minBirthSpacings) {
                                 for (int n = 0; n < numberOfRunsPerSim; n++) {
                                     final ModelInput input = new ModelInput(
-                                        tS,
-                                        t0,
-                                        tE,
+                                        initialisation_start,
+                                        simulation_start,
+                                        simulation_end,
                                         size,
                                         dataFiles.toString(),
                                         resultsDir.toString(),
@@ -264,11 +262,11 @@ public class DistributedFactorSearch {
                                         summaryResultsDir.toString(),
                                         projectPath.toString(),
                                         precision,
-                                        set_up_br,
-                                        set_up_dr,
+                                        initialisation_birth_rate,
+                                        initialisation_death_rate,
                                         recovery_factor,
                                         proportional_recovery_factor,
-                                        input_width,
+                                        distribution_granularity,
                                         minBirthSpacing
                                     );
                                     inputs.add(input);

@@ -11,31 +11,31 @@ These are all the configuration options supported by ValiPop. Options suffixed w
 **Configuration Options**
 
 - [Locations](#locations)
-    - [`run_purpose`](#run_purpose)
+    - [`group_name`](#group_name)
     - [`results_save_location`](#results_save_location)
     - [`summary_results_save_location`](#summary_results_save_location)
-    - [`var_data_files`*](#var_data_files)
+    - [`input_distributions_path`*](#input_distributions_path)
     - [`project_location`](#project_location)
 - [Dates and Periods](#dates-and-periods)
-    - [`tS`*](#tS)
-    - [`t0`*](#t0)
-    - [`tE`*](#tE)
+    - [`initialisation_start`*](#initialisation_start)
+    - [`simulation_start`*](#simulation_start)
+    - [`simulation_end`*](#simulation_end)
     - [`simulation_time_step`](#simulation_time_step)
     - [`min_birth_spacing`](#min_birth_spacing)
     - [`min_gestation_period`](#min_gestation_period)
-    - [`input_width`](#input_width)
+    - [`distribution_granularity`](#distribution_granularity)
 - [Simulation Factors](#simulation-factors)
-    - [`t0_pop_size`*](#t0_pop_size)
-    - [`set_up_br`](#set_up_br)
-    - [`set_up_dr`](#set_up_dr)
+    - [`target_initial_population_size`*](#target_initial_population_size)
+    - [`initialisation_birth_rate`](#initialisation_birth_rate)
+    - [`initialisation_death_rate`](#initialisation_death_rate)
     - [`recovery-factor`](#recovery-factor)
     - [`proportional_recovery_factor`](#proportional_recovery_factor)
 - [Results](#results)
-    - [`output_record_format`](#output_record_format)
-    - [`output_graph_format`](#output_record_format)
+    - [`record_export_format`](#record_export_format)
+    - [`population_export_format`](#record_export_format)
     - [`output_table`](#output_table)
-    - [`ct_tree_stepback`](#ct_tree_stepback)
-    - [`ct_tree_precision`](#ct_tree_precision)
+    - [`contingency_table_stepback`](#contingency_table_stepback)
+    - [`contingency_table_precision`](#contingency_table_precision)
 - [Miscellaneous](#miscellanious)
     - [`deterministic`](#deterministic)
     - [`seed`](#seed)
@@ -50,8 +50,8 @@ These are all the configuration options supported by ValiPop. Options suffixed w
 
 
 <dt>
-<a name="run_purpose">
-<code>run_purpose</code>
+<a name="group_name">
+<code>group_name</code>
 </a>
 </dt>
 
@@ -60,7 +60,7 @@ A name used for a grouping of runs. Must be a valid name for files and directori
 
 Results of a specific run are written to
 
-`<results_save_location>/<run_purpose>/<timestamp>`
+`<results_save_location>/<group_name>/<timestamp>`
 
 `timestamp` represents the datetime the runs was executed at in the form `yyyy-mm-ddThh-mm-ss-sss`.
 
@@ -97,14 +97,14 @@ There is a global summary file shared by all runs at
 
 There is local summary file shared by all runs of the same run purpose at
 
- ```<summary_results_save_location>/<run_purpose>/<run_purpose>-results-summary.csv```
+ ```<summary_results_save_location>/<group_name>/<group_name>-results-summary.csv```
 
 Defaults to `results/`.
 </dd>
 
 <dt>
-<a name="var_data_files">
-<code>var_data_files</code>
+<a name="input_distributions_path">
+<code>input_distributions_path</code>
 </a>
 </dt>
 
@@ -133,34 +133,34 @@ Defaults to `.` (current directory).
 <dl>
 
 <dt>
-<a name="tS">
-<code>tS</code>
+<a name="initialisation_start">
+<code>initialisation_start</code>
 </a>
 </dt>
 
 <dd markdown="1">
-The start date of the initialisation phase, where an initial population is generated and simulated until `t0`. The period between `tS` and `t0` must be at least 150 years to allow enough time for the preliminary population to settle.
+The start date of the initialisation phase, where an initial population is generated and simulated until `simulation_start`. The period between `initialisation_start` and `simulation_start` must be at least 150 years to allow enough time for the preliminary population to settle.
 
-At `tS` an initial population is first spawned, of which its size is based on [`set_up_br`](#set_up_br) and [`set_up_dr`](#set_up_dr), and the duration from [`t0`](#t0). The population is then simulated regularly until [`t0`](#t0). 
+At `initialisation_start` an initial population is first spawned, of which its size is based on [`initialisation_birth_rate`](#initialisation_birth_rate) and [`initialisation_death_rate`](#initialisation_death_rate), and the duration from [`simulation_start`](#simulation_start). The population is then simulated regularly until [`simulation_start`](#simulation_start). 
 
 This is required.
 </dd>
 
 <dt>
-<a name="t0">
-<code>t0</code>
+<a name="simulation_start">
+<code>simulation_start</code>
 </a>
 </dt>
 
 <dd markdown="1">
-The start date of the main phase, where records of events occurring between `t0` until [`tE`](#tE) will be recorded.
+The start date of the main phase, where records of events occurring between `simulation_start` until [`simulation_end`](#simulation_end) will be recorded.
 
 This is required.
 </dd>
 
 <dt>
-<a name="tE">
-<code>tE</code>
+<a name="simulation_end">
+<code>simulation_end</code>
 </a>
 </dt>
 
@@ -207,13 +207,13 @@ Defaults to `P147D` (147 days).
 </dd>
 
 <dt>
-<a name="input_width">
-<code>input_width</code>
+<a name="distribution_granularity">
+<code>distribution_granularity</code>
 </a>
 </dt>
 
 <dd markdown="1">
-The time intervals for which the given input distributions are divided into between [`tS`](#tS) and [`tE`](#tE). Input distributions for the same properties over multiple different years are the separated into their respective time_intervals. This is a Java period string of the form `P<year>Y<month>M<day>D`.
+The time intervals for which the given input distributions are divided into between [`initialisation_start`](#initialisation_start) and [`simulation_end`](#simulation_end). Input distributions for the same properties over multiple different years are the separated into their respective time_intervals. This is a Java period string of the form `P<year>Y<month>M<day>D`.
 
 Defaults to `P1Y` (1 year).
 </dd>
@@ -225,38 +225,38 @@ Defaults to `P1Y` (1 year).
 <dl>
 
 <dt>
-<a name="t0_pop_size">
-<code>t0_pop_size</code>
+<a name="target_initial_population_size">
+<code>target_initial_population_size</code>
 </a>
 </dt>
 
 <dd markdown="1">
-The desired population size at [`t0`](#t0). The initialisation phase will aim to generate an initial population of this size from [`tS`](#tS) until [`t0`](#t0).
+The desired population size at [`simulation_start`](#simulation_start). The initialisation phase will aim to generate an initial population of this size from [`initialisation_start`](#initialisation_start) until [`simulation_start`](#simulation_start).
 
 This is required.
 </dd>
 
 
 <dt>
-<a name="set_up_br">
-<code>set_up_br</code>
+<a name="initialisation_birth_rate">
+<code>initialisation_birth_rate</code>
 </a>
 </dt>
 
 <dd markdown="1">
-The flat birth rate used for the initial population between [`tS`](#tS) and [`t0`](#t0). It represents the percentage increase of the population in one time step as a decimal. 
+The flat birth rate used for the initial population between [`initialisation_start`](#initialisation_start) and [`simulation_start`](#simulation_start). It represents the percentage increase of the population in one time step as a decimal. 
 
 Defaults to `0.133`.
 </dd>
 
 <dt>
-<a name="set_up_dr">
-<code>set_up_dr</code>
+<a name="initialisation_death_rate">
+<code>initialisation_death_rate</code>
 </a>
 </dt>
 
 <dd markdown="1">
-The flat death rate used for the initial population between [`tS`](#tS) and [`t0`](t0). It represents the percentage decrease of the population in one time step as a decimal. 
+The flat death rate used for the initial population between [`initialisation_start`](#initialisation_start) and [`simulation_start`](simulation_start). It represents the percentage decrease of the population in one time step as a decimal. 
 
 Defaults to `0.122`.
 </dd>
@@ -292,8 +292,8 @@ Defaults to `1`.
 <dl>
 
 <dt>
-<a name="output_record_format">
-<code>output_record_format</code>
+<a name="record_export_format">
+<code>record_export_format</code>
 </a>
 </dt>
 
@@ -310,8 +310,8 @@ Defaults to `NONE`.
 </dd>
 
 <dt>
-<a name="output_graph_format">
-<code>output_graph_format</code>
+<a name="population_export_format">
+<code>population_export_format</code>
 </a>
 </dt>
 
@@ -343,8 +343,8 @@ Defaults to `true`.
 </dd>
 
 <dt>
-<a name="ct_tree_stepback">
-<code>ct_tree_stepback</code>
+<a name="contingency_table_stepback">
+<code>contingency_table_stepback</code>
 </a>
 </dt>
 
@@ -355,8 +355,8 @@ Defaults to `1`.
 </dd>
 
 <dt>
-<a name="ct_tree_precision">
-<code>ct_tree_precision</code>
+<a name="contingency_table_precision">
+<code>contingency_table_precision</code>
 </a>
 </dt>
 

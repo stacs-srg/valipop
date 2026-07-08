@@ -8,7 +8,7 @@ markdown: kramdown
 
 ## Validation Results
 
-Running ValiPop with [`output_tables=true`](configuration/config-reference.md#output_tables) will enable the validation phase of ValiPop. This will analyse the simulated target population to determine how similar it is to given input distributions. The result of the validation is written to the terminal output as the `Validation score`. The lower the score, the more similar the population is to the given input distributions, which is desired. 0 is the best achievable score. 
+Running ValiPop with [`contingency_table_export=true`](configuration/config-reference.md#contingency_table_export) will enable the validation phase of ValiPop. This will analyse the simulated target population to determine how similar it is to given input distributions. The result of the validation is written to the terminal output as the `Validation score`. The lower the score, the more similar the population is to the given input distributions, which is desired. 0 is the best achievable score. 
 
 The following text shows sample terminal output from running ValiPop with Validation:
 
@@ -36,10 +36,10 @@ Notably, there may be warning messages, like in the terminal output above, that 
 All simulation results of running ValiPop are written to a single directory. The directory is saved in the following path structure
 
 ```
-<results_save_location>/<run_purpose>/<datetime>/
+<results_save_location>/<group_name>/<datetime>/
 ```
 
-[`results_save_location`](configuration/config-reference.md#results_save_location) and [`run_purpose`](configuration/config-reference.md#run_purpose) can be specified in the [config file](configuration/index.md) and `datetime` represents the datetime when ValiPop was executed in the form  `yyyy-mm-ddThh-mm-ss-sss`.
+[`results_save_location`](configuration/config-reference.md#results_save_location) and [`group_name`](configuration/config-reference.md#group_name) can be specified in the [config file](configuration/index.md) and `datetime` represents the datetime when ValiPop was executed in the form  `yyyy-mm-ddThh-mm-ss-sss`.
 
 ValiPop will create the directory structure for the results if it does not exist already.
 
@@ -48,7 +48,7 @@ ValiPop will create the directory structure for the results if it does not exist
 The directory structure of the results of running ValiPop looks like the following:
 
 ```
-<results_path>/<run_purpose>/<datetime>/
+<results_path>/<group_name>/<datetime>/
 ├───analysis.R
 ├───detailed-results-<datetime>.txt
 │
