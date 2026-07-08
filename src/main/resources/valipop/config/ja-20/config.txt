@@ -11,7 +11,6 @@ target_initial_population_size = 10000000
 initialisation_birth_rate = 0.0133
 initialisation_death_rate = 0.0122
 results_save_location = src/main/resources/valipop/results
-record_export_format = NONE
 # these are things we'll be wanting to tune to minimise deviance
 min_birth_spacing = 147
 min_gestation_period = 147
