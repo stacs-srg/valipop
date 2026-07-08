@@ -75,10 +75,15 @@ public abstract class TestCases {
 
     private static Arguments makeTestConfiguration(final int initialPopulationSize) {
 
-        return Arguments.of(generatePopulation(initialPopulationSize));
+        try {
+            return Arguments.of(generatePopulation(initialPopulationSize));
+        }
+        catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private static IPersonCollection generatePopulation(final int initialPopulationSize)  {
+    private static IPersonCollection generatePopulation(final int initialPopulationSize) throws IOException {
 
         final Path tempDir;
         try {

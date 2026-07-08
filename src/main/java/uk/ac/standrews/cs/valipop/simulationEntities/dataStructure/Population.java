@@ -45,11 +45,11 @@ public class Population {
         Person.resetIds();
         Partnership.resetIds();
 
-        livingPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep(), "living");
+        livingPeople = new PeopleCollection(config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "living");
 
-        deadPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep(), "dead");
+        deadPeople = new PeopleCollection(config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "dead");
 
-        emigrants = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep(), "emigrants");
+        emigrants = new PeopleCollection(config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "emigrants");
 
         populationCounts = new PopulationCounts();
     }

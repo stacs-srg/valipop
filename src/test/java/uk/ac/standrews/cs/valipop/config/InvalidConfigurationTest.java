@@ -37,21 +37,21 @@ public class InvalidConfigurationTest {
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/config/error");
 
     private static List<Arguments> configurations = List.of(
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-1.txt"), "t0" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-2.txt"), "tE" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-3.txt"), "tS" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-4.txt"), "t0_pop_size" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-5.txt"), "t0_pop_size" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-1.txt"), "simulation_start" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-2.txt"), "simulation_end" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-3.txt"), "initialisation_start" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-4.txt"), "target_initial_population_size" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-5.txt"), "target_initial_population_size" ),
         Arguments.of(TEST_RESOURCE_DIR.resolve("config-6.txt"), "simulation_time_step" ),
         Arguments.of(TEST_RESOURCE_DIR.resolve("config-7.txt"), "recovery_factor" ),
         Arguments.of(TEST_RESOURCE_DIR.resolve("config-8.txt"), "over_sized_geography_factor" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-9.txt"), "output_record_format" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-10.txt"), "output_graph_format" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-11.txt"), "tS" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-12.txt"), "t0" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-13.txt"), "tE"),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-14.txt"), "t0_pop_size" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-15.txt"), "var_data_files" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-9.txt"), "record_export_format" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-10.txt"), "population_export_format" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-11.txt"), "initialisation_start" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-12.txt"), "simulation_start" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-13.txt"), "simulation_end"),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-14.txt"), "target_initial_population_size" ),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-15.txt"), "input_distributions_path" ),
         Arguments.of(TEST_RESOURCE_DIR.resolve("config-16.txt"), "Illegal line" ));
 
     @ParameterizedTest

@@ -22,7 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordExportFormat;
 
 public class SerializableSummaryRow implements Serializable {
     public LocalDateTime startTime;
@@ -38,7 +38,7 @@ public class SerializableSummaryRow implements Serializable {
     public double proportionalRecoveryFactor;
     public double oversizedGeographyFactor;
     public Period minBirthSpacing;
-    public RecordFormat outputRecordFormat;
+    public RecordExportFormat outputRecordFormat;
     public int seedPop;
     public String resultsDirectory;
     public String inputsDirectory;
@@ -75,7 +75,7 @@ public class SerializableSummaryRow implements Serializable {
         double proportionalRecoveryFactor,
         double oversizedGeographyFactor,
         Period minBirthSpacing,
-        RecordFormat outputRecordFormat,
+        RecordExportFormat outputRecordFormat,
         int seedPop,
         String resultsDirectory,
         String inputsDirectory,

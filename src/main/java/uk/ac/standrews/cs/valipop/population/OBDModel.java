@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.population;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.export.ExportFormat;
+import uk.ac.standrews.cs.valipop.export.PopulationExportFormat;
 import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.export.PopulationConverter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
@@ -42,7 +42,6 @@ import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Area;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.DistanceSelector;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Geography;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordGenerationFactory;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DeathDateSelector;
@@ -53,6 +52,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.Period;
@@ -79,6 +79,7 @@ public class OBDModel {
 
     // TODO enforce maximum age.
     public static final int MAXIMUM_AGE_AT_DEATH = 110;
+    public static final String POPULATION_EXPORT_FILENAME = "population";
 
     public static Logger log;
 
@@ -117,7 +118,7 @@ public class OBDModel {
         try {
             this.config = config;
 
-            currentDate = config.getTS();
+            currentDate = config.getInitialisationStart();
 
             partnersToSeparate = new HashSet<>();
             population = new Population(config);
@@ -136,7 +137,7 @@ public class OBDModel {
             occupationChangeModel = new OccupationChangeModel(population, desiredStatistics, config);
 
             log.info("Random seed: " + config.getSeed());
-            log.info("Population seed size: " + config.getT0PopulationSize());
+            log.info("Population seed size: " + config.getTargetInitialPopulationSize());
             log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
             // End of init period is the greatest age specified in the ordered birth rates (take min bound if max bound is unset)
@@ -198,26 +199,27 @@ public class OBDModel {
         return summary;
     }
 
-    public void analyseAndOutputPopulation(final boolean outputSummaryRow) {
+    public void analyseAndOutputPopulation(final boolean outputSummaryRow) throws IOException {
 
         final ProgramTimer recordTimer = new ProgramTimer();
 
+        if (config.getConfigFilePath() != null)
+            Files.copy(config.getConfigFilePath(), config.getRunPath().resolve("input-config.txt"));
+
+        if (config.shouldGenerateContingencyTables())
+            ContingencyTableFactory.generateContingencyTables(population.getPeople(), desiredStatistics, config, summary);
+
+        if (config.shouldExportRecords())
+            RecordGenerationFactory.outputRecords(config.getRecordExportFormat(), config.getRecordsDirPath(), population.getPeople(), config.getSimulationStart());
+
+        if (config.shouldExportPopulation())
+            outputToGraph(config.getPopulationExportFormat(), population.getPeople(), config.getGraphsDirPath());
+
+        summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
+
         try (final PrintStream resultsOutput = new PrintStream(config.getDetailedResultsPath().toFile(), StandardCharsets.UTF_8)) {
 
-            if (config.shouldGenerateContingencyTables())
-                ContingencyTableFactory.generateContingencyTables(population.getPeople(), desiredStatistics, config, summary);
-
-            if (config.getOutputRecordFormat() != RecordFormat.NONE)
-                RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), config.getRecordsDirPath(), population.getPeople(), config.getT0());
-
-            if (config.getOutputGraphFormat() != ExportFormat.NONE)
-                outputToGraph(config.getOutputGraphFormat(), population.getPeople(), config.getGraphsDirPath());
-
-            summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
-            AnalyticsRunner.runAnalytics(population.getPeople(config.getT0(), config.getTE(), Period.ofYears(MAXIMUM_AGE_AT_DEATH)), resultsOutput);
-
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
+            AnalyticsRunner.runAnalytics(population.getPeople(config.getSimulationStart(), config.getSimulationEnd(), Period.ofYears(MAXIMUM_AGE_AT_DEATH)), resultsOutput);
         }
 
         MemoryUsageAnalysis.log();
@@ -230,25 +232,20 @@ public class OBDModel {
         log.info("OBDModel --- Output complete");
     }
 
-    private static void outputToGraph(final ExportFormat type, final IPersonCollection people, final Path outputDir) throws Exception {
+    private static void outputToGraph(final PopulationExportFormat type, final IPersonCollection people, final Path outputDir) throws IOException {
 
-        final IPopulationWriter populationWriter;
-        switch (type) {
-            case GEDCOM:
-                populationWriter = new GEDCOMPopulationWriter(outputDir.resolve("graph.ged"));
-                break;
-            case GRAPHVIZ:
-                populationWriter = new GraphvizPopulationWriter(people, outputDir.resolve("graph.dot"));
-                break;
-            case GEOJSON:
-                populationWriter = new GeojsonPopulationWriter(outputDir.resolve("graph.geojson"));
-                break;
-            default:
-                return;
-        }
+        final IPopulationWriter populationWriter = switch (type) {
+
+            case GEDCOM -> new GEDCOMPopulationWriter(outputDir.resolve(POPULATION_EXPORT_FILENAME + ".ged"));
+            case GRAPHVIZ -> new GraphvizPopulationWriter(people, outputDir.resolve(POPULATION_EXPORT_FILENAME + ".dot"));
+            case GEOJSON -> new GeojsonPopulationWriter(outputDir.resolve(POPULATION_EXPORT_FILENAME + ".geojson"));
+        };
 
         try (final PopulationConverter converter = new PopulationConverter(people, populationWriter)) {
             converter.convert();
+        }
+        catch (final Exception e) {
+            throw new IOException(e);
         }
     }
 
@@ -302,7 +299,6 @@ public class OBDModel {
         log.info(logEntry);
     }
 
-
     // Progress the simulation until initialisation is finished
     private void initialisePopulation() throws InsufficientNumberOfPeopleException {
 
@@ -334,7 +330,7 @@ public class OBDModel {
 
     private void simulatePopulationUntilStart() {
 
-        while (currentDate.isBefore(config.getT0())) {
+        while (currentDate.isBefore(config.getSimulationStart())) {
 
             final int numberBorn = createBirths();
             final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
@@ -353,7 +349,7 @@ public class OBDModel {
 
     private void simulatePopulationUntilEnd() {
 
-        while (!currentDate.isAfter(config.getTE())) {
+        while (!currentDate.isAfter(config.getSimulationEnd())) {
 
             final int numberBorn = createBirths();
             final int numberDying = createDeaths(SexOption.MALE) + createDeaths(SexOption.FEMALE);
@@ -387,7 +383,7 @@ public class OBDModel {
     private int calculateStartingPopulationSize() {
 
         // Performs compound growth in reverse to work backwards from the target population to the
-        return (int) (config.getT0PopulationSize() / StrictMath.pow(config.getSetUpBR() - config.getSetUpDR() + 1, Period.between(config.getTS(), config.getT0()).getYears()));
+        return (int) (config.getTargetInitialPopulationSize() / StrictMath.pow(config.getInitialisationBirthRate() - config.getInitialisationDeathRate() + 1, Period.between(config.getInitialisationStart(), config.getSimulationStart()).getYears()));
     }
 
     private void advanceSimulationTime() {
@@ -410,12 +406,12 @@ public class OBDModel {
         final Period initTimeStep = config.getSimulationTimeStep();
 
         // calculate hypothetical number of expected births
-        final int hypotheticalBirths = calculateNumberToHaveEvent(config.getSetUpBR() * divideYieldingDouble(initTimeStep, Period.ofYears(1)));
+        final int hypotheticalBirths = calculateNumberToHaveEvent(config.getInitialisationBirthRate() * divideYieldingDouble(initTimeStep, Period.ofYears(1)));
 
         final int shortFallInBirths = hypotheticalBirths - birthsInTimeStp;
 
         // calculate hypothetical number of expected deaths
-        final int hypotheticalDeaths = calculateNumberToHaveEvent(config.getSetUpDR() * divideYieldingDouble(initTimeStep, Period.ofYears(1)));
+        final int hypotheticalDeaths = calculateNumberToHaveEvent(config.getInitialisationDeathRate() * divideYieldingDouble(initTimeStep, Period.ofYears(1)));
 
         // update hypothetical population
         currentHypotheticalPopulationSize += hypotheticalBirths - hypotheticalDeaths;
@@ -1402,7 +1398,7 @@ public class OBDModel {
         summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());
         summary.setEligibilityChecks(population.getPopulationCounts().getEligibilityChecks());
         summary.setFailedEligibilityChecks(population.getPopulationCounts().getFailedEligibilityChecks());
-        summary.setTotalPop(population.getPeople(config.getT0(), config.getTE(), Period.ofYears(MAXIMUM_AGE_AT_DEATH)).getNumberOfPeople());
+        summary.setTotalPop(population.getPeople(config.getSimulationStart(), config.getSimulationEnd(), Period.ofYears(MAXIMUM_AGE_AT_DEATH)).getNumberOfPeople());
         summary.setSimRunTime(simTimer.getRunTimeSeconds());
         summary.setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
         MemoryUsageAnalysis.reset();
@@ -1421,7 +1417,7 @@ public class OBDModel {
 
         MemoryUsageAnalysis.log();
 
-        summary.setTotalPop(population.getPeople(config.getT0(), config.getTE(), Period.ofYears(MAXIMUM_AGE_AT_DEATH)).getNumberOfPeople());
+        summary.setTotalPop(population.getPeople(config.getSimulationStart(), config.getSimulationEnd(), Period.ofYears(MAXIMUM_AGE_AT_DEATH)).getNumberOfPeople());
         summary.setSimRunTime(simTimer.getRunTimeSeconds());
     }
 

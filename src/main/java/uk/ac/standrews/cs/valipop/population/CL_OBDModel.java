@@ -65,8 +65,8 @@ public class CL_OBDModel {
         final ProgramTimer statsTimer = new ProgramTimer();
 
         final int maxMotherBirthAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
-        final int startYear = config.getT0().getYear();
-        final int endYear = config.getTE().getYear();
+        final int startYear = config.getSimulationStart().getYear();
+        final int endYear = config.getSimulationEnd().getYear();
 
         final double score = new ContingencyTableValidator(config.getRunPath(), maxMotherBirthAge, startYear, endYear).getValidationScore();
 

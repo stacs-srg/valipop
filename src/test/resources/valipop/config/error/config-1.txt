@@ -1,7 +1,7 @@
 # Config 1 - Misorderd dates 1
 
-tS = 1887-01-01
-t0 = 1855-01-01
-tE = 1973-01-01
-t0_pop_size = 10000
-var_data_files = src/test/resources/valipop/distributions
+initialisation_start = 1887-01-01
+simulation_start = 1855-01-01
+simulation_end = 1973-01-01
+target_initial_population_size = 10000
+input_distributions_path = src/test/resources/valipop/distributions

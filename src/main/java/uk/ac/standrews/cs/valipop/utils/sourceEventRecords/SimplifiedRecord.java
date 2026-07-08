@@ -27,7 +27,7 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisualiserF
 import java.util.Iterator;
 import java.util.function.Function;
 
-public class SimplifiedRecord extends Record {
+public class SimplifiedRecord extends RecordType {
 
     SimplifiedRecord(final Iterable<IPerson> people, final Iterable<IPartnership> partneships) {
       super(people, partneships);

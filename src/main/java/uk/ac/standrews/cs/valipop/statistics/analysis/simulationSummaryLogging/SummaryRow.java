@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging;
 
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.population.SerializableSummaryRow;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordExportFormat;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -59,7 +59,7 @@ public class SummaryRow {
     private double oversizedGeographyFactor;
     private Period minBirthSpacing;
 
-    private RecordFormat outputRecordFormat;
+    private RecordExportFormat outputRecordFormat;
 
     private int seedPop;
 
@@ -98,23 +98,23 @@ public class SummaryRow {
         this.config = config;
         this.resultsDirectory = config.getRunPath();
         this.inputsDirectory = config.getVarPath();
-        this.startTime = config.getStartTime();
-        this.reason = config.getRunPurpose();
+        this.startTime = config.getSimulationExecutionStartTime();
+        this.reason = config.getGroupName();
         this.codeVersion = codeVersion;
         this.timestep = config.getSimulationTimeStep();
-        this.inputWidth = config.getInputWidth();
-        this.startDate = config.getT0();
-        this.endDate = config.getTE();
+        this.inputWidth = config.getDistributionGranularity();
+        this.startDate = config.getSimulationStart();
+        this.endDate = config.getSimulationEnd();
         this.simLength = (int) DAYS.between(startDate, endDate);
         this.recoveryFactor = config.getRecoveryFactor();
         this.proportionalRecoveryFactor = config.getProportionalRecoveryFactor();
         this.binomialSampling = config.getBinomialSampling();
         this.minBirthSpacing = config.getMinBirthSpacing();
-        this.outputRecordFormat = config.getOutputRecordFormat();
-        this.seedPop = config.getT0PopulationSize();
+        this.outputRecordFormat = config.getRecordExportFormat();
+        this.seedPop = config.getTargetInitialPopulationSize();
         this.seed = config.getSeed();
-        this.ctTreeStepback = config.getCtTreeStepback();
-        this.ctTreePrecision = config.getCtTreePrecision();
+        this.ctTreeStepback = config.getContingencyTableStepback();
+        this.ctTreePrecision = config.getContingencyTablePrecision();
         this.hostname = hostname;
         this.oversizedGeographyFactor = config.getOverSizedGeographyFactor();
     }

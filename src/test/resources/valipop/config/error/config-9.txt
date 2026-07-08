@@ -1,9 +1,9 @@
-# Config 9 - Bad output_record_format
+# Config 9 - Bad record_export_format
 
-tS = 1687-01-01
-t0 = 1855-01-01
-tE = 1973-01-01
-t0_pop_size = 1000
-var_data_files = src/test/resources/valipop/distributions
+initialisation_start = 1687-01-01
+simulation_start = 1855-01-01
+simulation_end = 1973-01-01
+target_initial_population_size = 1000
+input_distributions_path = src/test/resources/valipop/distributions
 
-output_record_format = TEST_FAKE
+record_export_format = TEST_FAKE

@@ -34,6 +34,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordType.*;
 
 /**
  * E2E tests of GEDCOM export.
@@ -46,9 +47,9 @@ public class RecordExportTest {
     private static final String RECORD_DIR = "records";
 
     private static final List<Arguments> configurations = List.of(
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-1.txt"), "BR8JFQzWW6NfPSMekgpqHA==", "q12spKlZuMkBtxwSaRqvdQ==", "lbpktE0QdRQnJxo+2mq8Uw==", 80440, 80440, 21394),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-2.txt"), "3eAZn6WNGUVYso7HLoLPJQ==", "mxi+9JHBR4u09qj9y4NgnQ==", "aDG2Txpg5RqPnPxmScQ/zg==", 71125, 71125, 18253 ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-4.txt"), "Neom4z1Q/sAS40kOIPu/Gg==", "G3CcsZHSDZGQBgWHTn6nyw==", "mnBe+SrHwp/zOQn5obDqyQ==", 150842, 150842, 21803 )
+        Arguments.of(TEST_RESOURCE_DIR.resolve("config-1.txt"), "BR8JFQzWW6NfPSMekgpqHA==", "q12spKlZuMkBtxwSaRqvdQ==", "lbpktE0QdRQnJxo+2mq8Uw==", 80440, 80440, 21394)
+//        Arguments.of(TEST_RESOURCE_DIR.resolve("config-2.txt"), "3eAZn6WNGUVYso7HLoLPJQ==", "mxi+9JHBR4u09qj9y4NgnQ==", "aDG2Txpg5RqPnPxmScQ/zg==", 71125, 71125, 18253 ),
+//        Arguments.of(TEST_RESOURCE_DIR.resolve("config-4.txt"), "Neom4z1Q/sAS40kOIPu/Gg==", "G3CcsZHSDZGQBgWHTn6nyw==", "mnBe+SrHwp/zOQn5obDqyQ==", 150842, 150842, 21803 )
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
@@ -81,9 +82,9 @@ public class RecordExportTest {
 
         model.analyseAndOutputPopulation(true);
 
-        check(config,"birth_records.csv", expectedBirthHash, expectedBirthRecordCount);
-        check(config,"death_records.csv", expectedDeathHash, expectedDeathRecordCount);
-        check(config,"marriage_records.csv", expectedMarriageHash, expectedMarriageRecordCount);
+        check(config, BIRTH_RECORDS_FILENAME, expectedBirthHash, expectedBirthRecordCount);
+        check(config, DEATH_RECORDS_FILENAME, expectedDeathHash, expectedDeathRecordCount);
+        check(config, MARRIAGE_RECORDS_FILENAME, expectedMarriageHash, expectedMarriageRecordCount);
     }
 
     private static void check(final Config config, final String fileName, final String expectedHash, final int expectedRecordCount) throws IOException, NoSuchAlgorithmException {

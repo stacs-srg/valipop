@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSour
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.MarriageSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
-public class DsRecord extends Record {
+public class DsRecord extends RecordType {
 
     DsRecord(final Iterable<IPerson> people, final Iterable<IPartnership> partnerships) {
       super(people, partnerships);

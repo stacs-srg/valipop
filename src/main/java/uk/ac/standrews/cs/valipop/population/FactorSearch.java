@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.AnalysisThread;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ public class FactorSearch {
     private static final int THREAD_LIMIT = 2;
     public static int threadCount = 0;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         String[] pArgs = ProcessArgs.process(args, "FACTOR_SEARCH_PRECISION");
         if (!ProcessArgs.check(pArgs, "FACTOR_SEARCH_PRECISION")) {
@@ -75,14 +76,14 @@ public class FactorSearch {
         return ret;
     }
 
-    private static void runFactorSearch(int size0, double[] recovery_factors, double[] proportional_recovery_factors, double[] precisions, Path dataFiles, int numberOfRunsPerSim, String runPurpose, Path results_save_location) throws InterruptedException {
+    private static void runFactorSearch(int size0, double[] recovery_factors, double[] proportional_recovery_factors, double[] precisions, Path dataFiles, int numberOfRunsPerSim, String runPurpose, Path results_save_location) throws InterruptedException, IOException {
 
-        final LocalDate tS = LocalDate.of(1599, 1, 1);
-        final LocalDate t0 = LocalDate.of(1855, 1, 1);
-        final LocalDate tE = LocalDate.of(2015, 1, 1);
+        final LocalDate initialisation_start = LocalDate.of(1599, 1, 1);
+        final LocalDate simulation_start = LocalDate.of(1855, 1, 1);
+        final LocalDate simulation_end = LocalDate.of(2015, 1, 1);
 
-        final double set_up_br = 0.0233;
-        final double set_up_dr = 0.0322;
+        final double initialisation_birth_rate = 0.0233;
+        final double initialisation_death_rate = 0.0322;
 
         final Period[] input_widths = new Period[]{Period.ofYears(10)};
         final Period[] minBirthSpacings = new Period[]{Period.ofDays(147)};
@@ -93,19 +94,19 @@ public class FactorSearch {
             for (int size : t0_pop_sizes) {
                 for (double recovery_factor : recovery_factors) {
                     for (double proportional_recovery_factor : proportional_recovery_factors) {
-                        for (Period input_width : input_widths) {
+                        for (Period distribution_granularity : input_widths) {
                             for (Period minBirthSpacing : minBirthSpacings) {
                                 for (int n = 0; n < numberOfRunsPerSim; n++) {
 
-                                    Config config = new Config(tS, t0, tE, size, dataFiles, results_save_location, runPurpose, results_save_location);
+                                    Config config = new Config(initialisation_start, simulation_start, simulation_end, size, dataFiles, results_save_location, runPurpose, results_save_location);
 
                                     config.setCTtreePrecision(precision);
-                                    config.setRunPurpose(runPurpose);
-                                    config.setSetupBirthRate(set_up_br);
-                                    config.setSetupDeathRate(set_up_dr);
+                                    config.setGroupName(runPurpose);
+                                    config.setSetupBirthRate(initialisation_birth_rate);
+                                    config.setSetupDeathRate(initialisation_death_rate);
                                     config.setRecoveryFactor(recovery_factor);
                                     config.setProportionalRecoveryFactor(proportional_recovery_factor);
-                                    config.setInputWidth(input_width);
+                                    config.setDistributionGranularity(distribution_granularity);
                                     config.setMinBirthSpacing(minBirthSpacing);
 
                                     OBDModel model = new OBDModel(config);

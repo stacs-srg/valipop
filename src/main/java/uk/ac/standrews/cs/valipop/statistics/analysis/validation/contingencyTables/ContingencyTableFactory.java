@@ -52,7 +52,7 @@ public class ContingencyTableFactory {
 
         final ProgramTimer tableTimer = new ProgramTimer();
 
-        final ContingencyTree fullTree = new ContingencyTree(population, desired, config.getTS(), config.getT0(), config.getTE(), config.getCtTreeStepback(), config.getCtTreePrecision());
+        final ContingencyTree fullTree = new ContingencyTree(population, desired, config.getInitialisationStart(), config.getSimulationStart(), config.getSimulationEnd(), config.getContingencyTableStepback(), config.getContingencyTablePrecision());
 
         MemoryUsageAnalysis.log();
 

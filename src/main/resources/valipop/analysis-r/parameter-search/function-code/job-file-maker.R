@@ -1,8 +1,8 @@
-makeConstantsSet <- function(setupBR, setupDR, tS) {
+makeConstantsSet <- function(setupBR, setupDR, initialisation_start) {
   constants <- data.frame(
     "setup br" = setupBR,
     "setup dr" = setupDR,
-    "tS" = tS
+    "initialisation_start" = initialisation_start
   )
 }
 
@@ -49,9 +49,9 @@ convertResultSummaryToJob <- function(result, priority, n, deterministic, seed, 
             "setup dr" = constantsSet$setup.dr,
             "bf" = result$Birth.Factor,
             "df" = result$Death.Factor,
-            "tS" = constantsSet$tS,
-            "t0" = result$Start.Date,
-            "tE" = result$End.Date,
+            "initialisation_start" = constantsSet$initialisation_start,
+            "simulation_start" = result$Start.Date,
+            "simulation_end" = result$End.Date,
             "timestep" = result$Timestep,
             "binomial sampling" = result$binomial.Sampling,
             "min birth spacing" = result$Min.Birth.Spacing,

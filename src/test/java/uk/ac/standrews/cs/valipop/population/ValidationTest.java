@@ -75,8 +75,8 @@ public class ValidationTest {
     private static void runValidation(final Path workingDirectory, final double expectedScore) throws IOException {
 
         final Config config = new Config(workingDirectory.resolve("config.txt"));
-        final int startYear = config.getT0().getYear();
-        final int endYear = config.getTE().getYear();
+        final int startYear = config.getSimulationStart().getYear();
+        final int endYear = config.getSimulationEnd().getYear();
 
         final ContingencyTableValidator validator = new ContingencyTableValidator(workingDirectory, 55, startYear, endYear);
         final double score = validator.getValidationScore();

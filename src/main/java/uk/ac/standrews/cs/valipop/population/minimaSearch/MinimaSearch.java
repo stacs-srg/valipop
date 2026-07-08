@@ -57,9 +57,9 @@ public class MinimaSearch {
     private static final double minimaSize = 5;
     private static final double intervalBoundV = 0.02;
 
-    private static final LocalDate tS = LocalDate.of(1691,1,1);
-    private static final LocalDate t0 = LocalDate.of(1855,1,1);
-    private static final LocalDate tE = LocalDate.of(2015,1,1);
+    private static final LocalDate initialisation_start = LocalDate.of(1691,1,1);
+    private static final LocalDate simulation_start = LocalDate.of(1855,1,1);
+    private static final LocalDate simulation_end = LocalDate.of(2015,1,1);
 
     private static double recoveryFactor;
     private static double proportionalRecoveryFactor;
@@ -114,7 +114,7 @@ public class MinimaSearch {
 
                 for (; n < repeatRuns; n++) {
 
-                    final Config config = new Config(tS, t0, tE, populationSize, dataFiles, Config.DEFAULT_RESULTS_SAVE_PATH, runPurpose, Config.DEFAULT_RESULTS_SAVE_PATH);
+                    final Config config = new Config(initialisation_start, simulation_start, simulation_end, populationSize, dataFiles, Config.DEFAULT_RESULTS_SAVE_PATH, runPurpose, Config.DEFAULT_RESULTS_SAVE_PATH);
                     config.setDeterministic(true);
                     config.setSeed(123);
 
@@ -174,8 +174,8 @@ public class MinimaSearch {
     public static double getScore(final Minimise minimiseFor, final int maxBirthingAge, final Config config) throws IOException, StatsException {
 
         if (Objects.requireNonNull(minimiseFor) == Minimise.GEEGLM) {
-            final int startYear = config.getT0().getYear();
-            final int endYear = config.getTE().getYear();
+            final int startYear = config.getSimulationStart().getYear();
+            final int endYear = config.getSimulationEnd().getYear();
 
             return new ContingencyTableValidator(config.getRunPath(), maxBirthingAge, startYear, endYear).getValidationScore();
         }

@@ -495,12 +495,12 @@ public class PopulationStatistics implements EventRateTables {
 
     private static <T extends InputMetaData<?>> TreeMap<Year, T> insertDistributionsToMeetInputWidth(final Config config, final TreeMap<Year, T> inputs) {
 
-        final Period inputWidth = config.getInputWidth();
+        final Period inputWidth = config.getDistributionGranularity();
 
-        final int diff = config.getT0().getYear() - config.getTS().getYear();
+        final int diff = config.getSimulationStart().getYear() - config.getInitialisationStart().getYear();
         final int stepBack = (int) (inputWidth.getYears() * Math.ceil(diff / (double) inputWidth.getYears()));
 
-        Year prevInputDate = Year.of(config.getT0().minus(Period.ofYears(stepBack)).getYear());
+        Year prevInputDate = Year.of(config.getSimulationStart().minus(Period.ofYears(stepBack)).getYear());
 
         int c = 1;
 
@@ -538,7 +538,7 @@ public class PopulationStatistics implements EventRateTables {
 
         while (true) {
             curDate = prevInputDate.plus(Period.ofYears(inputWidth.getYears() * c));
-            if (curDate.isAfter(Year.of(config.getTE().getYear()))) break;
+            if (curDate.isAfter(Year.of(config.getSimulationEnd().getYear()))) break;
             c++;
         }
 

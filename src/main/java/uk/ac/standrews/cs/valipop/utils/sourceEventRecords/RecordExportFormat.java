@@ -20,11 +20,10 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public enum RecordFormat {
+public enum RecordExportFormat {
 
     DS,
     VIS_PROCESSING,
     EG_SKYE,
-    TD,
-    NONE
+    TD
 }
