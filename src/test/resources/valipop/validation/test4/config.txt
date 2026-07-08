@@ -9,7 +9,6 @@ min_birth_spacing = P147D
 min_gestation_period = P147D
 results_save_location = /tmp/results
 group_name = test4
-record_export_format = NONE
 distribution_granularity = P10Y
 recovery_factor = 5
 proportional_recovery_factor = 5

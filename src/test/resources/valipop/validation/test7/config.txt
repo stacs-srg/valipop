@@ -10,7 +10,6 @@ initialisation_death_rate = 0.0122
 results_save_location = /tmp/results
 recovery_factor = 1
 proportional_recovery_factor = 1
-record_export_format = NONE
 deterministic = true
 seed = 232323
 binomial_sampling = true

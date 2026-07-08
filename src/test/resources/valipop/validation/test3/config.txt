@@ -8,7 +8,6 @@ initialisation_death_rate = 0.03
 min_birth_spacing = P147D
 min_gestation_period = P147D
 results_save_location = /tmp/results
-record_export_format = NONE
 distribution_granularity = P10Y
 recovery_factor = 0.5
 proportional_recovery_factor = 0.5

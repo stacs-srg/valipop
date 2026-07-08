@@ -15,5 +15,4 @@ geography_file_location = src/main/resources/valipop/geography-cache/scotland-re
 min_birth_spacing = P147D
 recovery_factor = 1.0
 contingency_table_export = false
-record_export_format = NONE
 deterministic = true

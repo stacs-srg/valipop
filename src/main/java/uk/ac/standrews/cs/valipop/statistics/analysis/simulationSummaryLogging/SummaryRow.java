@@ -174,7 +174,8 @@ public class SummaryRow {
                 endPop, peakPop, startDate, endDate, simRunTime,
                 ctRunTime, recordsRunTime, resultsDirectory, recoveryFactor,
                 proportionalRecoveryFactor, binomialSampling,
-                minBirthSpacing, (maxMemoryUsage / 1e6), outputRecordFormat.toString(),
+                minBirthSpacing, (maxMemoryUsage / 1e6),
+                outputRecordFormat == null ? "NONE" : outputRecordFormat.toString(),
                 v.toString(), statsRunTime, eligibilityChecks, failedEligibilityChecks, seed,
                 ctTreeStepback, ctTreePrecision, hostname, oversizedGeographyFactor) + "\n";
     }
