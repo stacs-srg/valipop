@@ -694,7 +694,7 @@ public class Config implements Serializable {
 
         processors.put("record_export_format", value -> {
             try {
-                if (!value.equals("NONE")) recordExportFormat = RecordExportFormat.valueOf(value);
+                recordExportFormat = RecordExportFormat.valueOf(value);
             } catch (final IllegalArgumentException e) {
                 throw new IllegalArgumentException("'" + value + "' not a valid option for `record_export_format`");
             }
@@ -702,7 +702,7 @@ public class Config implements Serializable {
 
         processors.put("population_export_format", value -> {
             try {
-                if (!value.equals("NONE")) populationExportFormat = PopulationExportFormat.valueOf(value);
+                populationExportFormat = PopulationExportFormat.valueOf(value);
             } catch (final IllegalArgumentException e) {
                 throw new IllegalArgumentException("'" + value + "' not a valid option for `population_export_format`");
             }

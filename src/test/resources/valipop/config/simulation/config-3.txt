@@ -15,7 +15,6 @@ recovery_factor = 0.5
 proportional_recovery_factor = 0.5
 
 record_export_format = TD
-population_export_format = NONE
 binomial_sampling = true
 contingency_table_export = false
 simulation_time_step = P1Y
