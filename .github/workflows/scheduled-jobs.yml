@@ -113,7 +113,7 @@ jobs:
 
       - name: Build and push the ValiPop image
         id: push
-        uses: docker/build-push-action@v7.2.0
+        uses: docker/build-push-action@v7.3.0
         with:
           file: docker/model/Dockerfile
           context: .
@@ -169,7 +169,7 @@ jobs:
 
       - name: Build and push the ValiPop leader image
         id: push-leader
-        uses: docker/build-push-action@v7.2.0
+        uses: docker/build-push-action@v7.3.0
         with:
           file: docker/model/Dockerfile
           context: .
@@ -193,7 +193,7 @@ jobs:
 
       - name: Build and push the ValiPop worker image
         id: push-worker
-        uses: docker/build-push-action@v7.2.0
+        uses: docker/build-push-action@v7.3.0
         with:
           file: docker/model/Dockerfile
           context: .
@@ -217,7 +217,7 @@ jobs:
 
       - name: Build and push the ValiPop search image
         id: push-search
-        uses: docker/build-push-action@v7.2.0
+        uses: docker/build-push-action@v7.3.0
         with:
           file: docker/model/Dockerfile
           context: .
