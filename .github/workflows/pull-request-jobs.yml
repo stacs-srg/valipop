@@ -4,10 +4,6 @@ on:
   pull_request:
     branches: ['main']
 
-concurrency:
-  group: "build deploy"
-  cancel-in-progress: true
-
 jobs:
   build-and-test-linux:
     name: Build and test (Linux)
