@@ -17,40 +17,58 @@
  */
 package uk.ac.standrews.cs.valipop.export;
 
-import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.provider.Arguments;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
+import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.population.OBDModel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static uk.ac.standrews.cs.valipop.config.TestCases.getTestConfigurations;
+import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
 
 /**
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
+ * @author Daniel Brathagen (dbrathagen@gmail.com)
+ * @author Graham Kirby
  */
 public abstract class PopulationExportTest {
 
-    public static final String TEST_DIRECTORY_PATH_STRING = "src/test/resources/valipop/";
+    // Files can be checked for validity at: https://geojsonlint.com
 
-    protected final IPersonCollection population;
-    final String file_name_root;
+    public static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/export/population");
 
-    @TempDir Path temp_dir;
-    Path generated_output_file1;
-    Path generated_output_file2;
-    Path expected_output_file;
+    static void checkPopulationExportedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
 
-    PopulationExportTest(final IPersonCollection population) {
+        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+        final OBDModel model = new OBDModel(config);
 
-        this.population = population;
-        this.file_name_root = "file" + population.getNumberOfPeople() + "_expected";
+        model.runSimulation();
+        model.analyseAndOutputPopulation(false);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        final String hashAlgorithmName = config.get("hash_algorithm_name");
+        final String expectedHash = config.get("expected_hash");
+
+        String fileName = OBDModel.POPULATION_EXPORT_FILENAME + "." + config.getPopulationExportFormat().getFileSuffix();
+
+        final Path populationExportDirPath = config.getRunPath().resolve(POPULATION_EXPORT_DIR_NAME);
+
+        checkPopulationExportedAsExpected(populationExportDirPath.resolve(fileName), hashAlgorithmName, expectedHash);
+    }
+
+    private static void checkPopulationExportedAsExpected(final Path recordsFilePath, final String hashAlgorithmName, final String expectedHash) throws IOException, NoSuchAlgorithmException {
+
+        final byte[] bytes = Files.readAllBytes(recordsFilePath);
+        final String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance(hashAlgorithmName).digest(bytes));
+
+        assertEquals(expectedHash, actualHash, "Checking exported population from " + recordsFilePath);
     }
 
     protected static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {

@@ -19,7 +19,24 @@ package uk.ac.standrews.cs.valipop.export;
 
 public enum PopulationExportFormat {
 
-    GEDCOM,
-    GRAPHVIZ,
-    GEOJSON
+    GEDCOM {
+        @Override
+        public String getFileSuffix() {
+            return "ged";
+        }
+    },
+    GRAPHVIZ {
+        @Override
+        public String getFileSuffix() {
+            return "dot";
+        }
+    },
+    GEOJSON {
+        @Override
+        public String getFileSuffix() {
+            return "geojson";
+        }
+    };
+
+    public abstract String getFileSuffix();
 }

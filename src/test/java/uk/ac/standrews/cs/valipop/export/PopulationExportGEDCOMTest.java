@@ -18,10 +18,15 @@
 package uk.ac.standrews.cs.valipop.export;
 
 import gedinline.main.GedInlineValidator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.gedcom4j.exception.GedcomParserException;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.FieldSource;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationAdapter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
+import uk.ac.standrews.cs.valipop.population.OBDModel;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
@@ -31,93 +36,150 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
 
 /**
- * E2E tests of GEDCOM export.
+ * These tests check that when various populations are generated, and exported in GEDCOM format, then the files are valid and contain the expected content.
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public abstract class GEDCOMTest extends PopulationExportTest {
+public  class PopulationExportGEDCOMTest extends PopulationExportTest {
 
-    static final String INTENDED_SUFFIX = ".ged";
+    private static final List<Arguments> configurations = List.of(
+        Arguments.of("1855-2016-initial-200-gedcom.config"),
+        Arguments.of("1855-2016-initial-300-gedcom.config")
+    );
 
-    @BeforeEach
-    public void setup() throws IOException {
+    private static final List<Arguments> slowConfigurations = List.of(
+        Arguments.of("1855-2016-initial-1K-gedcom.config")
+    );
 
-        generated_output_file1 = Files.createTempFile(temp_dir, null, INTENDED_SUFFIX);
-        generated_output_file2 = Files.createTempFile(temp_dir,null, INTENDED_SUFFIX);
+    @ParameterizedTest
+    @FieldSource("configurations")
+    public void populationExportedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
 
-        expected_output_file = Path.of(TEST_DIRECTORY_PATH_STRING, "gedcom", file_name_root + INTENDED_SUFFIX);
+        checkPopulationExportedAsExpected(configPath);
     }
 
-    public GEDCOMTest(final IPersonCollection population) {
+    @ParameterizedTest
+    @FieldSource("slowConfigurations")
+    @Tag("slow")
+    public void populationExportedAsExpectedSlow(final String configPath) throws IOException, NoSuchAlgorithmException {
 
-        super(population);
+        checkPopulationExportedAsExpected(configPath);
     }
 
-    @Test
-    public void GEDCOMExportIsAsExpected() throws Exception {
+    @ParameterizedTest
+    @FieldSource("configurations")
+    public void GEDCOMIsValid(final String configPath) throws IOException {
 
-        final IPopulationWriter population_writer = new GEDCOMPopulationWriter(generated_output_file1);
-
-        try (final PopulationConverter converter = new PopulationConverter(population, population_writer)) {
-            converter.convert();
-        }
-
-        assertThatFilesHaveSameContent(generated_output_file1, expected_output_file);
+        checkGEDCOMIsValid(configPath);
     }
 
-    @Test
-    public void GEDCOMIsValid() throws Exception {
+    @ParameterizedTest
+    @FieldSource("slowConfigurations")
+    @Tag("slow")
+    public void GEDCOMIsValidSlow(final String configPath) throws IOException {
 
-        final IPopulationWriter population_writer = new GEDCOMPopulationWriter(generated_output_file1);
+        checkGEDCOMIsValid(configPath);
+    }
 
-        try (final PopulationConverter converter = new PopulationConverter(population, population_writer)) {
-            converter.convert();
-        }
+    @ParameterizedTest
+    @FieldSource("configurations")
+    public void exportImportGivesEquivalentPopulation(final String configPath) throws IOException, GedcomParserException {
 
-        final Path validation_output_file = Files.createTempFile(temp_dir, null, ".txt");
+        checkExportImportGivesEquivalentPopulation(configPath);
+    }
 
-        final GedInlineValidator validator = new GedInlineValidator(new File(generated_output_file1.toString()), new PrintWriter(validation_output_file.toString()));
+    @ParameterizedTest
+    @FieldSource("slowConfigurations")
+    @Tag("slow")
+    public void exportImportGivesEquivalentPopulationSlow(final String configPath) throws IOException, GedcomParserException {
+
+        checkExportImportGivesEquivalentPopulation(configPath);
+    }
+
+    @ParameterizedTest
+    @FieldSource("configurations")
+    public void exportImportExportGivesSamePopulationFile(final String configPath) throws Exception {
+
+        checkExportImportExportGivesSamePopulationFile(configPath);
+    }
+
+    @ParameterizedTest
+    @FieldSource("slowConfigurations")
+    @Tag("slow")    public void exportImportExportGivesSamePopulationFileSlow(final String configPath) throws Exception {
+
+        checkExportImportExportGivesSamePopulationFile(configPath);
+    }
+
+    private static void checkGEDCOMIsValid(final String configPath) throws IOException {
+
+        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+        final OBDModel model = new OBDModel(config);
+
+        model.runSimulation();
+        model.analyseAndOutputPopulation(false);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        final Path populationExportDirPath = config.getRunPath().resolve(POPULATION_EXPORT_DIR_NAME);
+        final Path exportedFilePath = populationExportDirPath.resolve("population.ged");
+        final Path validation_output_file = Files.createFile(populationExportDirPath.resolve("validation_output.txt"));
+
+        final GedInlineValidator validator = new GedInlineValidator(new File(exportedFilePath.toString()), new PrintWriter(validation_output_file.toString()));
         assertTrue(validator.validate());
         assertEquals(0, validator.getNumberOfWarnings(), "GEDCOM validation warnings count");
     }
 
-    @Test
-    public void exportImportGivesEquivalentPopulation() throws Exception {
+     private static void checkExportImportGivesEquivalentPopulation(final String configPath) throws IOException, GedcomParserException {
 
-        final IPopulationWriter population_writer1 = new GEDCOMPopulationWriter(generated_output_file1);
+        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+        final OBDModel model = new OBDModel(config);
 
-        try (final PopulationConverter converter = new PopulationConverter(population, population_writer1)) {
-            converter.convert();
-        }
+        model.runSimulation();
+        model.analyseAndOutputPopulation(false);
 
-        final IPersonCollection imported = new GEDCOMPopulationAdapter(generated_output_file1);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        final Path populationExportDirPath = config.getRunPath().resolve(POPULATION_EXPORT_DIR_NAME);
+        final Path exportedFilePath = populationExportDirPath.resolve("population.ged");
+
+
+        final IPersonCollection population = model.getPopulation().getPeople();
+        final IPersonCollection imported = new GEDCOMPopulationAdapter(exportedFilePath);
 
         assertEqualPopulations(population, imported);
     }
 
-    @Test
-    public void exportImportExportGivesSamePopulationFile() throws Exception {
+      private static void checkExportImportExportGivesSamePopulationFile(final String configPath) throws Exception {
 
-        final IPopulationWriter population_writer1 = new GEDCOMPopulationWriter(generated_output_file1);
-        final IPopulationWriter population_writer2 = new GEDCOMPopulationWriter(generated_output_file2);
+        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+        final OBDModel model = new OBDModel(config);
 
-        try (final PopulationConverter converter = new PopulationConverter(population, population_writer1)) {
-            converter.convert();
-        }
+        model.runSimulation();
+        model.analyseAndOutputPopulation(false);
 
-        final IPersonCollection imported = new GEDCOMPopulationAdapter(generated_output_file1);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        final Path populationExportDirPath = config.getRunPath().resolve(POPULATION_EXPORT_DIR_NAME);
+        final Path exportedFilePath = populationExportDirPath.resolve("population.ged");
+        final Path reExportedFilePath = populationExportDirPath.resolve("population2.ged");
+
+        final IPersonCollection imported = new GEDCOMPopulationAdapter(exportedFilePath);
+
+        final IPopulationWriter population_writer2 = new GEDCOMPopulationWriter(reExportedFilePath);
 
         try (final PopulationConverter converter = new PopulationConverter(imported, population_writer2)) {
             converter.convert();
         }
 
-        assertThatFilesHaveSameContent(generated_output_file1, generated_output_file2);
+        assertThatFilesHaveSameContent(exportedFilePath, reExportedFilePath);
     }
 
     private static void assertEqualPopulations(final IPersonCollection population1, final IPersonCollection population2) {

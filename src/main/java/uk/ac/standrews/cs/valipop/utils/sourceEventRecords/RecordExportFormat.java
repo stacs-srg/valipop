@@ -25,5 +25,5 @@ public enum RecordExportFormat {
     DS,
     VIS_PROCESSING,
     EG_SKYE,
-    TD
+    TD;
 }

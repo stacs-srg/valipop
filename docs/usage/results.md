@@ -75,35 +75,19 @@ The directory structure of the results of running ValiPop looks like the followi
 <dl>
 
 <dt>
-<code>detailed-results-&lt;datetime&gt;.txt</code>
-</dt>
-
-<dd markdown="1">
-This file is generated once the model and analysis has completed. It provides additional statistics on the simulated model such as fertility and death rates, number of remarriages, population sizes, and average children per marriage.
-</dd>
-
-<dt>
-<code>dump/</code>
-</dt>
-
-<dd markdown="1">
-The dump directory contains bulk information used for debugging.
-</dd>
-
-<dt>
-<code>graphs/</code>
-</dt>
-
-<dd markdown="1">
-The graph directory contains any graphs generated once the model and analysis have completed. The type of graph generated can be specified in the configuration.
-</dd>
-
-<dt>
 <code>log/</code>
 </dt>
 
-<dd markdown="1">
+<dd>
 The log directory contains files which gives more details about the model simulation than in standard output
+</dd>
+
+<dt>
+<code>population/</code>
+</dt>
+
+<dd>
+The population directory contains any graphs generated once the model and analysis have completed. The type of graph generated can be specified in the configuration.
 </dd>
 
 <dt>
@@ -115,10 +99,18 @@ The records directory contains any records generated once the model and analysis
 </dd>
 
 <dt>
+<code>statistics.txt</code>
+</dt>
+
+<dd>
+This file is generated once the model and analysis has completed. It provides additional statistics on the simulated model such as fertility and death rates, number of remarriages, population sizes, and average children per marriage.
+</dd>
+
+<dt>
 <code>tables/</code>
 </dt>
 
-<dd markdown="1">
+<dd>
 The tables directory contains contingency tables on birth, death, partnership, and separation. They are used by the analysis to validate the simulated population with the given statistics.
 </dd>
 

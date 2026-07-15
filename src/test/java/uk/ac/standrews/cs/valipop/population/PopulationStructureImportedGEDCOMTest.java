@@ -26,8 +26,6 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import java.nio.file.Path;
 import java.util.List;
 
-import static uk.ac.standrews.cs.valipop.export.PopulationExportTest.TEST_DIRECTORY_PATH_STRING;
-
 /**
  * Tests of properties of abstract population interface that should hold for all populations.
  *
@@ -36,6 +34,8 @@ import static uk.ac.standrews.cs.valipop.export.PopulationExportTest.TEST_DIRECT
 @ParameterizedClass
 @MethodSource("getGEDCOMTestCases")
 public class PopulationStructureImportedGEDCOMTest extends PopulationStructureTest {
+
+    public static final String TEST_DIRECTORY_PATH_STRING = "src/test/resources/valipop/";
 
     // Resources also include cardinal.ged, which requires more complex GEDCOM processing
     // that isn't done by ValiPop.
