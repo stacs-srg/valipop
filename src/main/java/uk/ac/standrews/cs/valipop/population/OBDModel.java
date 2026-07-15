@@ -80,6 +80,7 @@ public class OBDModel {
     // TODO enforce maximum age.
     public static final int MAXIMUM_AGE_AT_DEATH = 110;
     public static final String POPULATION_EXPORT_FILENAME = "population";
+    public static final String CONFIG_FILE_NAME = "input";
 
     public static Logger log;
 
@@ -204,7 +205,7 @@ public class OBDModel {
         final ProgramTimer recordTimer = new ProgramTimer();
 
         if (config.getConfigFilePath() != null)
-            Files.copy(config.getConfigFilePath(), config.getRunPath().resolve("input-config.txt"));
+            Files.copy(config.getConfigFilePath(), config.getRunPath().resolve(CONFIG_FILE_NAME + ".config"));
 
         if (config.shouldGenerateContingencyTables())
             ContingencyTableFactory.generateContingencyTables(population.getPeople(), desiredStatistics, config, summary);

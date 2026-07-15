@@ -110,6 +110,7 @@ public class Config implements Serializable {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS", Locale.UK);
     public static final String POPULATION_EXPORT_DIR_NAME = "population";
     public static final String LOG_FILE_NAME = "log.txt";
+    public static final String RECORDS_EXPORT_DIR_NAME = "records";
 
     private static Level logLevel = DEFAULT_LOG_LEVEL;
     public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
@@ -591,15 +592,6 @@ public class Config implements Serializable {
         varFemaleOccupationChangePaths = annotationsPath.resolve(femaleOccupationChangeSubFile);
     }
 
-    public static void mkBlankFile(final Path blankFilePath) throws IOException {
-
-//        try {
-            createFileIfDoesNotExist(blankFilePath);
-//        } catch (final IOException e) {
-//            throw new RuntimeException(e);
-//        }
-    }
-
     public static void createFileIfDoesNotExist(final Path path) throws IOException {
 
         if (!Files.exists(path)) {
@@ -618,23 +610,13 @@ public class Config implements Serializable {
     private static void mkSummaryFile(final Path summaryFilePath) throws IOException {
 
         if (!summaryFilePath.toFile().exists()) {
-//            return;
 
-//        try {
-
-//        try {
             createFileIfDoesNotExist(summaryFilePath);
-//        } catch (final IOException e) {
-//            throw new RuntimeException(e);
-//        }
+
             final PrintWriter write = new PrintWriter(summaryFilePath.toFile());
             write.println(SummaryRow.getSeparatedHeadings());
             write.close();
         }
-
-//        } catch (final IOException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     private static void mkDirs(final Path path) throws IOException {
@@ -765,6 +747,12 @@ public class Config implements Serializable {
         overSizedGeographyFactor = parseOversizedGeographyFactor(value, "over_sized_geography_factor");
     }
 
+    public String get(final String key) {
+        return configMap.get(key);
+    }
+
+    private final Map<String, String> configMap = new HashMap<>();
+
     private void readConfigFile(final Path pathToConfigFile) {
 
         this.pathToConfigFile = pathToConfigFile;
@@ -772,7 +760,7 @@ public class Config implements Serializable {
         try {
             for (final String line : InputFileReader.getAllLines(pathToConfigFile)) {
 
-                final String[] split = line.split("=");
+                final String[] split = line.split("=", -1);
 
                 if (split.length < 2) {
                     throw new IllegalArgumentException("Illegal line '" + line + "' read in config file. Each line should be of the format '<option> = <value>'");
@@ -783,11 +771,10 @@ public class Config implements Serializable {
                 // Join remaining equals together if any, in case they were part of the value
                 final String value = String.join("=", Arrays.copyOfRange(split, 1, split.length)).trim();
 
-                final Consumer<String> processor = processors.get(key);
-                if (processor == null) {
-                    throw new RuntimeException("No configuration processor defined for key: " + key);
-                }
-                processor.accept(value);
+                configMap.put(key, value);
+
+                if (processors.containsKey(key))
+                    processors.get(key).accept(value);
             }
         } catch (final IOException e) {
             log.severe("error reading config: " + e.getMessage());
@@ -831,7 +818,7 @@ public class Config implements Serializable {
         resultsSummaryPath = summaryResultsDirPath.resolve(groupName).resolve( groupName + "-results-summary.csv");
         runPath = groupPath.resolve(formatTimeStamp(simulationExecutionStartTime));
         detailedResultsPath = runPath.resolve("statistics.txt");
-        recordsPath = runPath.resolve("records");
+        recordsPath = runPath.resolve(RECORDS_EXPORT_DIR_NAME);
         populationExportPath = runPath.resolve(POPULATION_EXPORT_DIR_NAME);
         contingencyTablesPath = runPath.resolve("tables");
         final Path log = runPath.resolve("log");

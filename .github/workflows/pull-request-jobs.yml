@@ -19,5 +19,3 @@ jobs:
         with:
           maven-target: 'package'
           maven-params: '-DexcludedGroups=slow'
-          # Disabled while gedinline dependency is handled as a local jar.
-          # upload-dependencies: 'true'

@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.valipop.population.Randomness;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
@@ -45,8 +46,9 @@ public class RelationshipsTable {
     private static void toFile(Path recordsDirPath, String fileName) throws IOException {
 
         Path path = recordsDirPath.resolve(fileName);
-        Config.mkBlankFile(path);
-        PrintStream ps = new PrintStream(path.toFile(), "UTF-8");
+
+        Config.createFileIfDoesNotExist(path);
+        PrintStream ps = new PrintStream(path.toFile(), StandardCharsets.UTF_8);
 
         for (String[] line : relationshipsMarriage) {
             ps.println(asString(line));

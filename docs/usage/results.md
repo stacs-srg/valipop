@@ -49,22 +49,20 @@ The directory structure of the results of running ValiPop looks like the followi
 
 ```
 <results_path>/<group_name>/<datetime>/
-├───analysis.R
-├───detailed-results-<datetime>.txt
-│
-├───dump/
-│   └───order.csv
-│
-├───graphs/
-│   └───graph.png
+├───input.config
 │
 ├───log/
-│   └───trace.txt
+│   └───log.txt
+│
+├───population/
+│   └───graph.png
 │
 ├───records/
 │   ├───birth_records.csv
 │   ├───death_records.csv
 │   └───marriage_records.csv
+│
+├───statistics.txt
 │
 └───tables/
     ├───death-CT.csv
@@ -77,19 +75,7 @@ The directory structure of the results of running ValiPop looks like the followi
 <dl>
 
 <dt>
-<a name="analysisr">
-<code>analysis.R</code>
-</a>
-</dt>
-
-<dd markdown="1">
-This file is the analysis script executed to validate the simulated population with the given statistics.
-</dd>
-
-<dt>
-<a name="detailed-results-datetimetxt">
 <code>detailed-results-&lt;datetime&gt;.txt</code>
-</a>
 </dt>
 
 <dd markdown="1">
@@ -97,9 +83,7 @@ This file is generated once the model and analysis has completed. It provides ad
 </dd>
 
 <dt>
-<a name="dump">
 <code>dump/</code>
-</a>
 </dt>
 
 <dd markdown="1">
@@ -107,20 +91,15 @@ The dump directory contains bulk information used for debugging.
 </dd>
 
 <dt>
-<a name="graphs">
 <code>graphs/</code>
-</a>
 </dt>
 
 <dd markdown="1">
 The graph directory contains any graphs generated once the model and analysis have completed. The type of graph generated can be specified in the configuration.
 </dd>
 
-
 <dt>
-<a name="log">
 <code>log/</code>
-</a>
 </dt>
 
 <dd markdown="1">
@@ -128,19 +107,15 @@ The log directory contains files which gives more details about the model simula
 </dd>
 
 <dt>
-<a name="records">
 <code>records/</code>
-</a>
 </dt>
 
-<dd markdown="1">
+<dd>
 The records directory contains any records generated once the model and analysis have completed. The record format generated can be specified in the configuration. Generally only birth, death, and marriage records are recorded among the generated population.
 </dd>
 
 <dt>
-<a name="tables">
 <code>tables/</code>
-</a>
 </dt>
 
 <dd markdown="1">

@@ -145,7 +145,8 @@ public class ContingencyTableFactory {
 
         MemoryUsageAnalysis.log();
         final Path path = config.getContingencyTablesPath().resolve(fileName);
-        Config.mkBlankFile(path);
+
+        Config.createFileIfDoesNotExist(path);
         final PrintStream ps = new PrintStream(path.toFile(), StandardCharsets.UTF_8);
         table.outputToFile(ps);
         MemoryUsageAnalysis.log();

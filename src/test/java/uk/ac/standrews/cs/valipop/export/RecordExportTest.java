@@ -34,69 +34,78 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static uk.ac.standrews.cs.valipop.Config.RECORDS_EXPORT_DIR_NAME;
 import static uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordType.*;
 
 /**
- * E2E tests of GEDCOM export.
+ * These tests check that when various populations are generated, and records exported, then the expected numbers of records are created with the expected content.
  *
  * @author Daniel Brathagen (dbrathagen@gmail.com)
+ * @author Graham Kirby
  */
 public class RecordExportTest {
 
-    private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/config/simulation");
-    private static final String RECORD_DIR = "records";
+    private static final String HASH_ALGORITHM_NAME = "MD5";
+    private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/export/records");
 
     private static final List<Arguments> configurations = List.of(
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-1.txt"), "BR8JFQzWW6NfPSMekgpqHA==", "q12spKlZuMkBtxwSaRqvdQ==", "lbpktE0QdRQnJxo+2mq8Uw==", 80440, 80440, 21394)
-//        Arguments.of(TEST_RESOURCE_DIR.resolve("config-2.txt"), "3eAZn6WNGUVYso7HLoLPJQ==", "mxi+9JHBR4u09qj9y4NgnQ==", "aDG2Txpg5RqPnPxmScQ/zg==", 71125, 71125, 18253 ),
-//        Arguments.of(TEST_RESOURCE_DIR.resolve("config-4.txt"), "Neom4z1Q/sAS40kOIPu/Gg==", "G3CcsZHSDZGQBgWHTn6nyw==", "mnBe+SrHwp/zOQn5obDqyQ==", 150842, 150842, 21803 )
+        Arguments.of("1855-1973-initial-10K.config"),
+        Arguments.of("1855-1973-initial-10K-no-recovery.config"),
+        Arguments.of("1850-1900-initial-100K.config")
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-3.txt"), "yLtjxyKoLtZFzdv1nIgBMw==", "RDX7qoB+uHXxP6xbA/Segw==", "HoFomUFcKVIPhD0cftRgCQ==", 999935, 999935, 314724)
+        Arguments.of("1850-2025-initial-100K.config")
     );
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void recordsGeneratedAsExpected(final Path configPath, final String expectedBirthHash, final String expectedDeathHash, final String expectedMarriageHash,
-                                           final int expectedBirthRecordCount, final int expectedDeathRecordCount, final int expectedMarriageRecordCount) throws IOException, NoSuchAlgorithmException {
+    public void recordsGeneratedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
 
-        runTest(configPath, expectedBirthHash, expectedDeathHash, expectedMarriageHash, expectedBirthRecordCount,expectedDeathRecordCount, expectedMarriageRecordCount);
+        runTest(configPath);
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void recordsGeneratedAsExpectedSlow(final Path configPath, final String expectedBirthHash, final String expectedDeathHash, final String expectedMarriageHash,
-                                               final int expectedBirthRecordCount, final int expectedDeathRecordCount, final int expectedMarriageRecordCount) throws IOException, NoSuchAlgorithmException {
+    public void recordsGeneratedAsExpectedSlow(final String configPath) throws IOException, NoSuchAlgorithmException {
 
-        runTest(configPath, expectedBirthHash, expectedDeathHash, expectedMarriageHash, expectedBirthRecordCount,expectedDeathRecordCount, expectedMarriageRecordCount);
+        runTest(configPath);
     }
 
-    private static void runTest(final Path configPath, final String expectedBirthHash, final String expectedDeathHash, final String expectedMarriageHash,
-                                final int expectedBirthRecordCount, final int expectedDeathRecordCount, final int expectedMarriageRecordCount) throws IOException, NoSuchAlgorithmException {
+    private static void runTest(final String configPath) throws IOException, NoSuchAlgorithmException {
 
-        final Config config = new Config(configPath);
+        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
         final OBDModel model = new OBDModel(config);
+
         model.runSimulation();
+        model.analyseAndOutputPopulation(false);
 
-        model.analyseAndOutputPopulation(true);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        check(config, BIRTH_RECORDS_FILENAME, expectedBirthHash, expectedBirthRecordCount);
-        check(config, DEATH_RECORDS_FILENAME, expectedDeathHash, expectedDeathRecordCount);
-        check(config, MARRIAGE_RECORDS_FILENAME, expectedMarriageHash, expectedMarriageRecordCount);
+        final String expectedBirthHash = config.get("expected_birth_records_hash");
+        final String expectedDeathHash = config.get("expected_death_records_hash");
+        final String expectedMarriageHash = config.get("expected_marriage_records_hash");
+
+        final int expectedBirthRecordCount = Integer.parseInt(config.get("expected_birth_records_count"));
+        final int expectedDeathRecordCount = Integer.parseInt(config.get("expected_death_records_count"));
+        final int expectedMarriageRecordCount = Integer.parseInt(config.get("expected_marriage_records_count"));
+
+        final Path recordsExportDirPath = config.getRunPath().resolve(RECORDS_EXPORT_DIR_NAME);
+
+        check(recordsExportDirPath.resolve(BIRTH_RECORDS_FILENAME), expectedBirthHash, expectedBirthRecordCount);
+        check(recordsExportDirPath.resolve(DEATH_RECORDS_FILENAME), expectedDeathHash, expectedDeathRecordCount);
+        check(recordsExportDirPath.resolve(MARRIAGE_RECORDS_FILENAME), expectedMarriageHash, expectedMarriageRecordCount);
     }
 
-    private static void check(final Config config, final String fileName, final String expectedHash, final int expectedRecordCount) throws IOException, NoSuchAlgorithmException {
+    private static void check(final Path recordsFilePath, final String expectedHash, final int expectedRecordCount) throws IOException, NoSuchAlgorithmException {
 
-        final Path recordPath = config.getRunPath().resolve(RECORD_DIR).resolve(fileName);
-
-        final List<String> lines = Files.readAllLines(recordPath);
+        final List<String> lines = Files.readAllLines(recordsFilePath);
         assertEquals(expectedRecordCount, lines.size());
 
-        final byte[] bytes = (String.join("\n", lines) + "\n").getBytes();
-        final String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(bytes));
+        final byte[] bytes = Files.readAllBytes(recordsFilePath);
+        final String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance(HASH_ALGORITHM_NAME).digest(bytes));
 
-        assertEquals(expectedHash, actualHash, "Checking records from " + fileName);
+        assertEquals(expectedHash, actualHash, "Checking records from " + recordsFilePath);
     }
 }
