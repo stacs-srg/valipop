@@ -111,6 +111,7 @@ public class Config implements Serializable {
     public static final String POPULATION_EXPORT_DIR_NAME = "population";
     public static final String LOG_FILE_NAME = "log.txt";
     public static final String RECORDS_EXPORT_DIR_NAME = "records";
+    public static final String TEMP_DIR_INDICATOR = "!TEMP!";
 
     private static Level logLevel = DEFAULT_LOG_LEVEL;
     public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
@@ -643,7 +644,11 @@ public class Config implements Serializable {
 
         processors.put("input_distributions_path", value -> varPath = Paths.get(value));
         processors.put("results_save_location", value -> {
-            resultsSavePath = Paths.get(value);
+            try {
+                resultsSavePath = value.equals(TEMP_DIR_INDICATOR) ? Files.createTempDirectory("valipop-results") : Paths.get(value);
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
+            }
         });
         processors.put("summary_results_save_location", value -> summaryResultsDirPath = Paths.get(value));
         processors.put("project_location", value -> projectPath = Paths.get(value));
