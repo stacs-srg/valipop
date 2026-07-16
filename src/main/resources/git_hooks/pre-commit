@@ -2,6 +2,11 @@
 
 # Add to .git/hooks/pre-commit in local project directory.
 
+if grep -q '^ *results_save_location =' "/Users/gnck/"; then
+    echo "Commit blocked: debug mode is enabled."
+    exit 1
+fi
+
 mvn license:check
 if [ $? -ne 0 ]; then
     echo "Commit blocked: licence headers invalid."
