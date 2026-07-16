@@ -23,7 +23,11 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.IntStream;
+
+import static uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.PopulationAnalytics.PERCENTAGE_FORMAT;
 
 /**
  * An analytic class to analyse the distribution of deaths.
@@ -32,45 +36,42 @@ import java.util.stream.IntStream;
  */
 class DeathAnalytics {
 
-    private static final int MAX_AGE_AT_DEATH = 110;
-    private static final int ONE_HUNDRED = 100;
-
-    private final int[] age_at_death = new int[MAX_AGE_AT_DEATH]; // tracks age of death over population
     private final IPersonCollection population;
 
     private PrintStream out;
 
-    DeathAnalytics(final IPersonCollection population, PrintStream resultsOutput) {
+    DeathAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
-        analyseDeaths();
     }
 
     void printAllAnalytics() {
 
-        final int sum = IntStream.of(age_at_death).sum();
+        out.println("Death age distribution:");
+        out.println();
 
-        out.println("Death distribution:");
-        for (int i = 1; i < age_at_death.length; i++) {
-            out.println("\tDeaths at age: " + i + " = " + age_at_death[i] + " = " + String.format("%.3f", age_at_death[i] / (double) sum * ONE_HUNDRED) + '%');
-        }
+        printDeathAgeDistribution();
     }
 
-    private void analyseDeaths() {
+    private void printDeathAgeDistribution() {
+
+        final Map<Integer, Integer> agesAtDeath = new TreeMap<>();
 
         for (final IPerson person : population.getPeople()) {
 
-            final LocalDate death_date = person.getDeathDate();
+            final LocalDate deathDate = person.getDeathDate();
 
-            if (death_date != null) {
+            if (deathDate != null) {
 
-                final LocalDate birth_date = person.getBirthDate();
-                final int age_at_death_in_years = Period.between(birth_date, death_date).getYears();
-                if (age_at_death_in_years >= 0 && age_at_death_in_years < age_at_death.length) {
-                    age_at_death[age_at_death_in_years]++;
-                }
+                final int ageAtDeath = Period.between(person.getBirthDate(), deathDate).getYears();
+                agesAtDeath.put(ageAtDeath, agesAtDeath.getOrDefault(ageAtDeath, 0) + 1);
             }
         }
+
+        final int sum = agesAtDeath.values().stream().reduce(Integer::sum).orElseThrow();
+
+        for (final Map.Entry<Integer, Integer> entry : agesAtDeath.entrySet())
+            out.println("    " + String.format("%3s", entry.getKey()) + ", " + PERCENTAGE_FORMAT.format(entry.getValue() / (double) sum));
     }
 }

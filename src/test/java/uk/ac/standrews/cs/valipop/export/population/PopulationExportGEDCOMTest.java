@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.export;
+package uk.ac.standrews.cs.valipop.export.population;
 
 import gedinline.main.GedInlineValidator;
 import org.gedcom4j.exception.GedcomParserException;
@@ -24,6 +24,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
+import uk.ac.standrews.cs.valipop.export.PopulationConverter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationAdapter;
 import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
 import uk.ac.standrews.cs.valipop.population.OBDModel;
@@ -48,7 +50,7 @@ import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public  class PopulationExportGEDCOMTest extends PopulationExportTest {
+public class PopulationExportGEDCOMTest extends PopulationExportTest {
 
     private static final List<Arguments> configurations = List.of(
         Arguments.of("1855-2016-initial-200-gedcom.config"),
@@ -58,21 +60,6 @@ public  class PopulationExportGEDCOMTest extends PopulationExportTest {
     private static final List<Arguments> slowConfigurations = List.of(
         Arguments.of("1855-2016-initial-1K-gedcom.config")
     );
-
-    @ParameterizedTest
-    @FieldSource("configurations")
-    public void populationExportedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
-
-        checkPopulationExportedAsExpected(configPath);
-    }
-
-    @ParameterizedTest
-    @FieldSource("slowConfigurations")
-    @Tag("slow")
-    public void populationExportedAsExpectedSlow(final String configPath) throws IOException, NoSuchAlgorithmException {
-
-        checkPopulationExportedAsExpected(configPath);
-    }
 
     @ParameterizedTest
     @FieldSource("configurations")
@@ -113,7 +100,8 @@ public  class PopulationExportGEDCOMTest extends PopulationExportTest {
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
-    @Tag("slow")    public void exportImportExportGivesSamePopulationFileSlow(final String configPath) throws Exception {
+    @Tag("slow")
+    public void exportImportExportGivesSamePopulationFileSlow(final String configPath) throws Exception {
 
         checkExportImportExportGivesSamePopulationFile(configPath);
     }
@@ -137,7 +125,7 @@ public  class PopulationExportGEDCOMTest extends PopulationExportTest {
         assertEquals(0, validator.getNumberOfWarnings(), "GEDCOM validation warnings count");
     }
 
-     private static void checkExportImportGivesEquivalentPopulation(final String configPath) throws IOException, GedcomParserException {
+    private static void checkExportImportGivesEquivalentPopulation(final String configPath) throws IOException, GedcomParserException {
 
         final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
         final OBDModel model = new OBDModel(config);
@@ -157,7 +145,7 @@ public  class PopulationExportGEDCOMTest extends PopulationExportTest {
         assertEqualPopulations(population, imported);
     }
 
-      private static void checkExportImportExportGivesSamePopulationFile(final String configPath) throws Exception {
+    private static void checkExportImportExportGivesSamePopulationFile(final String configPath) throws Exception {
 
         final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
         final OBDModel model = new OBDModel(config);

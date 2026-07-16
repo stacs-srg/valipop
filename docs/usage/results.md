@@ -55,31 +55,39 @@ The directory structure of the results of running ValiPop looks like the followi
 │   └───log.txt
 │
 ├───population/
-│   └───graph.png
+│   └───population.ged
 │
 ├───records/
-│   ├───birth_records.csv
-│   ├───death_records.csv
-│   └───marriage_records.csv
+│   ├───birth-records.csv
+│   ├───death-records.csv
+│   └───marriage-records.csv
 │
 ├───statistics.txt
 │
 └───tables/
-    ├───death-CT.csv
-    ├───mb-CT.csv
-    ├───ob-CT.csv
-    ├───part-CT.csv
-    └───sep-CT.csv
+    ├───birth-contingency-table.csv
+    ├───death-contingency-table.csv
+    ├───multiple-birth-contingency-table.csv
+    ├───partnership-contingency-table.csv
+    └───separation-contingency-table.csv
 ```
 
 <dl>
+
+<dt>
+<code>input.config</code>
+</dt>
+
+<dd>
+This is a copy of the configuration file for the run.
+</dd>
 
 <dt>
 <code>log/</code>
 </dt>
 
 <dd>
-The log directory contains files which gives more details about the model simulation than in standard output
+The <em>log</em> directory contains files giving more detail about the simulation run.
 </dd>
 
 <dt>
@@ -87,7 +95,7 @@ The log directory contains files which gives more details about the model simula
 </dt>
 
 <dd>
-The population directory contains any graphs generated once the model and analysis have completed. The type of graph generated can be specified in the configuration.
+The *population* directory contains the exported representation of the simulated population, if specified in the configuration file.
 </dd>
 
 <dt>
@@ -95,7 +103,8 @@ The population directory contains any graphs generated once the model and analys
 </dt>
 
 <dd>
-The records directory contains any records generated once the model and analysis have completed. The record format generated can be specified in the configuration. Generally only birth, death, and marriage records are recorded among the generated population.
+The records directory contains the records generated from the simulated population, if specified
+in the configuration file.
 </dd>
 
 <dt>
@@ -103,7 +112,7 @@ The records directory contains any records generated once the model and analysis
 </dt>
 
 <dd>
-This file is generated once the model and analysis has completed. It provides additional statistics on the simulated model such as fertility and death rates, number of remarriages, population sizes, and average children per marriage.
+This file provides additional statistics on the simulated population, including fertility, death and remarriage rates, and family size distributions.
 </dd>
 
 <dt>
@@ -111,7 +120,7 @@ This file is generated once the model and analysis has completed. It provides ad
 </dt>
 
 <dd>
-The tables directory contains contingency tables on birth, death, partnership, and separation. They are used by the analysis to validate the simulated population with the given statistics.
+The tables directory contains contingency tables for birth, death, partnership, and separation. They are analysed during validation of the simulated population.
 </dd>
 
 </dl>

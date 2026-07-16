@@ -18,14 +18,12 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
 
-import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
 import java.io.PrintStream;
-import java.time.LocalDate;
-import java.util.List;
+import java.text.NumberFormat;
+import java.util.stream.Stream;
 
 /**
  * An analytic class to analyse the entire population.
@@ -35,153 +33,48 @@ import java.util.List;
  */
 public class PopulationAnalytics {
 
-    private static final int ONE_HUNDRED = 100;
+    public static final NumberFormat PERCENTAGE_FORMAT = NumberFormat.getPercentInstance();
+
+    static {
+        PERCENTAGE_FORMAT.setMinimumIntegerDigits(2);
+        PERCENTAGE_FORMAT.setMinimumFractionDigits(3);
+        PERCENTAGE_FORMAT.setMaximumFractionDigits(3);
+    }
+
     private final IPersonCollection population;
-    private PrintStream out;
+    private final PrintStream out;
 
     /**
      * Creates an analytic instance to analyse the entire population.
      *
      * @param population the population to analyse
      */
-    public PopulationAnalytics(final IPersonCollection population, PrintStream resultsOutput) {
+    public PopulationAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
     }
 
-    private void printBirthDate(final IPerson person) {
-
-        out.print(person.getBirthDate().toString());
-    }
-
-    private void printDeathDate(final IPerson person) {
-
-        final LocalDate death_date = person.getDeathDate();
-        if (death_date != null) {
-            out.print(death_date.toString());
-        }
-    }
-
     /**
      * Prints out all analyses.
-     *
-     * @throws Exception if the population size cannot be accessed
      */
     public void printAllAnalytics() {
 
-        final int size;
-        try {
-            size = population.getNumberOfPeople();
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-        final int number_males = countMales();
-        final int number_females = countFemales();
+        final int size = population.getNumberOfPeople();
 
-        out.println("Population size = " + size);
-        out.println("Number of males = " + number_males + " = " + String.format("%.1f", number_males / (double) size * ONE_HUNDRED) + '%');
-        out.println("Number of females = " + number_females + " = " + String.format("%.1f", number_females / (double) size * ONE_HUNDRED) + '%');
+        out.println("Population: " + size);
+        out.println();
+
+        out.println("    Female, " + PERCENTAGE_FORMAT.format(count(SexOption.FEMALE) / (double) size));
+        out.println("    Male,   " + PERCENTAGE_FORMAT.format(count(SexOption.MALE) / (double) size));
+        out.println();
     }
 
-    private int countMales() {
+    private int count(final SexOption sex) {
 
-        int count = 0;
-        for (final IPerson person : population.getPeople()) {
-            if (person.getSex() == SexOption.MALE) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    private int countFemales() {
-
-        int count = 0;
-        for (final IPerson person : population.getPeople()) {
-            if (person.getSex() == SexOption.FEMALE) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    /**
-     * Prints the dates of birth of all people.
-     */
-    public void printAllBirthDates() {
-
-        for (final IPerson person : population.getPeople()) {
-            printBirthDate(person);
-            out.println();
-        }
-    }
-
-    /**
-     * Prints the dates of death of all people.
-     */
-    public void printAllDeathDates() {
-
-        for (final IPerson person : population.getPeople()) {
-            printDeathDate(person);
-            out.println();
-        }
-    }
-
-    /**
-     * Prints the dates of birth of child_ids in a partnership.
-     *
-     * @param partnership the partnership
-     */
-    public void printChildren(final IPartnership partnership) {
-
-        if (partnership.getChildren() != null) {
-            for (final IPerson child : partnership.getChildren()) {
-
-                out.println("\t\tChild born: " + child.getBirthDate().toString());
-            }
-        }
-    }
-
-    /**
-     * Prints the details of partnerships and child_ids for a given person.
-     *
-     * @param person the person
-     */
-    @SuppressWarnings("FeatureEnvy")
-    public void printPartnerships(final IPerson person) {
-
-        final List<IPartnership> partnership_ids = person.getPartnerships();
-        if (partnership_ids != null) {
-            for (final IPartnership partnership : partnership_ids) {
-
-
-                final IPerson partner = partnership.getPartnerOf(person);
-                out.println("\tPartner born: " + partner.getBirthDate().toString());
-
-                final LocalDate marriage_date = partnership.getPartnershipDate();
-                if (marriage_date != null) {
-                    out.println("\tMarriage on " + marriage_date.toString());
-                }
-
-                printChildren(partnership);
-            }
-        }
-    }
-
-    /**
-     * Prints all significant dates for the population.
-     */
-    public void printAllDates() {
-
-        for (final IPerson person : population.getPeople()) {
-
-            out.print(person.getSex() + " Born: ");
-            printBirthDate(person);
-            out.print(", Died: ");
-            printDeathDate(person);
-            out.println();
-            printPartnerships(person);
-        }
+        return (int) Stream.generate(population.getPeople().iterator()::next).
+            limit(population.getNumberOfPeople()).
+            filter(person -> person.getSex() == sex).
+            count();
     }
 }

@@ -15,8 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.export;
+package uk.ac.standrews.cs.valipop.export.population;
 
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.FieldSource;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.population.OBDModel;
 
@@ -28,6 +32,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -35,14 +40,46 @@ import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
 import static uk.ac.standrews.cs.valipop.population.OBDModel.EXPORT_CHARSET;
 
 /**
+ * These tests check that when various populations are generated, and exported in various formats, then the files contain the expected content.
+ *
  * @author Daniel Brathagen (dbrathagen@gmail.com)
  * @author Graham Kirby
  */
-public abstract class PopulationExportTest {
-
-    // Files can be checked for validity at: https://geojsonlint.com
+public class PopulationExportTest {
 
     public static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/export/population");
+
+    // Graphviz files can be checked for validity at: https://magjac.com/graphviz-visual-editor/
+    // GeoJSON files can be checked for validity at: https://geojsonlint.com
+
+    private static final List<Arguments> configurations = List.of(
+        Arguments.of("1855-2016-initial-200-graphviz.config"),
+        Arguments.of("1855-2016-initial-300-graphviz.config"),
+        Arguments.of("1855-2016-initial-200-geojson.config"),
+        Arguments.of("1855-2016-initial-300-geojson.config")
+    );
+
+    private static final List<Arguments> slowConfigurations = List.of(
+        Arguments.of("1855-2016-initial-1K-graphviz.config"),
+        Arguments.of("1855-2016-initial-5K-graphviz.config"),
+        Arguments.of("1855-2016-initial-1K-geojson.config"),
+        Arguments.of("1855-2016-initial-5K-geojson.config")
+    );
+
+    @ParameterizedTest
+    @FieldSource("configurations")
+    public void populationExportedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
+
+        checkPopulationExportedAsExpected(configPath);
+    }
+
+    @ParameterizedTest
+    @FieldSource("slowConfigurations")
+    @Tag("slow")
+    public void populationExportedAsExpectedSlow(final String configPath) throws IOException, NoSuchAlgorithmException {
+
+        checkPopulationExportedAsExpected(configPath);
+    }
 
     static void checkPopulationExportedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
 

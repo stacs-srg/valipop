@@ -24,7 +24,9 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 
 import java.io.PrintStream;
 import java.util.*;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.PopulationAnalytics.PERCENTAGE_FORMAT;
 
 /**
  * An analytic class to analyse the distribution of children.
@@ -35,168 +37,100 @@ import java.util.stream.IntStream;
 
 class ChildrenAnalytics {
 
-    private static final int MAX_CHILDREN = 100;
-    private static final int ONE_HUNDRED = 100;
+    static final int MINIMUM_CHILD_BEARING_AGE = 15;
+    static final int MAXIMUM_CHILD_BEARING_AGE = 50;
 
-    private final int[] children_per_marriage = new int[MAX_CHILDREN]; // tracks family size
     private final IPersonCollection population;
-    private PrintStream out;
+    private final PrintStream out;
 
-    private final Map<Integer, Double> fertilityRateByYear = new TreeMap<>();
-
-    ChildrenAnalytics(final IPersonCollection population, PrintStream resultsOutput) {
+    ChildrenAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
-        analyseChildren();
-        calculateTFRByYear();
     }
 
     void printAllAnalytics() {
 
-        final int sum = IntStream.of(children_per_marriage).sum();
+        out.println("Family size distribution:");
+        out.println();
 
-        out.println("Children per marriage sizes:");
-        for (int i = 0; i < children_per_marriage.length; i++) {
-            if (children_per_marriage[i] != 0) {
-                out.println("\t" + children_per_marriage[i] + " Marriages with " + i + " child_ids" + " = " + String.format("%.1f", children_per_marriage[i] / (double) sum * ONE_HUNDRED) + '%');
-            }
-        }
+        printFamilySizes();
 
-        out.println("Fertility rates by year:");
-        for (Map.Entry<Integer, Double> fr : fertilityRateByYear.entrySet()) {
-            if (!fr.getValue().equals(0.0)) {
-                out.println("\t" + fr.getKey() + " Fertility rate = " + fr.getValue());
-            }
-        }
+        out.println();
+        out.println("Fertility rate distribution:");
+        out.println();
+
+        printFertilityRates();
+
+        out.println();
     }
 
-    private void analyseChildren() {
+    private void printFamilySizes() {
+
+        final Map<Integer, Integer> familySizeCounts = new TreeMap<>();
+
+        for (final IPerson person : population.getPeople())
+            if (person.getSex() == SexOption.FEMALE)
+
+                for (final IPartnership partnership : person.getPartnerships()) {
+
+                    final List<IPerson> child_ids = partnership.getChildren();
+                    familySizeCounts.put(child_ids.size(), familySizeCounts.getOrDefault(child_ids.size(), 0) + 1);
+                }
+
+        final int sum = familySizeCounts.values().stream().reduce(Integer::sum).orElseThrow();
+
+        for (final Map.Entry<Integer, Integer> entry : familySizeCounts.entrySet())
+            out.println("    " + entry.getKey() + ", " + PERCENTAGE_FORMAT.format(entry.getValue() / (double) sum));
+    }
+
+    private void printFertilityRates() {
+
+        final Map<Integer, Integer> femalesOfChildBearingAgeByYear = new HashMap<>();
+        final Map<Integer, Integer> birthsByYear = new HashMap<>();
+        final Map<Integer, Double> fertilityRateByYear = new TreeMap<>();
 
         for (final IPerson person : population.getPeople()) {
 
             if (person.getSex() == SexOption.FEMALE) {
-                final List<IPartnership> partnerships = person.getPartnerships();
-                if (partnerships != null) {
 
-                    for (final IPartnership partnership : partnerships) {
+                for (final IPartnership partnership : person.getPartnerships())
+                    for (final IPerson child : partnership.getChildren()) {
 
-                        final List<IPerson> child_ids = partnership.getChildren();
-
-                        if (child_ids != null) {
-                            children_per_marriage[child_ids.size()]++;
-                        }
+                        final int year = child.getBirthDate().getYear();
+                        birthsByYear.put(year, birthsByYear.getOrDefault(year, 0) + 1);
                     }
-                }
+
+                final int motherYearOfBirth = person.getBirthDate().getYear();
+
+                for (int year = motherYearOfBirth + MINIMUM_CHILD_BEARING_AGE; year < motherYearOfBirth + MAXIMUM_CHILD_BEARING_AGE; year++)
+                    femalesOfChildBearingAgeByYear.put(year, femalesOfChildBearingAgeByYear.getOrDefault(year, 0) + 1);
             }
         }
+
+        final int earliestYear = combineKeys(femalesOfChildBearingAgeByYear, birthsByYear).
+            min(Integer::compareTo).
+            orElseThrow();
+
+        final int latestYear = combineKeys(femalesOfChildBearingAgeByYear, birthsByYear).
+            max(Integer::compareTo).
+            orElseThrow();
+
+        for (int year = earliestYear; year <= latestYear; year++) {
+
+            final int births = birthsByYear.getOrDefault(year, 0);
+            final int femalesOfChildBearingAge = femalesOfChildBearingAgeByYear.getOrDefault(year, 0);
+
+            final double fertilityRate = femalesOfChildBearingAge == 0 ? 0 : births / (double) femalesOfChildBearingAge;
+
+            fertilityRateByYear.put(year, fertilityRate);
+        }
+
+        for (final Map.Entry<Integer, Double> entry : fertilityRateByYear.entrySet())
+            out.println("    " + entry.getKey() + ", " + PERCENTAGE_FORMAT.format(entry.getValue()));
     }
 
-    private void calculateTFRByYear() {
-
-        Map<Integer, Integer> livingFemalesOfSBAgeInEachYear = new HashMap<>();
-        Map<Integer, Integer> childrenBornInEachYear = new HashMap<>();
-
-        final int MIN_CB_AGE = 15;
-        final int MAX_CB_AGE = 50;
-
-        for (final IPerson person : population.getPeople()) {
-
-            if (person.getSex() == SexOption.FEMALE) {
-                final List<IPartnership> partnerships = person.getPartnerships();
-                if (partnerships != null) {
-
-                    for (final IPartnership partnership : partnerships) {
-
-                        final List<IPerson> child_ids = partnership.getChildren();
-
-                        if (child_ids != null) {
-
-                            for (final IPerson child : child_ids) {
-
-                                int yob = child.getBirthDate().getYear();
-
-                                try {
-                                    childrenBornInEachYear.put(yob, childrenBornInEachYear.get(yob) + 1);
-                                } catch (NullPointerException e) {
-                                    childrenBornInEachYear.put(yob, 1);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                int femalesYOB = person.getBirthDate().getYear();
-                for (int y = femalesYOB + MIN_CB_AGE; y < femalesYOB + MAX_CB_AGE; y++) {
-
-                    try {
-                        livingFemalesOfSBAgeInEachYear.put(y, livingFemalesOfSBAgeInEachYear.get(y) + 1);
-                    } catch (NullPointerException e) {
-                        livingFemalesOfSBAgeInEachYear.put(y, 1);
-                    }
-                }
-            }
-        }
-
-        Integer earliestYear = getSmallestValueInSets(livingFemalesOfSBAgeInEachYear.keySet(), childrenBornInEachYear.keySet());
-        Integer latestYear = getLargestValueInSets(livingFemalesOfSBAgeInEachYear.keySet(), childrenBornInEachYear.keySet());
-
-        if (earliestYear == null || latestYear == null) {
-            return;
-        }
-
-        for (int y = earliestYear; y < latestYear; y++) {
-            int births;
-            int femalesOfCBAge;
-
-            try {
-                births = childrenBornInEachYear.get(y);
-            } catch (NullPointerException e) {
-                births = 0;
-            }
-
-            try {
-                femalesOfCBAge = livingFemalesOfSBAgeInEachYear.get(y);
-            } catch (NullPointerException e) {
-                femalesOfCBAge = 0;
-            }
-
-            double asfrForYear;
-            if (femalesOfCBAge == 0) {
-                asfrForYear = 0;
-            } else {
-                asfrForYear = births / (double) femalesOfCBAge;
-            }
-
-            fertilityRateByYear.put(y, asfrForYear);
-        }
-    }
-
-    private static Integer getSmallestValueInSets(Set<Integer> a, Set<Integer> b) {
-
-        ArrayList<Integer> sets = new ArrayList<>(a);
-        sets.addAll(b);
-
-        Collections.sort(sets);
-
-        if (sets.size() == 0) {
-            return null;
-        } else {
-            return sets.get(0);
-        }
-    }
-
-    private static Integer getLargestValueInSets(Set<Integer> a, Set<Integer> b) {
-
-        ArrayList<Integer> sets = new ArrayList<>(a);
-        sets.addAll(b);
-
-        Collections.sort(sets);
-
-        if (sets.size() == 0) {
-            return null;
-        } else {
-            return sets.get(sets.size() - 1);
-        }
+    private static Stream<Integer> combineKeys(final Map<Integer, Integer> map1, final Map<Integer, Integer> map2) {
+        return Stream.concat(map1.keySet().stream(), map2.keySet().stream());
     }
 }

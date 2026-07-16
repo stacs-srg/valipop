@@ -59,8 +59,6 @@ public class Person implements IPerson {
         this(sex, birthDate, parents, statistics, adulterousBirth, false);
     }
 
-    private static int debug_count = 0;
-
     public Person(final SexOption sex, final LocalDate birthDate, final IPartnership parents, final PopulationStatistics statistics, final boolean adulterousBirth, final boolean immigrant) {
 
         id = getNewId();
@@ -72,10 +70,6 @@ public class Person implements IPerson {
 
         firstName = getForename(statistics, immigrant);
         surname = getSurname(statistics, immigrant);
-
-//        if (Randomness.do_debug && debug_count++ < 20) {
-//            System.out.println(id + ", " + firstName);
-//        }
 
         representation = firstName + " " + surname + " (" + id + ") " + birthDate;
 

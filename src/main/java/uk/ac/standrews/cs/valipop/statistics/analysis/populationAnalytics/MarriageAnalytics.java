@@ -24,7 +24,11 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.IntStream;
+
+import static uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.PopulationAnalytics.PERCENTAGE_FORMAT;
 
 /**
  * An analytic class to analyse the distribution of marriages.
@@ -33,49 +37,41 @@ import java.util.stream.IntStream;
  */
 class MarriageAnalytics {
 
-    private static final int MAX_MARRIAGES = 25;
-    private static final int ONE_HUNDRED = 100;
-
-    private final int[] count_marriages = new int[MAX_MARRIAGES];
     private final IPersonCollection population;
 
-    private PrintStream out;
+    private final PrintStream out;
 
-    MarriageAnalytics(final IPersonCollection population, PrintStream resultsOutput) {
+    MarriageAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
-        analyseMarriages();
     }
 
     void printAllAnalytics() {
 
-        final int sum = IntStream.of(count_marriages).sum();
+        out.println();
+        out.println("Male marriage count distribution:");
+        out.println();
 
-        out.println("Male marriage sizes:");
-        out.println("\t unmarried: " + count_marriages[0]);
-
-        for (int i = 1; i < count_marriages.length; i++) {
-            if (count_marriages[i] != 0) {
-                out.println("\t Married " + i + " times: " + count_marriages[i] + " = " + String.format("%.1f", count_marriages[i] / (double) sum * ONE_HUNDRED) + '%');
-            }
-        }
+        printMarriageCountDistribution();
     }
 
-    private void analyseMarriages() {
+    private void printMarriageCountDistribution() {
+
+        final Map<Integer, Integer> marriageCounts = new TreeMap<>();
 
         for (final IPerson person : population.getPeople()) {
 
             if (person.getSex() == SexOption.MALE) { // only look at Males to avoid counting marriages twice.
 
-                final List<IPartnership> partnership_ids = person.getPartnerships();
-
-                if (partnership_ids == null) {
-                    count_marriages[0]++;
-                } else {
-                    count_marriages[partnership_ids.size()]++;
-                }
+                final int marriageCount = person.getPartnerships().size();
+                marriageCounts.put(marriageCount, marriageCounts.getOrDefault(marriageCount, 0) + 1);
             }
         }
+
+        final int sum = marriageCounts.values().stream().reduce(Integer::sum).orElseThrow();
+
+        for (final Map.Entry<Integer, Integer> entry : marriageCounts.entrySet())
+            out.println("    " + entry.getKey() + ", " + PERCENTAGE_FORMAT.format(entry.getValue() / (double) sum));
     }
 }
