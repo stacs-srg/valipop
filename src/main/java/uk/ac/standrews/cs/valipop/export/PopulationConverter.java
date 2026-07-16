@@ -92,7 +92,7 @@ public class PopulationConverter implements AutoCloseable {
         population_writer.close();
     }
 
-    private <T extends Comparable<T>> Iterable<T> sort(final Iterable<T> unsorted) {
+    private static <T extends Comparable<T>> Iterable<T> sort(final Iterable<T> unsorted) {
 
         final List<T> list = new ArrayList<>();
         for (final T value : unsorted) {

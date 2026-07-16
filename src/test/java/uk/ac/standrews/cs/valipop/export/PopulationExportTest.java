@@ -32,6 +32,7 @@ import java.util.Base64;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
+import static uk.ac.standrews.cs.valipop.population.OBDModel.EXPORT_CHARSET;
 
 /**
  * @author Daniel Brathagen (dbrathagen@gmail.com)
@@ -72,7 +73,7 @@ public abstract class PopulationExportTest {
 
     protected static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {
 
-        try (final BufferedReader reader1 = Files.newBufferedReader(path1, StandardCharsets.UTF_8); final BufferedReader reader2 = Files.newBufferedReader(path2, StandardCharsets.UTF_8)) {
+        try (final BufferedReader reader1 = Files.newBufferedReader(path1, EXPORT_CHARSET); final BufferedReader reader2 = Files.newBufferedReader(path2, StandardCharsets.UTF_8)) {
 
             String line1;
 

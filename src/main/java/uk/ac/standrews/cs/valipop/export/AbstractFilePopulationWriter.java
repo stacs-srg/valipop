@@ -21,10 +21,13 @@ import uk.ac.standrews.cs.valipop.Config;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
+
+import static uk.ac.standrews.cs.valipop.population.OBDModel.EXPORT_CHARSET;
 
 /**
  * Writes a representation of the population to file in some external format.
@@ -64,7 +67,7 @@ public abstract class AbstractFilePopulationWriter implements IPopulationWriter 
 
         Config.createParentDirectoryIfDoesNotExist(path);
 
-        writer = new PrintWriter(Files.newBufferedWriter(path, StandardCharsets.UTF_8));
+        writer = new PrintWriter(Files.newBufferedWriter(path, EXPORT_CHARSET));
 
         outputHeader(writer);
     }

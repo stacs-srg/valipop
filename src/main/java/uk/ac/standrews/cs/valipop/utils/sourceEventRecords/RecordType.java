@@ -28,7 +28,11 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
+import static uk.ac.standrews.cs.valipop.population.OBDModel.EXPORT_CHARSET;
+
 abstract public class RecordType {
+
+    // TODO rename
 
     public static final String BIRTH_RECORDS_FILENAME = "birth-records.csv";
     public static final String DEATH_RECORDS_FILENAME = "death-records.csv";
@@ -62,7 +66,7 @@ abstract public class RecordType {
 
         Config.createParentDirectoryIfDoesNotExist(recordsPath);
 
-        try (final PrintWriter writer = new PrintWriter(Files.newBufferedWriter(recordsPath, StandardCharsets.UTF_8))) {
+        try (final PrintWriter writer = new PrintWriter(Files.newBufferedWriter(recordsPath, EXPORT_CHARSET))) {
 
             boolean first = true;
 

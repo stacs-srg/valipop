@@ -51,6 +51,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,6 +73,8 @@ import static uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils.divi
 public class OBDModel {
 
     // TODO use more informative class name
+
+    public static final Charset EXPORT_CHARSET = StandardCharsets.UTF_8;
 
     private static final int MINIMUM_POPULATION_SIZE = 100;
     private static final int EARLIEST_AGE_OF_MARRIAGE = 16;
