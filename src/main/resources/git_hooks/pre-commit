@@ -2,7 +2,7 @@
 
 # Add to .git/hooks/pre-commit in local project directory.
 
-if grep -q '^ *results_save_location =' "/Users/gnck/"; then
+if grep -r '^ *results_save_location = /Users/gnck' 'src/test/resources/'; then
     echo "Commit blocked: debug mode is enabled."
     exit 1
 fi
