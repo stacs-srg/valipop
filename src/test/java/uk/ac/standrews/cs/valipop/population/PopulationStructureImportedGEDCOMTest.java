@@ -37,8 +37,12 @@ public class PopulationStructureImportedGEDCOMTest extends PopulationStructureTe
 
     public static final String TEST_DIRECTORY_PATH_STRING = "src/test/resources/valipop/";
 
-    // Resources also include cardinal.ged, which requires more complex GEDCOM processing
-    // that isn't done by ValiPop.
+    // For future ValiPop development, see also:
+    // https://web.archive.org/web/20231029182316/https://gedcomassessment.com/en/index.htm
+    // which links to:
+    // https://web.archive.org/web/20230327132350/https://www.gedcomassessment.com/en/assess.ged
+    //
+    // This requires more complex GEDCOM processing than currently performed by ValiPop.
     public static final List<String> GEDCOM_TEST_CASES = List.of("kennedy.ged");
 
     PopulationStructureImportedGEDCOMTest(final IPersonCollection population) {

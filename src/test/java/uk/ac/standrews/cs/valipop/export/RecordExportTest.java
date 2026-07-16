@@ -33,7 +33,6 @@ import java.util.Base64;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 import static uk.ac.standrews.cs.valipop.Config.RECORDS_EXPORT_DIR_NAME;
 import static uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordType.*;
 
@@ -45,7 +44,6 @@ import static uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordType.*;
  */
 public class RecordExportTest {
 
-    private static final String HASH_ALGORITHM_NAME = "MD5";
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/export/records");
 
     private static final List<Arguments> configurations = List.of(
@@ -62,7 +60,7 @@ public class RecordExportTest {
     @FieldSource("configurations")
     public void recordsGeneratedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
 
-        runTest(configPath);
+        checkRecordsGeneratedAsExpected(configPath);
     }
 
     @ParameterizedTest
@@ -70,10 +68,10 @@ public class RecordExportTest {
     @Tag("slow")
     public void recordsGeneratedAsExpectedSlow(final String configPath) throws IOException, NoSuchAlgorithmException {
 
-        runTest(configPath);
+        checkRecordsGeneratedAsExpected(configPath);
     }
 
-    private static void runTest(final String configPath) throws IOException, NoSuchAlgorithmException {
+    private static void checkRecordsGeneratedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
 
         final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
         final OBDModel model = new OBDModel(config);
@@ -82,6 +80,8 @@ public class RecordExportTest {
         model.analyseAndOutputPopulation(false);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        final String hashAlgorithmName = config.get("hash_algorithm_name");
 
         final String expectedBirthHash = config.get("expected_birth_records_hash");
         final String expectedDeathHash = config.get("expected_death_records_hash");
@@ -93,18 +93,18 @@ public class RecordExportTest {
 
         final Path recordsExportDirPath = config.getRunPath().resolve(RECORDS_EXPORT_DIR_NAME);
 
-        check(recordsExportDirPath.resolve(BIRTH_RECORDS_FILENAME), expectedBirthHash, expectedBirthRecordCount);
-        check(recordsExportDirPath.resolve(DEATH_RECORDS_FILENAME), expectedDeathHash, expectedDeathRecordCount);
-        check(recordsExportDirPath.resolve(MARRIAGE_RECORDS_FILENAME), expectedMarriageHash, expectedMarriageRecordCount);
+        checkRecordsGeneratedAsExpected(recordsExportDirPath.resolve(BIRTH_RECORDS_FILENAME), hashAlgorithmName, expectedBirthHash, expectedBirthRecordCount);
+        checkRecordsGeneratedAsExpected(recordsExportDirPath.resolve(DEATH_RECORDS_FILENAME), hashAlgorithmName, expectedDeathHash, expectedDeathRecordCount);
+        checkRecordsGeneratedAsExpected(recordsExportDirPath.resolve(MARRIAGE_RECORDS_FILENAME), hashAlgorithmName, expectedMarriageHash, expectedMarriageRecordCount);
     }
 
-    private static void check(final Path recordsFilePath, final String expectedHash, final int expectedRecordCount) throws IOException, NoSuchAlgorithmException {
+    private static void checkRecordsGeneratedAsExpected(final Path recordsFilePath, final String hashAlgorithmName, final String expectedHash, final int expectedRecordCount) throws IOException, NoSuchAlgorithmException {
 
         final List<String> lines = Files.readAllLines(recordsFilePath);
         assertEquals(expectedRecordCount, lines.size());
 
         final byte[] bytes = Files.readAllBytes(recordsFilePath);
-        final String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance(HASH_ALGORITHM_NAME).digest(bytes));
+        final String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance(hashAlgorithmName).digest(bytes));
 
         assertEquals(expectedHash, actualHash, "Checking records from " + recordsFilePath);
     }

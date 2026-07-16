@@ -56,11 +56,10 @@ public abstract class PopulationExportTest {
         final String hashAlgorithmName = config.get("hash_algorithm_name");
         final String expectedHash = config.get("expected_hash");
 
-        String fileName = OBDModel.POPULATION_EXPORT_FILENAME + "." + config.getPopulationExportFormat().getFileSuffix();
-
         final Path populationExportDirPath = config.getRunPath().resolve(POPULATION_EXPORT_DIR_NAME);
+        final String populationExportFileName = OBDModel.POPULATION_EXPORT_FILENAME + "." + config.getPopulationExportFormat().getFileSuffix();
 
-        checkPopulationExportedAsExpected(populationExportDirPath.resolve(fileName), hashAlgorithmName, expectedHash);
+        checkPopulationExportedAsExpected(populationExportDirPath.resolve(populationExportFileName), hashAlgorithmName, expectedHash);
     }
 
     private static void checkPopulationExportedAsExpected(final Path recordsFilePath, final String hashAlgorithmName, final String expectedHash) throws IOException, NoSuchAlgorithmException {
