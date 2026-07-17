@@ -30,14 +30,13 @@ import java.time.Period;
  */
 public class Population {
 
-    // TODO rationalise OBDModel, Population, PersonCollection, PeopleCollection, IPersonCollection.
+    // TODO rationalise OBDModel, Population, PersonCollection, PeopleCollection, IPersonCollection, Collection<IPerson>
 
-    private PeopleCollection livingPeople;
-    private PeopleCollection deadPeople;
+    private final PeopleCollection livingPeople;
+    private final PeopleCollection deadPeople;
+    private final PeopleCollection emigrants;
 
-    private PeopleCollection emigrants;
-
-    private PopulationCounts populationCounts;
+    private final PopulationCounts populationCounts;
 
     public Population(final Config config) {
 
@@ -46,9 +45,7 @@ public class Population {
         Partnership.resetIds();
 
         livingPeople = new PeopleCollection(config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "living");
-
         deadPeople = new PeopleCollection(config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "dead");
-
         emigrants = new PeopleCollection(config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "emigrants");
 
         populationCounts = new PopulationCounts();
@@ -63,15 +60,13 @@ public class Population {
 
         final PeopleCollection result = new PeopleCollection(first, last, Period.ofYears(1), "combined");
 
-        Period period = Period.between(first, last);
+        final Period period = Period.between(first, last);
 
-        for (final IPerson person : livingPeople.getPeopleAliveInTimePeriod(first, period, maxAge)) {
+        for (final IPerson person : livingPeople.getPeopleAliveInTimePeriod(first, period, maxAge))
             result.add(person);
-        }
 
-        for (final IPerson person : deadPeople.getPeopleAliveInTimePeriod(first, period, maxAge)) {
+        for (final IPerson person : deadPeople.getPeopleAliveInTimePeriod(first, period, maxAge))
             result.add(person);
-        }
 
         return result;
     }
@@ -92,28 +87,31 @@ public class Population {
         return populationCounts;
     }
 
-    private PeopleCollection combine(final PeopleCollection collection1, final PeopleCollection collection2) {
+    private static PeopleCollection combine(final PeopleCollection collection1, final PeopleCollection collection2) {
 
-        final LocalDate date1 = collection1.getStartDate();
-        final LocalDate date2 = collection2.getStartDate();
-
-        final LocalDate start = date1.isAfter(date2) ? date2 : date1;
-        final LocalDate end = date1.isAfter(date2) ? date1 : date2;
+        final LocalDate earlierStart = earlierDate(collection1.getStartDate(), collection2.getStartDate());
+        final LocalDate laterEnd = laterDate(collection1.getEndDate(), collection2.getEndDate());
 
         final PeopleCollection cloned1 = collection1.clone();
         final PeopleCollection cloned2 = collection2.clone();
 
-        cloned1.setStartDate(start);
-        cloned1.setEndDate(end);
+        cloned1.setStartDate(earlierStart);
+        cloned1.setEndDate(laterEnd);
 
-        for (IPerson person : cloned2) {
+        for (final IPerson person : cloned2)
             cloned1.add(person);
-        }
 
-        for (IPartnership person : cloned2.getPartnerships()) {
-            cloned1.add(person);
-        }
+        for (final IPartnership partnership : cloned2.getPartnerships())
+            cloned1.add(partnership);
 
         return cloned1;
+    }
+
+    private static LocalDate earlierDate(final LocalDate date1, final LocalDate date2) {
+        return date1.isBefore(date2) ? date1 : date2;
+    }
+
+    private static LocalDate laterDate(final LocalDate date1, final LocalDate date2) {
+        return date1.isBefore(date2) ? date2 : date1;
     }
 }

@@ -17,18 +17,13 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
-import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
 import java.io.PrintStream;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.IntStream;
-
-import static uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.PopulationAnalytics.PERCENTAGE_FORMAT;
 
 /**
  * An analytic class to analyse the distribution of marriages.
@@ -38,7 +33,6 @@ import static uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics
 class MarriageAnalytics {
 
     private final IPersonCollection population;
-
     private final PrintStream out;
 
     MarriageAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
@@ -69,9 +63,6 @@ class MarriageAnalytics {
             }
         }
 
-        final int sum = marriageCounts.values().stream().reduce(Integer::sum).orElseThrow();
-
-        for (final Map.Entry<Integer, Integer> entry : marriageCounts.entrySet())
-            out.println("    " + entry.getKey() + ", " + PERCENTAGE_FORMAT.format(entry.getValue() / (double) sum));
+        ChildrenAnalytics.printMap(marriageCounts, out);
     }
 }

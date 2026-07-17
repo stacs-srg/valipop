@@ -65,17 +65,14 @@ public class PeopleCollection extends PersonCollection implements Cloneable, IPe
 
         final PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate(), getDivisionSize(), description);
 
-        for (final IPerson person : males.getPeople()) {
+        for (final IPerson person : males.getPeople())
             clone.add(person);
-        }
 
-        for (final IPerson person : females.getPeople()) {
+        for (final IPerson person : females.getPeople())
             clone.add(person);
-        }
 
-        for (final IPartnership partnership : partnershipIndex.values()) {
+        for (final IPartnership partnership : partnershipIndex.values())
             clone.add(partnership);
-        }
 
         return clone;
     }
@@ -134,23 +131,19 @@ public class PeopleCollection extends PersonCollection implements Cloneable, IPe
     @Override
     public void add(final IPerson person) {
 
-        if (person.getSex() == SexOption.MALE) {
+        if (person.getSex() == SexOption.MALE)
             males.add(person);
-
-        } else {
+        else
             females.add(person);
-        }
     }
 
     @Override
     public void remove(final IPerson person) {
 
-        if (person.getSex() == SexOption.MALE) {
+        if (person.getSex() == SexOption.MALE)
             males.remove(person);
-
-        } else {
+         else
             females.remove(person);
-        }
     }
 
     @Override
@@ -180,13 +173,12 @@ public class PeopleCollection extends PersonCollection implements Cloneable, IPe
     @Override
     public IPerson findPerson(final int id) {
 
-        for (final IPerson person : males.getPeople()) {
+        for (final IPerson person : males.getPeople())
             if (person.getId() == id) return person;
-        }
 
-        for (final IPerson person : females.getPeople()) {
+        for (final IPerson person : females.getPeople())
             if (person.getId() == id) return person;
-        }
+
         return null;
     }
 

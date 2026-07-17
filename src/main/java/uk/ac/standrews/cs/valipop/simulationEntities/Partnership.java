@@ -22,10 +22,10 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateSelector;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.getDateOfNextPostSeparationEvent;
 
@@ -36,20 +36,20 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
  */
 public class Partnership implements IPartnership {
 
-    private static int nextId = 0;
+    private static int nextId;
     private final int id;
     private final IPerson male;
     private final IPerson female;
     private final List<IPerson> children = new ArrayList<>();
 
     private LocalDate partnershipDate;
-    private LocalDate marriageDate = null;
-    private LocalDate separationDate = null;
-    private LocalDate earliestPossibleSeparationDate = null;
+    private LocalDate marriageDate;
+    private LocalDate separationDate;
+    private LocalDate earliestPossibleSeparationDate;
 
     private String marriageLocation;
 
-    private boolean finalised = false;
+    private boolean finalised;
 
     public Partnership(final IPerson male, final IPerson female) {
 
@@ -175,28 +175,23 @@ public class Partnership implements IPartnership {
         final LocalDate maleMovedOnDate = getDateOfNextPostSeparationEvent(male, earliestPossibleSeparationDate);
         final LocalDate femaleMovedOnDate = getDateOfNextPostSeparationEvent(female, earliestPossibleSeparationDate);
 
-        final LocalDate earliestMovedOnDate;
-
-        if (maleMovedOnDate != null) {
-
-            if (femaleMovedOnDate != null) {
-                earliestMovedOnDate = maleMovedOnDate.isBefore( femaleMovedOnDate) ? maleMovedOnDate : femaleMovedOnDate;
-            } else {
-                earliestMovedOnDate = maleMovedOnDate;
-            }
-
-        } else {
-            if (femaleMovedOnDate != null) {
-                earliestMovedOnDate = femaleMovedOnDate;
-
-            } else {
-
-                // pick a date in the next 30 years
-                earliestMovedOnDate = earliestPossibleSeparationDate.plusYears(30);
-            }
-        }
+        final LocalDate earliestMovedOnDate = getEarliestMovedOnDate(maleMovedOnDate, femaleMovedOnDate);
 
         separationDate = new DateSelector(random).selectRandomDate(earliestPossibleSeparationDate, earliestMovedOnDate);
+    }
+
+    private LocalDate getEarliestMovedOnDate(final LocalDate maleMovedOnDate, final LocalDate femaleMovedOnDate) {
+
+        if (maleMovedOnDate != null)
+
+            if (femaleMovedOnDate != null)
+                return maleMovedOnDate.isBefore(femaleMovedOnDate) ? maleMovedOnDate : femaleMovedOnDate;
+             else
+                return maleMovedOnDate;
+
+        else
+            // pick a date in the next 30 years
+            return Objects.requireNonNullElseGet(femaleMovedOnDate, () -> earliestPossibleSeparationDate.plusYears(30));
     }
 
     @Override
@@ -215,7 +210,17 @@ public class Partnership implements IPartnership {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        return o instanceof final Partnership other && other.id == id;
+    }
+
+    @Override
     public void addChildren(final Collection<IPerson> children) {
         this.children.addAll(children);
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }

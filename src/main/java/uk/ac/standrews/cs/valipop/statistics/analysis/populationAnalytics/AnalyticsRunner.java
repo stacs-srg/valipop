@@ -26,7 +26,7 @@ import java.io.PrintStream;
  */
 public class AnalyticsRunner {
 
-    public static void runAnalytics(IPersonCollection population, PrintStream resultsOutput) {
+    public static void runAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
 
         new PopulationAnalytics(population, resultsOutput).printAllAnalytics();
         new ChildrenAnalytics(population, resultsOutput).printAllAnalytics();

@@ -37,8 +37,7 @@ import static uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics
 class DeathAnalytics {
 
     private final IPersonCollection population;
-
-    private PrintStream out;
+    private final PrintStream out;
 
     DeathAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
 
@@ -69,9 +68,12 @@ class DeathAnalytics {
             }
         }
 
-        final int sum = agesAtDeath.values().stream().reduce(Integer::sum).orElseThrow();
+        if (!agesAtDeath.isEmpty()) {
 
-        for (final Map.Entry<Integer, Integer> entry : agesAtDeath.entrySet())
-            out.println("    " + String.format("%3s", entry.getKey()) + ", " + PERCENTAGE_FORMAT.format(entry.getValue() / (double) sum));
+            final int sum = agesAtDeath.values().stream().reduce(Integer::sum).orElseThrow();
+
+            for (final Map.Entry<Integer, Integer> entry : agesAtDeath.entrySet())
+                out.println("    " + String.format("%3s", entry.getKey()) + ", " + PERCENTAGE_FORMAT.format(entry.getValue() / (double) sum));
+        }
     }
 }

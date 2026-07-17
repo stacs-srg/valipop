@@ -31,6 +31,7 @@ import java.util.*;
 public class MaleCollection extends PersonCollection {
 
     private final TreeMap<LocalDate, TreeSet<IPerson>> byYear = new TreeMap<>();
+    private int size;
 
     /**
      * Instantiates a new MaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -45,9 +46,8 @@ public class MaleCollection extends PersonCollection {
 
         super(start, end, divisionSize, description);
 
-        for (LocalDate date = start; !date.isAfter(end); date = date.plus(divisionSize)) {
+        for (LocalDate date = start; !date.isAfter(end); date = date.plus(divisionSize))
             byYear.put(date, new TreeSet<>());
-        }
     }
 
     @Override
@@ -55,9 +55,8 @@ public class MaleCollection extends PersonCollection {
 
         final Collection<IPerson> people = new ArrayList<>();
 
-        for (Collection<IPerson> persons : byYear.values()) {
-            people.addAll(persons);
-        }
+        for (final Collection<IPerson> peopleForYear : byYear.values())
+            people.addAll(peopleForYear);
 
         return people;
     }
@@ -66,37 +65,34 @@ public class MaleCollection extends PersonCollection {
     void addPeople(final Collection<IPerson> people, final LocalDate divisionDate) {
 
         final Collection<IPerson> collection = byYear.get(divisionDate);
-        if (collection != null) {
+
+        if (collection != null)
             people.addAll(collection);
-        }
     }
 
     @Override
-    public void add(IPerson person) {
+    public void add(final IPerson person) {
 
-        final LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
+        final LocalDate divisionDate = getStartOfDivisionContaining(person.getBirthDate());
 
-        if (byYear.containsKey(divisionDate)) {
-            byYear.get(divisionDate).add(person);
+        byYear.putIfAbsent(divisionDate, new TreeSet<>());
 
-        } else {
+        final TreeSet<IPerson> peopleForYear = byYear.get(divisionDate);
+        if (peopleForYear.contains(person))
+            throw new RuntimeException("Collection already contains person: " + person);
 
-            final TreeSet<IPerson> newList = new TreeSet<>();
-            newList.add(person);
-            byYear.put(divisionDate, newList);
-        }
+        peopleForYear.add(person);
 
         size++;
     }
 
     @Override
-    public void remove(IPerson person) {
+    public void remove(final IPerson person) {
 
-        TreeSet<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate()));
+        final TreeSet<IPerson> peopleForYear = byYear.get(getStartOfDivisionContaining(person.getBirthDate()));
 
-        if (people == null || !people.remove(person)) {
+        if (peopleForYear == null || !peopleForYear.remove(person))
             throw new PersonNotFoundException("Specified person not found in data structure");
-        }
 
         size--;
     }
@@ -107,7 +103,7 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public int getNumberOfPeople(LocalDate firstDate, Period timePeriod) {
+    public int getNumberOfPeople(final LocalDate firstDate, final Period timePeriod) {
 
         return getPeopleBornInTimePeriod(firstDate, timePeriod).size();
     }

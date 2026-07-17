@@ -221,7 +221,7 @@ public class OBDModel {
 
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
 
-        try (final PrintStream resultsOutput = new PrintStream(config.getDetailedResultsPath().toFile(), StandardCharsets.UTF_8)) {
+        try (final PrintStream resultsOutput = new PrintStream(config.getDetailedResultsPath().toFile(), EXPORT_CHARSET)) {
 
             AnalyticsRunner.runAnalytics(population.getPeople(config.getSimulationStart(), config.getSimulationEnd(), Period.ofYears(MAXIMUM_AGE_AT_DEATH)), resultsOutput);
         }

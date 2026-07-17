@@ -29,7 +29,7 @@ public class PersonNotFoundException extends RuntimeException {
     /**
      * @param message the message
      */
-    public PersonNotFoundException(String message) {
+    public PersonNotFoundException(final String message) {
         this.message = message;
     }
 

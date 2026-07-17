@@ -38,6 +38,7 @@ import java.util.*;
 public class FemaleCollection extends PersonCollection {
 
     private final Map<LocalDate, Map<Integer, Set<IPerson>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
+    private int size;
 
     /**
      * Instantiates a new FemaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -62,11 +63,9 @@ public class FemaleCollection extends PersonCollection {
 
         final Collection<IPerson> people = new ArrayList<>();
 
-        for (Map<Integer, Set<IPerson>> map : byBirthYearAndNumberOfChildren.values()) {
-            for (Collection<IPerson> collection : map.values()) {
+        for (final Map<Integer, Set<IPerson>> map : byBirthYearAndNumberOfChildren.values())
+            for (final Collection<IPerson> collection : map.values())
                 people.addAll(collection);
-            }
-        }
 
         return people;
     }
@@ -76,15 +75,14 @@ public class FemaleCollection extends PersonCollection {
 
         // TODO confusing naming mismatch between this and next method
 
-        for (Collection<IPerson> collection : getAllPeopleFromDivision(divisionDate).values()) {
+        for (final Collection<IPerson> collection : getAllPeopleFromDivision(divisionDate).values())
             people.addAll(collection);
-        }
     }
 
     @Override
     public void add(final IPerson person) {
 
-        final LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
+        final LocalDate divisionDate = getStartOfDivisionContaining(person.getBirthDate());
         final int numberOfChildren = countChildren(person);
 
         final TreeSet<IPerson> newList = new TreeSet<>();
@@ -95,14 +93,16 @@ public class FemaleCollection extends PersonCollection {
             final Map<Integer, Set<IPerson>> map = byBirthYearAndNumberOfChildren.get(divisionDate);
 
             if (map.containsKey(numberOfChildren)) {
+                if (map.get(numberOfChildren).contains(person))
+                    throw new RuntimeException("Collection already contains person: " + person);
                 map.get(numberOfChildren).add(person);
 
-            } else {
+            } else
                 map.put(numberOfChildren, newList);
-            }
+
         } else {
 
-            Map<Integer, Set<IPerson>> newMap = new TreeMap<>();
+            final Map<Integer, Set<IPerson>> newMap = new TreeMap<>();
             newMap.put(numberOfChildren, newList);
             byBirthYearAndNumberOfChildren.put(divisionDate, newMap);
         }
@@ -113,7 +113,7 @@ public class FemaleCollection extends PersonCollection {
     @Override
     public void remove(final IPerson person) {
 
-        final LocalDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
+        final LocalDate divisionDate = getStartOfDivisionContaining(person.getBirthDate());
         final Map<Integer, Set<IPerson>> familySizeMap = byBirthYearAndNumberOfChildren.get(divisionDate);
         final int numberOfChildren = countChildren(person);
         final Collection<IPerson> people = familySizeMap.get(numberOfChildren);
@@ -173,9 +173,8 @@ public class FemaleCollection extends PersonCollection {
 
             final Map<Integer, Set<IPerson>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
 
-            if (temp != null && MapUtils.getMax(temp.keySet()) > highestBirthOrder) {
+            if (temp != null && MapUtils.getMax(temp.keySet()) > highestBirthOrder)
                 highestBirthOrder = MapUtils.getMax(temp.keySet());
-            }
 
             // move on to the new division date until we've covered the required divisions
             divisionDate = divisionDate.plus(getDivisionSize());
@@ -231,13 +230,12 @@ public class FemaleCollection extends PersonCollection {
         }
     }
 
-    private int countChildren(final IPerson person) {
+    private static int countChildren(final IPerson person) {
 
         int count = 0;
 
-        for (IPartnership partnership : person.getPartnerships()) {
+        for (final IPartnership partnership : person.getPartnerships())
             count += partnership.getChildren().size();
-        }
 
         return count;
     }

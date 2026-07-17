@@ -35,13 +35,10 @@ import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation
  */
 public abstract class PersonCollection implements Iterable<IPerson> {
 
-    // TODO rationalise with PeopleCollection
-
     private LocalDate startDate;
     private LocalDate endDate;
-    private Period divisionSize;
+    private final Period divisionSize;
     protected String description;
-    protected int size = 0;
 
     /**
      * Instantiates a new PersonCollection. The dates specify the earliest and latest expected birth dates of
@@ -316,29 +313,29 @@ public abstract class PersonCollection implements Iterable<IPerson> {
         return Period.between(startDate, date).toTotalMonths() % divisionSize.toTotalMonths() == 0;
     }
 
-    LocalDate resolveDateToCorrectDivisionDate(final LocalDate date) {
+    LocalDate getStartOfDivisionContaining(final LocalDate date) {
 
-        // TODO clarify
+        // TODO rewrite
 
-        final int dM = date.getMonth().getValue();
-        final int dY = date.getYear();
+        final int month = date.getMonth().getValue();
+        final int year = date.getYear();
 
-        final int sM = startDate.getMonth().getValue();
-        final int sY = startDate.getYear();
+        final int simulationStartMonth = startDate.getMonth().getValue();
+        final int simulationStartYear = startDate.getYear();
 
-        // Time unit in months
-        final int tsc = (int) divisionSize.toTotalMonths();
+        final int divisionSizeInMonths = (int) divisionSize.toTotalMonths();
 
-        final int adm = (12 * ((dY - sY) % tsc)) + dM;
+        final int adm = (12 * ((year - simulationStartYear) % divisionSizeInMonths)) + month;
 
-        final int cm = (sM % tsc) + tsc * (int) Math.floor((adm - (sM % tsc)) / tsc);
+        double xx = Math.floor((adm - (simulationStartMonth % divisionSizeInMonths)) / divisionSizeInMonths);
+        final int cm = (simulationStartMonth % divisionSizeInMonths) + divisionSizeInMonths * (int) xx;
 
-        final int absm = cm - 12 * ((dY - sY) % tsc);
+        final int absm = cm - 12 * ((year - simulationStartYear) % divisionSizeInMonths);
 
-        final int iM = 12 + absm - 12 * (int) Math.ceil((absm / 12.0D));
+        final int divisionStartMonth = 12 + absm - 12 * (int) Math.ceil((absm / 12.0D));
 
-        final int iY = dY + (int) Math.ceil(absm / 12.0D) - 1;
+        final int divisionStartYear = year + (int) Math.ceil(absm / 12.0D) - 1;
 
-        return LocalDate.of(iY, iM, 1);
+        return LocalDate.of(divisionStartYear, divisionStartMonth, 1);
     }
 }

@@ -78,10 +78,18 @@ class ChildrenAnalytics {
                     familySizeCounts.put(child_ids.size(), familySizeCounts.getOrDefault(child_ids.size(), 0) + 1);
                 }
 
-        final int sum = familySizeCounts.values().stream().reduce(Integer::sum).orElseThrow();
+        printMap(familySizeCounts, out);
+    }
 
-        for (final Map.Entry<Integer, Integer> entry : familySizeCounts.entrySet())
-            out.println("    " + entry.getKey() + ", " + PERCENTAGE_FORMAT.format(entry.getValue() / (double) sum));
+    static void printMap(final Map<Integer, Integer> map, final PrintStream out) {
+
+        if (!map.isEmpty()) {
+
+            final int sum = map.values().stream().reduce(Integer::sum).orElseThrow();
+
+            for (final Map.Entry<Integer, Integer> entry : map.entrySet())
+                out.println("    " + entry.getKey() + ", " + PERCENTAGE_FORMAT.format(entry.getValue() / (double) sum));
+        }
     }
 
     private void printFertilityRates() {
@@ -108,26 +116,29 @@ class ChildrenAnalytics {
             }
         }
 
-        final int earliestYear = combineKeys(femalesOfChildBearingAgeByYear, birthsByYear).
-            min(Integer::compareTo).
-            orElseThrow();
+        if (!femalesOfChildBearingAgeByYear.isEmpty()) {
 
-        final int latestYear = combineKeys(femalesOfChildBearingAgeByYear, birthsByYear).
-            max(Integer::compareTo).
-            orElseThrow();
+            final int earliestYear = combineKeys(femalesOfChildBearingAgeByYear, birthsByYear).
+                min(Integer::compareTo).
+                orElseThrow();
 
-        for (int year = earliestYear; year <= latestYear; year++) {
+            final int latestYear = combineKeys(femalesOfChildBearingAgeByYear, birthsByYear).
+                max(Integer::compareTo).
+                orElseThrow();
 
-            final int births = birthsByYear.getOrDefault(year, 0);
-            final int femalesOfChildBearingAge = femalesOfChildBearingAgeByYear.getOrDefault(year, 0);
+            for (int year = earliestYear; year <= latestYear; year++) {
 
-            final double fertilityRate = femalesOfChildBearingAge == 0 ? 0 : births / (double) femalesOfChildBearingAge;
+                final int births = birthsByYear.getOrDefault(year, 0);
+                final int femalesOfChildBearingAge = femalesOfChildBearingAgeByYear.getOrDefault(year, 0);
 
-            fertilityRateByYear.put(year, fertilityRate);
+                final double fertilityRate = femalesOfChildBearingAge == 0 ? 0 : births / (double) femalesOfChildBearingAge;
+
+                fertilityRateByYear.put(year, fertilityRate);
+            }
+
+            for (final Map.Entry<Integer, Double> entry : fertilityRateByYear.entrySet())
+                out.println("    " + entry.getKey() + ", " + PERCENTAGE_FORMAT.format(entry.getValue()));
         }
-
-        for (final Map.Entry<Integer, Double> entry : fertilityRateByYear.entrySet())
-            out.println("    " + entry.getKey() + ", " + PERCENTAGE_FORMAT.format(entry.getValue()));
     }
 
     private static Stream<Integer> combineKeys(final Map<Integer, Integer> map1, final Map<Integer, Integer> map2) {

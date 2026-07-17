@@ -23,6 +23,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.population.OBDModel;
+import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
+import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.Population;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Period;
 import java.util.Base64;
 import java.util.List;
 
@@ -38,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
 import static uk.ac.standrews.cs.valipop.population.OBDModel.EXPORT_CHARSET;
+import static uk.ac.standrews.cs.valipop.population.OBDModel.MAXIMUM_AGE_AT_DEATH;
 
 /**
  * These tests check that when various populations are generated, and exported in various formats, then the files contain the expected content.
