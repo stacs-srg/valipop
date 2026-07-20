@@ -58,7 +58,7 @@ public class PopulationExportGEDCOMTest extends PopulationExportTest {
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-//        Arguments.of("1855-2016-initial-1K-gedcom.config")
+        Arguments.of("1855-2016-initial-1K-gedcom.config")
     );
 
     @ParameterizedTest
