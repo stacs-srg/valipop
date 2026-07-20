@@ -194,17 +194,13 @@ public class DistributedFactorSearch {
         return new ModelOutput(maxBirthingAge, summaryRow.toSerialized());
     }
 
-    private static SerializableSummaryRow validateModel(final ModelOutput result) throws PreEmptiveOutOfMemoryWarning, IOException, StatsException {
+    private static SerializableSummaryRow validateModel(final ModelOutput result) throws PreEmptiveOutOfMemoryWarning, IOException {
 
         final Config config = new Config(result.summaryRow.config);
-        final int maxMotherBirthAge = result.age;
-        final int startYear = config.getSimulationStart().getYear();
-        final int endYear = config.getSimulationEnd().getYear();
-
         final SummaryRow summaryRow = new SummaryRow(result.summaryRow);
 
         final ProgramTimer statsTimer = new ProgramTimer();
-        final double score = new ContingencyTableValidator(config.getRunPath(), maxMotherBirthAge, startYear, endYear).getValidationScore();
+        final double score = new ContingencyTableValidator(config).getValidationScore();
 
         summaryRow.setV(score);
         summaryRow.setStatsRunTime(statsTimer.getRunTimeSeconds());

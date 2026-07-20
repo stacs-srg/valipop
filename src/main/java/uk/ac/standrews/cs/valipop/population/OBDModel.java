@@ -19,12 +19,12 @@ package uk.ac.standrews.cs.valipop.population;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.export.PopulationExportFormat;
-import uk.ac.standrews.cs.valipop.export.IPopulationWriter;
-import uk.ac.standrews.cs.valipop.export.PopulationConverter;
-import uk.ac.standrews.cs.valipop.export.gedcom.GEDCOMPopulationWriter;
-import uk.ac.standrews.cs.valipop.export.geojson.GeojsonPopulationWriter;
-import uk.ac.standrews.cs.valipop.export.graphviz.GraphvizPopulationWriter;
+import uk.ac.standrews.cs.valipop.exporting.PopulationExportFormat;
+import uk.ac.standrews.cs.valipop.exporting.IPopulationWriter;
+import uk.ac.standrews.cs.valipop.exporting.PopulationConverter;
+import uk.ac.standrews.cs.valipop.exporting.gedcom.GEDCOMPopulationWriter;
+import uk.ac.standrews.cs.valipop.exporting.geojson.GeojsonPopulationWriter;
+import uk.ac.standrews.cs.valipop.exporting.graphviz.GraphvizPopulationWriter;
 import uk.ac.standrews.cs.valipop.simulationEntities.*;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.AnalyticsRunner;

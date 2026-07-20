@@ -17,7 +17,7 @@
  */
 package uk.ac.standrews.cs.valipop;
 
-import uk.ac.standrews.cs.valipop.export.PopulationExportFormat;
+import uk.ac.standrews.cs.valipop.exporting.PopulationExportFormat;
 import uk.ac.standrews.cs.valipop.population.SerializableConfig;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.utils.InputFileReader;
@@ -112,6 +112,7 @@ public class Config implements Serializable {
     public static final String LOG_FILE_NAME = "log.txt";
     public static final String RECORDS_EXPORT_DIR_NAME = "records";
     public static final String TEMP_DIR_INDICATOR = "!TEMP!";
+    public static final String CONTINGENCY_TABLES_DIR_NAME = "tables";
 
     private static Level logLevel = DEFAULT_LOG_LEVEL;
     public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
@@ -123,7 +124,7 @@ public class Config implements Serializable {
     // ---- Input directory paths ----
 
     // Input directory path
-    private Path varPath;
+    private Path inputDistributionsPath;
 
     // Paths to leaf directories within the input directory
     private Path varOrderedBirthPaths;
@@ -184,6 +185,9 @@ public class Config implements Serializable {
     private boolean binomialSampling = DEFAULT_BINOMIAL_SAMPLING_FLAG;
     private boolean deterministic = DEFAULT_DETERMINISTIC_FLAG;
     private boolean exportContingencyTables = DEFAULT_EXPORT_CONTINGENCY_TABLES_FLAG;
+
+    // TODO add flag for validation
+
     private boolean exportRecords = DEFAULT_EXPORT_RECORDS_FLAG;
     private boolean exportPopulation = DEFAULT_EXPORT_POPULATION_FLAG;
 
@@ -230,7 +234,7 @@ public class Config implements Serializable {
         this.simulationStart = simulationStart;
         this.simulationEnd = simulationEnd;
         this.targetInitialPopulationSize = targetInitialPopulationSize;
-        this.varPath = varPath;
+        this.inputDistributionsPath = varPath;
         this.resultsSavePath = resultsDir;
         this.groupName = groupName;
         this.summaryResultsDirPath = summaryResultsDir;
@@ -238,8 +242,7 @@ public class Config implements Serializable {
         validateOptions();
         setUpFileStructure();
         configureLogging();
-        initialiseVarPaths();
-        setGeographyPath();
+        initialiseInputDistributionPaths();
     }
 
     // Initialise configuration from file
@@ -251,8 +254,8 @@ public class Config implements Serializable {
         validateOptions();
         setUpFileStructure();
         configureLogging();
-        initialiseVarPaths();
-        setGeographyPath();
+        initialiseInputDistributionPaths();
+//        setGeographyPath();
     }
 
     private void setGeographyPath() {
@@ -304,8 +307,8 @@ public class Config implements Serializable {
         return runPath;
     }
 
-    public Path getVarPath() {
-        return varPath;
+    public Path getInputDistributionsPath() {
+        return inputDistributionsPath;
     }
 
     public DirectoryStream<Path> getVarOrderedBirthPaths() {
@@ -553,44 +556,51 @@ public class Config implements Serializable {
         }
     }
 
-    private void initialiseVarPaths() {
+    private void initialiseInputDistributionPaths() {
 
-        final Path birthPath = varPath.resolve(birthSubFile);
-        varOrderedBirthPaths = birthPath.resolve(orderedBirthSubFile);
-        varMultipleBirthPaths = birthPath.resolve(multipleBirthSubFile);
-        varAdulterousBirthPaths = birthPath.resolve(adulterousBirthSubFile);
-        varBirthRatioPaths = birthPath.resolve(birthRatioSubFile);
+        // The path won't be set if this configuration is being created to test validation of pre-generated
+        // contingency tables, rather to run a new simulation.
+        if (inputDistributionsPath != null) {
 
-        final Path deathPath = varPath.resolve(deathSubFile);
-        varMaleLifetablePaths = deathPath.resolve(maleDeathSubFile).resolve(lifetableSubFile);
-        varMaleDeathCausesPaths = deathPath.resolve(maleDeathSubFile).resolve(deathCauseSubFile);
-        varFemaleLifetablePaths = deathPath.resolve(femaleDeathSubFile).resolve(lifetableSubFile);
-        varFemaleDeathCausesPaths = deathPath.resolve(femaleDeathSubFile).resolve(deathCauseSubFile);
+            final Path birthPath = inputDistributionsPath.resolve(birthSubFile);
+            varOrderedBirthPaths = birthPath.resolve(orderedBirthSubFile);
+            varMultipleBirthPaths = birthPath.resolve(multipleBirthSubFile);
+            varAdulterousBirthPaths = birthPath.resolve(adulterousBirthSubFile);
+            varBirthRatioPaths = birthPath.resolve(birthRatioSubFile);
 
-        final Path relationshipsPath = varPath.resolve(relationshipsSubFile);
-        varPartneringPaths = relationshipsPath.resolve(partneringSubFile);
-        varSeparationPaths = relationshipsPath.resolve(separationSubFile);
-        varMarriagePaths = relationshipsPath.resolve(marriageSubFile);
+            final Path deathPath = inputDistributionsPath.resolve(deathSubFile);
+            varMaleLifetablePaths = deathPath.resolve(maleDeathSubFile).resolve(lifetableSubFile);
+            varMaleDeathCausesPaths = deathPath.resolve(maleDeathSubFile).resolve(deathCauseSubFile);
+            varFemaleLifetablePaths = deathPath.resolve(femaleDeathSubFile).resolve(lifetableSubFile);
+            varFemaleDeathCausesPaths = deathPath.resolve(femaleDeathSubFile).resolve(deathCauseSubFile);
 
-        final Path annotationsPath = varPath.resolve(annotationsSubFile);
-        varMaleForenamePaths = annotationsPath.resolve(maleForenameSubFile);
-        varFemaleForenamePaths = annotationsPath.resolve(femaleForenameSubFile);
+            final Path relationshipsPath = inputDistributionsPath.resolve(relationshipsSubFile);
+            varPartneringPaths = relationshipsPath.resolve(partneringSubFile);
+            varSeparationPaths = relationshipsPath.resolve(separationSubFile);
+            varMarriagePaths = relationshipsPath.resolve(marriageSubFile);
 
-        varMigrantMaleForenamePaths = annotationsPath.resolve(maleMigrantForenameSubFile);
-        varMigrantFemaleForenamePaths = annotationsPath.resolve(femaleMigrantForenameSubFile);
+            final Path annotationsPath = inputDistributionsPath.resolve(annotationsSubFile);
+            varMaleForenamePaths = annotationsPath.resolve(maleForenameSubFile);
+            varFemaleForenamePaths = annotationsPath.resolve(femaleForenameSubFile);
 
-        varSurnamePaths = annotationsPath.resolve(surnameSubFile);
-        varMigrantSurnamePaths = annotationsPath.resolve(migrantSurnameSubFile);
+            varMigrantMaleForenamePaths = annotationsPath.resolve(maleMigrantForenameSubFile);
+            varMigrantFemaleForenamePaths = annotationsPath.resolve(femaleMigrantForenameSubFile);
 
-        varGeographyPaths = annotationsPath.resolve(geographySubFile);
+            varSurnamePaths = annotationsPath.resolve(surnameSubFile);
+            varMigrantSurnamePaths = annotationsPath.resolve(migrantSurnameSubFile);
 
-        varMigrationRatePaths = annotationsPath.resolve(migrationRateSubFile);
+            varGeographyPaths = annotationsPath.resolve(geographySubFile);
 
-        varMaleOccupationPaths = annotationsPath.resolve(maleOccupationSubFile);
-        varFemaleOccupationPaths = annotationsPath.resolve(femaleOccupationSubFile);
+            varMigrationRatePaths = annotationsPath.resolve(migrationRateSubFile);
 
-        varMaleOccupationChangePaths = annotationsPath.resolve(maleOccupationChangeSubFile);
-        varFemaleOccupationChangePaths = annotationsPath.resolve(femaleOccupationChangeSubFile);
+            varMaleOccupationPaths = annotationsPath.resolve(maleOccupationSubFile);
+            varFemaleOccupationPaths = annotationsPath.resolve(femaleOccupationSubFile);
+
+            varMaleOccupationChangePaths = annotationsPath.resolve(maleOccupationChangeSubFile);
+            varFemaleOccupationChangePaths = annotationsPath.resolve(femaleOccupationChangeSubFile);
+
+            setGeographyPath();
+        }
     }
 
     public static void createFileIfDoesNotExist(final Path path) throws IOException {
@@ -642,7 +652,7 @@ public class Config implements Serializable {
 
         processors = new HashMap<>();
 
-        processors.put("input_distributions_path", value -> varPath = Paths.get(value));
+        processors.put("input_distributions_path", value -> inputDistributionsPath = Paths.get(value));
         processors.put("results_save_location", value -> {
             try {
                 resultsSavePath = value.equals(TEMP_DIR_INDICATOR) ? Files.createTempDirectory("valipop-results") : Paths.get(value);
@@ -789,31 +799,31 @@ public class Config implements Serializable {
 
     private void validateOptions() {
 
-        if (initialisationStart == null)
-            throw new IllegalArgumentException("`initialisation_start` is required");
-
-        if (simulationStart == null)
-            throw new IllegalArgumentException("`simulation_start` is required");
-
-        if (simulationEnd == null)
-            throw new IllegalArgumentException("`simulation_end` is required");
-
-        if (targetInitialPopulationSize == null)
-            throw new IllegalArgumentException("`target_initial_population_size` is required");
-
-        if (varPath == null)
-            throw new IllegalArgumentException("`input_distributions_path` is required");
-
-        // Ensure ordering of dates
-        if (initialisationStart.isAfter(simulationStart) )
-            throw new IllegalArgumentException("`initialisation_start` cannot be after `simulation_start`");
-
-        if (simulationStart.isAfter(simulationEnd))
-            throw new IllegalArgumentException("`simulation_start` cannot be after `simulation_end`");
-
-        // This allows the simulation enough time to burn in
-        if (simulationStart.getYear() - initialisationStart.getYear() < 150)
-            throw new IllegalArgumentException("`initialisation_start` must be at least 150 years before `simulation_start`");
+//        if (initialisationStart == null)
+//            throw new IllegalArgumentException("`initialisation_start` is required");
+//
+//        if (simulationStart == null)
+//            throw new IllegalArgumentException("`simulation_start` is required");
+//
+//        if (simulationEnd == null)
+//            throw new IllegalArgumentException("`simulation_end` is required");
+//
+//        if (targetInitialPopulationSize == null)
+//            throw new IllegalArgumentException("`target_initial_population_size` is required");
+//
+//        if (varPath == null)
+//            throw new IllegalArgumentException("`input_distributions_path` is required");
+//
+//        // Ensure ordering of dates
+//        if (initialisationStart.isAfter(simulationStart) )
+//            throw new IllegalArgumentException("`initialisation_start` cannot be after `simulation_start`");
+//
+//        if (simulationStart.isAfter(simulationEnd))
+//            throw new IllegalArgumentException("`simulation_start` cannot be after `simulation_end`");
+//
+//        // This allows the simulation enough time to burn in
+//        if (simulationStart.getYear() - initialisationStart.getYear() < 150)
+//            throw new IllegalArgumentException("`initialisation_start` must be at least 150 years before `simulation_start`");
     }
 
     private void setUpFileStructure() throws IOException {
@@ -825,7 +835,7 @@ public class Config implements Serializable {
         detailedResultsPath = runPath.resolve("statistics.txt");
         recordsPath = runPath.resolve(RECORDS_EXPORT_DIR_NAME);
         populationExportPath = runPath.resolve(POPULATION_EXPORT_DIR_NAME);
-        contingencyTablesPath = runPath.resolve("tables");
+        contingencyTablesPath = runPath.resolve(CONTINGENCY_TABLES_DIR_NAME);
         final Path log = runPath.resolve("log");
 
         mkDirs(resultsSavePath);
@@ -893,7 +903,7 @@ public class Config implements Serializable {
 
     public SerializableConfig toSerialized() {
         return new SerializableConfig(
-            varPath.toString(),
+            inputDistributionsPath.toString(),
             varOrderedBirthPaths.toString(),
             varMaleLifetablePaths.toString(),
             varMaleDeathCausesPaths.toString(),
@@ -955,7 +965,7 @@ public class Config implements Serializable {
     }
 
     public Config(final SerializableConfig config) {
-        this.varPath                          =Path.of(config.varPath);
+        this.inputDistributionsPath =Path.of(config.varPath);
         this.varOrderedBirthPaths             =Path.of(config.varOrderedBirthPaths);
         this.varMaleLifetablePaths            =Path.of(config.varMaleLifetablePaths);
         this.varMaleDeathCausesPaths          =Path.of(config.varMaleDeathCausesPaths);

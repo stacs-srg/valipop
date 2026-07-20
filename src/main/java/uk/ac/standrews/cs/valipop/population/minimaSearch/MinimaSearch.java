@@ -128,7 +128,7 @@ public class MinimaSearch {
                         model.analyseAndOutputPopulation(false);
 
                         final int maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
-                        double v = getScore(minimiseFor, maxBirthingAge, config);
+                        double v = getScore(minimiseFor, config);
 
                         // Failed population run may get a NaN from the V calc
                         if (Double.isNaN(v)) {
@@ -171,14 +171,11 @@ public class MinimaSearch {
         }
     }
 
-    public static double getScore(final Minimise minimiseFor, final int maxBirthingAge, final Config config) throws IOException, StatsException {
+    public static double getScore(final Minimise minimiseFor, final Config config) throws IOException, StatsException {
 
-        if (Objects.requireNonNull(minimiseFor) == Minimise.GEEGLM) {
-            final int startYear = config.getSimulationStart().getYear();
-            final int endYear = config.getSimulationEnd().getYear();
+        if (Objects.requireNonNull(minimiseFor) == Minimise.GEEGLM)
+            return new ContingencyTableValidator(config).getValidationScore();
 
-            return new ContingencyTableValidator(config.getRunPath(), maxBirthingAge, startYear, endYear).getValidationScore();
-        }
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
     }
 

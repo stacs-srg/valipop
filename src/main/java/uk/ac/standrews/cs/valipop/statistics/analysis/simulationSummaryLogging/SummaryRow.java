@@ -97,7 +97,7 @@ public class SummaryRow {
 
         this.config = config;
         this.resultsDirectory = config.getRunPath();
-        this.inputsDirectory = config.getVarPath();
+        this.inputsDirectory = config.getInputDistributionsPath();
         this.startTime = config.getSimulationExecutionStartTime();
         this.reason = config.getGroupName();
         this.codeVersion = codeVersion;

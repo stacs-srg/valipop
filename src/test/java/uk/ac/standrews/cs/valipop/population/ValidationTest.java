@@ -25,14 +25,21 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.ContingencyTableValidator;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static uk.ac.standrews.cs.valipop.Config.CONTINGENCY_TABLES_DIR_NAME;
 
 /**
+ *  These tests check that when statistical validation is run against various pre-generated contingency tables, then
+ *  the validation scores are as expected.
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  * @author Daniel Brathagen (dbrathagen@gmail.com)
+ * @author Graham Kirby
  */
 public class ValidationTest {
 
@@ -43,44 +50,47 @@ public class ValidationTest {
 
     @SuppressWarnings("unused")
     private static final List<Arguments> configurations = List.of(
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test4"), 59.0)
+        Arguments.of("case1/case1.config")
     );
 
     @SuppressWarnings("unused")
     private static final List<Arguments> slowConfigurations = List.of(
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test1"), 3.0),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test2"), 0.0),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test3"), 64.0),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test5"), 25.0),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test6"), 0.0),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test7"), 65.0),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("test8"), 14.0)
+        Arguments.of("case2/case2.config"),
+        Arguments.of("case3/case3.config"),
+        Arguments.of("case4/case4.config"),
+        Arguments.of("case5/case5.config"),
+        Arguments.of("case6/case6.config"),
+        Arguments.of("case7/case7.config"),
+        Arguments.of("case8/case8.config")
     );
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void runFastValidation(final Path workingDirectory, final double expectedScore) throws IOException {
+    public void validationProducesExpectedScore(final String configPath) throws IOException {
 
-        runValidation(workingDirectory, expectedScore);
+        checkValidation(configPath);
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void runSlowValidation(final Path workingDirectory, final double expectedScore) throws IOException {
+    public void validationProducesExpectedScoreSlow(final String configPath) throws IOException {
 
-        runValidation(workingDirectory, expectedScore);
+        checkValidation(configPath);
     }
 
-    private static void runValidation(final Path workingDirectory, final double expectedScore) throws IOException {
+    private static void checkValidation(final String configPath) throws IOException {
 
-        final Config config = new Config(workingDirectory.resolve("config.txt"));
-        final int startYear = config.getSimulationStart().getYear();
-        final int endYear = config.getSimulationEnd().getYear();
+        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+        final double expectedScore = Double.parseDouble(config.get("expected_validation_score"));
 
-        final ContingencyTableValidator validator = new ContingencyTableValidator(workingDirectory, 55, startYear, endYear);
-        final double score = validator.getValidationScore();
+        try (final Stream<Path> paths = Files.list(TEST_RESOURCE_DIR.resolve(configPath).getParent().resolve(CONTINGENCY_TABLES_DIR_NAME)).sorted()) {
 
+            for (final Path contingency_table_path : paths.toList())
+                Files.copy(contingency_table_path, config.getRunPath().resolve(CONTINGENCY_TABLES_DIR_NAME).resolve(contingency_table_path.getFileName()));
+        }
+
+        final double score = new ContingencyTableValidator(config).getValidationScore();
         assertEquals(expectedScore, score, DELTA);
     }
 }

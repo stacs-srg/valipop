@@ -18,6 +18,7 @@
 package uk.ac.standrews.cs.valipop.utils;
 
 import org.apache.commons.io.IOUtils;
+import uk.ac.standrews.cs.valipop.Config;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static uk.ac.standrews.cs.valipop.Config.CONTINGENCY_TABLES_DIR_NAME;
 
 /**
  * For extracting, invoking, and reading the results of the R analysis scripts.
@@ -37,7 +40,6 @@ public class ContingencyTableValidator {
 
     // TODO add option generate contingency tables from config file if not already present.
 
-    private static final String CONTINGENCY_TABLES_DIRECTORY_NAME = "tables";
     private static final String ANALYSIS_SCRIPT_FILENAME = "analysis.R";
     private static final String ANALYSIS_OUTPUT_FILENAME = "analysis.out";
 
@@ -50,16 +52,21 @@ public class ContingencyTableValidator {
     private static final boolean DELETE_ANALYSIS_OUTPUT_FILE = true;
 
     private final Path workingDirectoryPath;
-    private final int maxMotherBirthAge;
     private final int startYear;
     private final int endYear;
 
-    public ContingencyTableValidator(final Path workingDirectoryPath, final int maxMotherBirthAge, final int startYear, final int endYear) {
+    public ContingencyTableValidator(final Path workingDirectoryPath, final int startYear, final int endYear) {
 
         this.workingDirectoryPath = workingDirectoryPath;
-        this.maxMotherBirthAge = maxMotherBirthAge;
         this.startYear = startYear;
         this.endYear = endYear;
+    }
+
+    public ContingencyTableValidator(final Config config) {
+
+        this.workingDirectoryPath = config.getRunPath();
+        startYear = config.getSimulationStart().getYear();
+        endYear = config.getSimulationEnd().getYear();
     }
 
     public synchronized double getValidationScore() throws IOException {
@@ -68,12 +75,12 @@ public class ContingencyTableValidator {
 
         final Path analysisScriptSource = ANALYSIS_SCRIPT_SOURCE_DIRECTORY.resolve(ANALYSIS_SCRIPT_FILENAME);
         final Path analysisScriptTempCopy = workingDirectoryPath.resolve(ANALYSIS_SCRIPT_FILENAME);
-        final Path contingencyTablesDirectoryPath = workingDirectoryPath.resolve(CONTINGENCY_TABLES_DIRECTORY_NAME);
+        final Path contingencyTablesDirectoryPath = workingDirectoryPath.resolve(CONTINGENCY_TABLES_DIR_NAME);
         final Path analysisOutputFile = workingDirectoryPath.resolve(ANALYSIS_OUTPUT_FILENAME);
 
         makeTempCopyOfRScript(analysisScriptSource, analysisScriptTempCopy);
 
-        final Process process = runRScript(contingencyTablesDirectoryPath, analysisScriptTempCopy, maxMotherBirthAge, startYear, endYear);
+        final Process process = runRScript(contingencyTablesDirectoryPath, analysisScriptTempCopy, startYear, endYear);
         final double score = getRScriptResult(process, analysisOutputFile);
 
         try {
@@ -101,7 +108,7 @@ public class ContingencyTableValidator {
     }
 
     /**
-     * Make a temporary copy of the R analysis script in the local directory. Needed in the case of running from
+     * Makes a temporary copy of the R analysis script in the local directory. Needed in the case of running from
      * a jar, and harmless otherwise.
      */
     private static void makeTempCopyOfRScript(final Path analysisScriptSource, final Path analysisScriptTempCopy) throws IOException {
@@ -120,13 +127,11 @@ public class ContingencyTableValidator {
      * 
      * @param runDirPath the path of the current run directory
      * @param rScriptPath the path of the R analysis script
-     * @param maxMotherBirthAge the maximum birthing age of the population model
-     * 
      * @return the executing process
      */
-    private static Process runRScript(final Path runDirPath, final Path rScriptPath, final int maxMotherBirthAge, final int startYear, final int endYear) throws IOException {
+    private static Process runRScript(final Path runDirPath, final Path rScriptPath, final int startYear, final int endYear) throws IOException {
 
-        final String[] command = { "Rscript", rScriptPath.toString(), runDirPath.toAbsolutePath().toString(), String.valueOf(maxMotherBirthAge), String.valueOf(startYear), String.valueOf(endYear)};
+        final String[] command = { "Rscript", rScriptPath.toString(), runDirPath.toAbsolutePath().toString(), String.valueOf(startYear), String.valueOf(endYear)};
 
         final ProcessBuilder builder = new ProcessBuilder(command);
         return builder.start();
@@ -147,7 +152,6 @@ public class ContingencyTableValidator {
         // The file the output of the R script is written to
         final File outputFile = new File(outputPath.toString());
         final FileWriter outputFileWriter = new FileWriter(outputFile, false);
-        outputFile.createNewFile();
 
         // Filter relevant lines, calculate v per line and sum together
         final int v = stdout.lines()

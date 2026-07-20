@@ -25,7 +25,6 @@ import uk.ac.standrews.cs.valipop.utils.ContingencyTableValidator;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Year;
 
 /**
  * Command line entry point to simulate a population model and analysis.
@@ -45,7 +44,7 @@ public class CL_OBDModel {
         }
     }
 
-    public static void runOBDModel(final Path pathToConfigFile) throws IOException, StatsException {
+    public static void runOBDModel(final Path pathToConfigFile) throws IOException {
 
         final Config config = new Config(pathToConfigFile);
         System.out.println("Running simulation with " + pathToConfigFile.toAbsolutePath());
@@ -53,6 +52,8 @@ public class CL_OBDModel {
         final OBDModel model = new OBDModel(config);
         model.runSimulation();
         model.analyseAndOutputPopulation(false);
+
+        // TODO separate contingency table generation from validation
 
         if (config.shouldGenerateContingencyTables())
             performAnalysis(model, config);
@@ -64,11 +65,7 @@ public class CL_OBDModel {
 
         final ProgramTimer statsTimer = new ProgramTimer();
 
-        final int maxMotherBirthAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(Year.of(0)).getLargestLabel().getValue();
-        final int startYear = config.getSimulationStart().getYear();
-        final int endYear = config.getSimulationEnd().getYear();
-
-        final double score = new ContingencyTableValidator(config.getRunPath(), maxMotherBirthAge, startYear, endYear).getValidationScore();
+        final double score = new ContingencyTableValidator(config).getValidationScore();
 
         System.out.println("Validation score: " + score + ")");
 

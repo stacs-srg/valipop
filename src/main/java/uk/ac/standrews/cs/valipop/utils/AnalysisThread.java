@@ -61,7 +61,7 @@ public class AnalysisThread extends Thread {
 
         double v = 99999;
         try {
-            v = MinimaSearch.getScore(GEEGLM, maxBirthingAge, config);
+            v = MinimaSearch.getScore(GEEGLM, config);
         } catch (final IOException | StatsException e) {
 
             System.err.println("Error in AnalysisThread");

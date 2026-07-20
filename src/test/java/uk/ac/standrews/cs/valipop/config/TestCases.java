@@ -25,7 +25,6 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -73,7 +72,7 @@ public abstract class TestCases {
         return initialPopulationSizes.stream().map(TestCases::makeTestConfiguration).toList();
     }
 
-    private static Arguments makeTestConfiguration(final int initialPopulationSize) {
+    public static Arguments makeTestConfiguration(final int initialPopulationSize) {
 
         try {
             return Arguments.of(generatePopulation(initialPopulationSize));

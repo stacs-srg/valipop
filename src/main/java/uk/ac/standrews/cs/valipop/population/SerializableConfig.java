@@ -22,7 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
-import uk.ac.standrews.cs.valipop.export.PopulationExportFormat;
+import uk.ac.standrews.cs.valipop.exporting.PopulationExportFormat;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordExportFormat;
 
 public class SerializableConfig implements Serializable {

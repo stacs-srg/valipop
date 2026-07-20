@@ -22,11 +22,7 @@ death_sat_geeglm <- function(in_data) {
   # "ar2" not supported in geeglm ?
   return(
     tryCatch(
-      expr = run_geeglm(
-        freq ~ Date * Age * Sex * Died * Source,
-        in_data,
-        constr = "ar1"
-      ),
+      expr = run_geeglm(freq ~ Date * Age * Sex * Died * Source, in_data),
       error = function(e) {
         warning("Population size too small for death analysis")
       }
@@ -48,7 +44,7 @@ ob_sat_geeglm <- function(in_data) {
 mb_sat_geeglm <- function(in_data) {
   return(
     tryCatch(
-      expr = run_geeglm(freq ~ Date * Age * NCIY, in_data, constr = "ar1"),
+      expr = run_geeglm(freq ~ Date * Age * NCIY, in_data),
       error = function(e) {
         warning("Population size too small for multiple birth analysis")
       }
@@ -67,12 +63,12 @@ part_sat_geeglm <- function(in_data) {
   )
 }
 
-run_geeglm <- function(formula, in_data, constr = "ar1") {
+run_geeglm <- function(formula, in_data, correlation = "ar1") {
   mod <- geeglm(
     formula,
     id = idvar, # nolint: object_usage_linter.
     data = in_data,
-    corstr = constr
+    corstr = correlation
   )
 
   return(mod)
@@ -86,40 +82,39 @@ read_in_data <- function(path) {
   return(data)
 }
 
-clean_data <- function(dirty_data, round = TRUE, start_year, end_year) {
-  data <- dirty_data
-  if (round) {
-    data <- dirty_data[which(dirty_data$freq > 0.5), ]
-    data$freq <- round(data$freq)
-  }
+clean_data <- function(dirty_data, start_year, end_year) {
+
+  data <- dirty_data[which(dirty_data$freq > 0.5), ]
+  data$freq <- round(data$freq)
+
   data <- data[which(data$Date < end_year), ]
   data <- data[which(data$Date > start_year), ]
 
   return(data)
 }
 
-clean_death_data <- function(dirty_data, round = TRUE, start_year, end_year) {
-  return(clean_data(dirty_data, round, start_year = start_year, end_year = end_year))
+clean_death_data <- function(dirty_data, start_year, end_year) {
+
+  return(clean_data(dirty_data, start_year = start_year, end_year = end_year))
 }
 
-# TODO Why is max mother's age a parameter but not minimum?
-# TODO Why ignore such outliers in the real data?
-clean_birth_data <- function(dirty_data, max_birthing_age, round = TRUE, start_year, end_year) {
-  data <- clean_data(dirty_data, round, start_year = start_year, end_year = end_year)
-  data <- data[which(data$Age >= 15), ]
-  data <- data[which(data$Age <= max_birthing_age), ]
+clean_birth_data <- function(dirty_data, start_year, end_year) {
+
+  data <- clean_data(dirty_data, start_year = start_year, end_year = end_year)
   return(data)
 }
 
-clean_multiple_birth_data <- function(dirty_data, max_birthing_age, round = TRUE, start_year, end_year)  {
-  clean_data <- clean_birth_data(dirty_data, max_birthing_age, round, start_year = start_year, end_year = end_year)
+clean_multiple_birth_data <- function(dirty_data, start_year, end_year)  {
+
+  clean_data <- clean_birth_data(dirty_data, start_year = start_year, end_year = end_year)
   clean_data <- clean_data[which(clean_data$NCIY != "0"), ]
 
   return(clean_data)
 }
 
-clean_partnership_data <- function(dirty_data, round = TRUE, start_year, end_year) {
-  data <- clean_data(dirty_data, round = round, start_year = start_year, end_year = end_year)
+clean_partnership_data <- function(dirty_data, start_year, end_year) {
+
+  data <- clean_data(dirty_data, start_year = start_year, end_year = end_year)
   data <- data[which(data$PartnerAge != "na"), ]
   data$PartnerAge <- droplevels(factor(data$PartnerAge))
   return(data)
@@ -319,9 +314,8 @@ bin2dec <- function(binaryvector) {
 ############################################################################################
 
 run_dir_path <- commandArgs(TRUE)[1]
-max_mother_birth_age <- as.integer(commandArgs(TRUE)[2])
-start_year <- as.integer(commandArgs(TRUE)[3])
-end_year <- as.integer(commandArgs(TRUE)[4])
+start_year <- as.integer(commandArgs(TRUE)[2])
+end_year <- as.integer(commandArgs(TRUE)[3])
 
 death_data <- clean_death_data(
   read_in_data(paste(run_dir_path, "/death-contingency-table.csv", sep = "")),
@@ -331,22 +325,18 @@ death_data <- clean_death_data(
 
 multiple_birth_data <- clean_multiple_birth_data(
   read_in_data(paste(run_dir_path, "/multiple-birth-contingency-table.csv", sep = "")),
-  max_mother_birth_age,
-  round = TRUE,
   start_year = start_year,
   end_year = end_year
 )
 
 birth_data <- clean_birth_data(
   read_in_data(paste(run_dir_path, "/birth-contingency-table.csv", sep = "")),
-  max_mother_birth_age,
   start_year = start_year,
   end_year = end_year
 )
 
 partnership_data <- clean_partnership_data(
   read_in_data(paste(run_dir_path, "/partnership-contingency-table.csv", sep = "")),
-  round = TRUE,
   start_year = start_year,
   end_year = end_year
 )
