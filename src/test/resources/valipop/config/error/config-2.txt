@@ -1,7 +1,0 @@
-# Config 2 - Misorderd dates 2
-
-initialisation_start = 1687-01-01
-simulation_start = 1995-01-01
-simulation_end = 1973-01-01
-target_initial_population_size = 10000
-input_distributions_path = src/test/resources/valipop/distributions

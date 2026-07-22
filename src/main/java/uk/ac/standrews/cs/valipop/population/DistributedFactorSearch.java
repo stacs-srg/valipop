@@ -171,7 +171,7 @@ public class DistributedFactorSearch {
 
         final Config config = new Config(i.initialisation_start, i.simulation_start, i.simulation_end, i.size, Paths.get(i.dataFiles), Paths.get(i.resultLocation), i.runPurpose, Paths.get(i.summaryResultsLocation));
 
-        config.setCTtreePrecision(i.precision);
+        config.setContingencyTablePrecision(i.precision);
         config.setSetupBirthRate(i.initialisation_birth_rate);
         config.setSetupDeathRate(i.initialisation_death_rate);
         config.setRecoveryFactor(i.rf);

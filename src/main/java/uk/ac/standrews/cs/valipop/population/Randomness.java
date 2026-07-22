@@ -22,7 +22,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 public class Randomness {
 
-    private static RandomGenerator randomGenerator = null;
+    private static RandomGenerator randomGenerator;
 
     public synchronized static RandomGenerator getRandomGenerator() {
 

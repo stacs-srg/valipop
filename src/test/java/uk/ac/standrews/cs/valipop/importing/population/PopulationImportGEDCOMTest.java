@@ -20,9 +20,12 @@ package uk.ac.standrews.cs.valipop.importing.population;
 import org.junit.jupiter.params.provider.Arguments;
 import uk.ac.standrews.cs.valipop.exporting.gedcom.GEDCOMPopulationAdapter;
 import uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -33,7 +36,7 @@ import java.util.List;
  */
 public class PopulationImportGEDCOMTest extends PopulationPropertiesTest {
 
-    public static final String TEST_DIRECTORY_PATH_STRING = "src/test/resources/valipop/";
+    private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/importing/population");
 
     // For future ValiPop development, see also:
     // https://web.archive.org/web/20231029182316/https://gedcomassessment.com/en/index.htm
@@ -42,29 +45,72 @@ public class PopulationImportGEDCOMTest extends PopulationPropertiesTest {
     //
     // This requires more complex GEDCOM processing than currently performed by ValiPop.
 
-    public static final List<String> GEDCOM_TEST_CASES = List.of("kennedy.ged");
+    private static final List<Arguments> configurations = List.of(
+        Arguments.of(loadPopulationFromGEDCOM("kennedy.ged"))
+    );
 
-    PopulationImportGEDCOMTest(final IPersonCollection population) {
+    private static final List<Arguments> slowConfigurations = List.of(
+        Arguments.of(createDummyPopulation())
+    );
 
-//        super(population);
-    }
-
-    static List<Arguments> getGEDCOMTestCases()  {
-
-        return GEDCOM_TEST_CASES.stream().
-            map(testCaseFileName -> Arguments.of(loadPopulation(testCaseFileName))).
-            toList();
-    }
-
-    private static IPersonCollection loadPopulation(final String testCaseFileName) {
+    private static IPersonCollection loadPopulationFromGEDCOM(final String fileName) {
 
         try {
-            final Path gedcom_file = Path.of(TEST_DIRECTORY_PATH_STRING, "gedcom", testCaseFileName);
+            final Path gedcom_file = TEST_RESOURCE_DIR.resolve(fileName);
 
             return new GEDCOMPopulationAdapter(gedcom_file);
         }
         catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static IPersonCollection createDummyPopulation() {
+
+        return new IPersonCollection() {
+            @Override
+            public Iterable<IPerson> getPeople() {
+                return List.of();
+            }
+
+            @Override
+            public Iterable<IPartnership> getPartnerships() {
+                return List.of();
+            }
+
+            @Override
+            public IPerson findPerson(final int id) {
+                return null;
+            }
+
+            @Override
+            public IPartnership findPartnership(final int id) {
+                return null;
+            }
+
+            @Override
+            public int getNumberOfPeople() {
+                return 0;
+            }
+
+            @Override
+            public int getNumberOfPartnerships() {
+                return 0;
+            }
+
+            @Override
+            public LocalDate getStartDate() {
+                return null;
+            }
+
+            @Override
+            public LocalDate getEndDate() {
+                return null;
+            }
+
+            @Override
+            public void setDescription(final String description) {
+            }
+        };
     }
 }

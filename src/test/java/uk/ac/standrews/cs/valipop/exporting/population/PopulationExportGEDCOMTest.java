@@ -137,7 +137,6 @@ public class PopulationExportGEDCOMTest extends PopulationExportTest {
         final Path populationExportDirPath = config.getRunPath().resolve(POPULATION_EXPORT_DIR_NAME);
         final Path exportedFilePath = populationExportDirPath.resolve("population.ged");
 
-
         final IPersonCollection population = model.getPopulation().getPeople();
         final IPersonCollection imported = new GEDCOMPopulationAdapter(exportedFilePath);
 

@@ -48,13 +48,6 @@ public class PopulationPropertiesTest {
     private static final int MAX_GESTATION_IN_DAYS = 300;
     private static final int MINIMUM_AGE_AT_MARRIAGE = 14;
 
-//    private final IPersonCollection population;
-
-//    protected PopulationPropertiesTest(final IPersonCollection population) {
-//
-//        this.population = population;
-//    }
-
     private static final List<Arguments> configurations = List.of(
         TestCases.makeTestConfiguration(200),
         TestCases.makeTestConfiguration(300)

@@ -34,33 +34,30 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class InvalidConfigurationTest {
 
-    private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/config/error");
+    private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/config/validation");
 
-    private static List<Arguments> configurations = List.of(
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-1.txt"), "simulation_start" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-2.txt"), "simulation_end" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-3.txt"), "initialisation_start" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-4.txt"), "target_initial_population_size" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-5.txt"), "target_initial_population_size" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-6.txt"), "simulation_time_step" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-7.txt"), "recovery_factor" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-8.txt"), "over_sized_geography_factor" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-9.txt"), "record_export_format" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-10.txt"), "population_export_format" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-11.txt"), "initialisation_start" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-12.txt"), "simulation_start" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-13.txt"), "simulation_end"),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-14.txt"), "target_initial_population_size" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-15.txt"), "input_distributions_path" ),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("config-16.txt"), "Illegal line" ));
+    private static final List<Arguments> configurations = List.of(
+        Arguments.of("init-start-after-simulation-start.config", "simulation_start"),
+        Arguments.of("simulation-start-after-end.config", "simulation_end"),
+        Arguments.of("invalid-init-date.config", "initialisation_start"),
+        Arguments.of("invalid-target-population-size.config", "target_initial_population_size"),
+        Arguments.of("negative-target-population-size.config", "target_initial_population_size"),
+        Arguments.of("invalid-time-step.config", "simulation_time_step"),
+        Arguments.of("invalid-recovery-factor.config", "recovery_factor"),
+        Arguments.of("invalid-geography-factor.config", "over_sized_geography_factor"),
+        Arguments.of("invalid-record-export-format.config", "record_export_format"),
+        Arguments.of("invalid-population-export-format.config", "population_export_format"),
+        Arguments.of("missing-simulation-start.config", "simulation_start"),
+        Arguments.of("missing-simulation-end.config", "simulation_end"),
+        Arguments.of("invalid-config.config", "Illegal line")
+    );
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void shouldThrowIllegalArgument
-        (final Path configPath, final String errorOption) {
+    public void shouldThrowIllegalArgument(final String configPath, final String errorMessage) {
 
-        final Exception e = assertThrows(IllegalArgumentException.class, () -> new Config(configPath));
+        final Exception e = assertThrows(IllegalArgumentException.class, () -> new Config(TEST_RESOURCE_DIR.resolve(configPath)));
 
-        assertTrue(e.getMessage().contains(errorOption));
+        assertTrue(e.getMessage().contains(errorMessage));
     }
 }

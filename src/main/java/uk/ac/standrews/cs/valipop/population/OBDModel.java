@@ -18,6 +18,7 @@
 package uk.ac.standrews.cs.valipop.population;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.exporting.PopulationExportFormat;
 import uk.ac.standrews.cs.valipop.exporting.IPopulationWriter;
@@ -121,6 +122,7 @@ public class OBDModel {
 
         try {
             this.config = config;
+            final RandomGenerator randomGenerator = Randomness.getRandomGenerator();
 
             currentDate = config.getInitialisationStart();
 
@@ -128,16 +130,16 @@ public class OBDModel {
             population = new Population(config);
             desiredStatistics = new PopulationStatistics(config);
 
-            geography = new Geography(readAreaList(config), Randomness.getRandomGenerator(), config.getOverSizedGeographyFactor());
+            geography = new Geography(readAreaList(config), randomGenerator, config.getOverSizedGeographyFactor());
 
             currentHypotheticalPopulationSize = calculateStartingPopulationSize();
 
-            deathDateSelector = new DeathDateSelector(Randomness.getRandomGenerator());
-            marriageDateSelector = new MarriageDateSelector(Randomness.getRandomGenerator());
-            moveDistanceSelector = new DistanceSelector(Randomness.getRandomGenerator());
+            deathDateSelector = new DeathDateSelector(randomGenerator);
+            marriageDateSelector = new MarriageDateSelector(randomGenerator);
+            moveDistanceSelector = new DistanceSelector(randomGenerator);
 
-            personFactory = new PersonFactory(population, desiredStatistics, config.getSimulationTimeStep(), Randomness.getRandomGenerator());
-            migrationModel = new BalancedMigrationModel(population, Randomness.getRandomGenerator(), geography, personFactory, desiredStatistics);
+            personFactory = new PersonFactory(population, desiredStatistics, config.getSimulationTimeStep(), randomGenerator);
+            migrationModel = new BalancedMigrationModel(population, randomGenerator, geography, personFactory, desiredStatistics);
             occupationChangeModel = new OccupationChangeModel(population, desiredStatistics, config);
 
             log.info("Random seed: " + config.getSeed());

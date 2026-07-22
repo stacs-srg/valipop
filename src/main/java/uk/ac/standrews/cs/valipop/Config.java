@@ -113,6 +113,7 @@ public class Config implements Serializable {
     public static final String RECORDS_EXPORT_DIR_NAME = "records";
     public static final String TEMP_DIR_INDICATOR = "!TEMP!";
     public static final String CONTINGENCY_TABLES_DIR_NAME = "tables";
+    public static final int MINIMUM_INITIALISATION_PERIOD_IN_YEARS = 150;
 
     private static Level logLevel = DEFAULT_LOG_LEVEL;
     public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
@@ -255,7 +256,6 @@ public class Config implements Serializable {
         setUpFileStructure();
         configureLogging();
         initialiseInputDistributionPaths();
-//        setGeographyPath();
     }
 
     private void setGeographyPath() {
@@ -799,31 +799,26 @@ public class Config implements Serializable {
 
     private void validateOptions() {
 
-//        if (initialisationStart == null)
-//            throw new IllegalArgumentException("`initialisation_start` is required");
-//
-//        if (simulationStart == null)
-//            throw new IllegalArgumentException("`simulation_start` is required");
-//
-//        if (simulationEnd == null)
-//            throw new IllegalArgumentException("`simulation_end` is required");
-//
-//        if (targetInitialPopulationSize == null)
-//            throw new IllegalArgumentException("`target_initial_population_size` is required");
-//
-//        if (varPath == null)
-//            throw new IllegalArgumentException("`input_distributions_path` is required");
-//
-//        // Ensure ordering of dates
-//        if (initialisationStart.isAfter(simulationStart) )
-//            throw new IllegalArgumentException("`initialisation_start` cannot be after `simulation_start`");
-//
-//        if (simulationStart.isAfter(simulationEnd))
-//            throw new IllegalArgumentException("`simulation_start` cannot be after `simulation_end`");
-//
-//        // This allows the simulation enough time to burn in
-//        if (simulationStart.getYear() - initialisationStart.getYear() < 150)
-//            throw new IllegalArgumentException("`initialisation_start` must be at least 150 years before `simulation_start`");
+        // Only the initialisation and simulation boundary dates are validated,
+        // since a config file used for testing population validation may only contain these.
+
+        if (simulationStart == null)
+            throw new IllegalArgumentException("`simulation_start` is required");
+
+        if (simulationEnd == null)
+            throw new IllegalArgumentException("`simulation_end` is required");
+
+        if (simulationStart.isAfter(simulationEnd))
+            throw new IllegalArgumentException("`simulation_start` cannot be after `simulation_end`");
+
+        if (initialisationStart != null) {
+
+            if (initialisationStart.isAfter(simulationStart))
+                throw new IllegalArgumentException("`initialisation_start` cannot be after `simulation_start`");
+
+            if (simulationStart.getYear() - initialisationStart.getYear() < MINIMUM_INITIALISATION_PERIOD_IN_YEARS)
+                throw new IllegalArgumentException("`initialisation_start` must be at least " + MINIMUM_INITIALISATION_PERIOD_IN_YEARS + " years before `simulation_start`");
+        }
     }
 
     private void setUpFileStructure() throws IOException {
@@ -893,7 +888,7 @@ public class Config implements Serializable {
         return contingencyTablePrecision;
     }
 
-    public void setCTtreePrecision(final double precision) {
+    public void setContingencyTablePrecision(final double precision) {
         this.contingencyTablePrecision = precision;
     }
 

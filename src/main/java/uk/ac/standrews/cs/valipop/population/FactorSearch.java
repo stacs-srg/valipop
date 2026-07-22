@@ -100,7 +100,7 @@ public class FactorSearch {
 
                                     Config config = new Config(initialisation_start, simulation_start, simulation_end, size, dataFiles, results_save_location, runPurpose, results_save_location);
 
-                                    config.setCTtreePrecision(precision);
+                                    config.setContingencyTablePrecision(precision);
                                     config.setGroupName(runPurpose);
                                     config.setSetupBirthRate(initialisation_birth_rate);
                                     config.setSetupDeathRate(initialisation_death_rate);

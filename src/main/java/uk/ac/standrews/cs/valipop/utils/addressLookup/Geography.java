@@ -35,6 +35,7 @@ public class Geography {
 
     private RandomGenerator rand;
 
+    // TODO generalise to other geographical areas.
     static final String[] SCOTLAND_COORDS = {"54.4","59.4","-7.9","-1.3"};
     static BoundingBox geographicalLimits;
 
@@ -45,7 +46,6 @@ public class Geography {
             invalidCoordSet.printStackTrace();
         }
     }
-
 
     public Geography(List<Area> residentialGeography, RandomGenerator random, double overSizedGeographyFactor) {
         this.rand = random;
