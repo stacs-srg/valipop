@@ -40,38 +40,6 @@ public abstract class TestCases {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Eventual population sizes: 113, 188.
-    public static final List<Integer> FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS = List.of(200, 300);
-
-    // Eventual population sizes: 19065.
-    public static final List<Integer> SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS = List.of(1000);
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static final List<Integer> FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEOJSON_TESTS = FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS;
-
-    // Eventual population sizes: 19065, 86033.
-    public static final List<Integer> SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEOJSON_TESTS = List.of(1000, 5000);
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static final List<Integer> FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GRAPHVIZ_TESTS = FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS;
-    public static final List<Integer> SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GRAPHVIZ_TESTS = SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEOJSON_TESTS;
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static final List<Integer> FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_STRUCTURE_TESTS = FAST_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_GEDCOM_TESTS;
-
-    // Eventual population sizes: 19065, ?.
-    public static final List<Integer> SLOW_TEST_CASE_INITIAL_POPULATION_SIZES_FOR_STRUCTURE_TESTS = List.of(1000, 10000);
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static List<Arguments> getTestConfigurations(final List<Integer> initialPopulationSizes) {
-
-        return initialPopulationSizes.stream().map(TestCases::makeTestConfiguration).toList();
-    }
-
     public static Arguments makeTestConfiguration(final int initialPopulationSize) {
 
         try {

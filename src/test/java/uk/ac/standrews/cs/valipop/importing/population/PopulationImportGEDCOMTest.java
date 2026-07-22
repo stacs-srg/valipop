@@ -18,6 +18,7 @@
 package uk.ac.standrews.cs.valipop.importing.population;
 
 import org.junit.jupiter.params.provider.Arguments;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.exporting.gedcom.GEDCOMPopulationAdapter;
 import uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
@@ -40,7 +41,7 @@ public class PopulationImportGEDCOMTest extends PopulationPropertiesTest {
 
     // For future ValiPop development, see also:
     // https://web.archive.org/web/20231029182316/https://gedcomassessment.com/en/index.htm
-    // which links to:
+    // which links to the test file:
     // https://web.archive.org/web/20230327132350/https://www.gedcomassessment.com/en/assess.ged
     //
     // This requires more complex GEDCOM processing than currently performed by ValiPop.
@@ -110,6 +111,11 @@ public class PopulationImportGEDCOMTest extends PopulationPropertiesTest {
 
             @Override
             public void setDescription(final String description) {
+            }
+
+            @Override
+            public Config getConfig() {
+                return null;
             }
         };
     }

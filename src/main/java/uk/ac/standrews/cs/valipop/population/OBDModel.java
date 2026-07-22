@@ -197,6 +197,10 @@ public class OBDModel {
         return population;
     }
 
+    public Config getConfig() {
+        return config;
+    }
+
     public PopulationStatistics getDesiredPopulationStatistics() {
         return desiredStatistics;
     }

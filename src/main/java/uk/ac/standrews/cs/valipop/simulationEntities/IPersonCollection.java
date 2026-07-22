@@ -17,6 +17,8 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities;
 
+import uk.ac.standrews.cs.valipop.Config;
+
 import java.time.LocalDate;
 
 /**
@@ -76,4 +78,6 @@ public interface IPersonCollection {
      * @param description the description
      */
     void setDescription(String description);
+
+    Config getConfig();
 }

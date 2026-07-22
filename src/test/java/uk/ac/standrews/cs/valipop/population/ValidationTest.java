@@ -48,12 +48,10 @@ public class ValidationTest {
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/validation");
     public static final double DELTA = 1e-10;
 
-    @SuppressWarnings("unused")
     private static final List<Arguments> configurations = List.of(
         Arguments.of("case1/case1.config")
     );
 
-    @SuppressWarnings("unused")
     private static final List<Arguments> slowConfigurations = List.of(
         Arguments.of("case2/case2.config"),
         Arguments.of("case3/case3.config"),

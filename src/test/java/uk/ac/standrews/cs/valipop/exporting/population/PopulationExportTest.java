@@ -52,6 +52,9 @@ public class PopulationExportTest {
     // Graphviz files can be checked for validity at: https://magjac.com/graphviz-visual-editor/
     // GeoJSON files can be checked for validity at: https://geojsonlint.com
 
+    // This test class defines configurations containing config files, rather than populations as used in other
+    // test classes, so that the same population instance can be used for all the tests.
+
     private static final List<Arguments> configurations = List.of(
         Arguments.of("1855-2016-initial-200-graphviz.config"),
         Arguments.of("1855-2016-initial-300-graphviz.config"),
@@ -80,6 +83,8 @@ public class PopulationExportTest {
 
         checkPopulationExportedAsExpected(configPath);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     static void checkPopulationExportedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
 

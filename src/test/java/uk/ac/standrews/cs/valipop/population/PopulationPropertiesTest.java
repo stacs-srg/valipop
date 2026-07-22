@@ -21,12 +21,14 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
-import uk.ac.standrews.cs.valipop.config.TestCases;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -48,15 +50,38 @@ public class PopulationPropertiesTest {
     private static final int MAX_GESTATION_IN_DAYS = 300;
     private static final int MINIMUM_AGE_AT_MARRIAGE = 14;
 
+    private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/population");
+
+    // This test class defines configurations containing populations, rather than config files as used in other
+    // test classes, so that the same population instance can be used for all the tests.
+
     private static final List<Arguments> configurations = List.of(
-        TestCases.makeTestConfiguration(200),
-        TestCases.makeTestConfiguration(300)
+        makePopulation("1855-2016-initial-200.config"),
+        makePopulation("1855-2016-initial-300.config")
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        TestCases.makeTestConfiguration(1000),
-        TestCases.makeTestConfiguration(10000)
+        makePopulation("1855-2016-initial-1000.config"),
+        makePopulation("1855-2016-initial-10000.config")
     );
+
+    private static Arguments makePopulation(final String configPath) {
+
+        try {
+            final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+
+            final OBDModel model = new OBDModel(config);
+            model.runSimulation();
+
+            final IPersonCollection population = model.getPopulation().getPeople();
+            population.setDescription("initial size=" + config.getTargetInitialPopulationSize() + ", seed=" + config.getSeed());
+
+            return Arguments.of(population);
+        }
+        catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

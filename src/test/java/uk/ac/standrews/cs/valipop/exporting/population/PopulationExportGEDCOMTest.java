@@ -60,6 +60,8 @@ public class PopulationExportGEDCOMTest extends PopulationExportTest {
         Arguments.of("1855-2016-initial-1K-gedcom.config")
     );
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @ParameterizedTest
     @FieldSource("configurations")
     public void GEDCOMIsValid(final String configPath) throws IOException {
@@ -104,6 +106,8 @@ public class PopulationExportGEDCOMTest extends PopulationExportTest {
 
         checkExportImportExportGivesSamePopulationFile(configPath);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static void checkGEDCOMIsValid(final String configPath) throws IOException {
 
