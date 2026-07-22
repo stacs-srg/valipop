@@ -21,6 +21,7 @@ import org.gedcom4j.exception.GedcomParserException;
 import org.gedcom4j.model.Family;
 import org.gedcom4j.model.Individual;
 import org.gedcom4j.parser.GedcomParser;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
@@ -31,6 +32,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Provides abstract interface to a population represented in a GEDCOM file.
@@ -40,10 +42,10 @@ import java.util.List;
  */
 public class GEDCOMPopulationAdapter implements IPersonCollection {
 
-    // TODO option to load whole population at initialisation.
-
-    private final GedcomParser parser;
     private String description;
+
+    private final List<IPerson> people;
+    private final List<IPartnership> partnerships;
 
     /**
      * Initialises the adapter for a given GEDCOM file.
@@ -54,20 +56,26 @@ public class GEDCOMPopulationAdapter implements IPersonCollection {
      */
     public GEDCOMPopulationAdapter(final Path path) throws IOException, GedcomParserException {
 
-        parser = new GedcomParser();
+        final GedcomParser parser = new GedcomParser();
         parser.load(path.toString());
+
+        people = parser.getGedcom().getIndividuals().values().stream().
+            map(individual -> new GEDCOMPerson(individual, this)).
+            map(person -> (IPerson) person).
+            sorted().
+            collect(Collectors.toList());
+
+        partnerships = parser.getGedcom().getFamilies().values().stream().
+            filter(family -> family.getHusband() != null).
+            filter(family -> family.getWife() != null).
+            map(family -> new GEDCOMPartnership(family, this)).
+            map(partnership -> (IPartnership) partnership).
+            sorted().
+            collect(Collectors.toList());
     }
 
     @Override
     public Iterable<IPerson> getPeople() {
-
-        List<IPerson> people = new ArrayList<>();
-
-        for (Individual individual : parser.getGedcom().getIndividuals().values()) {
-            people.add(new GEDCOMPerson(individual, this));
-        }
-
-        Collections.sort(people);
 
         return people;
     }
@@ -75,28 +83,16 @@ public class GEDCOMPopulationAdapter implements IPersonCollection {
     @Override
     public Iterable<IPartnership> getPartnerships() {
 
-        List<IPartnership> partnerships = new ArrayList<>();
-
-        for (Family family : parser.getGedcom().getFamilies().values()) {
-
-            // Ignore incomplete families, which may occur in real-life files.
-            if (family.getHusband() != null && family.getWife() != null)
-                partnerships.add(new GEDCOMPartnership(family, this));
-        }
-
-        Collections.sort(partnerships);
-
         return partnerships;
     }
 
     @Override
     public IPerson findPerson(final int id) {
 
-        for (final IPerson person : getPeople()) {
-            if (person.getId() == id) {
+        for (final IPerson person : getPeople())
+            if (person.getId() == id)
                 return person;
-            }
-        }
+
         return null;
     }
 
@@ -105,24 +101,23 @@ public class GEDCOMPopulationAdapter implements IPersonCollection {
 
         if (id == -1) return null;
 
-        for (final IPartnership partnership : getPartnerships()) {
-            if (partnership.getId() == id) {
+        for (final IPartnership partnership : getPartnerships())
+            if (partnership.getId() == id)
                 return partnership;
-            }
-        }
+
         return null;
     }
 
     @Override
     public int getNumberOfPeople() {
 
-        return parser.getGedcom().getIndividuals().values().size();
+        return people.size();
     }
 
     @Override
     public int getNumberOfPartnerships() {
 
-        return parser.getGedcom().getFamilies().values().size();
+        return partnerships.size();
     }
 
     @Override
@@ -139,6 +134,11 @@ public class GEDCOMPopulationAdapter implements IPersonCollection {
     public void setDescription(final String description) {
 
         this.description = description;
+    }
+
+    @Override
+    public Config getConfig() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

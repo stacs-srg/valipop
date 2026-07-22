@@ -23,6 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.population.OBDModel;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
 import static uk.ac.standrews.cs.valipop.population.OBDModel.EXPORT_CHARSET;
+import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.makePopulation;
 
 /**
  * These tests check that when various populations are generated, and exported in various formats, then the files contain the expected content.
@@ -52,49 +54,40 @@ public class PopulationExportTest {
     // Graphviz files can be checked for validity at: https://magjac.com/graphviz-visual-editor/
     // GeoJSON files can be checked for validity at: https://geojsonlint.com
 
-    // This test class defines configurations containing config files, rather than populations as used in other
-    // test classes, so that the same population instance can be used for all the tests.
-
     private static final List<Arguments> configurations = List.of(
-        Arguments.of("1855-2016-initial-200-graphviz.config"),
-        Arguments.of("1855-2016-initial-300-graphviz.config"),
-        Arguments.of("1855-2016-initial-200-geojson.config"),
-        Arguments.of("1855-2016-initial-300-geojson.config")
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-graphviz.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-graphviz.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-geojson.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-geojson.config"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        Arguments.of("1855-2016-initial-1K-graphviz.config"),
-        Arguments.of("1855-2016-initial-5K-graphviz.config"),
-        Arguments.of("1855-2016-initial-1K-geojson.config"),
-        Arguments.of("1855-2016-initial-5K-geojson.config")
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1K-graphviz.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-5K-graphviz.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1K-geojson.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-5K-geojson.config"))
     );
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void populationExportedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
+    public void populationExportedAsExpected(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
 
-        checkPopulationExportedAsExpected(configPath);
+        checkPopulationExportedAsExpected(population);
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void populationExportedAsExpectedSlow(final String configPath) throws IOException, NoSuchAlgorithmException {
+    public void populationExportedAsExpectedSlow(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
 
-        checkPopulationExportedAsExpected(configPath);
+        checkPopulationExportedAsExpected(population);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    static void checkPopulationExportedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
+    static void checkPopulationExportedAsExpected(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
 
-        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
-        final OBDModel model = new OBDModel(config);
-
-        model.runSimulation();
-        model.analyseAndOutputPopulation(false);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        final Config config = population.getConfig();
 
         final String hashAlgorithmName = config.get("hash_algorithm_name");
         final String expectedHash = config.get("expected_hash");

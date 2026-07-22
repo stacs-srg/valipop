@@ -17,6 +17,7 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.utils.MapUtils;
@@ -49,13 +50,12 @@ public class FemaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    FemaleCollection(final LocalDate start, final LocalDate end, final Period divisionSize, final String description) {
+    FemaleCollection(final Config config, final LocalDate start, final LocalDate end, final Period divisionSize, final String description) {
 
-        super(start, end, divisionSize, description);
+        super(config, start, end, divisionSize, description);
 
-        for (LocalDate date = start; !date.isAfter(end); date = date.plus(divisionSize)) {
+        for (LocalDate date = start; !date.isAfter(end); date = date.plus(divisionSize))
             byBirthYearAndNumberOfChildren.put(date, new TreeMap<>());
-        }
     }
 
     @Override

@@ -43,6 +43,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
+import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.makePopulation;
 
 /**
  * These tests check that when various populations are generated, and exported in GEDCOM format, then the files are valid and contain the expected content.
@@ -52,70 +53,71 @@ import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
 public class PopulationExportGEDCOMTest extends PopulationExportTest {
 
     private static final List<Arguments> configurations = List.of(
-        Arguments.of("1855-2016-initial-200-gedcom.config"),
-        Arguments.of("1855-2016-initial-300-gedcom.config")
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-gedcom.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-gedcom.config"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        Arguments.of("1855-2016-initial-1K-gedcom.config")
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1K-gedcom.config"))
     );
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void GEDCOMIsValid(final String configPath) throws IOException {
+    public void GEDCOMIsValid(final IPersonCollection population) throws IOException {
 
-        checkGEDCOMIsValid(configPath);
+        checkGEDCOMIsValid(population);
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void GEDCOMIsValidSlow(final String configPath) throws IOException {
+    public void GEDCOMIsValidSlow(final IPersonCollection population) throws IOException {
 
-        checkGEDCOMIsValid(configPath);
+        checkGEDCOMIsValid(population);
     }
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void exportImportGivesEquivalentPopulation(final String configPath) throws IOException, GedcomParserException {
+    public void exportImportGivesEquivalentPopulation(final IPersonCollection population) throws IOException, GedcomParserException {
 
-        checkExportImportGivesEquivalentPopulation(configPath);
+        checkExportImportGivesEquivalentPopulation(population);
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void exportImportGivesEquivalentPopulationSlow(final String configPath) throws IOException, GedcomParserException {
+    public void exportImportGivesEquivalentPopulationSlow(final IPersonCollection population) throws IOException, GedcomParserException {
 
-        checkExportImportGivesEquivalentPopulation(configPath);
+        checkExportImportGivesEquivalentPopulation(population);
     }
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void exportImportExportGivesSamePopulationFile(final String configPath) throws Exception {
+    public void exportImportExportGivesSamePopulationFile(final IPersonCollection population) throws Exception {
 
-        checkExportImportExportGivesSamePopulationFile(configPath);
+        checkExportImportExportGivesSamePopulationFile(population);
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void exportImportExportGivesSamePopulationFileSlow(final String configPath) throws Exception {
+    public void exportImportExportGivesSamePopulationFileSlow(final IPersonCollection population) throws Exception {
 
-        checkExportImportExportGivesSamePopulationFile(configPath);
+        checkExportImportExportGivesSamePopulationFile(population);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static void checkGEDCOMIsValid(final String configPath) throws IOException {
+    private static void checkGEDCOMIsValid(final IPersonCollection population) throws IOException {
 
-        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
-        final OBDModel model = new OBDModel(config);
-
-        model.runSimulation();
-        model.analyseAndOutputPopulation(false);
+        final Config config = population.getConfig();
+//        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+//        final OBDModel model = new OBDModel(config);
+//
+//        model.runSimulation();
+//        model.analyseAndOutputPopulation(false);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -128,32 +130,36 @@ public class PopulationExportGEDCOMTest extends PopulationExportTest {
         assertEquals(0, validator.getNumberOfWarnings(), "GEDCOM validation warnings count");
     }
 
-    private static void checkExportImportGivesEquivalentPopulation(final String configPath) throws IOException, GedcomParserException {
+    private static void checkExportImportGivesEquivalentPopulation(final IPersonCollection population) throws IOException, GedcomParserException {
 
-        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
-        final OBDModel model = new OBDModel(config);
+        final Config config = population.getConfig();
 
-        model.runSimulation();
-        model.analyseAndOutputPopulation(false);
+//        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+//        final OBDModel model = new OBDModel(config);
+//
+//        model.runSimulation();
+//        model.analyseAndOutputPopulation(false);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         final Path populationExportDirPath = config.getRunPath().resolve(POPULATION_EXPORT_DIR_NAME);
         final Path exportedFilePath = populationExportDirPath.resolve("population.ged");
 
-        final IPersonCollection population = model.getPopulation().getPeople();
+//        final IPersonCollection population = model.getPopulation().getPeople();
         final IPersonCollection imported = new GEDCOMPopulationAdapter(exportedFilePath);
 
         assertEqualPopulations(population, imported);
     }
 
-    private static void checkExportImportExportGivesSamePopulationFile(final String configPath) throws Exception {
+    private static void checkExportImportExportGivesSamePopulationFile(final IPersonCollection population) throws Exception {
 
-        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
-        final OBDModel model = new OBDModel(config);
+        final Config config = population.getConfig();
 
-        model.runSimulation();
-        model.analyseAndOutputPopulation(false);
+//        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+//        final OBDModel model = new OBDModel(config);
+//
+//        model.runSimulation();
+//        model.analyseAndOutputPopulation(false);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

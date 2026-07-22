@@ -17,6 +17,7 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dates.MisalignedTimeDivisionException;
@@ -39,6 +40,7 @@ public abstract class PersonCollection implements Iterable<IPerson> {
     private LocalDate endDate;
     private final Period divisionSize;
     protected String description;
+    protected Config config;
 
     /**
      * Instantiates a new PersonCollection. The dates specify the earliest and latest expected birth dates of
@@ -49,8 +51,9 @@ public abstract class PersonCollection implements Iterable<IPerson> {
      * @param startDate the start date
      * @param endDate   the end date
      */
-    PersonCollection(final LocalDate startDate, final LocalDate endDate, final Period divisionSize, final String description) {
+    PersonCollection(final Config config, final LocalDate startDate, final LocalDate endDate, final Period divisionSize, final String description) {
 
+        this.config = config;
         this.startDate = startDate;
         this.endDate = endDate;
         this.divisionSize = divisionSize;

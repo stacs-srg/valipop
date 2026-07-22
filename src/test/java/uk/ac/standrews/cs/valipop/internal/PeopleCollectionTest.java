@@ -81,7 +81,7 @@ public class PeopleCollectionTest {
 
         final Period y = Period.ofYears(1);
 
-        final PeopleCollection living = new PeopleCollection(s, e, y, "");
+        final PeopleCollection living = new PeopleCollection(null, s, e, y, "");
 
         final LocalDate b1 = LocalDate.of(1900, 1, 1);
         final LocalDate b2 = LocalDate.of(1900, 1, 2);
@@ -130,7 +130,7 @@ public class PeopleCollectionTest {
 
         final Period y = Period.ofYears(1);
 
-        final PeopleCollection living = new PeopleCollection(s, e, y,"");
+        final PeopleCollection living = new PeopleCollection(null, s, e, y,"");
 
         final LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -164,7 +164,7 @@ public class PeopleCollectionTest {
         final LocalDate e = LocalDate.of(3000, 1, 1);
 
         final Period y = Period.ofYears(1);
-        final PeopleCollection living = new PeopleCollection(s, e, y,"");
+        final PeopleCollection living = new PeopleCollection(null, s, e, y,"");
 
         final LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -205,7 +205,7 @@ public class PeopleCollectionTest {
         final LocalDate e = LocalDate.of(3000, 1, 1);
 
         final Period y = Period.ofYears(1);
-        final PeopleCollection living = new PeopleCollection(s, e, y,"");
+        final PeopleCollection living = new PeopleCollection(null, s, e, y,"");
 
         final LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -253,7 +253,7 @@ public class PeopleCollectionTest {
         final LocalDate e = LocalDate.of(3000, 1, 1);
 
         final Period y = Period.ofYears(1);
-        final PeopleCollection living = new PeopleCollection(s, e, y,"");
+        final PeopleCollection living = new PeopleCollection(null, s, e, y,"");
 
         final LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -324,7 +324,7 @@ public class PeopleCollectionTest {
             final LocalDate e = LocalDate.of(3000, 1, 1);
 
             final Period y = Period.ofYears(1);
-            final PeopleCollection living = new PeopleCollection(s, e, y,"");
+            final PeopleCollection living = new PeopleCollection(null, s, e, y,"");
 
             final LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -341,7 +341,7 @@ public class PeopleCollectionTest {
             final LocalDate e = LocalDate.of(3000, 1, 1);
 
             final Period y = Period.ofYears(1);
-            final PeopleCollection living = new PeopleCollection(s, e, y,"");
+            final PeopleCollection living = new PeopleCollection(null, s, e, y,"");
 
             final LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -361,7 +361,7 @@ public class PeopleCollectionTest {
             final LocalDate e = LocalDate.of(3000, 1, 1);
 
             final Period y = Period.ofYears(1);
-            final PeopleCollection living = new PeopleCollection(s, e, y,"");
+            final PeopleCollection living = new PeopleCollection(null, s, e, y,"");
 
             final LocalDate start = LocalDate.of(1600, 1, 1);
 
@@ -378,7 +378,7 @@ public class PeopleCollectionTest {
             final LocalDate e = LocalDate.of(3000, 1, 1);
 
             final Period y = Period.ofYears(1);
-            final PeopleCollection living = new PeopleCollection(s, e, y,"");
+            final PeopleCollection living = new PeopleCollection(null, s, e, y,"");
 
             final LocalDate start = LocalDate.of(1600, 1, 1);
 

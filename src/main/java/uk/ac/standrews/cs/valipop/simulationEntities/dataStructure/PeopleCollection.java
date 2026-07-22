@@ -52,18 +52,18 @@ public class PeopleCollection extends PersonCollection implements Cloneable, IPe
      * @param start the start
      * @param end   the end
      */
-    public PeopleCollection(final LocalDate start, final LocalDate end, final Period divisionSize, final String description) {
+    public PeopleCollection(final Config config, final LocalDate start, final LocalDate end, final Period divisionSize, final String description) {
 
-        super(start, end, divisionSize, description);
+        super(config, start, end, divisionSize, description);
 
-        males = new MaleCollection(start, end, divisionSize, description);
-        females = new FemaleCollection(start, end, divisionSize, description);
+        males = new MaleCollection(config, start, end, divisionSize, description);
+        females = new FemaleCollection(config, start, end, divisionSize, description);
     }
 
     @Override
     public PeopleCollection clone() {
 
-        final PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate(), getDivisionSize(), description);
+        final PeopleCollection clone = new PeopleCollection(config, getStartDate(), getEndDate(), getDivisionSize(), description);
 
         for (final IPerson person : males.getPeople())
             clone.add(person);
@@ -197,6 +197,12 @@ public class PeopleCollection extends PersonCollection implements Cloneable, IPe
         this.description = description;
     }
 
+    @Override
+    public Config getConfig() {
+        return config;
+    }
+
+    @Override
     public String toString() {
         return description;
     }
@@ -298,11 +304,9 @@ public class PeopleCollection extends PersonCollection implements Cloneable, IPe
         }
     }
 
-    private boolean nonImmigratingMotherOfImmigrantPerson(final IPerson mother, final IPerson person) {
+    private static boolean nonImmigratingMotherOfImmigrantPerson(final IPerson mother, final IPerson person) {
 
-        if (person.getImmigrationDate() == null) {
-            return false;
-        } else return mother.getImmigrationDate() == null;
+        return person.getImmigrationDate() != null && mother.getImmigrationDate() == null;
     }
 
     private void cancelPartnership(final IPartnership partnership) {

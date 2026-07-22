@@ -37,16 +37,19 @@ public class Population {
     private final PeopleCollection emigrants;
 
     private final PopulationCounts populationCounts;
+    private final Config config;
 
     public Population(final Config config) {
+
+        this.config = config;
 
         // TODO avoid statics.
         Person.resetIds();
         Partnership.resetIds();
 
-        livingPeople = new PeopleCollection(config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "living");
-        deadPeople = new PeopleCollection(config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "dead");
-        emigrants = new PeopleCollection(config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "emigrants");
+        livingPeople = new PeopleCollection(config, config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "living");
+        deadPeople = new PeopleCollection(config, config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "dead");
+        emigrants = new PeopleCollection(config, config.getInitialisationStart(), config.getSimulationEnd(), config.getSimulationTimeStep(), "emigrants");
 
         populationCounts = new PopulationCounts();
     }
@@ -58,7 +61,7 @@ public class Population {
 
     public PeopleCollection getPeople(final LocalDate first, final LocalDate last, final Period maxAge) {
 
-        final PeopleCollection result = new PeopleCollection(first, last, Period.ofYears(1), "combined");
+        final PeopleCollection result = new PeopleCollection(config, first, last, Period.ofYears(1), "combined");
 
         final Period period = Period.between(first, last);
 

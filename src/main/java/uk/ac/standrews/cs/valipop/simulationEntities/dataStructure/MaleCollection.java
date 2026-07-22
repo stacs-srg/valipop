@@ -17,6 +17,7 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.dataStructure;
 
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 
 import java.time.LocalDate;
@@ -42,9 +43,9 @@ public class MaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    public MaleCollection(final LocalDate start, final LocalDate end, final Period divisionSize, final String description) {
+    public MaleCollection(final Config config, final LocalDate start, final LocalDate end, final Period divisionSize, final String description) {
 
-        super(start, end, divisionSize, description);
+        super(config, start, end, divisionSize, description);
 
         for (LocalDate date = start; !date.isAfter(end); date = date.plus(divisionSize))
             byYear.put(date, new TreeSet<>());

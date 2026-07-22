@@ -57,9 +57,11 @@ public class PopulationImportGEDCOMTest extends PopulationPropertiesTest {
     private static IPersonCollection loadPopulationFromGEDCOM(final String fileName) {
 
         try {
-            final Path gedcom_file = TEST_RESOURCE_DIR.resolve(fileName);
+            final GEDCOMPopulationAdapter population = new GEDCOMPopulationAdapter(TEST_RESOURCE_DIR.resolve(fileName));
+            population.setDescription("gedcom file=" + fileName);
 
-            return new GEDCOMPopulationAdapter(gedcom_file);
+            return population;
+
         }
         catch (final Exception e) {
             throw new RuntimeException(e);
@@ -69,6 +71,7 @@ public class PopulationImportGEDCOMTest extends PopulationPropertiesTest {
     private static IPersonCollection createDummyPopulation() {
 
         return new IPersonCollection() {
+
             @Override
             public Iterable<IPerson> getPeople() {
                 return List.of();
@@ -116,6 +119,11 @@ public class PopulationImportGEDCOMTest extends PopulationPropertiesTest {
             @Override
             public Config getConfig() {
                 return null;
+            }
+
+            @Override
+            public String toString() {
+                return "dummy gedcom file";
             }
         };
     }

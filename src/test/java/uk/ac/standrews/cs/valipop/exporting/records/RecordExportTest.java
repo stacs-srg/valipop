@@ -23,6 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.population.OBDModel;
+import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,6 +35,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.ac.standrews.cs.valipop.Config.RECORDS_EXPORT_DIR_NAME;
+import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.makePopulation;
 import static uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordType.*;
 
 /**
@@ -47,37 +49,39 @@ public class RecordExportTest {
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/exporting/records");
 
     private static final List<Arguments> configurations = List.of(
-        Arguments.of("1855-1973-initial-10K.config"),
-        Arguments.of("1855-1973-initial-10K-no-recovery.config"),
-        Arguments.of("1850-1900-initial-100K.config")
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-1973-initial-10K.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-1973-initial-10K-no-recovery.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1850-1900-initial-100K.config"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        Arguments.of("1850-2025-initial-100K.config")
+        makePopulation(TEST_RESOURCE_DIR.resolve("1850-2025-initial-100K.config"))
     );
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void recordsGeneratedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
+    public void recordsGeneratedAsExpected(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
 
-        checkRecordsGeneratedAsExpected(configPath);
+        checkRecordsGeneratedAsExpected(population);
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void recordsGeneratedAsExpectedSlow(final String configPath) throws IOException, NoSuchAlgorithmException {
+    public void recordsGeneratedAsExpectedSlow(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
 
-        checkRecordsGeneratedAsExpected(configPath);
+        checkRecordsGeneratedAsExpected(population);
     }
 
-    private static void checkRecordsGeneratedAsExpected(final String configPath) throws IOException, NoSuchAlgorithmException {
+    private static void checkRecordsGeneratedAsExpected(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
 
-        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
-        final OBDModel model = new OBDModel(config);
+        final Config config = population.getConfig();
 
-        model.runSimulation();
-        model.analyseAndOutputPopulation(false);
+//        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+//        final OBDModel model = new OBDModel(config);
+//
+//        model.runSimulation();
+//        model.analyseAndOutputPopulation(false);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
