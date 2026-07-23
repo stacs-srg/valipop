@@ -77,16 +77,7 @@ public class RecordExportTest {
 
         final Config config = population.getConfig();
 
-//        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
-//        final OBDModel model = new OBDModel(config);
-//
-//        model.runSimulation();
-//        model.analyseAndOutputPopulation(false);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         final String hashAlgorithmName = config.get("hash_algorithm_name");
-
         final String expectedBirthHash = config.get("expected_birth_records_hash");
         final String expectedDeathHash = config.get("expected_death_records_hash");
         final String expectedMarriageHash = config.get("expected_marriage_records_hash");

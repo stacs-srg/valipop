@@ -45,7 +45,7 @@ ValiPop will create the directory structure for the results if it does not exist
 
 ### Result Structure
 
-The directory structure of the results of running ValiPop looks like the following:
+The files output from a simulation run are structured as follows:
 
 ```
 <results_path>/<group_name>/<datetime>/
@@ -95,7 +95,7 @@ The <em>log</em> directory contains files giving more detail about the simulatio
 </dt>
 
 <dd>
-The *population* directory contains the exported representation of the simulated population, if specified in the configuration file.
+The <em>population</em> directory contains the exported representation of the simulated population, if specified in the configuration file.
 </dd>
 
 <dt>
@@ -103,7 +103,7 @@ The *population* directory contains the exported representation of the simulated
 </dt>
 
 <dd>
-The records directory contains the records generated from the simulated population, if specified
+The <em>records</em> directory contains the records generated from the simulated population, if specified
 in the configuration file.
 </dd>
 
@@ -120,7 +120,7 @@ This file provides additional statistics on the simulated population, including 
 </dt>
 
 <dd>
-The tables directory contains contingency tables for birth, death, partnership, and separation. They are analysed during validation of the simulated population.
+The <em>tables</em> directory contains contingency tables for birth, death, partnership, and separation. They are analysed during validation of the simulated population.
 </dd>
 
 </dl>

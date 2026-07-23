@@ -5,7 +5,6 @@ target
 .Rproj.user
 .Rhistory
 .RData
-results
 *.log
 .vscode
 **/.DS_Store

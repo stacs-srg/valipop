@@ -114,7 +114,7 @@ public class MinimaSearch {
 
                 for (; n < repeatRuns; n++) {
 
-                    final Config config = new Config(initialisation_start, simulation_start, simulation_end, populationSize, dataFiles, Config.DEFAULT_RESULTS_SAVE_PATH, runPurpose, Config.DEFAULT_RESULTS_SAVE_PATH);
+                    final Config config = new Config(initialisation_start, simulation_start, simulation_end, populationSize, dataFiles, null, runPurpose, null);
                     config.setDeterministic(true);
                     config.setSeed(123);
 

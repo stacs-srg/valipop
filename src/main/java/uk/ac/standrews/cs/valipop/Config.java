@@ -116,7 +116,6 @@ public class Config implements Serializable {
     public static final int MINIMUM_INITIALISATION_PERIOD_IN_YEARS = 150;
 
     private static Level logLevel = DEFAULT_LOG_LEVEL;
-    public static final Path DEFAULT_RESULTS_SAVE_PATH = Paths.get("results");
     private final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
     private final Path DEFAULT_PROJECT_PATH = Paths.get(".");
 
@@ -200,8 +199,8 @@ public class Config implements Serializable {
 
     // Locations
     private Path projectPath = DEFAULT_PROJECT_PATH;
-    private Path summaryResultsDirPath = DEFAULT_RESULTS_SAVE_PATH;
-    private Path resultsSavePath = DEFAULT_RESULTS_SAVE_PATH;
+    private Path summaryResultsDirPath;
+    private Path resultsSavePath;
     private Path geographyFilePath = DEFAULT_GEOGRAPHY_FILE_PATH;
 
     private int seed = DEFAULT_SEED;
@@ -822,6 +821,9 @@ public class Config implements Serializable {
     }
 
     private void setUpFileStructure() throws IOException {
+
+        if (summaryResultsDirPath == null)
+            summaryResultsDirPath = resultsSavePath;
 
         globalSummaryPath = summaryResultsDirPath.resolve( "global-results-summary.csv");
         final Path groupPath = resultsSavePath.resolve(groupName);

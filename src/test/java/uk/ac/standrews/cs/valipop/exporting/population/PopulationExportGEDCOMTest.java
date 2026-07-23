@@ -113,13 +113,6 @@ public class PopulationExportGEDCOMTest extends PopulationExportTest {
     private static void checkGEDCOMIsValid(final IPersonCollection population) throws IOException {
 
         final Config config = population.getConfig();
-//        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
-//        final OBDModel model = new OBDModel(config);
-//
-//        model.runSimulation();
-//        model.analyseAndOutputPopulation(false);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         final Path populationExportDirPath = config.getRunPath().resolve(POPULATION_EXPORT_DIR_NAME);
         final Path exportedFilePath = populationExportDirPath.resolve("population.ged");
@@ -134,34 +127,16 @@ public class PopulationExportGEDCOMTest extends PopulationExportTest {
 
         final Config config = population.getConfig();
 
-//        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
-//        final OBDModel model = new OBDModel(config);
-//
-//        model.runSimulation();
-//        model.analyseAndOutputPopulation(false);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         final Path populationExportDirPath = config.getRunPath().resolve(POPULATION_EXPORT_DIR_NAME);
         final Path exportedFilePath = populationExportDirPath.resolve("population.ged");
 
-//        final IPersonCollection population = model.getPopulation().getPeople();
         final IPersonCollection imported = new GEDCOMPopulationAdapter(exportedFilePath);
-
         assertEqualPopulations(population, imported);
     }
 
     private static void checkExportImportExportGivesSamePopulationFile(final IPersonCollection population) throws Exception {
 
         final Config config = population.getConfig();
-
-//        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
-//        final OBDModel model = new OBDModel(config);
-//
-//        model.runSimulation();
-//        model.analyseAndOutputPopulation(false);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         final Path populationExportDirPath = config.getRunPath().resolve(POPULATION_EXPORT_DIR_NAME);
         final Path exportedFilePath = populationExportDirPath.resolve("population.ged");
