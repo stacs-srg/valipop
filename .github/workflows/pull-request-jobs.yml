@@ -12,7 +12,7 @@ jobs:
       contents: write
     steps:
       - name: Check out project
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Build and run tests
         uses: ./.github/actions/build-and-test
