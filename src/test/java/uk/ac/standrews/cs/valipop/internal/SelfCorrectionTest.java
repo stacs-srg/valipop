@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.internal;
 
 import org.junit.jupiter.api.Test;
 import uk.ac.standrews.cs.valipop.population.Randomness;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.trees.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.DeathStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;

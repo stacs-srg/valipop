@@ -21,14 +21,18 @@ import org.apache.commons.io.IOUtils;
 import uk.ac.standrews.cs.valipop.Config;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import static uk.ac.standrews.cs.valipop.Config.CONTINGENCY_TABLES_DIR_NAME;
+import static uk.ac.standrews.cs.valipop.Config.VALIDATION_ANALYSIS_DIR_NAME;
+import static uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.tables.ContingencyTable.LABEL_SOURCE;
+import static uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.tables.ContingencyTable.NUMERICAL_VARIABLES;
+import static uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.trees.SourceType.TARGET;
 
 /**
  * For extracting, invoking, and reading the results of the R analysis scripts.
@@ -38,10 +42,11 @@ import static uk.ac.standrews.cs.valipop.Config.CONTINGENCY_TABLES_DIR_NAME;
  */
 public class ContingencyTableValidator {
 
-    // TODO add option generate contingency tables from config file if not already present.
-
-    private static final String ANALYSIS_SCRIPT_FILENAME = "analysis.R";
-    private static final String ANALYSIS_OUTPUT_FILENAME = "analysis.out";
+    private static final String ANALYSIS_SCRIPT_FILENAME = "validation-analysis.R";
+    private static final String ANALYSIS_FILENAME = "validation-analysis-full.txt";
+    private static final String ANALYSIS_RELEVANT_FILENAME = "validation-analysis-relevant.txt";
+    private static final String ANALYSIS_SIGNIFICANT_FILENAME = "validation-analysis-significant.txt";
+    private static final String ANALYSIS_SCORE_FILENAME = "validation-analysis-score.txt";
 
     private static final int NORMAL_EXIT_CODE = 0;
     private static final int R_PROCESS_TIMEOUT_IN_MINUTES = 10;
@@ -49,49 +54,132 @@ public class ContingencyTableValidator {
     // Relative to src/main/resources.
     private static final Path ANALYSIS_SCRIPT_SOURCE_DIRECTORY = Path.of("valipop/analysis-r/geeglm/");
 
-    private static final boolean DELETE_ANALYSIS_OUTPUT_FILE = true;
-
     private final Path workingDirectoryPath;
+    private final Path contingencyTablesDirectoryPath;
+    private final Path analysisFile;
+    private final Path analysisRelevantFile;
+    private final Path analysisSignificantFile;
+    private final Path analysisScoreFile;
+    private final Path analysisScriptSource;
+    private final Path analysisScriptTempCopy;
+
     private final int startYear;
     private final int endYear;
 
-    public ContingencyTableValidator(final Path workingDirectoryPath, final int startYear, final int endYear) {
-
-        this.workingDirectoryPath = workingDirectoryPath;
-        this.startYear = startYear;
-        this.endYear = endYear;
-    }
-
     public ContingencyTableValidator(final Config config) {
 
-        this.workingDirectoryPath = config.getRunPath();
+        workingDirectoryPath = config.getRunPath();
+        contingencyTablesDirectoryPath = workingDirectoryPath.resolve(CONTINGENCY_TABLES_DIR_NAME);
+
+        final Path validationAnalysisDirectoryPath = workingDirectoryPath.resolve(VALIDATION_ANALYSIS_DIR_NAME);
+
+        analysisFile = validationAnalysisDirectoryPath.resolve(ANALYSIS_FILENAME);
+        analysisRelevantFile = validationAnalysisDirectoryPath.resolve(ANALYSIS_RELEVANT_FILENAME);
+        analysisSignificantFile = validationAnalysisDirectoryPath.resolve(ANALYSIS_SIGNIFICANT_FILENAME);
+        analysisScoreFile = validationAnalysisDirectoryPath.resolve(ANALYSIS_SCORE_FILENAME);
+
+        analysisScriptSource = ANALYSIS_SCRIPT_SOURCE_DIRECTORY.resolve(ANALYSIS_SCRIPT_FILENAME);
+        analysisScriptTempCopy = validationAnalysisDirectoryPath.resolve(ANALYSIS_SCRIPT_FILENAME);
+
         startYear = config.getSimulationStart().getYear();
         endYear = config.getSimulationEnd().getYear();
     }
 
-    public synchronized double getValidationScore() throws IOException {
+    @SuppressWarnings("StringConcatenationMissingWhitespace")
+    public synchronized void validate() throws IOException {
 
         // Synchronized since method creates and deletes files in the parent directory.
 
-        final Path analysisScriptSource = ANALYSIS_SCRIPT_SOURCE_DIRECTORY.resolve(ANALYSIS_SCRIPT_FILENAME);
-        final Path analysisScriptTempCopy = workingDirectoryPath.resolve(ANALYSIS_SCRIPT_FILENAME);
-        final Path contingencyTablesDirectoryPath = workingDirectoryPath.resolve(CONTINGENCY_TABLES_DIR_NAME);
-        final Path analysisOutputFile = workingDirectoryPath.resolve(ANALYSIS_OUTPUT_FILENAME);
+        runAnalysis();
 
-        makeTempCopyOfRScript(analysisScriptSource, analysisScriptTempCopy);
+        int relevantInteractions = 0;
+        int significantInteractions = 0;
+        int starCount = 0;
 
-        final Process process = runRScript(contingencyTablesDirectoryPath, analysisScriptTempCopy, startYear, endYear);
-        final double score = getRScriptResult(process, analysisOutputFile);
+        try (final FileWriter analysisRelevantFileWriter = new FileWriter(analysisRelevantFile.toString(), false)) {
+
+            Files.readAllLines(analysisFile).stream().
+                filter(ContingencyTableValidator::lineIsRelevant).
+                forEach(line -> {
+                    try {
+                        analysisRelevantFileWriter.append(line).append("\n");
+                    } catch (final IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+        }
+
+        try (final FileWriter analysisSignificantFileWriter = new FileWriter(analysisSignificantFile.toString(), false)) {
+
+            for (final String line : Files.readAllLines(analysisRelevantFile)) {
+
+                if (line.contains(":" + LABEL_SOURCE + TARGET)) relevantInteractions++;
+
+                if (line.isEmpty() || line.contains("-----") || line.contains("Pr(>|W|)"))
+                    analysisSignificantFileWriter.append(line).append("\n");
+
+                if (line.contains("*") && line.contains(":" + LABEL_SOURCE + TARGET)) {
+
+                    significantInteractions++;
+                    starCount += countStars(line);
+                    analysisSignificantFileWriter.append(line).append("\n");
+                }
+            }
+        }
+
+        final String averageFormatted = String.format("%.2f", (double) starCount / relevantInteractions);
+
+        try (final FileWriter analysisScoreFileWriter = new FileWriter(analysisScoreFile.toString(), false)) {
+
+            analysisScoreFileWriter.append("overall_score = ").append(String.valueOf(starCount)).append("\n");
+            analysisScoreFileWriter.append("relevant_interactions = ").append(String.valueOf(relevantInteractions)).append("\n");
+            analysisScoreFileWriter.append("significant_interactions = ").append(String.valueOf(significantInteractions)).append("\n");
+            analysisScoreFileWriter.append("score_per_interaction = ").append(averageFormatted).append("\n");
+        }
+    }
+
+    private void runAnalysis() throws IOException {
+
+        makeTempCopyOfRScript();
+
+        final Process process = runRScript();
+        outputAnalysisResults(process, analysisFile);
 
         try {
             checkExitStatus(process);
         }
         finally {
             Files.delete(analysisScriptTempCopy);
-            if (DELETE_ANALYSIS_OUTPUT_FILE) Files.delete(analysisOutputFile);
         }
+    }
 
-        return score;
+    public int getValidationScore() throws IOException {
+
+        try (final InputStreamReader reader = new InputStreamReader(Files.newInputStream(workingDirectoryPath.resolve(VALIDATION_ANALYSIS_DIR_NAME).resolve(ANALYSIS_SCORE_FILENAME)), StandardCharsets.UTF_8)) {
+
+            final Properties properties = new Properties();
+            properties.load(reader);
+            return Integer.parseInt(properties.getProperty("overall_score"));
+        }
+    }
+
+    private static boolean lineIsRelevant(final String line) {
+
+        return line.isEmpty() || line.contains("-----") || line.contains("Pr(>|W|)") || lineContainsRelevantInteraction(line);
+    }
+
+    @SuppressWarnings("StringConcatenationMissingWhitespace")
+    private static boolean lineContainsRelevantInteraction(final String line) {
+
+        final boolean line_contains_numerical_variable = Arrays.stream(line.split(" ")[0].     // Potential interaction.
+            split(":", -1)).                                                              // Variables within interaction.
+            anyMatch(NUMERICAL_VARIABLES::contains);                                                 // Check for any numerical variables.
+
+        return line.contains(LABEL_SOURCE + TARGET) && line_contains_numerical_variable;             // Check for interaction with TARGET variable.
+    }
+
+    private static int countStars(final String line) {
+        return line.length() - line.replace("*", "").length();
     }
 
     private static void checkExitStatus(final Process process) {
@@ -111,12 +199,12 @@ public class ContingencyTableValidator {
      * Makes a temporary copy of the R analysis script in the local directory. Needed in the case of running from
      * a jar, and harmless otherwise.
      */
-    private static void makeTempCopyOfRScript(final Path analysisScriptSource, final Path analysisScriptTempCopy) throws IOException {
+    private void makeTempCopyOfRScript() throws IOException {
 
         try (
             // Retrieve the R file as a stream in case it's in a jar.
             final InputStream stream = ContingencyTableValidator.class.getClassLoader().getResourceAsStream(analysisScriptSource.toString());
-            final OutputStream output = new FileOutputStream(analysisScriptTempCopy.toFile())
+            final OutputStream output = Files.newOutputStream(analysisScriptTempCopy)
         ) {
             IOUtils.copy(stream, output);
         }
@@ -124,14 +212,12 @@ public class ContingencyTableValidator {
 
     /**
      * Executes the R analysis script and returns the running process.
-     * 
-     * @param runDirPath the path of the current run directory
-     * @param rScriptPath the path of the R analysis script
+     *
      * @return the executing process
      */
-    private static Process runRScript(final Path runDirPath, final Path rScriptPath, final int startYear, final int endYear) throws IOException {
+    private Process runRScript() throws IOException {
 
-        final String[] command = { "Rscript", rScriptPath.toString(), runDirPath.toAbsolutePath().toString(), String.valueOf(startYear), String.valueOf(endYear)};
+        final String[] command = { "Rscript", analysisScriptTempCopy.toString(), contingencyTablesDirectoryPath.toAbsolutePath().toString(), String.valueOf(startYear), String.valueOf(endYear)};
 
         final ProcessBuilder builder = new ProcessBuilder(command);
         return builder.start();
@@ -143,84 +229,25 @@ public class ContingencyTableValidator {
      * @param process the executing R analysis process
      * @param outputPath the path of the process output and error streams
      */
-    private static double getRScriptResult(final Process process, final Path outputPath) throws IOException {
+    private static void outputAnalysisResults(final Process process, final Path outputPath) throws IOException {
 
-        // Extracting stdout and stderr
-        final BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        final BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        try (
+            final BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            final BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            final FileWriter outputFileWriter = new FileWriter(outputPath.toString(), false);
+        ) {
+            stdout.lines().
+                forEach(line -> {
+                    try {
+                        outputFileWriter.append(line).append("\n");
 
-        // The file the output of the R script is written to
-        final File outputFile = new File(outputPath.toString());
-        final FileWriter outputFileWriter = new FileWriter(outputFile, false);
+                    } catch (final IOException e) {
+                        System.err.println("Unable to write results of analysis to file " + outputPath);
+                    }
+                });
 
-        // Filter relevant lines, calculate v per line and sum together
-        final int v = stdout.lines()
-            // Writing lines to file
-            .filter(ContingencyTableValidator::filterAnalysis)
-            .peek((l) -> {
-                try {
-                    outputFileWriter.write(l);
-                    outputFileWriter.append("\n");
-                } catch (final IOException e) {
-                    System.err.println("Unable to write results of analysis to file " + outputPath);
-                }
-            })
-            .filter(ContingencyTableValidator::filterAnalysis)
-            .map(ContingencyTableValidator::getLineScore)
-            .reduce(Double::sum)
-            .map((res) -> (int) Math.floor(res))
-            .orElse(0);
-
-        // Print out any errors
-        stderr.lines().forEach(System.err::println);
-
-        // Clean up
-        stdout.close();
-        stderr.close();
-        outputFileWriter.close();
-
-        return v;
-    }
-
-    private static boolean filterAnalysis(final String line) {
-
-        // Only interested in interactions with STATS.
-        return line.contains("STAT");
-    }
-
-    // TODO define alternative metric including normalisation for number of interactions.
-    private static double getLineScore(final String line) {
-
-        final int MAX_STARS = 3;
-        final double[] STAR_VALUES = { 2, 3, 4 };
-
-        // Scan for sequences stars
-        // Start from max star count to prevent lower star counts from identifying first
-        final int[] starCounts = new int[MAX_STARS];
-
-        for (int starNumber = MAX_STARS; starNumber > 0; starNumber--) {
-            starCounts[starNumber - 1] = 0;
-
-            if (line.contains("*".repeat(starNumber) + " ".repeat(MAX_STARS - starNumber))) {
-                starCounts[starNumber - 1]++;
-                break;
-            }
+            // Print out any errors
+            stderr.lines().forEach(System.err::println);
         }
-
-        // Count dots in line.
-        final double dotCount = (line.length() - line.replace(".  ", "").length()) / 3;
-        double value = dotCount / 3;
-        for (int i = 0; i < MAX_STARS; i++) {
-            value += starCounts[i] * STAR_VALUES[i];
-        }
-
-        return value;
-    }
-
-    private static String[] joinArrays(final String[] first, final String[] second) {
-        final List<String> both = new ArrayList<String>(first.length + second.length);
-        Collections.addAll(both, first);
-        Collections.addAll(both, second);
-        return both.toArray(new String[0]);
     }
 }

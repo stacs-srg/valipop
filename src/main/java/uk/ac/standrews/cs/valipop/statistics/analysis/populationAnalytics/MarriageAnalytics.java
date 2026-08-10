@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.trees.SexOption;
 
 import java.io.PrintStream;
 import java.util.Map;
@@ -30,18 +30,18 @@ import java.util.TreeMap;
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  */
-class MarriageAnalytics {
+public class MarriageAnalytics {
 
     private final IPersonCollection population;
     private final PrintStream out;
 
-    MarriageAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
+    public MarriageAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
     }
 
-    void printAllAnalytics() {
+    public void printMarriageAnalytics() {
 
         out.println();
         out.println("Male marriage count distribution:");

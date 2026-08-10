@@ -25,7 +25,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.trees.SexOption;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -69,7 +69,6 @@ public class PopulationPropertiesTest {
 
             final OBDModel model = new OBDModel(config);
             model.runSimulation();
-            model.analyseAndOutputPopulation(false);
 
             final IPersonCollection population = model.getPopulation().getPeople();
             population.setDescription("initial size=" + config.getTargetInitialPopulationSize() + ", seed=" + config.getSeed());

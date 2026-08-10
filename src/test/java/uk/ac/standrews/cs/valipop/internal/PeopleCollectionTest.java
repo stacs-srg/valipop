@@ -25,7 +25,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.Person;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PersonNotFoundException;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.trees.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 import java.io.IOException;

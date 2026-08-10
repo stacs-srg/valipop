@@ -20,24 +20,25 @@ package uk.ac.standrews.cs.valipop.population;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.exporting.PopulationExportFormat;
-import uk.ac.standrews.cs.valipop.exporting.IPopulationWriter;
-import uk.ac.standrews.cs.valipop.exporting.PopulationConverter;
-import uk.ac.standrews.cs.valipop.exporting.gedcom.GEDCOMPopulationWriter;
-import uk.ac.standrews.cs.valipop.exporting.geojson.GeojsonPopulationWriter;
-import uk.ac.standrews.cs.valipop.exporting.graphviz.GraphvizPopulationWriter;
+import uk.ac.standrews.cs.valipop.conversion.PopulationExportFormat;
+import uk.ac.standrews.cs.valipop.conversion.IPopulationWriter;
+import uk.ac.standrews.cs.valipop.conversion.PopulationConverter;
+import uk.ac.standrews.cs.valipop.conversion.GEDCOMExportAdapter;
+import uk.ac.standrews.cs.valipop.conversion.GeoJSONExportAdapter;
+import uk.ac.standrews.cs.valipop.conversion.GraphvizExportAdapter;
 import uk.ac.standrews.cs.valipop.simulationEntities.*;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.*;
-import uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.AnalyticsRunner;
+import uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.ContingencyTableFactory;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.trees.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByIntegerRange;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
+import uk.ac.standrews.cs.valipop.utils.ContingencyTableValidator;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Address;
 import uk.ac.standrews.cs.valipop.utils.addressLookup.Area;
@@ -177,7 +178,7 @@ public class OBDModel {
         return Arrays.stream(objectMapper.readValue(new File(config.getGeographyFilePath().toString()), Area[].class)).toList();
     }
 
-    public void runSimulation() {
+    public void runSimulation() throws IOException {
 
         for (int countAttempts = 0; countAttempts < MAX_ATTEMPTS; countAttempts++) {
             try {
@@ -191,6 +192,7 @@ public class OBDModel {
         }
 
         recordFinalSummary();
+        outputFiles(false);
     }
 
     public Population getPopulation() {
@@ -209,27 +211,37 @@ public class OBDModel {
         return summary;
     }
 
-    public void analyseAndOutputPopulation(final boolean outputSummaryRow) throws IOException {
+    public void outputFiles(final boolean outputSummaryRow) throws IOException {
 
         final ProgramTimer recordTimer = new ProgramTimer();
 
         if (config.getConfigFilePath() != null)
             Files.copy(config.getConfigFilePath(), config.getRunPath().resolve(CONFIG_FILE_NAME + ".config"));
 
-        if (config.shouldGenerateContingencyTables())
-            ContingencyTableFactory.generateContingencyTables(population.getPeople(), desiredStatistics, config, summary);
+        if (config.shouldExportPopulation())
+            outputToGraph(config.getPopulationExportFormat(), population.getPeople(), config.getPopulationExportDirPath());
 
         if (config.shouldExportRecords())
             RecordGenerationFactory.outputRecords(config.getRecordExportFormat(), config.getRecordsDirPath(), population.getPeople(), config.getSimulationStart());
 
-        if (config.shouldExportPopulation())
-            outputToGraph(config.getPopulationExportFormat(), population.getPeople(), config.getGraphsDirPath());
+        if (config.shouldGenerateContingencyTables())
+            ContingencyTableFactory.generateContingencyTables(population.getPeople(), desiredStatistics, config, summary);
+
+        if (config.shouldValidate())
+            new ContingencyTableValidator(config).validate();
 
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
 
-        try (final PrintStream resultsOutput = new PrintStream(config.getDetailedResultsPath().toFile(), EXPORT_CHARSET)) {
+        try (final PrintStream resultsOutput = new PrintStream(config.getStatisticsPath().toFile(), EXPORT_CHARSET)) {
 
-            AnalyticsRunner.runAnalytics(population.getPeople(config.getSimulationStart(), config.getSimulationEnd(), Period.ofYears(MAXIMUM_AGE_AT_DEATH)), resultsOutput);
+            final IPersonCollection population1 = population.getPeople(config.getSimulationStart(), config.getSimulationEnd(), Period.ofYears(MAXIMUM_AGE_AT_DEATH));
+
+            final PopulationAnalytics analytics = new PopulationAnalytics(population1, resultsOutput);
+
+            analytics.printPopulationAnalytics();
+            analytics.printChildrenAnalytics();
+            analytics.printDeathAnalytics();
+            analytics.printMarriageAnalytics();
         }
 
         MemoryUsageAnalysis.log();
@@ -246,9 +258,9 @@ public class OBDModel {
 
         final IPopulationWriter populationWriter = switch (type) {
 
-            case GEDCOM -> new GEDCOMPopulationWriter(outputDir.resolve(POPULATION_EXPORT_FILENAME + ".ged"));
-            case GRAPHVIZ -> new GraphvizPopulationWriter(people, outputDir.resolve(POPULATION_EXPORT_FILENAME + ".dot"));
-            case GEOJSON -> new GeojsonPopulationWriter(outputDir.resolve(POPULATION_EXPORT_FILENAME + ".geojson"));
+            case GEDCOM -> new GEDCOMExportAdapter(outputDir.resolve(POPULATION_EXPORT_FILENAME + ".ged"));
+            case GRAPHVIZ -> new GraphvizExportAdapter(people, outputDir.resolve(POPULATION_EXPORT_FILENAME + ".dot"));
+            case GEOJSON -> new GeoJSONExportAdapter(outputDir.resolve(POPULATION_EXPORT_FILENAME + ".geojson"));
         };
 
         try (final PopulationConverter converter = new PopulationConverter(people, populationWriter)) {

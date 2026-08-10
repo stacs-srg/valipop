@@ -20,7 +20,7 @@ package uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.trees.SexOption;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -34,8 +34,7 @@ import static uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Tom Dalton
  */
-
-class ChildrenAnalytics {
+public class ChildrenAnalytics {
 
     static final int MINIMUM_CHILD_BEARING_AGE = 15;
     static final int MAXIMUM_CHILD_BEARING_AGE = 50;
@@ -43,13 +42,13 @@ class ChildrenAnalytics {
     private final IPersonCollection population;
     private final PrintStream out;
 
-    ChildrenAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
+    public ChildrenAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
     }
 
-    void printAllAnalytics() {
+    public void printChildrenAnalytics() {
 
         out.println("Family size distribution:");
         out.println();

@@ -112,7 +112,7 @@ public class FactorSearch {
                                     OBDModel model = new OBDModel(config);
                                     try {
                                         model.runSimulation();
-                                        model.analyseAndOutputPopulation(false);
+                                        model.outputFiles(false);
 
                                     } catch (PreEmptiveOutOfMemoryWarning e) {
                                         model.getSummaryRow().outputSummaryRowToFile();

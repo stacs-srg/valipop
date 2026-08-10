@@ -51,7 +51,7 @@ public class CL_OBDModel {
 
         final OBDModel model = new OBDModel(config);
         model.runSimulation();
-        model.analyseAndOutputPopulation(false);
+        model.outputFiles(false);
 
         // TODO separate contingency table generation from validation
 
@@ -65,7 +65,7 @@ public class CL_OBDModel {
 
         final ProgramTimer statsTimer = new ProgramTimer();
 
-        final double score = new ContingencyTableValidator(config).getValidationScore();
+        final int score = new ContingencyTableValidator(config).getValidationScore();
 
         System.out.println("Validation score: " + score + ")");
 

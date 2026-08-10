@@ -17,7 +17,7 @@
  */
 package uk.ac.standrews.cs.valipop;
 
-import uk.ac.standrews.cs.valipop.exporting.PopulationExportFormat;
+import uk.ac.standrews.cs.valipop.conversion.PopulationExportFormat;
 import uk.ac.standrews.cs.valipop.population.SerializableConfig;
 import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.valipop.utils.InputFileReader;
@@ -51,10 +51,14 @@ public class Config implements Serializable {
 
     private static final boolean DEFAULT_BINOMIAL_SAMPLING_FLAG = true;
     private static final boolean DEFAULT_DETERMINISTIC_FLAG = false;
-    private static final boolean DEFAULT_EXPORT_CONTINGENCY_TABLES_FLAG = false;
-    private static final boolean DEFAULT_EXPORT_RECORDS_FLAG = false;
     private static final boolean DEFAULT_EXPORT_POPULATION_FLAG = false;
+    private static final boolean DEFAULT_EXPORT_RECORDS_FLAG = false;
+    private static final boolean DEFAULT_EXPORT_CONTINGENCY_TABLES_FLAG = false;
+    private static final boolean DEFAULT_EXPORT_VALIDATION_ANALYSIS_FLAG = false;
+    private static final boolean DEFAULT_SCALE_CONTINGENCY_TABLE_TARGET_FREQUENCIES_FLAG = false;
+    private static final boolean DEFAULT_SUPPRESS_SOLELY_CATEGORICAL_CORRELATIONS_FLAG = false;
 
+    private static final double DEFAULT_VALIDATION_FREQUENCY_THRESHOLD = 0.0001;
     private static final double DEFAULT_INITIALISATION_BIRTH_RATE = 0.0133;
     private static final double DEFAULT_INITIALISATION_DEATH_RATE = 0.0122;
     private static final double DEFAULT_RECOVERY_FACTOR = 1.0;
@@ -108,12 +112,17 @@ public class Config implements Serializable {
 
     private static final Logger log = Logger.getLogger(Config.class.getName());
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss-SSS", Locale.UK);
+
+    public static final String LOG_DIR_NAME = "log";
     public static final String POPULATION_EXPORT_DIR_NAME = "population";
-    public static final String LOG_FILE_NAME = "log.txt";
     public static final String RECORDS_EXPORT_DIR_NAME = "records";
-    public static final String TEMP_DIR_INDICATOR = "!TEMP!";
     public static final String CONTINGENCY_TABLES_DIR_NAME = "tables";
+    public static final String VALIDATION_ANALYSIS_DIR_NAME = "validation";
+
+    public static final String LOG_FILE_NAME = "log.txt";
+    public static final String TEMP_DIR_INDICATOR = "!TEMP!";
     public static final int MINIMUM_INITIALISATION_PERIOD_IN_YEARS = 150;
+    public static final String STATISTICS_FILENAME = "statistics.txt";
 
     private static Level logLevel = DEFAULT_LOG_LEVEL;
     private final Path DEFAULT_GEOGRAPHY_FILE_PATH = Paths.get("geography.ser");
@@ -160,7 +169,7 @@ public class Config implements Serializable {
     private Path resultsSummaryPath;
 
     // Path for detailed results for the run
-    private Path detailedResultsPath;
+    private Path statisticsPath;
 
     // Path for the records of a run
     private Path recordsPath;
@@ -184,12 +193,13 @@ public class Config implements Serializable {
 
     private boolean binomialSampling = DEFAULT_BINOMIAL_SAMPLING_FLAG;
     private boolean deterministic = DEFAULT_DETERMINISTIC_FLAG;
-    private boolean exportContingencyTables = DEFAULT_EXPORT_CONTINGENCY_TABLES_FLAG;
 
-    // TODO add flag for validation
-
-    private boolean exportRecords = DEFAULT_EXPORT_RECORDS_FLAG;
     private boolean exportPopulation = DEFAULT_EXPORT_POPULATION_FLAG;
+    private boolean exportRecords = DEFAULT_EXPORT_RECORDS_FLAG;
+    private boolean exportContingencyTables = DEFAULT_EXPORT_CONTINGENCY_TABLES_FLAG;
+    private boolean exportValidationAnalysis = DEFAULT_EXPORT_VALIDATION_ANALYSIS_FLAG;
+    private boolean scaleContingencyTableTargetFrequencies = DEFAULT_SCALE_CONTINGENCY_TABLE_TARGET_FREQUENCIES_FLAG;
+    private boolean suppressSolelyCategoricalCorrelations = DEFAULT_SUPPRESS_SOLELY_CATEGORICAL_CORRELATIONS_FLAG;
 
     // Time steps
     private Period simulationTimeStep = DEFAULT_SIMULATION_TIME_STEP;
@@ -205,6 +215,7 @@ public class Config implements Serializable {
 
     private int seed = DEFAULT_SEED;
     private double overSizedGeographyFactor = DEFAULT_OVERSIZED_GEOGRAPHY_FACTOR;
+    private double validationFrequencyThreshold = DEFAULT_VALIDATION_FREQUENCY_THRESHOLD;
 
     private int contingencyTableStepback = DEFAULT_CONTINGENCY_TABLE_STEPBACK;
     private double contingencyTablePrecision = DEFAULT_CONTINGENCY_TABLE_PRECISION;
@@ -228,13 +239,13 @@ public class Config implements Serializable {
     }
 
     // Initialise configuration programmatically
-    public Config(final LocalDate initialisationStart, final LocalDate simulationStart, final LocalDate simulationEnd, final int targetInitialPopulationSize, final Path varPath, final Path resultsDir, final String groupName, final Path summaryResultsDir) throws IOException {
+    public Config(final LocalDate initialisationStart, final LocalDate simulationStart, final LocalDate simulationEnd, final int targetInitialPopulationSize, final Path inputDistributionsPath, final Path resultsDir, final String groupName, final Path summaryResultsDir) throws IOException {
 
         this.initialisationStart = initialisationStart;
         this.simulationStart = simulationStart;
         this.simulationEnd = simulationEnd;
         this.targetInitialPopulationSize = targetInitialPopulationSize;
-        this.inputDistributionsPath = varPath;
+        this.inputDistributionsPath = inputDistributionsPath;
         this.resultsSavePath = resultsDir;
         this.groupName = groupName;
         this.summaryResultsDirPath = summaryResultsDir;
@@ -270,8 +281,8 @@ public class Config implements Serializable {
         return contingencyTableStepback;
     }
 
-    public Path getDetailedResultsPath() {
-        return detailedResultsPath;
+    public Path getStatisticsPath() {
+        return statisticsPath;
     }
 
     public Path getRecordsDirPath() {
@@ -282,7 +293,7 @@ public class Config implements Serializable {
         return pathToConfigFile;
     }
 
-    public Path getGraphsDirPath() {
+    public Path getPopulationExportDirPath() {
         return populationExportPath;
     }
 
@@ -466,12 +477,24 @@ public class Config implements Serializable {
         return exportContingencyTables;
     }
 
+    public boolean shouldValidate() {
+        return exportValidationAnalysis;
+    }
+
     public boolean shouldExportRecords() {
         return exportRecords;
     }
 
     public boolean shouldExportPopulation() {
         return exportPopulation;
+    }
+
+    public boolean shouldScaleContingencyTableTargetFrequencies() {
+        return scaleContingencyTableTargetFrequencies;
+    }
+
+    public boolean shouldSuppressSolelyCategoricalCorrelations() {
+        return suppressSolelyCategoricalCorrelations;
     }
 
     public Period getMinGestationPeriod() {
@@ -652,6 +675,7 @@ public class Config implements Serializable {
         processors = new HashMap<>();
 
         processors.put("input_distributions_path", value -> inputDistributionsPath = Paths.get(value));
+
         processors.put("results_save_location", value -> {
             try {
                 resultsSavePath = value.equals(TEMP_DIR_INDICATOR) ? Files.createTempDirectory("valipop-results") : Paths.get(value);
@@ -659,6 +683,7 @@ public class Config implements Serializable {
                 throw new RuntimeException(e);
             }
         });
+
         processors.put("summary_results_save_location", value -> summaryResultsDirPath = Paths.get(value));
         processors.put("project_location", value -> projectPath = Paths.get(value));
 
@@ -679,18 +704,24 @@ public class Config implements Serializable {
         processors.put("initialisation_birth_rate", value -> initialisationBirthRate = parseDouble(value, "initialisation_birth_rate"));
         processors.put("initialisation_death_rate", value -> initialisationDeathRate = parseDouble(value, "initialisation_death_rate"));
         processors.put("recovery_factor", value -> recoveryFactor = parseDouble(value, "recovery_factor"));
+        processors.put("validation_frequency_threshold", value -> validationFrequencyThreshold = parseDouble(value, "validation_frequency_threshold"));
         processors.put("proportional_recovery_factor", value -> proportionalRecoveryFactor = parseDouble(value, "recovery_factor"));
         processors.put("over_sized_geography_factor", value -> overSizedGeographyFactor = parseOversizedGeographyFactor(value, "over_sized_geography_factor"));
-
         processors.put("binomial_sampling", value -> binomialSampling = value.equalsIgnoreCase("true"));
-        processors.put("record_export", value -> exportRecords = value.equalsIgnoreCase("true"));
+
         processors.put("population_export", value -> exportPopulation = value.equalsIgnoreCase("true"));
+        processors.put("record_export", value -> exportRecords = value.equalsIgnoreCase("true"));
         processors.put("contingency_table_export", value -> exportContingencyTables = value.equalsIgnoreCase("true"));
+        processors.put("validation_export", value -> exportValidationAnalysis = value.equalsIgnoreCase("true"));
+        processors.put("scale_contingency_table_target_frequencies", value -> scaleContingencyTableTargetFrequencies = value.equalsIgnoreCase("true"));
+        processors.put("suppress_solely_categorical_correlations", value -> suppressSolelyCategoricalCorrelations = value.equalsIgnoreCase("true"));
+
         processors.put("deterministic", value -> deterministic = value.equalsIgnoreCase("true"));
 
         processors.put("record_export_format", value -> {
             try {
                 recordExportFormat = RecordExportFormat.valueOf(value);
+
             } catch (final IllegalArgumentException e) {
                 throw new IllegalArgumentException("'" + value + "' not a valid option for `record_export_format`");
             }
@@ -699,6 +730,7 @@ public class Config implements Serializable {
         processors.put("population_export_format", value -> {
             try {
                 populationExportFormat = PopulationExportFormat.valueOf(value);
+
             } catch (final IllegalArgumentException e) {
                 throw new IllegalArgumentException("'" + value + "' not a valid option for `population_export_format`");
             }
@@ -776,9 +808,8 @@ public class Config implements Serializable {
 
                 final String[] split = line.split("=", -1);
 
-                if (split.length < 2) {
+                if (split.length < 2)
                     throw new IllegalArgumentException("Illegal line '" + line + "' read in config file. Each line should be of the format '<option> = <value>'");
-                }
 
                 final String key = split[0].trim();
 
@@ -822,26 +853,34 @@ public class Config implements Serializable {
 
     private void setUpFileStructure() throws IOException {
 
+        // TODO why is this in Config?
+
         if (summaryResultsDirPath == null)
             summaryResultsDirPath = resultsSavePath;
 
         globalSummaryPath = summaryResultsDirPath.resolve( "global-results-summary.csv");
-        final Path groupPath = resultsSavePath.resolve(groupName);
         resultsSummaryPath = summaryResultsDirPath.resolve(groupName).resolve( groupName + "-results-summary.csv");
+
+        final Path groupPath = resultsSavePath.resolve(groupName);
         runPath = groupPath.resolve(formatTimeStamp(simulationExecutionStartTime));
-        detailedResultsPath = runPath.resolve("statistics.txt");
-        recordsPath = runPath.resolve(RECORDS_EXPORT_DIR_NAME);
+
+        final Path logPath = runPath.resolve(LOG_DIR_NAME);
+        final Path validationAnalysisPath = runPath.resolve(VALIDATION_ANALYSIS_DIR_NAME);
+
+        statisticsPath = runPath.resolve(STATISTICS_FILENAME);
         populationExportPath = runPath.resolve(POPULATION_EXPORT_DIR_NAME);
+        recordsPath = runPath.resolve(RECORDS_EXPORT_DIR_NAME);
         contingencyTablesPath = runPath.resolve(CONTINGENCY_TABLES_DIR_NAME);
-        final Path log = runPath.resolve("log");
 
         mkDirs(resultsSavePath);
         mkDirs(groupPath);
         mkDirs(runPath);
+
+        mkDirs(logPath);
         mkDirs(recordsPath);
         mkDirs(populationExportPath);
         mkDirs(contingencyTablesPath);
-        mkDirs(log);
+        mkDirs(validationAnalysisPath);
 
         mkSummaryFile(globalSummaryPath);
         mkSummaryFile(resultsSummaryPath);
@@ -898,6 +937,10 @@ public class Config implements Serializable {
         return overSizedGeographyFactor;
     }
 
+    public double getValidationFrequencyThreshold() {
+        return validationFrequencyThreshold;
+    }
+
     public SerializableConfig toSerialized() {
         return new SerializableConfig(
             inputDistributionsPath.toString(),
@@ -926,7 +969,7 @@ public class Config implements Serializable {
             varFemaleOccupationChangePaths.toString(),
             globalSummaryPath.toString(),
             resultsSummaryPath.toString(),
-            detailedResultsPath.toString(),
+            statisticsPath.toString(),
             recordsPath.toString(),
             populationExportPath.toString(),
             contingencyTablesPath.toString(),
@@ -988,7 +1031,7 @@ public class Config implements Serializable {
         this.varFemaleOccupationChangePaths   =Path.of(config.varFemaleOccupationChangePaths);
         this.globalSummaryPath                =Path.of(config.globalSummaryPath);
         this.resultsSummaryPath               =Path.of(config.resultsSummaryPath);
-        this.detailedResultsPath              =Path.of(config.detailedResultsPath);
+        this.statisticsPath =Path.of(config.detailedResultsPath);
         this.recordsPath                      =Path.of(config.recordsPath);
         this.populationExportPath             =Path.of(config.graphsPath);
         this.contingencyTablesPath            =Path.of(config.contingencyTablesPath);

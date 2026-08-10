@@ -185,7 +185,7 @@ public class DistributedFactorSearch {
         System.out.println("Simulating the model");
         model.runSimulation();
         System.out.println("Analysing the model");
-        model.analyseAndOutputPopulation(false);
+        model.outputFiles(false);
         System.out.println("Complete for rf: " +config.getRecoveryFactor() + ", rpf: " + config.getProportionalRecoveryFactor());
 
         final SummaryRow summaryRow = model.getSummaryRow();
@@ -234,9 +234,9 @@ public class DistributedFactorSearch {
         final double initialisation_birth_rate = 0.0233;
         final double initialisation_death_rate = 0.0233;
 
-        final Period[] input_widths = new Period[]{Period.ofYears(10)};
-        final Period[] minBirthSpacings = new Period[]{Period.ofDays(147)};
-        final int[] t0_pop_sizes = new int[]{size0};
+        final Period[] input_widths = {Period.ofYears(10)};
+        final Period[] minBirthSpacings = {Period.ofDays(147)};
+        final int[] t0_pop_sizes = {size0};
 
         final List<ModelInput> inputs = new ArrayList<>();
 

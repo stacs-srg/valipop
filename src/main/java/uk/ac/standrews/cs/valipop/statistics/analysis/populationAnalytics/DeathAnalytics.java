@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.IntStream;
 
 import static uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.PopulationAnalytics.PERCENTAGE_FORMAT;
 
@@ -34,18 +33,18 @@ import static uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  */
-class DeathAnalytics {
+public class DeathAnalytics {
 
     private final IPersonCollection population;
     private final PrintStream out;
 
-    DeathAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
+    public DeathAnalytics(final IPersonCollection population, final PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
     }
 
-    void printAllAnalytics() {
+    public void printDeathAnalytics() {
 
         out.println("Death age distribution:");
         out.println();

@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.PersonCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.dataStructure.Population;
-import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.SexOption;
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.trees.SexOption;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCountByString;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.OccupationChangeStatsKey;
