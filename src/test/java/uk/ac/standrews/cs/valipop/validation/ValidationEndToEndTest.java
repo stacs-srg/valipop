@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class ValidationEndToEndTest {
 
-    public static final int MAX_ACCEPTABLE_VALIDATION_SCORE = 20;
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/validation");
 
     private static final List<Arguments> endToEndConfigurations = List.of(
@@ -52,12 +51,13 @@ public class ValidationEndToEndTest {
     public void endToEndValidation(final String configPath) throws IOException {
 
         final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+        final double acceptableScore = Double.parseDouble(config.get("acceptable_validation_score"));
 
         final OBDModel model = new OBDModel(config);
         model.runSimulation();
 
         final int score = new ContingencyTableValidator(config).getValidationScore();
 
-        assertTrue(score <= MAX_ACCEPTABLE_VALIDATION_SCORE);
+        assertTrue(score <= acceptableScore);
     }
 }

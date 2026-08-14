@@ -24,14 +24,12 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static uk.ac.standrews.cs.valipop.Config.CONTINGENCY_TABLES_DIR_NAME;
 import static uk.ac.standrews.cs.valipop.Config.VALIDATION_ANALYSIS_DIR_NAME;
-import static uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.tables.ContingencyTable.LABEL_SOURCE;
-import static uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.tables.ContingencyTable.NUMERICAL_VARIABLES;
+import static uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.tables.ContingencyTable.*;
 import static uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.trees.SourceType.TARGET;
 
 /**
@@ -45,7 +43,6 @@ public class ContingencyTableValidator {
     private static final String ANALYSIS_SCRIPT_FILENAME = "validation-analysis.R";
     private static final String ANALYSIS_FILENAME = "validation-analysis-full.txt";
     private static final String ANALYSIS_RELEVANT_FILENAME = "validation-analysis-relevant.txt";
-    private static final String ANALYSIS_SIGNIFICANT_FILENAME = "validation-analysis-significant.txt";
     private static final String ANALYSIS_SCORE_FILENAME = "validation-analysis-score.txt";
 
     private static final int NORMAL_EXIT_CODE = 0;
@@ -58,13 +55,15 @@ public class ContingencyTableValidator {
     private final Path contingencyTablesDirectoryPath;
     private final Path analysisFile;
     private final Path analysisRelevantFile;
-    private final Path analysisSignificantFile;
     private final Path analysisScoreFile;
     private final Path analysisScriptSource;
     private final Path analysisScriptTempCopy;
 
     private final int startYear;
     private final int endYear;
+
+    @SuppressWarnings("BooleanVariableAlwaysNegated")
+    private final boolean suppressSolelyCategoricalCorrelations;
 
     public ContingencyTableValidator(final Config config) {
 
@@ -75,7 +74,6 @@ public class ContingencyTableValidator {
 
         analysisFile = validationAnalysisDirectoryPath.resolve(ANALYSIS_FILENAME);
         analysisRelevantFile = validationAnalysisDirectoryPath.resolve(ANALYSIS_RELEVANT_FILENAME);
-        analysisSignificantFile = validationAnalysisDirectoryPath.resolve(ANALYSIS_SIGNIFICANT_FILENAME);
         analysisScoreFile = validationAnalysisDirectoryPath.resolve(ANALYSIS_SCORE_FILENAME);
 
         analysisScriptSource = ANALYSIS_SCRIPT_SOURCE_DIRECTORY.resolve(ANALYSIS_SCRIPT_FILENAME);
@@ -83,9 +81,10 @@ public class ContingencyTableValidator {
 
         startYear = config.getSimulationStart().getYear();
         endYear = config.getSimulationEnd().getYear();
+
+        suppressSolelyCategoricalCorrelations = config.shouldSuppressSolelyCategoricalCorrelations();
     }
 
-    @SuppressWarnings("StringConcatenationMissingWhitespace")
     public synchronized void validate() throws IOException {
 
         // Synchronized since method creates and deletes files in the parent directory.
@@ -98,32 +97,64 @@ public class ContingencyTableValidator {
 
         try (final FileWriter analysisRelevantFileWriter = new FileWriter(analysisRelevantFile.toString(), false)) {
 
-            Files.readAllLines(analysisFile).stream().
-                filter(ContingencyTableValidator::lineIsRelevant).
-                forEach(line -> {
-                    try {
-                        analysisRelevantFileWriter.append(line).append("\n");
-                    } catch (final IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-        }
+            final List<String> linesInAnalysisFile = Files.readAllLines(analysisFile);
+            List<String> linesForParticularAnalysis;
 
-        try (final FileWriter analysisSignificantFileWriter = new FileWriter(analysisSignificantFile.toString(), false)) {
+            int line_no = 0;
+            while (!(linesInAnalysisFile.get(line_no).contains("-----"))) line_no++;
 
-            for (final String line : Files.readAllLines(analysisRelevantFile)) {
+            while (line_no < linesInAnalysisFile.size()) {
 
-                if (line.contains(":" + LABEL_SOURCE + TARGET)) relevantInteractions++;
+                analysisRelevantFileWriter.append("\n").append(linesInAnalysisFile.get(line_no)).append("\n").append("\n");
 
-                if (line.isEmpty() || line.contains("-----") || line.contains("Pr(>|W|)"))
-                    analysisSignificantFileWriter.append(line).append("\n");
+                linesForParticularAnalysis = new ArrayList<>();
 
-                if (line.contains("*") && line.contains(":" + LABEL_SOURCE + TARGET)) {
+                while (!(linesInAnalysisFile.get(line_no).contains("(Intercept)"))) line_no++;
+                line_no++;
 
-                    significantInteractions++;
-                    starCount += countStars(line);
-                    analysisSignificantFileWriter.append(line).append("\n");
+                while (!(linesInAnalysisFile.get(line_no).contains("---") || linesInAnalysisFile.get(line_no).isEmpty())) {
+                    linesForParticularAnalysis.add(linesInAnalysisFile.get(line_no));
+                    line_no++;
                 }
+
+                final Map<String, Integer> maxStarCounts = new TreeMap<>(ContingencyTableValidator::compareAnalysisKeys);
+
+                int max_key_length = 0;
+                for (final String line1 : linesForParticularAnalysis) {
+                    if (lineIsRelevant(line1)) {
+                        relevantInteractions++;
+
+                        final String s = line1.split(" ")[0];
+                        String key = s;
+                        final List<String> variables = Arrays.stream(s.split(":", -1)).filter(variable -> !variable.equals("SourceTARGET")).toList();
+
+                        for (final String variable : variables)
+                            if (prefixedByCategoricalVariable(variable))
+                                key = s.replace(variable, getCategoricalVariablePrefix(variable));
+
+                        final int stars = countStars(line1);
+                        if (maxStarCounts.containsKey(key)) {
+                            maxStarCounts.put(key, Math.max(maxStarCounts.get(key), stars));
+                        } else {
+                            maxStarCounts.put(key, stars);
+                        }
+
+                        if (stars > 0) significantInteractions++;
+                        starCount += stars;
+
+                        if (key.length() > max_key_length) max_key_length = key.length();
+                    }
+                }
+
+                for (final String key : maxStarCounts.keySet()) {
+                    analysisRelevantFileWriter.append(key);
+                    for (int i = 0; i <= max_key_length - key.length(); i++) analysisRelevantFileWriter.append(" ");
+                    for (int i = 0; i < maxStarCounts.get(key); i++) analysisRelevantFileWriter.append("*");
+                    analysisRelevantFileWriter.append("\n");
+                }
+
+                while (line_no < linesInAnalysisFile.size() && !(linesInAnalysisFile.get(line_no).contains("-----")))
+                    line_no++;
             }
         }
 
@@ -136,6 +167,28 @@ public class ContingencyTableValidator {
             analysisScoreFileWriter.append("significant_interactions = ").append(String.valueOf(significantInteractions)).append("\n");
             analysisScoreFileWriter.append("score_per_interaction = ").append(averageFormatted).append("\n");
         }
+    }
+
+    private static int compareAnalysisKeys(final String s1, final String s2) {
+
+        final int number_of_variables1 = s1.split(":", -1).length;
+        final int number_of_variables2 = s2.split(":", -1).length;
+
+        if (number_of_variables1 == number_of_variables2) return s1.compareTo(s2);
+        else return Integer.compare(number_of_variables1, number_of_variables2);
+    }
+
+    private static boolean prefixedByCategoricalVariable(final String variable) {
+
+        return getCategoricalVariablePrefix(variable) != null;
+    }
+
+    private static String getCategoricalVariablePrefix(final String variable) {
+
+        for (final String categoricalVariable : CATEGORICAL_VARIABLES)
+            if (variable.startsWith(categoricalVariable)) return categoricalVariable;
+
+        return null;
     }
 
     private void runAnalysis() throws IOException {
@@ -163,19 +216,18 @@ public class ContingencyTableValidator {
         }
     }
 
-    private static boolean lineIsRelevant(final String line) {
-
-        return line.isEmpty() || line.contains("-----") || line.contains("Pr(>|W|)") || lineContainsRelevantInteraction(line);
-    }
-
     @SuppressWarnings("StringConcatenationMissingWhitespace")
-    private static boolean lineContainsRelevantInteraction(final String line) {
+    private boolean lineIsRelevant(final String line) {
 
-        final boolean line_contains_numerical_variable = Arrays.stream(line.split(" ")[0].     // Potential interaction.
-            split(":", -1)).                                                              // Variables within interaction.
-            anyMatch(NUMERICAL_VARIABLES::contains);                                                 // Check for any numerical variables.
+        // Check for interaction with TARGET variable.
+        if (!line.contains(LABEL_SOURCE + TARGET)) return false;
 
-        return line.contains(LABEL_SOURCE + TARGET) && line_contains_numerical_variable;             // Check for interaction with TARGET variable.
+        if (!suppressSolelyCategoricalCorrelations) return true;
+
+        // Check whether line contains any numerical variables.
+        return Arrays.stream(line.split(" ")[0].
+            split(":", -1)).
+            anyMatch(NUMERICAL_VARIABLES::contains);
     }
 
     private static int countStars(final String line) {
@@ -224,18 +276,19 @@ public class ContingencyTableValidator {
     }
 
     /**
-     * Outputs the standard output and error of the R analysis to {@code outputPath} and returns the calculated v value.
+     * Outputs the standard output and error of the R analysis to {@code outputPath}.
      * 
      * @param process the executing R analysis process
-     * @param outputPath the path of the process output and error streams
+     * @param outputPath the path of the process output
      */
     private static void outputAnalysisResults(final Process process, final Path outputPath) throws IOException {
 
         try (
             final BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
             final BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            final FileWriter outputFileWriter = new FileWriter(outputPath.toString(), false);
-        ) {
+
+            final FileWriter outputFileWriter = new FileWriter(outputPath.toString(), false)) {
+
             stdout.lines().
                 forEach(line -> {
                     try {

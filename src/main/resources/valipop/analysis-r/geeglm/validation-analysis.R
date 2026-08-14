@@ -35,7 +35,8 @@ run_death_analysis <- function(in_data) {
     tryCatch(
       expr = run_analysis(Frequency ~ Date * Age * Sex * Died * Source, in_data),
       error = function(e) {
-        warning("Error in death analysis, probably due to population size being too small")
+        e$message <- paste("Error in death analysis (may be due to population size being too small):", e, sep = " ")
+        stop(e)
       }
     )
   )
@@ -46,7 +47,8 @@ run_birth_analysis <- function(in_data) {
     tryCatch(
       expr = run_analysis(Frequency ~ Date * Age * CIY * Source, in_data),
       error = function(e) {
-        warning("Error in birth analysis, probably due to population size being too small")
+        e$message <- paste("Error in birth analysis (may be due to population size being too small):", e, sep = " ")
+        stop(e)
       }
     )
   )
@@ -57,7 +59,8 @@ run_multiple_birth_analysis <- function(in_data) {
     tryCatch(
       expr = run_analysis(Frequency ~ Date * Age * NCIY * Source, in_data),
       error = function(e) {
-        warning("Error in multiple birth analysis, probably due to population size being too small")
+        e$message <- paste("Error in multiple birth analysis (may be due to population size being too small):", e, sep = " ")
+        stop(e)
       }
     )
   )
@@ -68,7 +71,8 @@ run_partnership_analysis <- function(in_data) {
     tryCatch(
       expr = run_analysis(Frequency ~ Date * PartnerAge * Age * Source, in_data),
       error = function(e) {
-        warning("Error in partnership analysis, probably due to population size being too small")
+        e$message <- paste("Error in partnership analysis (may be due to population size being too small):", e, sep = " ")
+        stop(e)
       }
     )
   )

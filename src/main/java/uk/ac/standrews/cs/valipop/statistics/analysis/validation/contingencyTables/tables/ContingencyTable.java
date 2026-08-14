@@ -51,6 +51,10 @@ public abstract class ContingencyTable {
         LABEL_NUMBER_OF_PREVIOUS_CHILDREN_IN_ANY_PARTNERSHIP
     );
 
+    public static final Set<String> CATEGORICAL_VARIABLES = Set.of(
+        LABEL_SOURCE, LABEL_SEX, LABEL_PARTNER_AGE, LABEL_SEPARATED, LABEL_DIED, LABEL_CHILDREN_IN_YEAR
+    );
+
     @SuppressWarnings("rawtypes")
     protected final Map<String, ContingencyTableRow> table = new TreeMap<>();
 
