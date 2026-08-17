@@ -76,8 +76,7 @@ public class OBDModel {
 
     // TODO use more informative class name
 
-//    public static final Charset EXPORT_CHARSET = StandardCharsets.UTF_8;
-    public static final Charset EXPORT_CHARSET = StandardCharsets.ISO_8859_1;
+    public static final Charset EXPORT_CHARSET = StandardCharsets.UTF_8;
 
     private static final int MINIMUM_POPULATION_SIZE = 100;
     private static final int EARLIEST_AGE_OF_MARRIAGE = 16;

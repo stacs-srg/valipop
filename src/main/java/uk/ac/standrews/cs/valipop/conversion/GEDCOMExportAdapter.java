@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -193,7 +194,7 @@ public class GEDCOMExportAdapter extends AbstractFilePopulationWriter {
 
     private void writeName(final String name) {
 
-        write(NAME_TAG, name);
+        write(NAME_TAG, Normalizer.normalize(name, Normalizer.Form.NFKD));
     }
 
     private void writeName(final IPerson person) {
