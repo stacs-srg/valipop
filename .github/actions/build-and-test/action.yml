@@ -34,4 +34,4 @@ runs:
 
   - name: Build and test with Maven
     shell: bash
-    run: mvn -B ${{ inputs.maven-target }} ${{ inputs.maven-params }}
+    run: mvn -B ${{ inputs.maven-target }} ${{ inputs.maven-params }} -Drun.jvmArguments="-Xmx4g"
