@@ -194,7 +194,7 @@ public class GEDCOMExportAdapter extends AbstractFilePopulationWriter {
 
     private void writeName(final String name) {
 
-        write(NAME_TAG, Normalizer.normalize(name, Normalizer.Form.NFKD));
+        write(NAME_TAG, name);
     }
 
     private void writeName(final IPerson person) {

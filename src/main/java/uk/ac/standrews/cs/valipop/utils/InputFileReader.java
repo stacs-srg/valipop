@@ -33,6 +33,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Normalizer;
 import java.time.Year;
 import java.util.*;
 import java.util.logging.Logger;
@@ -217,9 +218,17 @@ public class InputFileReader {
                             throw new InvalidInputFileException("One or more data rows do not have the correct number of values in the file: " + path.toString());
                         }
 
-                        String rowLabel = split[0];
+                        String name = split[0];
+                        String normalize = Normalizer.normalize(name, Normalizer.Form.NFKD);
+                        String normalized = normalize.replaceAll("\\p{M}", "").replaceAll("ł", "l").replaceAll("Ł", "L");
 
-                        data.put(rowLabel, Double.valueOf(split[1]));
+                        Double frequency = Double.valueOf(split[1]);
+
+                        if (data.containsKey(normalized)) {
+                            frequency += data.get(normalized);
+                        }
+
+                        data.put(normalized, frequency);
                     }
                     break;
             }
