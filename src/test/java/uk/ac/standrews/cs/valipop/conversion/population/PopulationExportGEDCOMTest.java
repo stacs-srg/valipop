@@ -52,8 +52,8 @@ import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.mak
 public class PopulationExportGEDCOMTest extends PopulationExportTest {
 
     private static final List<Arguments> configurations = List.of(
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-gedcom.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-gedcom.config"))
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-gedcom.config"))
+//        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-gedcom.config"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(

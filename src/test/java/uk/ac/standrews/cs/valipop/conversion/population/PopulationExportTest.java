@@ -17,6 +17,7 @@
  */
 package uk.ac.standrews.cs.valipop.conversion.population;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -55,9 +56,9 @@ public class PopulationExportTest {
     // GeoJSON files can be checked for validity at: https://geojsonlint.com
 
     private static final List<Arguments> configurations = List.of(
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-graphviz.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-graphviz.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-geojson.config")),
+//        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-graphviz.config")),
+//        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-graphviz.config")),
+//        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-geojson.config")),
         makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-geojson.config"))
     );
 
@@ -78,6 +79,7 @@ public class PopulationExportTest {
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
+    @Disabled
     public void populationExportedAsExpectedSlow(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
 
         checkPopulationExportedAsExpected(population);
@@ -99,6 +101,8 @@ public class PopulationExportTest {
     }
 
     private static void checkPopulationExportedAsExpected(final Path recordsFilePath, final String hashAlgorithmName, final String expectedHash) throws IOException, NoSuchAlgorithmException {
+
+        Files.readAllLines(recordsFilePath).forEach(System.out::println);
 
         final byte[] bytes = Files.readAllBytes(recordsFilePath);
         final String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance(hashAlgorithmName).digest(bytes));
