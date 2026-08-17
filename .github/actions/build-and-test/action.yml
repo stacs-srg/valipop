@@ -34,4 +34,4 @@ runs:
 
   - name: Build and test with Maven
     shell: bash
-    run: mvn -B ${{ inputs.maven-target }} ${{ inputs.maven-params }} -Drun.jvmArguments="-Xmx4g"
+    run: mvn -B ${{ inputs.maven-target }} ${{ inputs.maven-params }} -Drun.jvmArguments="-Xmx4g" -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8
