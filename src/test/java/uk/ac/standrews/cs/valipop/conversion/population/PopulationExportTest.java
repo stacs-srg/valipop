@@ -35,6 +35,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -104,7 +105,10 @@ public class PopulationExportTest {
 
         Files.readAllLines(recordsFilePath).forEach(System.out::println);
 
-        final byte[] bytes = Files.readAllBytes(recordsFilePath);
+        final byte[] bytes = String.join("\n", Files.readAllLines(recordsFilePath, EXPORT_CHARSET)).getBytes(EXPORT_CHARSET);
+
+
+        final byte[] bytes2 = Files.readAllBytes(recordsFilePath);
 
         System.out.println(">>>>>>>>>>>>> ");
         for (int i = 0; i < 100; i++)
