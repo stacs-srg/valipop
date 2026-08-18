@@ -419,7 +419,7 @@ public class PopulationStatistics implements EventRateTables {
         final TreeMap<Year, ValiPopEnumeratedDistribution> data = new WriteOnceTreeMap<>();
 
         for (final Path path : paths) {
-            final ValiPopEnumeratedDistribution tempData = InputFileReader.readInNameDataFile(path, Randomness.getRandomGenerator());
+            final ValiPopEnumeratedDistribution tempData = InputFileReader.readInNameDataFile(path, config, Randomness.getRandomGenerator());
             data.put(tempData.getYear(), tempData);
         }
 

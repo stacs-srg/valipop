@@ -55,6 +55,7 @@ public class Config implements Serializable {
     private static final boolean DEFAULT_EXPORT_RECORDS_FLAG = false;
     private static final boolean DEFAULT_EXPORT_CONTINGENCY_TABLES_FLAG = false;
     private static final boolean DEFAULT_EXPORT_VALIDATION_ANALYSIS_FLAG = false;
+    private static final boolean DEFAULT_NORMALIZE_NAMES_FLAG = false;
     private static final boolean DEFAULT_SCALE_CONTINGENCY_TABLE_TARGET_FREQUENCIES_FLAG = false;
     private static final boolean DEFAULT_SUPPRESS_SOLELY_CATEGORICAL_CORRELATIONS_FLAG = false;
 
@@ -198,6 +199,7 @@ public class Config implements Serializable {
     private boolean exportRecords = DEFAULT_EXPORT_RECORDS_FLAG;
     private boolean exportContingencyTables = DEFAULT_EXPORT_CONTINGENCY_TABLES_FLAG;
     private boolean exportValidationAnalysis = DEFAULT_EXPORT_VALIDATION_ANALYSIS_FLAG;
+    private boolean normalizeNames = DEFAULT_NORMALIZE_NAMES_FLAG;
     private boolean scaleContingencyTableTargetFrequencies = DEFAULT_SCALE_CONTINGENCY_TABLE_TARGET_FREQUENCIES_FLAG;
     private boolean suppressSolelyCategoricalCorrelations = DEFAULT_SUPPRESS_SOLELY_CATEGORICAL_CORRELATIONS_FLAG;
 
@@ -489,6 +491,10 @@ public class Config implements Serializable {
         return exportPopulation;
     }
 
+    public boolean shouldNormalizeNames() {
+        return normalizeNames;
+    }
+
     public boolean shouldScaleContingencyTableTargetFrequencies() {
         return scaleContingencyTableTargetFrequencies;
     }
@@ -713,6 +719,7 @@ public class Config implements Serializable {
         processors.put("record_export", value -> exportRecords = value.equalsIgnoreCase("true"));
         processors.put("contingency_table_export", value -> exportContingencyTables = value.equalsIgnoreCase("true"));
         processors.put("validation_export", value -> exportValidationAnalysis = value.equalsIgnoreCase("true"));
+        processors.put("normalize_names", value -> normalizeNames = value.equalsIgnoreCase("true"));
         processors.put("scale_contingency_table_target_frequencies", value -> scaleContingencyTableTargetFrequencies = value.equalsIgnoreCase("true"));
         processors.put("suppress_solely_categorical_correlations", value -> suppressSolelyCategoricalCorrelations = value.equalsIgnoreCase("true"));
 
@@ -804,7 +811,7 @@ public class Config implements Serializable {
         this.pathToConfigFile = pathToConfigFile;
 
         try {
-            for (final String line : InputFileReader.getAllLines(pathToConfigFile)) {
+            for (final String line : InputFileReader.readAllNonCommentLines(pathToConfigFile)) {
 
                 final String[] split = line.split("=", -1);
 

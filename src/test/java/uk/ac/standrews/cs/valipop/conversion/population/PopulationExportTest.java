@@ -57,9 +57,9 @@ public class PopulationExportTest {
     // GeoJSON files can be checked for validity at: https://geojsonlint.com
 
     private static final List<Arguments> configurations = List.of(
-//        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-graphviz.config")),
-//        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-graphviz.config")),
-//        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-geojson.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-graphviz.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-graphviz.config")),
+        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-geojson.config")),
         makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-geojson.config"))
     );
 
@@ -80,7 +80,6 @@ public class PopulationExportTest {
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    @Disabled
     public void populationExportedAsExpectedSlow(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
 
         checkPopulationExportedAsExpected(population);
@@ -101,28 +100,19 @@ public class PopulationExportTest {
         checkPopulationExportedAsExpected(populationExportDirPath.resolve(populationExportFileName), hashAlgorithmName, expectedHash);
     }
 
-    private static void checkPopulationExportedAsExpected(final Path recordsFilePath, final String hashAlgorithmName, final String expectedHash) throws IOException, NoSuchAlgorithmException {
+    private static void checkPopulationExportedAsExpected(final Path exportFilePath, final String hashAlgorithmName, final String expectedHash) throws IOException, NoSuchAlgorithmException {
 
-        Files.readAllLines(recordsFilePath).forEach(System.out::println);
-
-        final byte[] bytes = String.join("\n", Files.readAllLines(recordsFilePath, EXPORT_CHARSET)).getBytes(EXPORT_CHARSET);
-
-
-        final byte[] bytes2 = Files.readAllBytes(recordsFilePath);
-
-        System.out.println(">>>>>>>>>>>>> ");
-        for (int i = 0; i < 100; i++)
-            System.out.print(bytes[i] + " ");
-        System.out.println();
+        // Read line by line rather than reading all bytes directly, to give consistent newline encoding on all platforms.
+        final byte[] bytes = String.join("\n", Files.readAllLines(exportFilePath, EXPORT_CHARSET)).getBytes(EXPORT_CHARSET);
 
         final String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance(hashAlgorithmName).digest(bytes));
 
-        assertEquals(expectedHash, actualHash, "Checking exported population from " + recordsFilePath);
+        assertEquals(expectedHash, actualHash, "Checking exported population from " + exportFilePath);
     }
 
     protected static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {
 
-        try (final BufferedReader reader1 = Files.newBufferedReader(path1, EXPORT_CHARSET); final BufferedReader reader2 = Files.newBufferedReader(path2, StandardCharsets.UTF_8)) {
+        try (final BufferedReader reader1 = Files.newBufferedReader(path1, EXPORT_CHARSET); final BufferedReader reader2 = Files.newBufferedReader(path2, EXPORT_CHARSET)) {
 
             String line1;
 

@@ -68,7 +68,7 @@ public class DistributionGenerator {
                 "src/main/resources/valipop/inputs/icem-scot-1861/icem-scot-1861-counties-L-P.csv"};
 
         for (String file : files) {
-            ArrayList<String> fileLines = new ArrayList<>(InputFileReader.getAllLines(Paths.get(file)));
+            ArrayList<String> fileLines = new ArrayList<>(InputFileReader.readAllNonCommentLines(Paths.get(file)));
 
             if (lines.isEmpty()) {
                 labels = fileLines.get(0);

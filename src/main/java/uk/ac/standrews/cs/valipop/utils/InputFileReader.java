@@ -27,7 +27,6 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -37,6 +36,8 @@ import java.text.Normalizer;
 import java.time.Year;
 import java.util.*;
 import java.util.logging.Logger;
+
+import static uk.ac.standrews.cs.valipop.population.OBDModel.EXPORT_CHARSET;
 
 /**
  * Parses the input files into input data to form the distribution used by the simulation.
@@ -51,31 +52,16 @@ public class InputFileReader {
     private static final String COMMENT_INDICATOR = "#";
     public static Logger log = Logger.getLogger(InputFileReader.class.getName());
 
-    public static List<String> getAllLines(Path path) throws IOException {
+    public static List<String> readAllNonCommentLines(final Path path) throws IOException {
 
-        List<String> lines = new ArrayList<>();
-
-        // Reads in all lines to a collection of Strings
-        try (BufferedReader reader = Files.newBufferedReader(path)) {
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-
-                if (!line.startsWith(COMMENT_INDICATOR) && line.length() != 0) {
-                    lines.add(line);
-                }
-            }
-            reader.close();
-        }
-
-        return lines;
+        return Files.readAllLines(path, EXPORT_CHARSET).stream().filter(line -> !line.isEmpty() && !line.startsWith(COMMENT_INDICATOR)).toList();
     }
 
     public static TreeMap<Year, Double> readInSingleInputFile(Path path) throws IOException, InvalidInputFileException {
 
         TreeMap<Year, Double> data = new TreeMap<>();
 
-        List<String> lines = new ArrayList<>(getAllLines(path));
+        List<String> lines = new ArrayList<>(readAllNonCommentLines(path));
 
         for (int i = 0; i < lines.size(); i++) {
 
@@ -104,7 +90,7 @@ public class InputFileReader {
 
     public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path, Config config, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException {
 
-        List<String> lines = new ArrayList<>(getAllLines(path));
+        List<String> lines = new ArrayList<>(readAllNonCommentLines(path));
 
         Year year = null;
         String sourcePopulation = null;
@@ -175,16 +161,16 @@ public class InputFileReader {
         return new SelfCorrectingTwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
-    public static ValiPopEnumeratedDistribution readInNameDataFile(Path path, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException, InconsistentWeightException {
+    public static ValiPopEnumeratedDistribution readInNameDataFile(final Path path, final Config config, final RandomGenerator randomGenerator) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
-        List<String> lines = new ArrayList<>(getAllLines(path));
+        final List<String> lines = new ArrayList<>(readAllNonCommentLines(path));
 
         Year year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
         List<String> columnLabels = new ArrayList<>();
-        Map<String, Double> data = new HashMap<>();
+        final Map<String, Double> data = new HashMap<>();
 
         for (int i = 0; i < lines.size(); i++) {
 
@@ -195,7 +181,7 @@ public class InputFileReader {
                 case "year":
                     try {
                         year = Year.parse(split[1]);
-                    } catch (NumberFormatException e) {
+                    } catch (final NumberFormatException e) {
                         throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
                     }
                     break;
@@ -214,21 +200,24 @@ public class InputFileReader {
                         s = lines.get(i);
                         split = s.split(TAB);
 
-                        if (split.length != columnLabels.size()) {
+                        if (split.length != columnLabels.size())
                             throw new InvalidInputFileException("One or more data rows do not have the correct number of values in the file: " + path.toString());
-                        }
 
                         String name = split[0];
-                        String normalize = Normalizer.normalize(name, Normalizer.Form.NFKD);
-                        String normalized = normalize.replaceAll("ł", "l").replaceAll("Ł", "L").replaceAll("[^\\p{ASCII}]", "");
-
                         Double frequency = Double.valueOf(split[1]);
 
-                        if (data.containsKey(normalized)) {
-                            frequency += data.get(normalized);
+                        if (config.shouldNormalizeNames()) {
+
+                            name = normalizeName(name);
+
+                            // Check whether name has been encountered previously.
+                            // If so, the previous occasion was an input name that was normalized to the same form as this one,
+                            // and their frequencies should be summed.
+                            if (data.containsKey(name))
+                                frequency += data.get(name);
                         }
 
-                        data.put(normalized, frequency);
+                        data.put(name, frequency);
                     }
                     break;
             }
@@ -237,9 +226,24 @@ public class InputFileReader {
         return new ValiPopEnumeratedDistribution(year, sourcePopulation, sourceOrganisation, data, randomGenerator);
     }
 
+    private static String normalizeName(String name) {
+
+        // E.g. maps "Ádám" to "Adam".
+
+        // Perform unicode compatibility normalization.
+        // Result may appear the same when rendered but byte representation is expanded
+        name = Normalizer.normalize(name, Normalizer.Form.NFKD);
+
+        // Replace Polish characters that aren't normalized in previous step.
+        name = name.replace("ł", "l").replace("Ł", "L");
+
+        // Remove any non-ASCII characters.
+        return name.replaceAll("[^\\p{ASCII}]", "");
+    }
+
     public static AgeDependantEnumeratedDistribution readInDeathCauseDataFile(Path path, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
-        List<String> lines = new ArrayList<>(getAllLines(path));
+        List<String> lines = new ArrayList<>(readAllNonCommentLines(path));
 
         Year year = null;
         String sourcePopulation = null;
@@ -281,7 +285,7 @@ public class InputFileReader {
 
     public static OneDimensionDataDistribution readIn1DDataFile(Path path) throws IOException, InvalidInputFileException {
 
-        List<String> lines = new ArrayList<>(getAllLines(path));
+        List<String> lines = new ArrayList<>(readAllNonCommentLines(path));
 
         Year year = null;
         String sourcePopulation = null;
@@ -341,7 +345,7 @@ public class InputFileReader {
 
     public static SelfCorrecting2DIntegerRangeProportionalDistribution readInAgeAndProportionalStatsInput(Path path, RandomGenerator random) throws IOException, InvalidInputFileException {
 
-        List<String> lines = new ArrayList<>(getAllLines(path));
+        List<String> lines = new ArrayList<>(readAllNonCommentLines(path));
 
         Year year = null;
         String sourcePopulation = null;
@@ -384,7 +388,7 @@ public class InputFileReader {
 
     public static SelfCorrecting2DEnumeratedProportionalDistribution readInStringAndProportionalStatsInput(Path path, RandomGenerator random) throws IOException, InvalidInputFileException {
 
-        List<String> lines = new ArrayList<>(getAllLines(path));
+        List<String> lines = new ArrayList<>(readAllNonCommentLines(path));
 
         Year year = null;
         String sourcePopulation = null;
@@ -427,7 +431,7 @@ public class InputFileReader {
 
     public static SelfCorrectingProportionalDistribution<IntegerRange, Integer, Integer> readInAndAdaptAgeAndProportionalStatsInput(Path path, RandomGenerator random) throws IOException, InvalidInputFileException {
 
-        List<String> lines = new ArrayList<>(getAllLines(path));
+        List<String> lines = new ArrayList<>(readAllNonCommentLines(path));
 
         Year year = null;
         String sourcePopulation = null;
