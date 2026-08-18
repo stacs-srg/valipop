@@ -220,7 +220,7 @@ public class InputFileReader {
 
                         String name = split[0];
                         String normalize = Normalizer.normalize(name, Normalizer.Form.NFKD);
-                        String normalized = normalize.replaceAll("\\p{M}", "").replaceAll("ł", "l").replaceAll("Ł", "L");
+                        String normalized = normalize.replaceAll("ł", "l").replaceAll("Ł", "L").replaceAll("[^\\p{ASCII}]", "");
 
                         Double frequency = Double.valueOf(split[1]);
 

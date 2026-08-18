@@ -175,7 +175,10 @@ public class OBDModel {
     private static List<Area> readAreaList(final Config config) throws IOException {
 
         final ObjectMapper objectMapper = new ObjectMapper();
-        return Arrays.stream(objectMapper.readValue(new File(config.getGeographyFilePath().toString()), Area[].class)).toList();
+        final String geographyFilePath = config.getGeographyFilePath().toString();
+        final Area[] areas = objectMapper.readValue(new File(geographyFilePath), Area[].class);
+
+        return Arrays.stream(areas).toList();
     }
 
     public void runSimulation() throws IOException {
