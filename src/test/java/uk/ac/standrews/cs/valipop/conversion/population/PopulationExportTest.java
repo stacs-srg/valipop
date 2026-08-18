@@ -105,6 +105,12 @@ public class PopulationExportTest {
         Files.readAllLines(recordsFilePath).forEach(System.out::println);
 
         final byte[] bytes = Files.readAllBytes(recordsFilePath);
+
+        System.out.println(">>>>>>>>>>>>> ");
+        for (int i = 0; i < 100; i++)
+            System.out.print(bytes[i] + " ");
+        System.out.println();
+
         final String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance(hashAlgorithmName).digest(bytes));
 
         assertEquals(expectedHash, actualHash, "Checking exported population from " + recordsFilePath);
