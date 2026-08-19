@@ -52,11 +52,11 @@ import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.get
 public class PopulationExportGEDCOMTest extends PopulationExportTest {
 
     private static final List<Arguments> configurations = List.of(
-        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-gedcom.config")),
-        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-gedcom.config"))
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-gedcom.config"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-gedcom.config")),
         Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1K-gedcom.config"))
     );
 
