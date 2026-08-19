@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordExportFormat;
 
 import java.io.*;
 import java.nio.file.*;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -122,7 +123,8 @@ public class Config implements Serializable {
 
     public static final String LOG_FILE_NAME = "log.txt";
     public static final String TEMP_DIR_INDICATOR = "!TEMP!";
-    public static final int MINIMUM_INITIALISATION_PERIOD_IN_YEARS = 150;
+    public static final int MINIMUM_INITIALISATION_PERIOD_IN_YEARS = 30;
+
     public static final String STATISTICS_FILENAME = "statistics.txt";
 
     private static Level logLevel = DEFAULT_LOG_LEVEL;
@@ -1070,5 +1072,22 @@ public class Config implements Serializable {
         this.simulationStart                  =config.simulationStart;
         this.simulationEnd                    =config.simulationEnd;
         this.targetInitialPopulationSize      =config.targetInitialPopulationSize;
+    }
+
+    public static String normalizeName(String name) {
+
+        if (name == null) return null;
+
+        // E.g. maps "Ádám" to "Adam".
+
+        // Perform unicode compatibility normalization.
+        // Result may appear the same when rendered but byte representation is expanded
+        name = Normalizer.normalize(name, Normalizer.Form.NFKD);
+
+        // Replace Polish characters that aren't normalized in previous step.
+        name = name.replace("ł", "l").replace("Ł", "L");
+
+        // Remove any non-ASCII characters.
+        return name.replaceAll("[^\\p{ASCII}]", "");
     }
 }

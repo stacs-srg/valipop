@@ -34,7 +34,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.ac.standrews.cs.valipop.Config.RECORDS_EXPORT_DIR_NAME;
-import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.makePopulation;
+import static uk.ac.standrews.cs.valipop.conversion.population.PopulationExportTest.readBytes;
+import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.getPopulation;
 import static uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordType.*;
 
 /**
@@ -48,28 +49,28 @@ public class RecordExportTest {
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/conversion/records");
 
     private static final List<Arguments> configurations = List.of(
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-1973-initial-10K.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-1973-initial-10K-no-recovery.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1850-1900-initial-100K.config"))
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-1973-initial-10K.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-1973-initial-10K-no-recovery.config"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        makePopulation(TEST_RESOURCE_DIR.resolve("1850-2025-initial-100K.config"))
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1850-2025-initial-100K.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1850-1900-initial-100K.config"))
     );
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void recordsGeneratedAsExpected(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
+    public void recordsGeneratedAsExpected(final Path configPath) throws IOException, NoSuchAlgorithmException {
 
-        checkRecordsGeneratedAsExpected(population);
+        checkRecordsGeneratedAsExpected(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void recordsGeneratedAsExpectedSlow(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
+    public void recordsGeneratedAsExpectedSlow(final Path configPath) throws IOException, NoSuchAlgorithmException {
 
-        checkRecordsGeneratedAsExpected(population);
+        checkRecordsGeneratedAsExpected(getPopulation(configPath));
     }
 
     private static void checkRecordsGeneratedAsExpected(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
@@ -97,7 +98,7 @@ public class RecordExportTest {
         final List<String> lines = Files.readAllLines(recordsFilePath);
         assertEquals(expectedRecordCount, lines.size());
 
-        final byte[] bytes = Files.readAllBytes(recordsFilePath);
+        final byte[] bytes = readBytes(recordsFilePath);
         final String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance(hashAlgorithmName).digest(bytes));
 
         assertEquals(expectedHash, actualHash, "Checking records from " + recordsFilePath);

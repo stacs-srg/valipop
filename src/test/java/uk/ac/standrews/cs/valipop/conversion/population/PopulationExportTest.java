@@ -17,7 +17,6 @@
  */
 package uk.ac.standrews.cs.valipop.conversion.population;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -28,20 +27,18 @@ import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
 import static uk.ac.standrews.cs.valipop.population.OBDModel.EXPORT_CHARSET;
-import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.makePopulation;
+import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.getPopulation;
 
 /**
  * These tests check that when various populations are generated, and exported in various formats, then the files contain the expected content.
@@ -57,32 +54,33 @@ public class PopulationExportTest {
     // GeoJSON files can be checked for validity at: https://geojsonlint.com
 
     private static final List<Arguments> configurations = List.of(
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-graphviz.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-graphviz.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-geojson.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-geojson.config"))
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-graphviz.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-graphviz.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-geojson.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-geojson.config"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1K-graphviz.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-5K-graphviz.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1K-geojson.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-5K-geojson.config"))
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1K-graphviz.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-5K-graphviz.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1K-geojson.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-5K-geojson.config"))
     );
+    public static final String UNIX_NEWLINE = "\n";
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void populationExportedAsExpected(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
+    public void populationExportedAsExpected(final Path configPath) throws IOException, NoSuchAlgorithmException {
 
-        checkPopulationExportedAsExpected(population);
+        checkPopulationExportedAsExpected(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void populationExportedAsExpectedSlow(final IPersonCollection population) throws IOException, NoSuchAlgorithmException {
+    public void populationExportedAsExpectedSlow(final Path configPath) throws IOException, NoSuchAlgorithmException {
 
-        checkPopulationExportedAsExpected(population);
+        checkPopulationExportedAsExpected(getPopulation(configPath));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,12 +100,17 @@ public class PopulationExportTest {
 
     private static void checkPopulationExportedAsExpected(final Path exportFilePath, final String hashAlgorithmName, final String expectedHash) throws IOException, NoSuchAlgorithmException {
 
-        // Read line by line rather than reading all bytes directly, to give consistent newline encoding on all platforms.
-        final byte[] bytes = String.join("\n", Files.readAllLines(exportFilePath, EXPORT_CHARSET)).getBytes(EXPORT_CHARSET);
+        final byte[] bytes = readBytes(exportFilePath);
 
         final String actualHash = Base64.getEncoder().encodeToString(MessageDigest.getInstance(hashAlgorithmName).digest(bytes));
 
         assertEquals(expectedHash, actualHash, "Checking exported population from " + exportFilePath);
+    }
+
+    public static byte[] readBytes(final Path filePath) throws IOException {
+
+        // Read line by line rather than reading all bytes directly, to give consistent newline encoding on all platforms.
+        return String.join(UNIX_NEWLINE, Files.readAllLines(filePath, EXPORT_CHARSET)).getBytes(EXPORT_CHARSET);
     }
 
     protected static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {

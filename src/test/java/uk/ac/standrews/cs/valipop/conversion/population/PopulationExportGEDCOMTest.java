@@ -24,10 +24,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.conversion.GEDCOMExportAdapter;
+import uk.ac.standrews.cs.valipop.conversion.GEDCOMImportAdapter;
 import uk.ac.standrews.cs.valipop.conversion.IPopulationWriter;
 import uk.ac.standrews.cs.valipop.conversion.PopulationConverter;
-import uk.ac.standrews.cs.valipop.conversion.GEDCOMImportAdapter;
-import uk.ac.standrews.cs.valipop.conversion.GEDCOMExportAdapter;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
@@ -42,7 +42,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static uk.ac.standrews.cs.valipop.Config.POPULATION_EXPORT_DIR_NAME;
-import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.makePopulation;
+import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.getPopulation;
 
 /**
  * These tests check that when various populations are generated, and exported in GEDCOM format, then the files are valid and contain the expected content.
@@ -52,59 +52,59 @@ import static uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest.mak
 public class PopulationExportGEDCOMTest extends PopulationExportTest {
 
     private static final List<Arguments> configurations = List.of(
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-gedcom.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-gedcom.config"))
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200-gedcom.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300-gedcom.config"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1K-gedcom.config"))
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1K-gedcom.config"))
     );
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void GEDCOMIsValid(final IPersonCollection population) throws IOException {
+    public void GEDCOMIsValid(final Path configPath) throws IOException {
 
-        checkGEDCOMIsValid(population);
+        checkGEDCOMIsValid(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void GEDCOMIsValidSlow(final IPersonCollection population) throws IOException {
+    public void GEDCOMIsValidSlow(final Path configPath) throws IOException {
 
-        checkGEDCOMIsValid(population);
+        checkGEDCOMIsValid(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void exportImportGivesEquivalentPopulation(final IPersonCollection population) throws IOException, GedcomParserException {
+    public void exportImportGivesEquivalentPopulation(final Path configPath) throws IOException, GedcomParserException {
 
-        checkExportImportGivesEquivalentPopulation(population);
+        checkExportImportGivesEquivalentPopulation(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void exportImportGivesEquivalentPopulationSlow(final IPersonCollection population) throws IOException, GedcomParserException {
+    public void exportImportGivesEquivalentPopulationSlow(final Path configPath) throws IOException, GedcomParserException {
 
-        checkExportImportGivesEquivalentPopulation(population);
+        checkExportImportGivesEquivalentPopulation(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void exportImportExportGivesSamePopulationFile(final IPersonCollection population) throws Exception {
+    public void exportImportExportGivesSamePopulationFile(final Path configPath) throws Exception {
 
-        checkExportImportExportGivesSamePopulationFile(population);
+        checkExportImportExportGivesSamePopulationFile(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void exportImportExportGivesSamePopulationFileSlow(final IPersonCollection population) throws Exception {
+    public void exportImportExportGivesSamePopulationFileSlow(final Path configPath) throws Exception {
 
-        checkExportImportExportGivesSamePopulationFile(population);
+        checkExportImportExportGivesSamePopulationFile(getPopulation(configPath));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

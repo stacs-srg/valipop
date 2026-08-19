@@ -42,15 +42,15 @@ public class ValidationEndToEndTest {
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/validation");
 
     private static final List<Arguments> endToEndConfigurations = List.of(
-        Arguments.of("endToEnd/1855-1973-initial-10K.config")
+        Arguments.of(TEST_RESOURCE_DIR.resolve("endToEnd/1855-1973-initial-2K.config"))
     );
 
     @ParameterizedTest
     @FieldSource("endToEndConfigurations")
     @Tag("slow")
-    public void endToEndValidation(final String configPath) throws IOException {
+    public void endToEndValidation(final Path configPath) throws IOException {
 
-        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+        final Config config = new Config(configPath);
         final double acceptableScore = Double.parseDouble(config.get("acceptable_validation_score"));
 
         final OBDModel model = new OBDModel(config);

@@ -65,6 +65,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import static uk.ac.standrews.cs.valipop.simulationEntities.PopulationNavigation.*;
 import static uk.ac.standrews.cs.valipop.utils.specialTypes.dates.DateUtils.divideYieldingDouble;
@@ -140,7 +141,7 @@ public class OBDModel {
             moveDistanceSelector = new DistanceSelector(randomGenerator);
 
             personFactory = new PersonFactory(population, desiredStatistics, config.getSimulationTimeStep(), randomGenerator);
-            migrationModel = new BalancedMigrationModel(population, randomGenerator, geography, personFactory, desiredStatistics);
+            migrationModel = new BalancedMigrationModel(population, config, randomGenerator, geography, personFactory, desiredStatistics);
             occupationChangeModel = new OccupationChangeModel(population, desiredStatistics, config);
 
             log.info("Random seed: " + config.getSeed());
@@ -177,6 +178,9 @@ public class OBDModel {
         final ObjectMapper objectMapper = new ObjectMapper();
         final String geographyFilePath = config.getGeographyFilePath().toString();
         final Area[] areas = objectMapper.readValue(new File(geographyFilePath), Area[].class);
+
+        if (config.shouldNormalizeNames())
+            Arrays.stream(areas).forEach(Area::normalize);
 
         return Arrays.stream(areas).toList();
     }

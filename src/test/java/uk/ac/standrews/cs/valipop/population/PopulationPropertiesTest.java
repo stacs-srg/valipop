@@ -22,6 +22,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.conversion.GEDCOMImportAdapter;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
@@ -53,19 +54,30 @@ public class PopulationPropertiesTest {
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/population");
 
     private static final List<Arguments> configurations = List.of(
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300.config"))
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-200.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-300.config"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1000.config")),
-        makePopulation(TEST_RESOURCE_DIR.resolve("1855-2016-initial-10000.config"))
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-1000.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("1855-2016-initial-10000.config"))
     );
 
-    public static Arguments makePopulation(final Path configPath) {
+    public static IPersonCollection makePopulation(final Path path) {
 
         try {
-            final Config config = new Config(configPath);
+            if (path == null)
+                return createDummyPopulation();
+
+            if (path.getFileName().toString().endsWith(".ged")) {
+
+                final GEDCOMImportAdapter population = new GEDCOMImportAdapter(path);
+                population.setDescription("gedcom file=" + path);
+
+                return population;
+            }
+
+            final Config config = new Config(path);
 
             final OBDModel model = new OBDModel(config);
             model.runSimulation();
@@ -73,28 +85,38 @@ public class PopulationPropertiesTest {
             final IPersonCollection population = model.getPopulation().getPeople();
             population.setDescription("initial size=" + config.getTargetInitialPopulationSize() + ", seed=" + config.getSeed());
 
-            return Arguments.of(population);
+            return population;
         }
-        catch (final IOException e) {
+        catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static final Map<Path, IPersonCollection> populationCache = new HashMap<>();
+
+    public static IPersonCollection getPopulation(final Path configPath) {
+
+        if (!populationCache.containsKey(configPath))
+            populationCache.put(configPath, makePopulation(configPath));
+
+        return populationCache.get(configPath);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void nonExistentPersonIsntFound(final IPersonCollection population) {
+    public void nonExistentPersonIsntFound(final Path configPath) {
 
-        checkNonExistentPersonIsntFound(population);
+        checkNonExistentPersonIsntFound(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void nonExistentPersonIsntFoundSlow(final IPersonCollection population) {
+    public void nonExistentPersonIsntFoundSlow(final Path configPath) {
 
-        checkNonExistentPersonIsntFound(population);
+        checkNonExistentPersonIsntFound(getPopulation(configPath));
     }
 
     private static void checkNonExistentPersonIsntFound(final IPersonCollection population) {
@@ -106,17 +128,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void nonExistentPartnershipIsntFound(final IPersonCollection population) {
+    public void nonExistentPartnershipIsntFound(final Path configPath) {
 
-        checkNonExistentPartnershipIsntFound(population);
+        checkNonExistentPartnershipIsntFound(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void nonExistentPartnershipIsntFoundSlow(final IPersonCollection population) {
+    public void nonExistentPartnershipIsntFoundSlow(final Path configPath) {
 
-        checkNonExistentPartnershipIsntFound(population);
+        checkNonExistentPartnershipIsntFound(getPopulation(configPath));
     }
 
     private static void checkNonExistentPartnershipIsntFound(final IPersonCollection population) {
@@ -128,17 +150,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void numberOfPeopleIsConsistent(final IPersonCollection population) {
+    public void numberOfPeopleIsConsistent(final Path configPath) {
 
-        checkNumberOfPeopleIsConsistent(population);
+        checkNumberOfPeopleIsConsistent(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void numberOfPeopleIsConsistentSlow(final IPersonCollection population) {
+    public void numberOfPeopleIsConsistentSlow(final Path configPath) {
 
-        checkNumberOfPeopleIsConsistent(population);
+        checkNumberOfPeopleIsConsistent(getPopulation(configPath));
     }
 
     private static void checkNumberOfPeopleIsConsistent(final IPersonCollection population) {
@@ -154,17 +176,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void personIDsArentRepeated(final IPersonCollection population) {
+    public void personIDsArentRepeated(final Path configPath) {
 
-        checkPersonIDsArentRepeated(population);
+        checkPersonIDsArentRepeated(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void personIDsArentRepeatedSlow(final IPersonCollection population) {
+    public void personIDsArentRepeatedSlow(final Path configPath) {
 
-        checkPersonIDsArentRepeated(population);
+        checkPersonIDsArentRepeated(getPopulation(configPath));
     }
 
     private static void checkPersonIDsArentRepeated(final IPersonCollection population) {
@@ -180,17 +202,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void numberOfPartnershipsIsConsistent(final IPersonCollection population) {
+    public void numberOfPartnershipsIsConsistent(final Path configPath) {
 
-        checkNumberOfPartnershipsIsConsistent(population);
+        checkNumberOfPartnershipsIsConsistent(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void numberOfPartnershipsIsConsistentSlow(final IPersonCollection population) {
+    public void numberOfPartnershipsIsConsistentSlow(final Path configPath) {
 
-        checkNumberOfPartnershipsIsConsistent(population);
+        checkNumberOfPartnershipsIsConsistent(getPopulation(configPath));
     }
 
     private static void checkNumberOfPartnershipsIsConsistent(final IPersonCollection population) {
@@ -206,17 +228,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void partnershipIDsArentRepeated(final IPersonCollection population) {
+    public void partnershipIDsArentRepeated(final Path configPath) {
 
-        checkPartnershipIDsArentRepeated(population);
+        checkPartnershipIDsArentRepeated(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void partnershipIDsArentRepeatedSlow(final IPersonCollection population) {
+    public void partnershipIDsArentRepeatedSlow(final Path configPath) {
 
-        checkPartnershipIDsArentRepeated(population);
+        checkPartnershipIDsArentRepeated(getPopulation(configPath));
     }
 
     private static void checkPartnershipIDsArentRepeated(final IPersonCollection population) {
@@ -233,17 +255,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void tooManyPersonIterations(final IPersonCollection population) {
+    public void tooManyPersonIterations(final Path configPath) {
 
-        checkTooManyPersonIterations(population);
+        checkTooManyPersonIterations(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void tooManyPersonIterationsSlow(final IPersonCollection population) {
+    public void tooManyPersonIterationsSlow(final Path configPath) {
 
-        checkTooManyPersonIterations(population);
+        checkTooManyPersonIterations(getPopulation(configPath));
     }
 
     private static void checkTooManyPersonIterations(final IPersonCollection population) {
@@ -256,17 +278,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void tooManyPartnershipIterations(final IPersonCollection population) {
+    public void tooManyPartnershipIterations(final Path configPath) {
 
-        checkTooManyPartnershipIterations(population);
+        checkTooManyPartnershipIterations(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void tooManyPartnershipIterationsSlow(final IPersonCollection population) {
+    public void tooManyPartnershipIterationsSlow(final Path configPath) {
 
-        checkTooManyPartnershipIterations(population);
+        checkTooManyPartnershipIterations(getPopulation(configPath));
     }
 
     private static void checkTooManyPartnershipIterations(final IPersonCollection population) {
@@ -279,17 +301,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void peopleCanBeFoundById(final IPersonCollection population) {
+    public void peopleCanBeFoundById(final Path configPath) {
 
-        checkPeopleCanBeFoundById(population);
+        checkPeopleCanBeFoundById(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void peopleCanBeFoundByIdSlow(final IPersonCollection population) {
+    public void peopleCanBeFoundByIdSlow(final Path configPath) {
 
-        checkPeopleCanBeFoundById(population);
+        checkPeopleCanBeFoundById(getPopulation(configPath));
     }
 
     private static void checkPeopleCanBeFoundById(final IPersonCollection population) {
@@ -305,17 +327,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void partnershipsCanBeFoundById(final IPersonCollection population) {
+    public void partnershipsCanBeFoundById(final Path configPath) {
 
-        checkPartnershipsCanBeFoundById(population);
+        checkPartnershipsCanBeFoundById(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void partnershipsCanBeFoundByIdSlow(final IPersonCollection population) {
+    public void partnershipsCanBeFoundByIdSlow(final Path configPath) {
 
-        checkPartnershipsCanBeFoundById(population);
+        checkPartnershipsCanBeFoundById(getPopulation(configPath));
     }
 
     private static void checkPartnershipsCanBeFoundById(final IPersonCollection population) {
@@ -331,17 +353,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void partnershipsConsistent(final IPersonCollection population) {
+    public void partnershipsConsistent(final Path configPath) {
 
-        checkPartnershipsConsistent(population);
+        checkPartnershipsConsistent(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void partnershipsConsistentSlow(final IPersonCollection population) {
+    public void partnershipsConsistentSlow(final Path configPath) {
 
-        checkPartnershipsConsistent(population);
+        checkPartnershipsConsistent(getPopulation(configPath));
     }
 
     private static void checkPartnershipsConsistent(final IPersonCollection population) {
@@ -373,17 +395,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void familiesNotTooLarge(final IPersonCollection population) {
+    public void familiesNotTooLarge(final Path configPath) {
 
-        checkFamiliesNotTooLarge(population);
+        checkFamiliesNotTooLarge(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void familiesNotTooLargeSlow(final IPersonCollection population) {
+    public void familiesNotTooLargeSlow(final Path configPath) {
 
-        checkFamiliesNotTooLarge(population);
+        checkFamiliesNotTooLarge(getPopulation(configPath));
     }
 
     private static void checkFamiliesNotTooLarge(final IPersonCollection population) {
@@ -396,17 +418,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void birthsBeforeDeaths(final IPersonCollection population) {
+    public void birthsBeforeDeaths(final Path configPath) {
 
-        checkBirthsBeforeDeaths(population);
+        checkBirthsBeforeDeaths(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void birthsBeforeDeathsSlow(final IPersonCollection population) {
+    public void birthsBeforeDeathsSlow(final Path configPath) {
 
-        checkBirthsBeforeDeaths(population);
+        checkBirthsBeforeDeaths(getPopulation(configPath));
     }
 
     private static void checkBirthsBeforeDeaths(final IPersonCollection population) {
@@ -425,17 +447,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void sensibleAgeAtMarriages(final IPersonCollection population) {
+    public void sensibleAgeAtMarriages(final Path configPath) {
 
-        checkSensibleAgeAtMarriages(population);
+        checkSensibleAgeAtMarriages(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void sensibleAgeAtMarriagesSlow(final IPersonCollection population) {
+    public void sensibleAgeAtMarriagesSlow(final Path configPath) {
 
-        checkSensibleAgeAtMarriages(population);
+        checkSensibleAgeAtMarriages(getPopulation(configPath));
     }
 
     private static void checkSensibleAgeAtMarriages(final IPersonCollection population) {
@@ -460,17 +482,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void marriagesBeforeDeaths(final IPersonCollection population) {
+    public void marriagesBeforeDeaths(final Path configPath) {
 
-        checkMarriagesBeforeDeaths(population);
+        checkMarriagesBeforeDeaths(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void marriagesBeforeDeathsSlow(final IPersonCollection population) {
+    public void marriagesBeforeDeathsSlow(final Path configPath) {
 
-        checkMarriagesBeforeDeaths(population);
+        checkMarriagesBeforeDeaths(getPopulation(configPath));
     }
 
     private static void checkMarriagesBeforeDeaths(final IPersonCollection population) {
@@ -493,17 +515,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void sexesConsistent(final IPersonCollection population) {
+    public void sexesConsistent(final Path configPath) {
 
-        checkSexesConsistent(population);
+        checkSexesConsistent(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void sexesConsistentSlow(final IPersonCollection population) {
+    public void sexesConsistentSlow(final Path configPath) {
 
-        checkSexesConsistent(population);
+        checkSexesConsistent(getPopulation(configPath));
     }
 
     private static void checkSexesConsistent(final IPersonCollection population) {
@@ -521,17 +543,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void surnamesInheritedOnMaleLine(final IPersonCollection population) {
+    public void surnamesInheritedOnMaleLine(final Path configPath) {
 
-        checkSurnamesInheritedOnMaleLine(population);
+        checkSurnamesInheritedOnMaleLine(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void surnamesInheritedOnMaleLineSlow(final IPersonCollection population) {
+    public void surnamesInheritedOnMaleLineSlow(final Path configPath) {
 
-        checkSurnamesInheritedOnMaleLine(population);
+        checkSurnamesInheritedOnMaleLine(getPopulation(configPath));
     }
 
     private static void checkSurnamesInheritedOnMaleLine(final IPersonCollection population) {
@@ -544,17 +566,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void noSiblingPartners(final IPersonCollection population) {
+    public void noSiblingPartners(final Path configPath) {
 
-        checkNoSiblingPartners(population);
+        checkNoSiblingPartners(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void noSiblingPartnersSlow(final IPersonCollection population) {
+    public void noSiblingPartnersSlow(final Path configPath) {
 
-        checkNoSiblingPartners(population);
+        checkNoSiblingPartners(getPopulation(configPath));
     }
 
     private static void checkNoSiblingPartners(final IPersonCollection population) {
@@ -577,17 +599,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void noParentPartnerOfChild(final IPersonCollection population) {
+    public void noParentPartnerOfChild(final Path configPath) {
 
-        checkNoParentPartnerOfChild(population);
+        checkNoParentPartnerOfChild(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void noParentPartnerOfChildSlow(final IPersonCollection population) {
+    public void noParentPartnerOfChildSlow(final Path configPath) {
 
-        checkNoParentPartnerOfChild(population);
+        checkNoParentPartnerOfChild(getPopulation(configPath));
     }
 
     private static void checkNoParentPartnerOfChild(final IPersonCollection population) {
@@ -604,17 +626,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void parentsHaveSensibleAgesAtBirths(final IPersonCollection population) {
+    public void parentsHaveSensibleAgesAtBirths(final Path configPath) {
 
-        checkParentsHaveSensibleAgesAtBirths(population);
+        checkParentsHaveSensibleAgesAtBirths(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void parentsHaveSensibleAgesAtBirthsSlow(final IPersonCollection population) {
+    public void parentsHaveSensibleAgesAtBirthsSlow(final Path configPath) {
 
-        checkParentsHaveSensibleAgesAtBirths(population);
+        checkParentsHaveSensibleAgesAtBirths(getPopulation(configPath));
     }
 
     private static void checkParentsHaveSensibleAgesAtBirths(final IPersonCollection population) {
@@ -633,17 +655,17 @@ public class PopulationPropertiesTest {
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void parentsAndChildrenConsistent(final IPersonCollection population) {
+    public void parentsAndChildrenConsistent(final Path configPath) {
 
-        checkParentsAndChildrenConsistent(population);
+        checkParentsAndChildrenConsistent(getPopulation(configPath));
     }
 
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void parentsAndChildrenConsistentSlow(final IPersonCollection population) {
+    public void parentsAndChildrenConsistentSlow(final Path configPath) {
 
-        checkParentsAndChildrenConsistent(population);
+        checkParentsAndChildrenConsistent(getPopulation(configPath));
     }
 
     private static void checkParentsAndChildrenConsistent(final IPersonCollection population) {
@@ -732,5 +754,65 @@ public class PopulationPropertiesTest {
     private static int differenceInYears(final LocalDate parent_birth_date, final LocalDate child_birth_date) {
 
         return Period.between(parent_birth_date, child_birth_date).getYears();
+    }
+
+    private static IPersonCollection createDummyPopulation() {
+
+        return new IPersonCollection() {
+
+            @Override
+            public Iterable<IPerson> getPeople() {
+                return List.of();
+            }
+
+            @Override
+            public Iterable<IPartnership> getPartnerships() {
+                return List.of();
+            }
+
+            @Override
+            public IPerson findPerson(final int id) {
+                return null;
+            }
+
+            @Override
+            public IPartnership findPartnership(final int id) {
+                return null;
+            }
+
+            @Override
+            public int getNumberOfPeople() {
+                return 0;
+            }
+
+            @Override
+            public int getNumberOfPartnerships() {
+                return 0;
+            }
+
+            @Override
+            public LocalDate getStartDate() {
+                return null;
+            }
+
+            @Override
+            public LocalDate getEndDate() {
+                return null;
+            }
+
+            @Override
+            public void setDescription(final String description) {
+            }
+
+            @Override
+            public Config getConfig() {
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "dummy gedcom file";
+            }
+        };
     }
 }

@@ -18,8 +18,10 @@
 package uk.ac.standrews.cs.valipop.utils.addressLookup;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.Config;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Stores countries (excluding UK) as addresses and supports picking a country address at random.
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 public class ForeignGeography {
 
     // TODO move to config file.
-    private String[] countries = {"Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina",
+    private static final List<String> countries = List.of("Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina",
             "Armenia", "Australia", "Austria", "Azerbaijan", "The Bahamas", "Bahrain", "Bangladesh", "Barbados",
             "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana",
             "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon", "Canada",
@@ -53,16 +55,20 @@ public class ForeignGeography {
             "South Sudan", "Suriname", "Swaziland", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan",
             "Tanzania", "Thailand", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan",
             "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United States", "Uruguay", "Uzbekistan", "Vanuatu",
-            "Vatican City", "Venezuela", "Vietnam", "Wales", "Yemen", "Zambia", "Zimbabwe"};
+            "Vatican City", "Venezuela", "Vietnam", "Wales", "Yemen", "Zambia", "Zimbabwe");
 
-    private final ArrayList<Address> foreignAddresses = new ArrayList<>();
+    private final List<Address> foreignAddresses;
     private final RandomGenerator randomNumberGenerator;
 
-    public ForeignGeography(RandomGenerator randomNumberGenerator) {
+    public ForeignGeography(final RandomGenerator randomNumberGenerator, final Config config) {
 
-        for (String country : countries) {
-            foreignAddresses.add(new Address(country));
-        }
+        foreignAddresses = countries.stream().
+            map(country -> config.shouldNormalizeNames() ?
+                Config.normalizeName(country) :
+                country
+            ).
+            map(Address::new).
+            toList();
 
         this.randomNumberGenerator = randomNumberGenerator;
     }

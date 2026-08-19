@@ -27,6 +27,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static uk.ac.standrews.cs.valipop.Config.normalizeName;
+
 /**
  * Represents a serializable area defined by an address, bounding box, and place id.
  * Created by passing in input geography data.
@@ -87,6 +89,15 @@ public class Area implements Serializable {
     private long maximumNumberOfAbodes = 0;
 
     private transient ArrayList<Address> addresses = new ArrayList<>();
+
+    public void normalize() {
+        road = normalizeName(road);
+        suburb = normalizeName(suburb);
+        town = normalizeName(town);
+        county = normalizeName(county);
+        state = normalizeName(state);
+        postcode = normalizeName(postcode);
+    }
 
     public static Area makeArea(String jsonInput, Cache cache) throws IOException, InvalidCoordSet, InterruptedException, APIOverloadedException, URISyntaxException {
         Area area = mapper.readValue(jsonInput, Area.class);

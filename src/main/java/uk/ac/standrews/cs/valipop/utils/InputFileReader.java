@@ -208,7 +208,7 @@ public class InputFileReader {
 
                         if (config.shouldNormalizeNames()) {
 
-                            name = normalizeName(name);
+                            name = Config.normalizeName(name);
 
                             // Check whether name has been encountered previously.
                             // If so, the previous occasion was an input name that was normalized to the same form as this one,
@@ -224,21 +224,6 @@ public class InputFileReader {
         }
 
         return new ValiPopEnumeratedDistribution(year, sourcePopulation, sourceOrganisation, data, randomGenerator);
-    }
-
-    private static String normalizeName(String name) {
-
-        // E.g. maps "Ádám" to "Adam".
-
-        // Perform unicode compatibility normalization.
-        // Result may appear the same when rendered but byte representation is expanded
-        name = Normalizer.normalize(name, Normalizer.Form.NFKD);
-
-        // Replace Polish characters that aren't normalized in previous step.
-        name = name.replace("ł", "l").replace("Ł", "L");
-
-        // Remove any non-ASCII characters.
-        return name.replaceAll("[^\\p{ASCII}]", "");
     }
 
     public static AgeDependantEnumeratedDistribution readInDeathCauseDataFile(Path path, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException, InconsistentWeightException {

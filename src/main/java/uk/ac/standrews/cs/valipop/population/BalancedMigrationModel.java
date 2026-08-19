@@ -18,6 +18,7 @@
 package uk.ac.standrews.cs.valipop.population;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.Partnership;
@@ -48,14 +49,15 @@ public class BalancedMigrationModel {
     private final PersonFactory personFactory;
     private final PopulationStatistics desired;
 
-    public BalancedMigrationModel(final Population population, final RandomGenerator randomNumberGenerator, final Geography geography, final PersonFactory personFactory, final PopulationStatistics desired) {
+    public BalancedMigrationModel(final Population population, final Config config, final RandomGenerator randomNumberGenerator, final Geography geography, final PersonFactory personFactory, final PopulationStatistics desired) {
 
         this.population = population;
         this.randomNumberGenerator = randomNumberGenerator;
         this.geography = geography;
         this.personFactory = personFactory;
         this.desired = desired;
-        foreignGeography = new ForeignGeography(randomNumberGenerator);
+
+        foreignGeography = new ForeignGeography(randomNumberGenerator, config);
     }
 
     public void performMigration(final LocalDate currentTime, final OBDModel model) {

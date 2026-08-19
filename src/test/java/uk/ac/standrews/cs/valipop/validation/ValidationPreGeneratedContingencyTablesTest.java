@@ -47,22 +47,22 @@ public class ValidationPreGeneratedContingencyTablesTest {
     private static final Path TEST_RESOURCE_DIR = Path.of("src/test/resources/valipop/validation");
 
     private static final List<Arguments> configurations = List.of(
-        Arguments.of("case1/case1.config")
+        Arguments.of(TEST_RESOURCE_DIR.resolve("case1/case1.config"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        Arguments.of("case2/case2.config"),
-        Arguments.of("case3/case3.config"),
-        Arguments.of("case4/case4.config"),
-        Arguments.of("case5/case5.config"),
-        Arguments.of("case6/case6.config"),
-        Arguments.of("case7/case7.config"),
-        Arguments.of("case8/case8.config")
+        Arguments.of(TEST_RESOURCE_DIR.resolve("case2/case2.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("case3/case3.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("case4/case4.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("case5/case5.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("case6/case6.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("case7/case7.config")),
+        Arguments.of(TEST_RESOURCE_DIR.resolve("case8/case8.config"))
     );
 
     @ParameterizedTest
     @FieldSource("configurations")
-    public void validationProducesExpectedScore(final String configPath) throws IOException {
+    public void validationProducesExpectedScore(final Path configPath) throws IOException {
 
         checkValidation(configPath);
     }
@@ -70,17 +70,17 @@ public class ValidationPreGeneratedContingencyTablesTest {
     @ParameterizedTest
     @FieldSource("slowConfigurations")
     @Tag("slow")
-    public void validationProducesExpectedScoreSlow(final String configPath) throws IOException {
+    public void validationProducesExpectedScoreSlow(final Path configPath) throws IOException {
 
         checkValidation(configPath);
     }
 
-    private static void checkValidation(final String configPath) throws IOException {
+    private static void checkValidation(final Path configPath) throws IOException {
 
-        final Config config = new Config(TEST_RESOURCE_DIR.resolve(configPath));
+        final Config config = new Config(configPath);
         final double expectedScore = Double.parseDouble(config.get("expected_validation_score"));
 
-        try (final Stream<Path> paths = Files.list(TEST_RESOURCE_DIR.resolve(configPath).getParent().resolve(CONTINGENCY_TABLES_DIR_NAME)).sorted()) {
+        try (final Stream<Path> paths = Files.list(configPath.getParent().resolve(CONTINGENCY_TABLES_DIR_NAME)).sorted()) {
 
             for (final Path contingency_table_path : paths.toList())
                 Files.copy(contingency_table_path, config.getRunPath().resolve(CONTINGENCY_TABLES_DIR_NAME).resolve(contingency_table_path.getFileName()));

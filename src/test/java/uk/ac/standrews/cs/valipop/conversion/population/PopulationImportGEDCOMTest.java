@@ -18,15 +18,9 @@
 package uk.ac.standrews.cs.valipop.conversion.population;
 
 import org.junit.jupiter.params.provider.Arguments;
-import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.conversion.GEDCOMImportAdapter;
 import uk.ac.standrews.cs.valipop.population.PopulationPropertiesTest;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPartnership;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPerson;
-import uk.ac.standrews.cs.valipop.simulationEntities.IPersonCollection;
 
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -47,85 +41,10 @@ public class PopulationImportGEDCOMTest extends PopulationPropertiesTest {
     // This requires more complex GEDCOM processing than currently performed by ValiPop.
 
     private static final List<Arguments> configurations = List.of(
-        Arguments.of(loadPopulationFromGEDCOM("kennedy.ged"))
+        Arguments.of(TEST_RESOURCE_DIR.resolve("kennedy.ged"))
     );
 
     private static final List<Arguments> slowConfigurations = List.of(
-        Arguments.of(createDummyPopulation())
+        Arguments.of((Object) null)
     );
-
-    @SuppressWarnings("SameParameterValue")
-    private static IPersonCollection loadPopulationFromGEDCOM(final String fileName) {
-
-        try {
-            final GEDCOMImportAdapter population = new GEDCOMImportAdapter(TEST_RESOURCE_DIR.resolve(fileName));
-            population.setDescription("gedcom file=" + fileName);
-
-            return population;
-
-        }
-        catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static IPersonCollection createDummyPopulation() {
-
-        return new IPersonCollection() {
-
-            @Override
-            public Iterable<IPerson> getPeople() {
-                return List.of();
-            }
-
-            @Override
-            public Iterable<IPartnership> getPartnerships() {
-                return List.of();
-            }
-
-            @Override
-            public IPerson findPerson(final int id) {
-                return null;
-            }
-
-            @Override
-            public IPartnership findPartnership(final int id) {
-                return null;
-            }
-
-            @Override
-            public int getNumberOfPeople() {
-                return 0;
-            }
-
-            @Override
-            public int getNumberOfPartnerships() {
-                return 0;
-            }
-
-            @Override
-            public LocalDate getStartDate() {
-                return null;
-            }
-
-            @Override
-            public LocalDate getEndDate() {
-                return null;
-            }
-
-            @Override
-            public void setDescription(final String description) {
-            }
-
-            @Override
-            public Config getConfig() {
-                return null;
-            }
-
-            @Override
-            public String toString() {
-                return "dummy gedcom file";
-            }
-        };
-    }
 }
