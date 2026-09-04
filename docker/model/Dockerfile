@@ -6,7 +6,7 @@ COPY pom.xml ./
 
 # Copy Java source code and the R analysis
 COPY src/main/java src/main/java
-COPY src/main/resources/valipop/analysis-r/geeglm src/main/resources/valipop/analysis-r/geeglm
+COPY src/main/resources/R/geeglm src/main/resources/R/geeglm
 
 RUN mvn clean package -Dmaven.test.skip=true
 

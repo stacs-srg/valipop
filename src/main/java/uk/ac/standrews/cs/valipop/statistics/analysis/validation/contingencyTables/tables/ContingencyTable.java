@@ -28,7 +28,7 @@ import java.util.*;
 public abstract class ContingencyTable {
 
     // The string constants defined here must match the variables used in formulae in
-    // resources/valipop/analysis-r/geeglm/validation-analysis.R.
+    // resources/R/geeglm/validation-analysis.R.
 
     public static final String LABEL_DATE = "Date";
     public static final String LABEL_SOURCE = "Source";

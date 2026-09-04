@@ -117,7 +117,7 @@
                         <licenseSet>
                             <header>com/mycila/maven/plugin/license/templates/GPL-3.txt</header>
                             <includes>
-                                <include>src/main/resources/valipop/analysis-r/geeglm/**</include>
+                                <include>src/main/resources/R/geeglm/**</include>
                             </includes>
                         </licenseSet>
                     </licenseSets>

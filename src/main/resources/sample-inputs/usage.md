@@ -49,7 +49,7 @@ Read more [here](https://en.wikipedia.org/wiki/Wikipedia:Text_of_the_Creative_Co
 
 ## Histpop
 
-The following Parlimentary Papers was retrieved from [Histpop](www.histpop.org).
+The following Parlimentary Papers were retrieved from [Histpop](www.histpop.org).
 
 - First detailed annual report of Registrar General of Births, Deaths and Marriages in Scotland BPP 1861 XVIII (2814) xix 
 

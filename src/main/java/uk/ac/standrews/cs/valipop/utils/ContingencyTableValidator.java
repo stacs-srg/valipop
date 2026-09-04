@@ -49,7 +49,7 @@ public class ContingencyTableValidator {
     private static final int R_PROCESS_TIMEOUT_IN_MINUTES = 10;
 
     // Relative to src/main/resources.
-    private static final Path ANALYSIS_SCRIPT_SOURCE_DIRECTORY = Path.of("valipop/analysis-r/geeglm/");
+    private static final Path ANALYSIS_SCRIPT_SOURCE_DIRECTORY = Path.of("R/geeglm/");
 
     private final Path workingDirectoryPath;
     private final Path contingencyTablesDirectoryPath;
