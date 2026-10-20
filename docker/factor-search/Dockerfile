@@ -1,4 +1,4 @@
-FROM spark:4.1.2-scala2.13-java21-ubuntu as spark
+FROM spark:4.2.0-scala2.13-java21-ubuntu as spark
 
 FROM valipop as run
 
