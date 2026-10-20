@@ -47,6 +47,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.8.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -70,6 +71,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.11.0</version>
                 <executions>
                     <execution>
                         <id>copy-system-dependencies</id>
