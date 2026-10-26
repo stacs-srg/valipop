@@ -32,7 +32,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.6</version>
+                <version>3.6.1</version>
             </plugin>
 
             <plugin>
@@ -164,6 +164,14 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.junit.vintage/junit-vintage-engine -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>6.1.3</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- These override insecure transitive dependencies -->
 
