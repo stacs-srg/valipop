@@ -140,7 +140,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>21</jdk.version>
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
-        <netty.version>4.2.19.Final</netty.version>
+        <netty.version>4.2.20.Final</netty.version>
     </properties>
 
     <repositories>
