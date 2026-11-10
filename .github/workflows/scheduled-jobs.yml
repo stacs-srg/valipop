@@ -157,9 +157,13 @@ jobs:
 
       - name: Build ValiPop base
         run: |
-          sudo apt-get update
-          sudo apt-get -y install docker-compose
-          docker-compose build base
+          docker compose build base
+
+#      - name: Build ValiPop base
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get -y install docker-compose
+#          docker-compose build base
 
       - name: Extract metadata (tags, labels) for ValiPop leader image
         id: meta-leader
